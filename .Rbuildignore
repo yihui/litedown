@@ -1,0 +1,6 @@
+.gitignore
+^.*\.Rproj$
+^\.Rproj\.user$
+Makefile
+^\.github$
+^LICENSE\.md$

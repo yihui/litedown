@@ -1,0 +1,33 @@
+Package: litedown
+Type: Package
+Title: A lightweight version of R Markdown
+Version: 0.0.1
+Authors@R: c(
+   person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666")),
+   person()
+   )
+Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
+    to lightweight HTML/LaTeX documents with the 'commonmark' package (instead
+    of Pandoc). Some missing Markdown features in 'commonmark' are also
+    supported, such as raw HTML/LaTeX blocks, LaTeX math, superscripts,
+    subscripts, footnotes, element attributes, appendices, and fenced 'Divs',
+    but not all Pandoc's Markdown features are (or will be) supported. With
+    additional JavaScript and CSS, you can also create HTML slides and articles.
+    This package can be viewed as a trimmed-down version of R Markdown and
+    'knitr'. It does not aim at rich Markdown features or a large variety of
+    output formats (the primary formats are HTML and LaTeX).
+Imports:
+    utils,
+    commonmark (>= 1.9.0),
+    xfun (>= 0.38)
+Suggests:
+    knitr,
+    rmarkdown (>= 2.18),
+    yaml
+License: MIT + file LICENSE
+URL: https://github.com/yihui/litedown
+BugReports: https://github.com/yihui/litedown/issues
+VignetteBuilder: knitr
+RoxygenNote: 7.3.1
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)

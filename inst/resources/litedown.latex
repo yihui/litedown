@@ -1,0 +1,13 @@
+\documentclass[$classoption$]{$documentclass$}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+$header-includes$
+\title{$title$}
+\author{$author$}
+\date{$date$}
+\begin{document}
+\maketitle
+$include-before$
+$body$
+$include-after$
+\end{document}

@@ -1,0 +1,598 @@
+---
+title: Making HTML Slides with the **litedown** Package
+author: "[Yihui Xie](https://yihui.org)"
+date: "`r Sys.Date()`"
+output:
+  litedown::html_format:
+    meta:
+      css: [default, snap, "@npm/@xiee/utils/css/key-buttons.min.css,heading-anchor.min.css"]
+      js: [snap, "@npm/@xiee/utils/js/key-buttons.min.js,external-link.min.js,heading-anchor.min.js"]
+    options:
+      toc: true
+      number_sections: true
+---
+
+```{=html}
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Making HTML Slides with the litedown Package}
+%\VignetteEncoding{UTF-8}
+-->
+```
+## Get started
+
+Specify at least one CSS file (`snap.css`) and one JS script (`snap.js`) in YAML
+metadata:
+
+``` yaml
+---
+output:
+  litedown::html_format:
+    meta:
+      css: [default, slides]  # "slides" is an alias of "snap.css"
+      js: [slides]  # "slides" is an alias of "snap.js"
+---
+```
+
+You will learn more about `snap.css` and `snap.js` at the end of this
+presentation.
+
+--------------------------------------------------------------------------------
+
+<!--# class="fade" -->
+
+Equivalently, you can specify them in the arguments of `litedown::mark_html()`:
+
+``` r
+litedown::mark_html("test.md", output = "test.html", meta = list(
+  css = c("default", "slides"),
+  js = "slides"
+))
+```
+
+but I recommend that you specify these options in YAML metadata instead.
+
+--------------------------------------------------------------------------------
+
+## Create slides
+
+There are two ways to create a new slide:
+
+1.  Insert a horizontal rule (`---`).
+2.  Or use the level-two section heading (`##`).
+
+You must choose only one way, i.e., either use horizontal rules to separate all
+slides, or avoid horizontal rules but only use section headings.
+
+The first way is more flexible---you don't have to start a slide with a section
+heading.
+
+--------------------------------------------------------------------------------
+
+### Example (`---`)
+
+``` markdown
+## First slide
+
+**Content**.
+
+---
+
+More _content_ on the next page.
+
+---
+
+## Third slide
+```
+
+--------------------------------------------------------------------------------
+
+### Example (`##`)
+
+``` markdown
+## First slide
+
+Content.
+
+## Second slide
+
+Content.
+
+## Third slide
+```
+
+--------------------------------------------------------------------------------
+
+## Keyboard shortcuts
+
+-   <kbd>f</kbd>: Fullscreen mode (press `Esc` to exit). The scroll bar will be
+    hidden in the fullscreen mode. You can also use the keyboard shortcut of
+    your browser, e.g., `fn + F` in Chrome on macOS.
+
+-   <kbd>o</kbd>: Overview mode
+
+    -   Slides become thumbnails, to make it easier to glance over multiple
+        slides at once.
+
+    -   Press <kbd>o</kbd> again to go back to presentation mode.
+
+    -   Alternatively, you can click on a slide while holding the `Alt` key to
+        toggle the overview mode and navigate to the clicked slide. Basically,
+        `Alt + Click` is like zoom in/out.
+
+--------------------------------------------------------------------------------
+
+-   <kbd>m</kbd>: Mirror mode
+
+    -   Slides are mirrored.[^1]
+
+    -   Press <kbd>m</kbd> again to resume.
+
+[^1]: See [this post](https://yihui.org/en/2020/04/xaringan-mirror/) for a
+    possible application of this odd feature.
+
+--------------------------------------------------------------------------------
+
+## CSS and styling
+
+You can pass more CSS files to the `css` option, e.g., if you have `extra.css`
+under the same directory as the Markdown input file:
+
+``` yaml
+---
+output:
+  litedown::html_format:
+    meta:
+      css: [default, slides, extra.css]
+      js: [slides]
+---
+```
+
+--------------------------------------------------------------------------------
+
+If your input document is `.Rmd`, you can also embed CSS directly in a `css`
+code chunk:
+
+````{verbatim}
+#| lang='markdown'
+
+```{css, echo=FALSE}
+/* your CSS rules */
+```
+````
+
+--------------------------------------------------------------------------------
+
+Below is a CSS code chunk in which we defined the font families for this
+presentation:
+
+```{css}
+body {
+  font-family: Georgia, serif;
+}
+.slide h1, .slide h2 {
+  font-family: Baskerville, Garamond, serif;
+}
+code {
+  font-family: Consolas, "Andale Mono", monospace;
+  font-weight: bold;
+}
+```
+
+--------------------------------------------------------------------------------
+
+### Example: section numbers
+
+When the Markdown option `number_sections` is enabled, all sections are
+numbered. You can hide all numbers via CSS:
+
+```{css}
+.section-number { display: none; }
+```
+
+For this presentation, only section numbers for level-two headings are
+displayed:
+
+```{css}
+#TOC > ul > li > .section-number,
+h2 > .section-number {
+  display: inline-block;
+}
+```
+
+--------------------------------------------------------------------------------
+
+### Example: TOC
+
+If you enable the table of contents (TOC) by setting the option `toc: true`, you
+will get a TOC slide after the title slide. It uses a two-column layout by
+default. You can custom its styles via the CSS selector `#TOC`. For example, you
+can use three columns:
+
+``` css
+#TOC { columns: 3; }
+```
+
+--------------------------------------------------------------------------------
+
+Or define the TOC title by:
+
+```{css}
+#TOC::before { content: "Outline"; }
+```
+
+Or shorten TOC (hide lower-level headings):
+
+``` css
+#TOC li ul { display: none; }
+```
+
+--------------------------------------------------------------------------------
+
+For this presentation, we don't hide lower-level headings in TOC but just make
+them more compact (`display: inline;`):
+
+```{css}
+#TOC li ul li {
+  display: inline;
+  border-left: 0.2em dotted #ccc;
+  padding-left: 0.2em;
+}
+#TOC li ul li a {
+  color: #666;
+  text-decoration: none;
+}
+```
+
+--------------------------------------------------------------------------------
+
+### Responsive layout
+
+| Media               | Width    |  Mode   | Font size | Overview columns |
+|---------------------|----------|:-------:|:---------:|:----------------:|
+| Super large devices | ≥ 1800px |    ↓    |     ↓     |        4         |
+| Larger desktops     | ≥ 1400px |    ↓    |     ↓     |        3         |
+| Desktops            | ≥ 992px  | Slides  |   200%    |        2         |
+| Phones and tablets  | \< 992px | Article |   100%    |       N/A        |
+
+You can resize your browser window to see the effect (also try to press
+<kbd>o</kbd> and test the overview mode). If you are on a mobile device, you
+should see a normal continuous page, since you cannot adjust the window size.
+
+--------------------------------------------------------------------------------
+
+### Printing
+
+-   When the slides are printed, the font size will be reduced.
+
+-   To save space, the presentation is printed as a *continuous* document
+    instead of slides.
+
+-   If you want borders on slides, print them from the overview mode.
+
+-   To customize style for printing, you may define CSS rules in:
+
+    ``` css
+    @media print {
+    }
+    ```
+
+--------------------------------------------------------------------------------
+
+## Slide attributes
+
+You can add more attributes to a slide via an HTML comment that starts with `#`
+(`Cmd / Ctrl + Shift + C` in RStudio's visual Markdown editor), e.g.,
+
+``` html
+<!--# class="inverse" style="color: red;"
+contenteditable -->
+```
+
+The syntax is just HTML. These attributes will be added to the slide container:
+
+``` html
+<div class="slide inverse" style="color: red;" contenteditable>
+</div>
+```
+
+--------------------------------------------------------------------------------
+
+### Built-in classes
+
+-   `inverse`: Apply a dark background and invert the slide color.
+
+-   `center`: Center all elements horizontally.
+
+-   `middle`: Center all elements vertically.
+
+-   `fade`: Fade a slide (50% opacity) and apply grid lines to the background
+    (can be useful for de-emphasizing a slide).
+
+You can define your own arbitrary class names (e.g., `<!--# class="large" -->`)
+and corresponding CSS rules (e.g., `.large { font-size: 150%; }`).
+
+--------------------------------------------------------------------------------
+
+### Example: an inverse slide
+
+<!--# class="inverse" style="font-size: 130%;" -->
+
+``` html
+<!--# class="inverse" style="font-size: 130%;" -->
+```
+
+-   The background is (nearly) black and the text is white.
+
+-   The font size is 30% larger.
+
+--------------------------------------------------------------------------------
+
+### Example: center content
+
+<!--# class="middle center" -->
+
+Everything is centered both vertically and horizontally.
+
+``` html
+<!--# class="middle center" -->
+```
+
+Of course, you don't have to use both classes at the same time. Depending on how
+you want to center content, you can use one of these classes.
+
+--------------------------------------------------------------------------------
+
+### Example: fade a slide
+
+<!--# class="fade" -->
+
+``` html
+<!--# class="fade" -->
+```
+
+This slide is not important. You do not need to read it carefully. You can even
+take a nap, since the speaker is boring.
+
+--------------------------------------------------------------------------------
+
+### Example: a background image
+
+<!--# style="background-image: url(https://user-images.githubusercontent.com/163582/219277796-6d2dd826-fb11-4970-b07c-dd920a694e3b.jpg); background-size: cover; color: lightgreen;" -->
+
+``` html
+<!--#
+style="background-image: url(path/to/image);"
+-->
+```
+
+We use the `style` attribute to introduce a background image to this slide. You
+can learn more about the `background-image` property
+[here](https://www.w3schools.com/cssref/pr_background-image.php).
+
+--------------------------------------------------------------------------------
+
+### Example: an editable slide
+
+<!--# contenteditable style="font-family: fantasy, monospace;" -->
+
+``` html
+<!--# contenteditable -->
+```
+
+Believe it or not, this slide is editable because we have enabled the
+`contenteditable` attribute. If you find any mistake on your slide during your
+presentation, you can click on it and edit any text.
+
+Note that your edits *will not* be saved, though.
+
+--------------------------------------------------------------------------------
+
+## Miscellaneous elements
+
+### Page numbers
+
+They are placed in `<span class="page-number"></span>` at the bottom right of
+all slides.
+
+If you click on a page number, the URL of the presentation will be appended by a
+hash of the form `#N`, where `N` is the page number. You can share this URL with
+other people when you want to point them to a specific page in the slides.
+
+--------------------------------------------------------------------------------
+
+### Timer
+
+A timer is added to the bottom left in `<span class="timer"></span>` by default.
+If you want a *countdown* timer, you can add a custom `<span>` to your document
+(in Markdown, you can use a raw HTML block ```` ```{=html} ````), and specify
+the total number of seconds in the attribute `data-total`, e.g.,
+
+``` html
+<span class="timer" data-total="1200"></span>
+```
+
+The timer will start when the presentation becomes fullscreen. To restart the
+timer, click on it.
+
+For the countdown timer, when the time is up, the timer will start to blink.
+
+```{=html}
+<span class="timer" data-total="1200"></span>
+```
+
+--------------------------------------------------------------------------------
+
+## Caveats
+
+### Lengthy slides
+
+When the height of a slide exceeds the window height, you need to be careful
+because it can be easy to accidentally scroll to the next page as you approach
+the bottom of the slide.
+
+One solution is to add more space to the bottom of the slide using the `extend`
+class.
+
+``` css
+:root { --slide-ratio: .75; }
+```
+
+This will add a placeholder with the class `spacer` to the end of the slide.
+This placeholder has a height of `50vh`, i.e., half of the window height (you
+can customize it via CSS). That means as soon as the bottom of the slide reaches
+the middle of the screen, you will be navigated to the next slide. Be careful!
+If you move from an oversized slide to the next slide by accident, you *will
+not* be able to move back to the bottom of the previous slide directly! Instead,
+you will always be navigated to the top of the previous slide if you want to go
+back. When you are on a long slide, I recommend that you use your mouse wheel or
+the `Down` arrow key to scroll at small steps, instead of using the `PageDown`
+key to scroll over to the next screen at once.
+
+Because of this hassle, you may not really want to make a slide lengthy, but it
+may be unavoidable when you have lengthy content to show on one slide and it
+cannot be broken. Below is a toy example (the output block cannot be split onto
+two slides):
+
+```{r}
+#| comment=''
+
+cat(1:10, sep = "\n")
+```
+
+--------------------------------------------------------------------------------
+
+### Aspect ratio
+
+<!--# class="extend" -->
+
+The aspect ratio of slides is not defined by default. The content will fit all
+available space on the screen. If you present the slides directly with your own
+computer, this may not be a problem since you know if all content fits well on
+your own screen. However, if you connect your computer to a projector or present
+the slides on another computer, you'd better know the screen resolution
+beforehand, because the aspect ratio may be different, and your slides can look
+different on that screen.
+
+You can fix the aspect ratio by setting the body width in CSS. For example, if
+your computer screen's resolution is 1440 × 900, and you want the aspect ratio
+4:3, you should set the body width to 1200px (= 900 × 4/3).
+
+``` css
+body { width: 1200px; }
+```
+
+Or set the width to a proportion of the height. A relative value will work with
+any screen height, e.g., 4/3 ≈ 1.33:
+
+``` css
+body { width: 133vh; }
+```
+
+However, note that when the presentation is not fullscreen, the slides will not
+take the full screen height (the browser UI elements such as the menu and tool
+bar will take some vertical space), so `133vh` will be an underestimate of the
+width.
+
+--------------------------------------------------------------------------------
+
+## Technical notes
+
+How does this HTML presentation work under the hood?
+
+### The original HTML
+
+``` html
+<h2>First slide</h2>
+<p>Content</p>
+<hr>
+<h2>Second slide</h2>
+<p>More content</p>
+<hr>
+```
+
+This can be generated from Markdown.
+
+--------------------------------------------------------------------------------
+
+### snap.js
+
+The script
+[`snap.js`](https://github.com/yihui/litedown/blob/main/inst/resources/snap.js)
+converts HTML to a structure more convenient to style as slides:
+
+``` html
+<div class="slide-container">
+  <div class="slide">
+    <h2>First slide</h2>
+    <p>Content</p>
+  </div>
+  <div class="slide">
+    <h2>Second slide</h2>
+    <p>More content</p>
+  </div>
+</div>
+```
+
+--------------------------------------------------------------------------------
+
+### snap.css
+
+The core technique is [CSS Scroll
+Snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts).
+The full CSS is
+[`snap.css`](https://github.com/yihui/litedown/blob/main/inst/resources/snap.css),
+and the essential rules are:
+
+``` css
+html {
+  scroll-snap-type: y mandatory;
+}
+.slide {
+  min-height: 100vh;
+  scroll-snap-align: start;
+}
+```
+
+--------------------------------------------------------------------------------
+
+The JS and CSS code can be used outside the R package **litedown**, too. You
+just need to have the correct HTML structure. Then in your HTML document:
+
+``` html
+<script src="https://cdn.jsdelivr.net/gh/yihui/litedown@VERSION/inst/resources/snap.min.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/gh/yihui/litedown@VERSION/inst/resources/default.min.css,gh/yihui/litedown@VERSION/inst/resources/snap.min.css">
+```
+
+Remember to substitute `VERSION` with [an appropriate
+version](https://github.com/yihui/litedown/tags) (e.g., `1.11`). You can omit
+`@VERSION` to use the latest version but it is not recommended because future
+updates might break your old slides.
+
+Both the JS and CSS are quite lightweight (total size is
+`r xfun::format_bytes(sum(file.size(pres_files <- litedown:::pkg_file('resources', c('default.css', 'snap.css', 'snap.js')))))`
+when uncompressed) and have no dependencies. They were written from scratch.
+
+--------------------------------------------------------------------------------
+
+## Enjoy!
+
+<!--# style="background-image: url(https://upload.wikimedia.org/wikipedia/commons/7/7e/Mudra-Naruto-KageBunshin.svg); background-position: bottom right; background-repeat: no-repeat; background-size: 25%;" -->
+
+-   I developed the [xaringan](https://github.com/yihui/xaringan) in package
+    2016 and have used it since then. It still works perfectly, but now I prefer
+    more lightweight frameworks.
+
+-   Most of presentation features that I need are included in
+    `r length(xfun::read_all(pres_files))` lines of JS/CSS code (`default.css` /
+    `snap.js` / `snap.css`).
+
+-   This simple presentation framework is highly customizable. Customizing
+    slides can be addictive if you know HTML/CSS/JS.
+
+-   Learn more about the Markdown syntax in
+    [`vignette('intro', package = 'litedown')`](intro.html).
+
+-   Github repo: <https://github.com/yihui/litedown> (you can find the [Rmd
+    source](https://github.com/yihui/litedown/blob/main/vignettes/slides.Rmd) of
+    this presentation in the repo)

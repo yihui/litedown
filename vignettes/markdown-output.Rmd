@@ -1,0 +1,25 @@
+---
+title: HTML Output from Markdown Examples
+---
+
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{HTML Output from Markdown Examples}
+-->
+
+This vignette shows how the output looks like in HTML from the other vignette `markdown-examples.Rmd`, in which the literal HTML code was shown.
+
+```{r}
+#| markdown-output, results='asis', tidy=FALSE,
+#| file=litedown:::pkg_file('examples', 'render-options.R')
+```
+
+```{r}
+#| smartypants, results='asis', eval=isTRUE(l10n_info()[['UTF-8']])
+
+# smartypants example
+cat(mark("1/2 (c)"))
+
+mkd <- paste(names(litedown:::pants), collapse = ' ')
+cat(mark(mkd))
+```
