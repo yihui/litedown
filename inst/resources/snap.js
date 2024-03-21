@@ -37,7 +37,7 @@
   function isSep(el) {
     return el.tagName === 'HR' && el.attributes.length === 0;
   }
-  let el = p.firstElementChild; if (isSep(el)) el.remove();
+  let el = p.firstElementChild; isSep(el) && el.remove();
   el = p.firstElementChild; if (!el) return;
   let s = newSlide(); el.before(s);
   while (true) {
@@ -58,8 +58,7 @@
     const m = newEl('div');
     m.innerHTML = `<div ${attr}></div>`;
     const attrs = m.firstElementChild.attributes;
-    for (let i = 0; i < attrs.length; i++) {
-      let a = attrs[i];
+    for (const a of attrs) {
       el.setAttribute(a.name, a.value);
     }
     m.remove();
@@ -91,8 +90,7 @@
     n.onclick = e => location.hash = i + 1;
     s.append(n);
     // apply slide attributes in <!--# -->
-    for (let k in s.childNodes) {
-      const node = s.childNodes[k];
+    for (const node of s.childNodes) {
       if (node.nodeType !== Node.COMMENT_NODE) continue;
       let t = node.textContent;
       if (!/^#/.test(t)) continue;
