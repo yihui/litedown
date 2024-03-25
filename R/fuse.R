@@ -342,7 +342,7 @@ fuse_code = function(x, envir, blocks) {
   if (!opts$include) return('')
 
   # decide the number of backticks to wrap up output
-  fence = make_fence(unlist(res))
+  fence = xfun::make_fence(unlist(res))
 
   # deal with figure alt text, captions, and environment
   env = opts$fig.env; alt = opts$fig.alt; cap = opts$fig.cap
@@ -385,35 +385,21 @@ fuse_code = function(x, envir, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      if (is.null(env)) img else fenced_block(
-        c(img, '', sprintf('<span>#fig:%s</span> %s', lab, cap)), ':::', env
+      if (is.null(env)) img else xfun::fenced_block(
+        c(img, '', sprintf('<span>#fig:%s</span> %s', lab, cap)), env, char = ':'
       )
     } else {
-      fenced_block(
-        x, fence,
-        c(if (type == 'source') paste0('.', opts$engine), opts[[paste0('attr.', type)]])
-      )
+      a = opts[[paste0('attr.', type)]]
+      if (type == 'source') a = c(paste0('.', opts$engine), a)
+      xfun::fenced_block(x, a, fence)
     }
   }))
-  if (!is.null(opts$attr.chunk)) out = fenced_block(out, '::::', opts$attr.chunk)
+  if (!is.null(opts$attr.chunk)) out = xfun::fenced_block(out, opts$attr.chunk, char = ':')
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
 }
 
 is_plot = function(x) inherits(x, 'record_plot')
-
-# if the content contains N backticks, use N+1 backticks as the fence
-make_fence = function(x) {
-  f = '```'
-  while (any(grepl(f, x, fixed = TRUE))) f = paste0(f, '`')
-  f
-}
-
-fenced_block = function(x, fence = '```', attrs = NULL) {
-  a = paste(attrs, collapse = ' ')
-  if (grepl(' ', a, fixed = TRUE)) a = paste0('{', a, '}')
-  c('', paste(fence, a), x, fence)
-}
 
 fuse_text = function(x, envir) {
   if (is.character(src <- x$source)) return(src)
