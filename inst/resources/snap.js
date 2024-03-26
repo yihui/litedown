@@ -27,8 +27,14 @@
   }
   p.classList.add('slide-container');
   // add 'slide' class to the frontmatter div and toc
-  ['.frontmatter', '#TOC'].forEach(s => {
-    d.body.querySelector(s)?.classList.add('slide');
+  ['.frontmatter', '#TOC'].forEach(sel => {
+    const el = d.body.querySelector(sel);
+    if (!el) return;
+    if (sel === '.frontmatter') {
+      el.classList.add('slide');
+    } else {
+      const s = newSlide(); el.before(s); s.append(el);
+    }
   });
 
   function newSlide(s) {
@@ -70,27 +76,33 @@
   const slides = d.querySelectorAll('div.slide'), N = slides.length,
         tm = d.querySelector('span.timer'), fn = d.querySelector('.footnotes');
   slides.forEach((s, i) => {
+    // slide header, main body, and footer
+    const header = newEl('div', 'header'), main = newEl('div', 'main'), footer = newEl('div', 'footer');
+    main.append(...s.childNodes);
+    s.append(main);
+    s.insertAdjacentElement('afterbegin', header);
+    s.insertAdjacentElement('beforeend', footer);
     // append footnotes
     if (fn) s.querySelectorAll('.footnote-ref > a[href^="#fn"]').forEach(a => {
       const li = fn.querySelector('li' + a.getAttribute('href'));
       if (!li) return;
       let f = s.querySelector('section.footnotes');
       if (!f) {
-        f = newEl('section', 'footnotes'); s.append(f);
+        f = newEl('section', 'footnotes'); footer.before(f);
       }
       f.append(li);
       li.firstElementChild?.insertAdjacentHTML('afterbegin', `[${a.innerHTML}] `);
       li.outerHTML = li.innerHTML;
     });
     // add a timer
-    s.append(tm ? tm.cloneNode() : newEl('span', 'timer'));
+    footer.append(tm ? tm.cloneNode() : newEl('span', 'timer'));
     // add page numbers
     const n = newEl('span', 'page-number');
     n.innerText = i + 1 + '/' + N;
     n.onclick = e => location.hash = i + 1;
-    s.append(n);
+    footer.append(n);
     // apply slide attributes in <!--# -->
-    for (const node of s.childNodes) {
+    for (const node of main.childNodes) {
       if (node.nodeType !== Node.COMMENT_NODE) continue;
       let t = node.textContent;
       if (!/^#/.test(t)) continue;
@@ -115,12 +127,13 @@
     setInterval(setTimers, 1000);
   }
   function setTimers() {
+    if (!dC.contains('slide-mode')) return;  // set timer only in slide mode
     let t = (new Date() - t0);
     if (t1) t = t1 - t;
     const t2 = new Date(Math.abs(t)).toISOString().substr(11, 8).replace(/^00:/, '');
     tms.forEach(el => {
       el.innerText = t2;
-      if (t < 0) el.style.display = el.style.display === 'none' ? '' : 'none';
+      if (t < 0) el.style.visibility = el.style.visibility === 'hidden' ? '' : 'hidden';
     });
   }
   function toggleView(e) {
