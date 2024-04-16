@@ -8,6 +8,14 @@ release](https://www.r-pkg.org/badges/version/litedown)](https://cran.r-project.
 
 <!-- badges: end -->
 
+```         
+  ______  
+ /   ⚡  \
+/litedown\
+\   ⚡    /
+ \______/
+```
+
 ## Overview
 
 This package provides a trimmed-down implementation of [R
