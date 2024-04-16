@@ -14,7 +14,7 @@ output:
 
 ```{=html}
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{litedown::vignette}
 %\VignetteIndexEntry{Authoring HTML Articles with the litedown Package}
 %\VignetteEncoding{UTF-8}
 -->

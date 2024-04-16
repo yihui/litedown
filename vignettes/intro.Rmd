@@ -1,5 +1,5 @@
 ---
-title: An Introduction to the markdown Package
+title: An Introduction to the litedown Package
 author: Yihui Xie
 date: "`{r} Sys.Date()`"
 output:
@@ -14,8 +14,8 @@ output:
 
 ```{=html}
 <!--
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{An Introduction to the markdown Package}
+%\VignetteEngine{litedown::vignette}
+%\VignetteIndexEntry{An Introduction to the litedown Package}
 %\VignetteEncoding{UTF-8}
 -->
 <style type="text/css">

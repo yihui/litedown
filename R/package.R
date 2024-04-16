@@ -8,3 +8,25 @@
 '_PACKAGE'
 
 .env = new.env(parent = emptyenv())
+
+# register vignette engines
+.onLoad = function(lib, pkg) {
+  tools::vignetteEngine(
+    'vignette', vig_fun(TRUE), vig_fun(FALSE), '[.]R?md$',
+    aspell = list(filter = vig_filter)
+  )
+}
+
+# weave or tangle?
+vig_fun = function(weave = TRUE) {
+  function(file, quiet = FALSE, ...) {
+    if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
+  }
+}
+
+# filter out code from document so aspell() won't spell check code
+vig_filter = function(ifile, encoding) {
+  x = xfun::read_utf8(ifile)
+  # TODO: implement knitr:::knit_filter based on parse_rmd()
+  structure(x, control = '-H -t')
+}

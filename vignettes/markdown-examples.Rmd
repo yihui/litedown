@@ -3,7 +3,7 @@ title: Raw Output from Markdown Examples
 ---
 
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{litedown::vignette}
 %\VignetteIndexEntry{Some Markdown Examples}
 -->
 

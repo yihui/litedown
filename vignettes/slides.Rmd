@@ -14,7 +14,7 @@ output:
 
 ```{=html}
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{litedown::vignette}
 %\VignetteIndexEntry{Making HTML Slides with the litedown Package}
 %\VignetteEncoding{UTF-8}
 -->

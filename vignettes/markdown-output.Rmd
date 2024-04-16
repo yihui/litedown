@@ -3,7 +3,7 @@ title: HTML Output from Markdown Examples
 ---
 
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{litedown::vignette}
 %\VignetteIndexEntry{HTML Output from Markdown Examples}
 -->
 

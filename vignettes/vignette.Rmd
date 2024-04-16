@@ -1,0 +1,35 @@
+---
+title: Building R package vignettes with litedown
+author: Yihui Xie
+date: "`{r} Sys.Date()`"
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default"]
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Building R package vignettes with litedown}
+  %\VignetteEncoding{UTF-8}
+---
+
+To build package vignettes with **litedown**, first add this to the package
+`DESCRIPTION` file:
+
+``` yaml
+VignetteBuilder: litedown
+```
+
+Then use the vignette engine `litedown::vignette` in the YAML metadata of a
+`.Rmd` or `.md` vignette file:
+
+``` yaml
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Building R package vignettes with litedown}
+  %\VignetteEncoding{UTF-8}
+```
+
+The output format of a vignette can be specified in the `output` field of the
+YAML metadata, e.g., `litedown::html_format` (for HTML vignettes) or
+`litedown::latex_format` (for PDF vignettes). If no output format is specified,
+the default is HTML.
