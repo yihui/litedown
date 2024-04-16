@@ -227,7 +227,7 @@ set_highlight = function(meta, options, html) {
 
   # style -> css
   css = if (is.null(s <- o$style)) {
-    if (p == 'prism') 'prism-xcode'  # use prism-xcode.css in this package
+    if (p == 'prism') '@prism-xcode'  # use prism-xcode.css in this package
   } else if (is.character(s)) js_combine(get_path(switch(
     p,
     highlight = sprintf('build/styles/%s.min.css', s),
