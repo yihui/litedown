@@ -59,7 +59,7 @@ a { color: #eb4a47; }
   margin-bottom: 0.5em;
 }
 .mirrored { transform: scale(-1, 1); }
-.timer { visibility: hidden; }
+.timer { opacity: 0; }
 html:fullscreen::-webkit-scrollbar, .spacer { display: none; }
 html:fullscreen {
   -ms-overflow-style: none;
@@ -88,7 +88,7 @@ html:fullscreen {
   }
   li li { font-size: .9em; }
   .slide-mode .spacer { display: block; }
-  .slide-mode .timer { visibility: visible; }
+  .slide-mode .timer { opacity: initial; }
 }
 @media (min-width: 1400px) {
   :root { --slide-width: 33%; }
