@@ -21,7 +21,6 @@ output:
 ```
 ```{r, include=FALSE}
 options(width = 80)
-knitr::opts_chunk$set(comment = '#>')
 ```
 
 The R package [**litedown**](https://cran.r-project.org/package=litedown) can be

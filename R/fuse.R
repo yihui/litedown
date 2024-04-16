@@ -390,7 +390,11 @@ fuse_code = function(x, envir, blocks) {
       )
     } else {
       a = opts[[paste0('attr.', type)]]
-      if (type == 'source') a = c(paste0('.', opts$engine), a)
+      if (type == 'source') {
+        a = c(paste0('.', opts$engine), a)  # use engine name as class name
+      } else {
+        x = paste0(opts$comment, x)  # comment out text output
+      }
       xfun::fenced_block(x, a, fence)
     }
   }))
@@ -446,7 +450,7 @@ reactor = local({
     invisible(old)
   }
   opt_fun(
-    eval = TRUE, echo = TRUE, results = 'markup',
+    eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
     warning = TRUE, message = TRUE, error = FALSE, include = TRUE,
     strip.white = TRUE,
     attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,

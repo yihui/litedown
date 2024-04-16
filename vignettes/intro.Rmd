@@ -31,8 +31,8 @@ output:
 ```
 ```{r}
 #| include=FALSE
+
 options(width = 80)
-knitr::opts_chunk$set(comment = '#>')
 ```
 
 The **litedown** package is built on top of **commonmark**. It renders Markdown
