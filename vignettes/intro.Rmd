@@ -564,6 +564,7 @@ extension in **commonmark**'s extensions.
 
 ```{r}
 #| collapse=TRUE
+
 litedown::markdown_options()
 # commonmark's arguments
 opts = formals(commonmark::markdown_html)

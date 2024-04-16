@@ -153,10 +153,10 @@ output:
 If your input document is `.Rmd`, you can also embed CSS directly in a `css`
 code chunk:
 
-````{verbatim}
-#| lang='markdown'
+```` markdown
+```{css}
+#| echo=FALSE
 
-```{css, echo=FALSE}
 /* your CSS rules */
 ```
 ````

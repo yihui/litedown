@@ -1,7 +1,7 @@
 ---
 title: Authoring HTML Articles with the litedown Package
 author: Yihui Xie
-date: "`r Sys.Date()`"
+date: "`{r} Sys.Date()`"
 output:
   litedown::html_format:
     meta:
@@ -19,7 +19,9 @@ output:
 %\VignetteEncoding{UTF-8}
 -->
 ```
-```{r, include=FALSE}
+```{r}
+#| include=FALSE
+
 options(width = 80)
 ```
 
@@ -208,7 +210,9 @@ a quote, just use the blockquote syntax `>`, e.g.,
 ### Margin embedding
 
 ::: embed-right
-```{r, echo=FALSE}
+```{r}
+#| echo=FALSE
+
 knitr::kable(head(mtcars, 4))
 ```
 :::
