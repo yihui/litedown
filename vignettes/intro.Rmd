@@ -4,6 +4,8 @@ author: Yihui Xie
 date: "`{r} Sys.Date()`"
 output:
   litedown::html_format:
+    meta:
+      css: ["@default"]
     options:
       toc: 
         depth: 4
@@ -670,9 +672,8 @@ Variables specific to the HTML template:
     understand the following example URLs. The shorthand syntax is as follows
     (`...` stands for `https://cdn.jsdelivr.net`):
 
-    -   `@foo` will be converted to `.../gh/yihui/litedown/inst/resources/foo`,
-        e.g., `@default` means
-        `.../gh/yihui/litedown/inst/resources/default.css`.
+    -   `@foo` will be converted to `.../npm/@xiee/utils/css/foo.min.css`, e.g.,
+        `@default` means `.../npm/@xiee/utils/css/default.min.css`.
 
     -   `@path/to/file` (i.e., a value that contains slashes) will be converted
         to `.../path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
@@ -755,8 +756,8 @@ With an extra CSS file and a JS file, you can create lightweight HTML slides:
 output:
   litedown::html_format:
     meta:
-      css: [default, slides]
-      js: [slides]
+      css: [default, snap]
+      js: [snap]
 ---
 ```
 
@@ -781,8 +782,8 @@ from sections (see [documentation
 here](https://yihui.org/en/2023/10/section-tabsets/)).
 
 ``` yaml
-css: ["@npm/@xiee/utils/js/tabsets.min.css"]
-js: ["@npm/@xiee/utils/js/tabsets.min.js"]
+css: ["@tabsets"]
+js: ["@tabsets"]
 ```
 
 #### Code folding
@@ -791,7 +792,7 @@ Code folding can be supported by `fold-details.js` (see [documentation
 here](https://yihui.org/en/2023/09/code-folding/)).
 
 ``` yaml
-js: ["@npm/@xiee/utils/js/fold-details.min.js"]
+js: ["@fold-details"]
 ```
 
 #### Right-align a quote footer
@@ -800,7 +801,7 @@ You can use the script `right-quote.js` to right-align a blockquote footer if it
 starts with an em-dash (`---`).
 
 ``` yaml
-js: ["@npm/@xiee/utils/js/right-quote.min.js"]
+js: ["@right-quote"]
 ```
 
 #### Add anchor links to headings
@@ -809,8 +810,8 @@ The CSS is necessary only if you want to hide the anchors by default and reveal
 them on hover.
 
 ``` yaml
-css: ["default", "@npm/@xiee/utils/css/heading-anchor.min.css"]
-js: ["@npm/@xiee/utils/js/heading-anchor.min.js"]
+css: ["default", "@heading-anchor"]
+js: ["@heading-anchor"]
 ```
 
 #### Style keyboard shortcuts
@@ -820,8 +821,8 @@ useful for [showing keyboard
 shortcuts](https://yihui.org/en/2023/02/key-buttons/).
 
 ``` yaml
-css: ["default", "@npm/@xiee/utils/css/key-buttons.min.css"]
-js: ["@npm/@xiee/utils/js/key-buttons.min.js"]
+css: ["default", "@key-buttons"]
+js: ["@key-buttons"]
 ```
 
 Of course, you can combine any number of JS scripts and CSS files if you want
@@ -894,8 +895,8 @@ output:
       number_sections: true
       embed_resources: false
     meta:
-      css: ["default", "@npm/@xiee/utils/css/heading-anchor.min.css"]
-      js: ["@npm/@xiee/utils/js/heading-anchor.min.js"]
+      css: ["default", "@heading-anchor"]
+      js: ["@heading-anchor"]
 ```
 
 Note that not all **rmarkdown** options are supported, and not even all

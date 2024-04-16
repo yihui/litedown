@@ -5,8 +5,8 @@ date: "`r Sys.Date()`"
 output:
   litedown::html_format:
     meta:
-      js: ["@npm/@xiee/utils/js/sidenotes.min.js,appendix.min.js,heading-anchor.min.js,right-quote.min.js"]
-      css: [default, "@npm/@xiee/utils/css/article.min.css,heading-anchor.min.css"]
+      css: ["@default", "@article", "@heading-anchor"]
+      js: ["@sidenotes", "@appendix", "@heading-anchor", "@right-quote"]
     options:
       toc: true
       number_sections: true
@@ -47,8 +47,8 @@ and `js`):[^2]
 output:
   litedown::html_format:
     meta:
-      css: ["default", "@xiee/utils/css/article.min.css"]
-      js: ["@xiee/utils/js/sidenotes.min.js,appendix.min.js"]
+      css: ["default", "@article"]
+      js: ["@sidenotes", "@appendix"]
 ```
 
 The `default` CSS is the default style provided by this package. Beyond that,

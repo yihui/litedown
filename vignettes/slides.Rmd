@@ -5,8 +5,8 @@ date: "`r Sys.Date()`"
 output:
   litedown::html_format:
     meta:
-      css: [default, snap, "@npm/@xiee/utils/css/key-buttons.min.css,heading-anchor.min.css"]
-      js: [snap, "@npm/@xiee/utils/js/key-buttons.min.js,external-link.min.js,heading-anchor.min.js"]
+      css: ["@default", "@snap", "@key-buttons", "@heading-anchor"]
+      js: ["@snap", "@key-buttons", "@external-link", "@heading-anchor"]
     options:
       toc: true
       number_sections: true
@@ -29,8 +29,8 @@ metadata:
 output:
   litedown::html_format:
     meta:
-      css: [default, slides]  # "slides" is an alias of "snap.css"
-      js: [slides]  # "slides" is an alias of "snap.js"
+      css: [default, snap]
+      js: [snap]
 ---
 ```
 
@@ -45,8 +45,8 @@ Equivalently, you can specify them in the arguments of `litedown::mark_html()`:
 
 ``` r
 litedown::mark_html("test.md", output = "test.html", meta = list(
-  css = c("default", "slides"),
-  js = "slides"
+  css = c("default", "snap"),
+  js = "snap"
 ))
 ```
 
@@ -517,8 +517,7 @@ This can be generated from Markdown.
 
 ### snap.js
 
-The script
-[`snap.js`](https://github.com/yihui/litedown/blob/main/inst/resources/snap.js)
+The script [`snap.js`](https://github.com/yihui/misc.js/blob/main/js/snap.js)
 converts HTML to a structure more convenient to style as slides:
 
 ``` html
@@ -541,8 +540,8 @@ converts HTML to a structure more convenient to style as slides:
 The core technique is [CSS Scroll
 Snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts).
 The full CSS is
-[`snap.css`](https://github.com/yihui/litedown/blob/main/inst/resources/snap.css),
-and the essential rules are:
+[`snap.css`](https://github.com/yihui/misc.js/blob/main/css/snap.css), and the
+essential rules are:
 
 ``` css
 html {
@@ -560,17 +559,17 @@ The JS and CSS code can be used outside the R package **litedown**, too. You
 just need to have the correct HTML structure. Then in your HTML document:
 
 ``` html
-<script src="https://cdn.jsdelivr.net/gh/yihui/litedown@VERSION/inst/resources/snap.min.js" defer></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/gh/yihui/litedown@VERSION/inst/resources/default.min.css,gh/yihui/litedown@VERSION/inst/resources/snap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@VERSION/js/snap.min.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/npm/@xiee/utils@VERSION/css/default.min.css,npm/@xiee/utils@VERSION/css/snap.min.css">
 ```
 
 Remember to substitute `VERSION` with [an appropriate
-version](https://github.com/yihui/litedown/tags) (e.g., `1.11`). You can omit
+version](https://github.com/yihui/misc.js/tags) (e.g., `1.11.0`). You can omit
 `@VERSION` to use the latest version but it is not recommended because future
 updates might break your old slides.
 
 Both the JS and CSS are quite lightweight (total size is
-`r xfun::format_bytes(sum(file.size(pres_files <- litedown:::pkg_file('resources', c('default.css', 'snap.css', 'snap.js')))))`
+`{r} xfun::format_bytes(sum(file.size(pres_files <- litedown:::pkg_file('resources', c('default.css', 'snap.css', 'snap.js')))))`
 when uncompressed) and have no dependencies. They were written from scratch.
 
 --------------------------------------------------------------------------------
@@ -584,8 +583,8 @@ when uncompressed) and have no dependencies. They were written from scratch.
     more lightweight frameworks.
 
 -   Most of presentation features that I need are included in
-    `r length(xfun::read_all(pres_files))` lines of JS/CSS code (`default.css` /
-    `snap.js` / `snap.css`).
+    `{r} length(xfun::read_all(pres_files))` lines of JS/CSS code (`default.css`
+    / `snap.js` / `snap.css`).
 
 -   This simple presentation framework is highly customizable. Customizing
     slides can be addictive if you know HTML/CSS/JS.

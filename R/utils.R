@@ -730,7 +730,7 @@ pkg_file = function(...) {
   system.file(..., package = 'litedown', mustWork = TRUE)
 }
 
-jsdelivr = function(file, dir = 'gh/yihui/litedown/inst/resources/') {
+jsdelivr = function(file, dir = 'npm/@xiee/utils/') {
   ifelse(is_https(file), file, sprintf('https://cdn.jsdelivr.net/%s%s', dir, file))
 }
 
@@ -747,11 +747,14 @@ resolve_dups = function(x) {
 resolve_files = function(x, ext = 'css') {
   x = resolve_dups(x)
   if (length(x) == 0) return(x)
-  # @foo -> jsdelivr.net/gh/yihui/litedown
+  # @foo -> jsdelivr.net/npm/@xiee/ext/foo.min.ext
   i0 = grepl('^@', x)
   x[i0] = sub('^@', '', x[i0])
   i = i0 & !grepl('/', x)
-  x[i] = jsdelivr(xfun::with_ext(x[i], ext))
+  # if no extension is specified, use .min.ext
+  ext2 = xfun::file_ext(x[i])
+  ext2[ext2 == ''] = paste0('.min.', ext)
+  x[i] = jsdelivr(paste0(ext, '/', xfun::with_ext(x[i], ext2)))
   # @foo/bar -> jsdelivr.net/foo/bar
   i = i0 & !grepl(',', x)
   x[i] = jsdelivr(x[i], '')
