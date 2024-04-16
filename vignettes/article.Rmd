@@ -170,9 +170,7 @@ e.g.,
 If you use R Markdown, you can generate a wide plot or table from an R code
 chunk, e.g.,
 
-````{verbatim}
-#| lang='markdown'
-
+```` markdown
 ::: {.fullwidth}
 ```{r}
 #| sunspots, echo=FALSE, fig.dim=c(14, 4),
