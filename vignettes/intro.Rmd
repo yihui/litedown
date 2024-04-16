@@ -670,24 +670,26 @@ Variables specific to the HTML template:
     value starts with `@`, it will be recognized as a jsdelivr.com resource. if
     you are not familiar with jsdelivr, you may read its documentation to
     understand the following example URLs. The shorthand syntax is as follows
-    (`...` stands for `https://cdn.jsdelivr.net`):
+    (`CDN` stands for `https://cdn.jsdelivr.net`):
 
-    -   `@foo` will be converted to `.../npm/@xiee/utils/css/foo.min.css`, e.g.,
-        `@default` means `.../npm/@xiee/utils/css/default.min.css`.
+    -   `@foo` (without a filename extension) will be converted to
+        `CDN/npm/@xiee/utils/css/foo.min.css`, e.g., `@default` means
+        `CDN/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css`
+        extension over `.min.css`, you can use `@default.css`.
 
     -   `@path/to/file` (i.e., a value that contains slashes) will be converted
-        to `.../path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
-        converted to `.../npm/@xiee/utils/js/center-img.min.js`.
+        to `CDN/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
+        converted to `CDN/npm/@xiee/utils/js/center-img.min.js`.
 
     -   `@path/to/file-1,file-2` (comma-separated values and later values do not
         contain slashes) will be converted to
-        `.../combine/path/to/file-1,path/to/file-2` (this can be useful to
+        `CDN/combine/path/to/file-1,path/to/file-2` (this can be useful to
         [combine](https://www.jsdelivr.com/documentation#id-combine-multiple-files)
         multiple resources and load all at once).
 
     -   `@path-1/to/file-1,path-2/to/file-2` (comma-separated values and later
         values contain slashes) will be converted to
-        `.../combine/path-1/to/file-1,path-2/to/file-2`.
+        `CDN/combine/path-1/to/file-1,path-2/to/file-2`.
 
     This provides a way to reduce the output HTML file size by loading CSS from
     the web instead of embedding inside HTML, at the cost of requiring Internet
