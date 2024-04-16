@@ -175,7 +175,7 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
 get_loc = function(block, input = NULL, lines = block$lines) {
   function(label) {
     l = if (length(lines) > 0) paste(range(lines), collapse = '-')
-    paste0(l, label, sprintf(' (%s)', input))
+    paste0(l, label, if (label == '') ' ', sprintf('(%s)', input))
   }
 }
 
@@ -213,7 +213,7 @@ fuse = function(
       } else {
         one_string(fuse_text(b, envir), '')
       },
-      function(e, loc) sprintf('Quitting from lines%s', loc),
+      function(e, loc) sprintf('Quitting from lines %s', loc),
       p_lab[i], get_loc(b, input)
     )
     p_bar(i, n)
