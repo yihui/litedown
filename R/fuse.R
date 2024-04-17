@@ -87,7 +87,7 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
   }
 
   # find out inline code `{lang} expr`
-  rx_inline = '^[{](.+?)[}]\\s+(.+)'
+  rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
   m = m[, m[2, ] == 'code' & grepl(rx_inline, m[9, ]), drop = FALSE]
   for (i in seq_len(ncol(m))) {
     pos = as.integer(m[3:6, i]); i1 = pos[1]; i2 = pos[3]
