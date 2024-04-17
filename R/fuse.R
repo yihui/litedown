@@ -336,7 +336,7 @@ fuse_code = function(x, envir, blocks) {
   res = if (opts$eval) {
     do.call(xfun::record, c(list(code = x$source, envir = envir), args))
   } else {
-    list(structure(x$source, class = 'record_source'))
+    list(new_source(x$source))
   }
 
   if (!opts$include) return('')
@@ -362,7 +362,7 @@ fuse_code = function(x, envir, blocks) {
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
   # if figure env is provided, merge all plots in one env
-  if (!is.null(env)) res = c(p1, structure(unlist(p2), class = 'record_plot'))
+  if (!is.null(env)) res = c(p1, new_plot(unlist(p2)))
   i = 0  # plot counter
 
   # generate markdown output
@@ -402,6 +402,11 @@ fuse_code = function(x, envir, blocks) {
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
 }
+
+new_record = function(x, class) structure(x, class = paste0('record_', class))
+new_source = function(x) new_record(x, 'source')
+new_output = function(x) new_record(x, 'output')
+new_plot   = function(x) new_record(x, 'plot')
 
 is_plot = function(x) inherits(x, 'record_plot')
 
