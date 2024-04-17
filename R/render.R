@@ -1,9 +1,8 @@
 #' Render Markdown to an output format
 #'
 #' Render Markdown to an output format via the \pkg{commonmark} package. The
-#' function `mark_html()` is a shorthand of `mark(format = 'html', template =
-#' TRUE)`, and `mark_latex()` is a shorthand of `mark(format = 'latex', template
-#' = TRUE)`.
+#' function `mark_html()` is a shorthand of `mark(format = 'html')`, and
+#' `mark_latex()` is a shorthand of `mark(format = 'latex')`.
 #' @param file Path to an input file. If not provided, it is presumed that the
 #'   `text` argument will be used instead. This argument can also take a
 #'   character vector of Markdown text directly. To avoid ambiguity in the
@@ -29,12 +28,6 @@
 #'   `list(option1 = TRUE)`, and `"-option2"` means `list(option2 = FALSE)`.
 #'   Options that do not take logical values must be specified via a list, e.g.,
 #'   `list(width = 30)`.
-#' @param template Path to a template file. The default value is
-#'   `getOption('litedown.FORMAT.template', litedown:::pkg_file('resources',
-#'   'litedown.FORMAT'))` where `FORMAT` is the output format name (`html` or
-#'   `latex`). It can also take a logical value: `TRUE` means to use the default
-#'   template, and `FALSE` means to generate only a fragment without using any
-#'   template.
 #' @param meta A named list of metadata. Elements in the metadata will be used
 #'   to fill out the template by their names and values, e.g., `list(title =
 #'   ...)` will replace the `$title$` variable in the template. See the Section
@@ -58,7 +51,7 @@
 #' mark(text = 'This is *not* a file.md')
 mark = function(
   file = NULL, output = NULL, text = NULL, format = c('html', 'latex'),
-  options = NULL, template = FALSE, meta = list()
+  options = NULL, meta = list()
 ) {
   if (is.null(text)) {
     if (!is.character(file)) stop("Either 'file' or 'text' must be provided.")
@@ -91,9 +84,17 @@ mark = function(
     names(Filter(isTRUE, options)), commonmark::list_extensions()
   )
 
-  # if `template` was specified in YAML, try to override `template = TRUE/NULL`
-  if (isTRUE(template)) template = NULL
-  if (is.null(template)) template = yaml_field(yaml, format, 'template')
+  # determine the template: first check the `template` value in the output
+  # format litedown::(html|latex)_format in YAML
+  template = yaml_field(yaml, format, 'template')
+  # if not set there, check global option; if not set, disable template if no
+  # YAML was provided (i.e., generate a fragment)
+  if (is.null(template)) template = get_option(
+    sprintf('litedown.%s.template', format), length(yaml) > 0
+  )
+  # template = FALSE means no template; other values mean the default template
+  if (!is.character(template)) template = if (!isFALSE(template))
+    pkg_file('resources', sprintf('litedown.%s', format))
 
   render_args = options[intersect(names(formals(render_fun)), names(options))]
   render = function(x, clean = FALSE) {
@@ -273,7 +274,7 @@ mark = function(
   # convert some meta variables in case they use Markdown syntax
   for (i in c('title', 'author', 'date')) meta[[i]] = render(meta[[i]], clean = TRUE)
   # use the template (if provided) to create a standalone document
-  if (format %in% c('html', 'latex') && !isFALSE(template)) {
+  if (format %in% c('html', 'latex') && is.character(template)) {
     # add HTML dependencies to `include-headers` if found
     meta = add_html_deps(meta, output, 'local' %in% options[['embed_resources']])
     ret = build_output(format, options, template, meta)
@@ -299,28 +300,20 @@ mark = function(
 #' @export
 #' @examples
 #'
-#' mark_html('Hello _World_!', template = FALSE)
+#' mark_html('Hello _World_!')
 #' # write HTML to an output file
 #' mark_html('_Hello_, **World**!', output = tempfile())
-mark_html = function(..., template = TRUE) {
-  mark(..., format = 'html', template = template)
-}
+mark_html = function(...) mark(..., format = 'html')
 
 #' @export
 #' @rdname mark
 #' @examples
 #'
-#' mark_latex('Hello _World_!', template = FALSE)
-mark_latex = function(..., template = TRUE) {
-  mark(..., format = 'latex', template = template)
-}
+#' mark_latex('Hello _World_!')
+mark_latex = function(...) mark(..., format = 'latex')
 
 # insert body and meta variables into a template
 build_output = function(format, options, template, meta) {
-  if (is.null(template)) template = get_option(
-    sprintf('litedown.%s.template', format),
-    pkg_file('resources', sprintf('litedown.%s', format))
-  )
   tpl = one_string(template, test = TRUE)
   if (format == 'html') {
     b = meta$body

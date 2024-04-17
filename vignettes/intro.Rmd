@@ -576,8 +576,10 @@ commonmark::list_extensions()
 
 ### Templates
 
-By default, `mark()` generates a document fragment (i.e., the body). To generate
-a full document, you need a template. Below is a simple HTML template example:
+By default, `mark()` generates a document fragment (i.e., the body) if the input
+does not contain YAML metadata at the beginning. To generate a full document,
+you need to specify YAML metadata. A full document is generated with a template.
+Below is a simple HTML template example:
 
 ``` html
 <html>
@@ -592,22 +594,43 @@ a full document, you need a template. Below is a simple HTML template example:
 ```
 
 It contains two variables, `$title$` and `$body$`. All variables will be
-substituted by metadata values, except for `$body$`, which takes the value from
-`mark()`.
+substituted by metadata values, except for `$body$`, which is from the body of
+the input document (after conversion to a target output format).
 
 The **litedown** has provided default templates for
 [HTML](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.html)
 and
 [LaTeX](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.latex)
-output. To use them, call `mark(..., template = TRUE)`, or the wrapper functions
-`mark_html()` / `mark_latex()`. To pass metadata to templates, use the `meta`
-argument, e.g.,
+output. To pass metadata to templates, use the `meta` argument, e.g.,
 
 ``` r
-litedown::mark(..., meta = list(title = "My Title"), template = TRUE)
+litedown::mark(..., meta = list(title = "My Title"))
 ```
 
-You can provide your own template file to the `template` argument, too.
+If you want to use a custom template file, you can either set the path in the
+global option `litedown.FORMAT.template` (where `FORMAT` is the output format
+name (`html` or `latex`), e.g., in `.Rprofile`:
+
+``` r
+options(litedown.html.template = 'path/to/my/template.html')
+```
+
+The global option will be applied to all documents to be converted by `mark()`.
+Alternatively, you can pass a template path to the `template` argument of the
+output format `litedown::html_format` or `litedown::latex_format` in an
+individual document, e.g.,
+
+``` yaml
+---
+output:
+  litedown::html_format:
+    template: "path/to/my/template.html"
+---
+```
+
+The template path can also take a logical value: `TRUE` means to use the default
+template, and `FALSE` means to generate only a fragment document without using
+any template.
 
 ### YAML metadata {#yaml-metadata}
 

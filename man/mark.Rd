@@ -12,13 +12,12 @@ mark(
   text = NULL,
   format = c("html", "latex"),
   options = NULL,
-  template = FALSE,
   meta = list()
 )
 
-mark_html(..., template = TRUE)
+mark_html(...)
 
-mark_latex(..., template = TRUE)
+mark_latex(...)
 }
 \arguments{
 \item{file}{Path to an input file. If not provided, it is presumed that the
@@ -50,12 +49,6 @@ for details. This argument can take either a character vector of the form
 Options that do not take logical values must be specified via a list, e.g.,
 \code{list(width = 30)}.}
 
-\item{template}{Path to a template file. The default value is
-\code{getOption('litedown.FORMAT.template', litedown:::pkg_file('resources', 'litedown.FORMAT'))} where \code{FORMAT} is the output format name (\code{html} or
-\code{latex}). It can also take a logical value: \code{TRUE} means to use the default
-template, and \code{FALSE} means to generate only a fragment without using any
-template.}
-
 \item{meta}{A named list of metadata. Elements in the metadata will be used
 to fill out the template by their names and values, e.g., \code{list(title = ...)} will replace the \verb{$title$} variable in the template. See the Section
 \dQuote{YAML metadata} in the vignette \code{vignette('intro', package = 'litedown')} for supported variables.}
@@ -68,7 +61,8 @@ vector of the rendered output.
 }
 \description{
 Render Markdown to an output format via the \pkg{commonmark} package. The
-function \code{mark_html()} is a shorthand of \code{mark(format = 'html', template = TRUE)}, and \code{mark_latex()} is a shorthand of \code{mark(format = 'latex', template = TRUE)}.
+function \code{mark_html()} is a shorthand of \code{mark(format = 'html')}, and
+\code{mark_latex()} is a shorthand of \code{mark(format = 'latex')}.
 }
 \examples{
 library(litedown)
@@ -81,11 +75,11 @@ mark(I("This is *not* a file.md"))
 # that's equivalent to
 mark(text = "This is *not* a file.md")
 
-mark_html("Hello _World_!", template = FALSE)
+mark_html("Hello _World_!")
 # write HTML to an output file
 mark_html("_Hello_, **World**!", output = tempfile())
 
-mark_latex("Hello _World_!", template = FALSE)
+mark_latex("Hello _World_!")
 }
 \seealso{
 The spec of GitHub Flavored Markdown:

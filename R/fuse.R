@@ -182,10 +182,9 @@ get_loc = function(block, input = NULL, lines = block$lines) {
 # fuse code with text
 fuse = function(
   input = NULL, output = NULL, text = xfun::read_utf8(input),
-  format = c('html', 'latex', 'markdown'), template = TRUE,
-  envir = parent.frame(), quiet = FALSE
+  format = c('html', 'latex', 'markdown'), envir = parent.frame(), quiet = FALSE
 ) {
-  fuse_wrapper(input, output, text, format[1], template, '.md', .fuse, input, envir, quiet)
+  fuse_wrapper(input, output, text, format[1], '.md', .fuse, input, envir, quiet)
 }
 
 .fuse = function(blocks, input, envir, quiet) {
@@ -221,7 +220,7 @@ fuse = function(
 
 # extract code from input
 fiss = function(input = NULL, output = NULL, text = xfun::read_utf8(input)) {
-  fuse_wrapper(input, output, text, '', FALSE, '.R', .fiss)
+  fuse_wrapper(input, output, text, '', '.R', .fiss)
 }
 
 .fiss = function(blocks) {
@@ -231,7 +230,7 @@ fiss = function(input = NULL, output = NULL, text = xfun::read_utf8(input)) {
   unlist(res)
 }
 
-fuse_wrapper = function(input, output, text, format, template, ext, process_fun, ...) {
+fuse_wrapper = function(input, output, text, format, ext, process_fun, ...) {
   if (auto_name <- is.null(output) && is_file(input)) {
     output = check_output(input, xfun::with_ext(input, ext))
   }
@@ -271,7 +270,7 @@ fuse_wrapper = function(input, output, text, format, template, ext, process_fun,
   res = process_fun(blocks, ...)
 
   if (format %in% c('html', 'latex')) {
-    res = mark(text = res, format = format, template = template)
+    res = mark(text = res, format = format)
     if (auto_name) output = auto_output(input, format)
   }
   # TODO: build PDF for format == 'latex'?

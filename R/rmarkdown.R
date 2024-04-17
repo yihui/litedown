@@ -8,7 +8,7 @@ output_format = function(to = 'html') {
       to = to, keep_tex = keep_tex, latex_engine = latex_engine, args = '--template'
     )
     opts$convert_fun = function(input, output, ...) {
-      mark(input, output, NULL, to, options, template, meta)
+      mark(input, output, NULL, to, options, meta)
     }
     rmarkdown::output_format(
       NULL, opts, keep_md = keep_md,

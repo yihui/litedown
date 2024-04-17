@@ -31,10 +31,8 @@ install.packages('litedown', repos = 'https://yihui.r-universe.dev')
 
 The function `litedown::mark()` is based on the R package
 [**commonmark**](https://github.com/r-lib/commonmark), and renders Markdown to
-various output formats supported by **commonmark**; `mark_html()` is a wrapper
-function to render Markdown to HTML, and `mark_latex()` is a wrapper function
-for LaTeX output. HTML and LaTeX are the primary output formats supported by
-this package. MS Office formats are not supported.
+various output formats supported by **commonmark**, which are primarily HTML and
+LaTeX. MS Office formats are not supported.
 
 Some useful Markdown features missing in **commonmark** have been added to this
 package, including LaTeX math, raw HTML/LaTeX blocks, fenced `Div`s, and
