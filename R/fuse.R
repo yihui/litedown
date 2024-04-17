@@ -283,9 +283,8 @@ fuse_wrapper = function(input, output, text, format, template, ext, process_fun,
 }
 
 fuse_code = function(x, envir, blocks) {
-  old = reactor(names(x$options)); on.exit(reactor(old), add = TRUE)
   # merge local chunk options into global options
-  reactor(x$options)
+  old = reactor(x$options); on.exit(reactor(old), add = TRUE)
   opts = reactor()
 
   # evaluate `wd` for now to make sure we set the right working directory before
