@@ -257,13 +257,10 @@ fuse_wrapper = function(input, output, text, format, template, ext, process_fun,
   if (is.null(opts$dev)) {
     opts$dev = if (format == 'latex') 'pdf' else 'png'
   }
-  # set fig.path to output_files/figure-format/ if `output` is a path, otherwise
-  # use a temp path
-  if (is.null(opts$fig.path)) {
-    opts$fig.path = if (is.character(output)) {
-      paste0(xfun::sans_ext(output), '_files/figure-', format, '/')
-    } else tempfile('litedown-fuse-', '.')
-  }
+  # fig.path = output_files/ if `output` is a path, otherwise use litedown_files
+  if (is.null(opts$fig.path)) opts$fig.path = paste0(
+    if (is.character(output)) xfun::sans_ext(output) else 'litedown', '_files/'
+  )
   # make sure fig.path is absolute path
   if (xfun::is_rel_path(opts$fig.path))
     opts$fig.path = file.path(getwd(), opts$fig.path)
