@@ -1,7 +1,7 @@
 ---
 title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
-date: "`r Sys.Date()`"
+date: "`{r} Sys.Date()`"
 output:
   litedown::html_format:
     meta:

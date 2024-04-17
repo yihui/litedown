@@ -295,11 +295,6 @@ fuse_code = function(x, envir, blocks) {
   }
   for (i in names(opts)) opts[[i]] = eval_lang(opts[[i]], envir)
 
-  if (opts$engine != 'r') {
-    warning("The engine '", opts$engine, "' is not supported yet.")
-    return('')
-  }
-
   # fuse child documents
   if (length(opts$child)) return(unlist(lapply(
     opts$child, fuse, output = NA, format = 'markdown', envir = envir, quiet = TRUE
@@ -332,8 +327,14 @@ fuse_code = function(x, envir, blocks) {
     list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
   )
 
+  lang = opts$engine
   res = if (opts$eval) {
-    do.call(xfun::record, c(list(code = x$source, envir = envir), args))
+    if (lang == 'r') {
+      do.call(xfun::record, c(list(code = x$source, envir = envir), args))
+    } else if (is.function(eng <- engines(lang))) eng(x) else {
+      warning("The engine '", lang, "' is not supported yet.")
+      return('')
+    }
   } else {
     list(new_source(x$source))
   }
@@ -372,9 +373,9 @@ fuse_code = function(x, envir, blocks) {
       x = one_string(x)
       if (opts$strip.white) x = str_trim(x)
     }
-    if (type == 'output') {
+    if (type %in% c('output', 'asis')) {
       if (opts$results == 'hide') return()
-      if (opts$results == 'asis') return(x)
+      if (any(c(opts$results, type) == 'asis')) return(x)
     }
     if (type == 'warning' && !opts$warning) return()
     if (type == 'message' && !opts$message) return()
@@ -390,7 +391,7 @@ fuse_code = function(x, envir, blocks) {
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
-        a = c(paste0('.', opts$engine), a)  # use engine name as class name
+        a = c(paste0('.', lang), a)  # use engine name as class name
       } else {
         x = paste0(opts$comment, x)  # comment out text output
       }
@@ -470,6 +471,18 @@ reactor(
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
   wd = NULL
 )
+
+# language engines
+engines = new_opts()
+engines(
+  css = function(x) eng_html(x, '<style type="text/css">', '</style>'),
+  js = function(x) eng_html(x, '<script>', '</script>')
+)
+
+eng_html = function(x, before = NULL, after = NULL) {
+  out = xfun::fenced_block(c(before, x$source, after), '=html')
+  list(new_source(x$source), new_record(out, 'asis'))
+}
 
 #' @export
 print.litedown_env = function(x, ...) {
