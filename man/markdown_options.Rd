@@ -32,7 +32,7 @@ cat(mark(mkd, options = "+number_sections+toc"))
 
 # hard_wrap example
 cat(mark("foo\nbar\n"))
-cat(mark("foo\nbar\n", options = "hard_wrap"))
+cat(mark("foo\nbar\n", options = "hardbreaks"))
 
 # latex math example
 mkd <- c(

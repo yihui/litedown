@@ -52,7 +52,7 @@ Type 'q()' to quit R.
 <p>foo
 bar</p>
 
-> cat(mark("foo\nbar\n", options = "hard_wrap"))
+> cat(mark("foo\nbar\n", options = "hardbreaks"))
 <p>foo<br />
 bar</p>
 
