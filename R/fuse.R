@@ -429,17 +429,18 @@ exec_inline = function(x, envir) {
   as.character(res)
 }
 
-# similar to the base R options() interface but for litedown chunk options
-reactor = local({
+# similar to the base R options() interface but for litedown options / engines /
+# ..., and is based on environments, which are *mutable*
+new_opts = function() {
   # global chunk options
-  .opts = structure(new_env(), class = 'reactor_options')
+  .opts = structure(new_env(), class = 'litedown_env')
 
   opt_get = function(x, drop = length(x) == 1) {
     vs = mget(x, .opts, ifnotfound = list(NULL))
     if (drop) vs[[1]] else vs
   }
   # setter: fun(opt = val); getter: fun('opt')
-  opt_fun = function(...) {
+  function(...) {
     v = list(...)
     n = length(v)
     if (n == 0) return(.opts)
@@ -454,23 +455,25 @@ reactor = local({
     for (i in nms) assign(i, v[[i]], envir = .opts)
     invisible(old)
   }
-  opt_fun(
-    eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
-    warning = TRUE, message = TRUE, error = FALSE, include = TRUE,
-    strip.white = TRUE,
-    attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
-    attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
-    cache = FALSE, cache.path = NULL,  # TODO: cache not implemented
-    dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
-    fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
-    code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
-    wd = NULL
-  )
-  opt_fun
-})
+}
 
-#' @exportS3Method
-print.reactor_options = function(x, ...) {
+# chunk options
+reactor = new_opts()
+reactor(
+  eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
+  warning = TRUE, message = TRUE, error = FALSE, include = TRUE,
+  strip.white = TRUE,
+  attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
+  attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
+  cache = FALSE, cache.path = NULL,  # TODO: cache not implemented
+  dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
+  fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
+  code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
+  wd = NULL
+)
+
+#' @export
+print.litedown_env = function(x, ...) {
   str(as.list.environment(x, all.names = TRUE, sorted = TRUE), ...)
   invisible(x)
 }
