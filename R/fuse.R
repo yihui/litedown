@@ -185,12 +185,10 @@ fuse = function(
   format = c('html', 'latex', 'markdown'), template = TRUE,
   envir = parent.frame(), quiet = FALSE
 ) {
-  fuse_wrapper(
-    input, output, text, format[1], template, '.md', .fuse, input, format[1], envir, quiet
-  )
+  fuse_wrapper(input, output, text, format[1], template, '.md', .fuse, input, envir, quiet)
 }
 
-.fuse = function(blocks, input, format, envir, quiet) {
+.fuse = function(blocks, input, envir, quiet) {
   n = length(blocks)
 
   # a simple progress indicator
