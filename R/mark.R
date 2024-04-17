@@ -3,7 +3,7 @@
 #' Render Markdown to an output format via the \pkg{commonmark} package. The
 #' function `mark_html()` is a shorthand of `mark(format = 'html')`, and
 #' `mark_latex()` is a shorthand of `mark(format = 'latex')`.
-#' @param file Path to an input file. If not provided, it is presumed that the
+#' @param input Path to an input file. If not provided, it is presumed that the
 #'   `text` argument will be used instead. This argument can also take a
 #'   character vector of Markdown text directly. To avoid ambiguity in the
 #'   latter case, a single character string input will be treated as a file if
@@ -50,12 +50,12 @@
 #' # that's equivalent to
 #' mark(text = 'This is *not* a file.md')
 mark = function(
-  file = NULL, output = NULL, text = NULL, format = c('html', 'latex'),
+  input = NULL, output = NULL, text = NULL, format = c('html', 'latex'),
   options = NULL, meta = list()
 ) {
   if (is.null(text)) {
-    if (!is.character(file)) stop("Either 'file' or 'text' must be provided.")
-    text = if (is_file(file)) xfun::read_utf8(file) else file
+    if (!is.character(input)) stop("Either 'input' or 'text' must be provided.")
+    text = if (is_file(input)) xfun::read_utf8(input) else input
   }
   text = xfun::split_lines(text)
 
@@ -69,7 +69,7 @@ mark = function(
   )
   meta = normalize_meta(meta)
 
-  if (missing(output) && is_file(file)) output = auto_output(file, format)
+  if (missing(output) && is_file(input)) output = auto_output(input, format)
 
   render_fun = tryCatch(
     getFromNamespace(paste0('markdown_', tolower(format)), 'commonmark'),
@@ -282,7 +282,7 @@ mark = function(
 
   if (format == 'html') {
     ret = xfun::in_dir(
-      if (is_file(file)) dirname(file) else '.',
+      if (is_file(input)) dirname(input) else '.',
       embed_resources(ret, options[['embed_resources']])
     )
     ret = clean_html(ret)
