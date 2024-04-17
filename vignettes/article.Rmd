@@ -10,15 +10,12 @@ output:
     options:
       toc: true
       number_sections: true
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Authoring HTML Articles with the litedown Package}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{=html}
-<!--
-%\VignetteEngine{litedown::vignette}
-%\VignetteIndexEntry{Authoring HTML Articles with the litedown Package}
-%\VignetteEncoding{UTF-8}
--->
-```
 ```{r}
 #| include=FALSE
 

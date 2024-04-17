@@ -10,15 +10,12 @@ output:
     options:
       toc: true
       number_sections: true
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Making HTML Slides with the litedown Package}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{=html}
-<!--
-%\VignetteEngine{litedown::vignette}
-%\VignetteIndexEntry{Making HTML Slides with the litedown Package}
-%\VignetteEncoding{UTF-8}
--->
-```
 ## Get started
 
 Specify at least one CSS file (`snap.css`) and one JS script (`snap.js`) in YAML

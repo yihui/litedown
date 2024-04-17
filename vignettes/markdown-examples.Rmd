@@ -1,11 +1,13 @@
 ---
 title: Raw Output from Markdown Examples
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default"]
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Some Markdown Examples}
 ---
-
-<!--
-%\VignetteEngine{litedown::vignette}
-%\VignetteIndexEntry{Some Markdown Examples}
--->
 
 This vignette shows some examples for different Markdown rendering options.
 

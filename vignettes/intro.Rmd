@@ -10,15 +10,15 @@ output:
       toc: 
         depth: 4
       number_sections: true
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{An Introduction to the litedown Package}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{=html}
-<!--
-%\VignetteEngine{litedown::vignette}
-%\VignetteIndexEntry{An Introduction to the litedown Package}
-%\VignetteEncoding{UTF-8}
--->
-<style type="text/css">
+```{css}
+/*| echo=FALSE */
+
 #TOC {
   float: right;
   border-left: 1px dashed;
@@ -27,8 +27,8 @@ output:
   background: ghostwhite;
 }
 #TOC ul { margin: 0; }
-</style>
 ```
+
 ```{r}
 #| include=FALSE
 
