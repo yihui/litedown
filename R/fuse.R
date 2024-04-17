@@ -264,6 +264,10 @@ fuse_wrapper = function(input, output, text, format, template, ext, process_fun,
   # make sure fig.path is absolute path
   if (xfun::is_rel_path(opts$fig.path))
     opts$fig.path = file.path(getwd(), opts$fig.path)
+  # clean up the figure folder on exit if it's empty
+  on.exit(xfun::del_empty_dir({
+    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
+  }), add = TRUE)
 
   blocks = parse_rmd(input, text)
   res = process_fun(blocks, ...)
