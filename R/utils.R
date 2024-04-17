@@ -743,35 +743,48 @@ resolve_dups = function(x) {
   x
 }
 
+# add filename extensions to paths without extensions
+add_ext = function(x, ext) {
+  i = xfun::file_ext(x) == ''
+  x[i] = paste0(x[i], ext)
+  x
+}
+
 # resolve CSS/JS shorthand filenames to actual paths (e.g., 'default' to 'default.css')
 resolve_files = function(x, ext = 'css') {
   x = resolve_dups(x)
   if (length(x) == 0) return(x)
-  # @foo -> jsdelivr.net/npm/@xiee/ext/foo.min.ext
+  min_ext = paste0('.min.', ext)
+
+  # @foo -> jsdelivr.net/npm/@xiee/utils/ext/foo.min.ext
   i0 = grepl('^@', x)
   x[i0] = sub('^@', '', x[i0])
-  i = i0 & !grepl('/', x)
   # if no extension is specified, use .min.ext
-  ext2 = xfun::file_ext(x[i])
-  ext2[ext2 == ''] = paste0('.min.', ext)
-  x[i] = jsdelivr(paste0(ext, '/', xfun::with_ext(x[i], ext2)))
+  x[i0] = add_ext(x[i0], min_ext)
+  i = i0 & !grepl('[/,]', x)
+  x[i] = jsdelivr(paste0(ext, '/', x[i]))
+
   # @foo/bar -> jsdelivr.net/foo/bar
   i = i0 & !grepl(',', x)
   x[i] = jsdelivr(x[i], '')
+
   # @foo/bar,baz -> jsdelivr.net/combine/foo/bar,foo/baz
   i = i0 & grepl(',', x)
-  if (any(i)) x[i] = sapply(strsplit(x[i], ','), function(z) {
+  if (any(i)) x[i] = sapply(strsplit(x[i], ',\\s*'), function(z) {
     d = dirname(z[1])
-    for (j in 2:length(z)) {
+    if (d == '.') d = paste0('npm/@xiee/utils/', ext)
+    for (j in seq_along(z)) {
       if (grepl('/', z[j])) {
         d = dirname(z[j])
       } else {
         z[j] = paste(d, z[j], sep = '/')
       }
     }
+    z = add_ext(z, min_ext)
     paste0('combine/', paste(z, collapse = ','))
   })
   x[i] = jsdelivr(x[i], '')
+
   # built-in resources in this package
   i = dirname(x) == '.' & xfun::file_ext(x) == '' & !xfun::file_exists(x)
   x[i & (x == 'slides')] = 'snap'  # alias slides.css -> snap.css

@@ -5,8 +5,8 @@ date: "`{r} Sys.Date()`"
 output:
   litedown::html_format:
     meta:
-      css: ["@default", "@article", "@heading-anchor"]
-      js: ["@sidenotes", "@appendix", "@heading-anchor", "@right-quote"]
+      css: ["@default, article, heading-anchor"]
+      js: ["@sidenotes, appendix, heading-anchor, right-quote"]
     options:
       toc: true
       number_sections: true
