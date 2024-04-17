@@ -68,12 +68,12 @@ map_args = function(
     if (is.list(math_method)) math_method$engine else math_method, 'mathjax'
   )) opts$js_math = 'mathjax'
   if (!isFALSE(anchor_sections)) {
-    meta$js = c(meta$js, '@npm/@xiee/utils/js/heading-anchor.min.js')
-    meta$css = c(meta$css, '@npm/@xiee/utils/css/heading-anchor.min.css')
+    meta$js = c(meta$js, '@heading-anchor')
+    meta$css = c(meta$css, '@heading-anchor')
   }
   # 'hide' is not supported here; if it is desired, use <script data-open=false>
   if (code_folding != 'none') meta$js = c(
-    meta$js, '@npm/@xiee/utils/js/fold-details.min.js'
+    meta$js, '@fold-details'
   )
   if (is.list(includes)) meta[
     c('header_includes', 'include_before', 'include_after')
