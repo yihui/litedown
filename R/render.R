@@ -94,8 +94,6 @@ mark = function(
   # if `template` was specified in YAML, try to override `template = TRUE/NULL`
   if (isTRUE(template)) template = NULL
   if (is.null(template)) template = yaml_field(yaml, format, 'template')
-  # backward-compatibility (the standalone option may be dropped someday)
-  if (isFALSE(options[['standalone']])) template = FALSE
 
   render_args = options[intersect(names(formals(render_fun)), names(options))]
   render = function(x, clean = FALSE) {

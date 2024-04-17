@@ -669,25 +669,12 @@ normalize_options = function(x, format = 'html') {
   g = get_option(sprintf('litedown.%s.options', format))
   x = option2list(x)
   n = names(x)
-  n[n == 'hard_wrap'] = 'hardbreaks'
-  n[n == 'tables'] = 'table'
-  n[n == 'base64_images'] = 'embed_resources'
-  names(x) = n
   # default options
   d = option2list(markdown_options())
   g = option2list(g)
   d[names(g)] = g  # merge global options() into default options
   d[n] = x  # then merge user-provided options
   if (!is.character(d[['top_level']])) d$top_level = 'section'
-  # mathjax = true -> js_math = 'mathjax'
-  if (isTRUE(d[['mathjax']])) d$js_math = 'mathjax'
-  d$mathjax = NULL
-  # highlight_code -> js_highlight
-  if (!is.null(h <- d[['highlight_code']])) {
-    h$package = 'highlight'
-    d$js_highlight = h
-    d$highlight_code = NULL
-  }
   d = normalize_embed(d)
   # TODO: fully enable footnotes https://github.com/github/cmark-gfm/issues/314
   if (format == 'html' && !is.logical(d[['footnotes']])) d$footnotes = TRUE
