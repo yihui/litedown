@@ -57,7 +57,7 @@ cat(mark('```r\n1 + 1;\n```'))
 cat(mark('```{.r}\n1 + 1;\n```'))
 cat(mark('```{.r .js}\n1 + 1;\n```'))
 cat(mark('```{.r .js #foo}\n1 + 1;\n```'))
-cat(mark('```{.r .js #foo style="color:red;"}\n1 + 1;\n```'))
+cat(mark('```{.r .js #foo style="background:lime;"}\n1 + 1;\n```'))
 cat(mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````'))
 
 # raw blocks
