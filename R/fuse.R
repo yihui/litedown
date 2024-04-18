@@ -184,7 +184,7 @@ fuse = function(
   input = NULL, output = NULL, text = xfun::read_utf8(input),
   format = c('html', 'latex', 'markdown'), envir = parent.frame(), quiet = FALSE
 ) {
-  fuse_wrapper(input, output, text, format[1], '.md', .fuse, input, envir, quiet)
+  fuse_wrapper(input, output, text, format[1], '.markdown', .fuse, input, envir, quiet)
 }
 
 .fuse = function(blocks, input, envir, quiet) {
