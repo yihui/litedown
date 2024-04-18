@@ -140,8 +140,8 @@ under the same directory as the Markdown input file:
 output:
   litedown::html_format:
     meta:
-      css: [default, slides, extra.css]
-      js: [slides]
+      css: [default, snap, extra.css]
+      js: [snap]
 ---
 ```
 
