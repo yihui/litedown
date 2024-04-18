@@ -60,31 +60,26 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
     res[[length(res) + 1]] <<- list(source = text[p], ..., lines = p)
     res
   }
-  # code blocks must have non-empty info strings
-  if (!length(m) || !length(m <- m[, m[2, ] != 'code_block' | m[9, ] != '', drop = FALSE]))
-    return(add_block(seq_along(text), type = 'text_block'))
 
-  i1 = i2 = 1  # the start/end index of text blocks
-  n = ncol(m)  # total number of matches
-  for (i in seq_len(n)) {
-    type = m[2, i]  # code or code_block
-    pos  = as.integer(m[3:6, i])  # position: row1, col1, row2, col2
-    info = m[8, i]  # info string (e.g., language name '{r}')
-    code = m[9, i]  # source code
-    if (type == 'code_block') {
-      add_block(pos[1]:pos[3], info = info, type = 'code_chunk')
-      i1 = pos[3] + 1  # next line of current code block is start of next text block
-    } else {
-      i3 = which(m[2, ] == 'code_block')
-      i3 = i3[i3 > i][1]  # find the next code block
-      # the previous line of next code block is the end of current text block
-      i2 = if (is.na(i3)) length(text) else as.integer(m[3, i3]) - 1
-      # add the text block when reaching the end of matches or the next match is code block
-      if (i == n || (!is.na(i3) && i3 - i == 1)) {
-        add_block(i1:i2, type = 'text_block')
-      }
+  n = length(text)
+  i = 1  # the possible start line number of text blocks
+  if (length(m)) {
+    for (j in which(m[2, ] == 'code_block')) {
+      # start (3) and end (5) line numbers for code chunks
+      pos = as.integer(m[c(3, 5), j]); i1 = pos[1]; i2 = pos[2]
+      # add the possible text block before the current code chunk
+      if (i1 > i) add_block(i:(i1 - 1), type = 'text_block')
+      # add the code chunk
+      add_block(i1:i2, info = m[8, j], type = 'code_chunk')
+      i = i2 + 1  # the earliest line for the next text block is next line
     }
   }
+  # if there are lines remaining, they must be a text block
+  if (i <= n) add_block(i:n, type = 'text_block')
+
+  # code blocks must have non-empty info strings
+  if (!length(m) || !length(m <- m[, m[2, ] != 'code_block' | m[9, ] != '', drop = FALSE]))
+    return(res)
 
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
