@@ -13,10 +13,10 @@ cat(mark("foo\nbar\n", options = "+hardbreaks"))
 # latex math example
 mkd <- c(
   "`$x$` is inline math $x$!", "", "Display style:", "", "$$x + y$$", "",
-  "\\begin{eqnarray}
-a^{2}+b^{2} & = & c^{2}\\\\
-\\sin^{2}(x)+\\cos^{2}(x) & = & 1
-\\end{eqnarray}"
+  "\\begin{align}
+a^{2}+b^{2} & = c^{2}\\\\
+\\sin^{2}(x)+\\cos^{2}(x) & = 1
+\\end{align}"
 )
 
 cat(mark(mkd))
