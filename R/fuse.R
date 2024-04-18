@@ -218,6 +218,10 @@ fuse = function(
   res
 }
 
+# an internal function for RStudio IDE to recognize the custom knit function
+# when users hit the Knit button
+knit = function(input, ...) fuse(input, envir = parent.frame())
+
 # extract code from input
 fiss = function(input = NULL, output = NULL, text = xfun::read_utf8(input)) {
   fuse_wrapper(input, output, text, '', '.R', .fiss)
@@ -276,6 +280,8 @@ fuse_wrapper = function(input, output, text, format, ext, process_fun, ...) {
   # TODO: build PDF for format == 'latex'?
   if (is.character(output)) {
     xfun::write_utf8(res, output)
+    # for RStudio to capture the output path and display it in RStudio Viewer
+    if (Sys.getenv('RSTUDIO') == '1') message('Output created: ', output)
     invisible(output)
   } else res
 }

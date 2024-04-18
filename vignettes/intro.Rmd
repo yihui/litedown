@@ -854,31 +854,24 @@ js: ["@key-buttons"]
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
 
-## Using RStudio
+## Authoring
 
-If you use the RStudio IDE, the `Knit` button can render your Markdown or R
-Markdown document to the `output` format specified in YAML (e.g.,
-`litedown::html_format` or `litedown::latex_format`). This requires the
-**\*r\*markdown** package (\>= v2.18), although the **litedown** package itself
-doesn't really require **rmarkdown**.
+If you use the RStudio IDE, the `Knit` button can render R Markdown to a
+**litedown** output format specified in YAML (e.g., `litedown::html_format` or
+`litedown::latex_format`). Please also remember to add a top-level setting
+`knit: litedown:::knit` in YAML, otherwise RStudio will use `knitr::knit()`
+instead of `litedown::fuse()` to compile R Markdown.
 
-If you only need to render a document to the HTML format, you can bypass
-RStudio's requirement for **rmarkdown**:
+``` yaml
+---
+output:
+  litedown::html_format: null
+  litedown::latex_format: null
+knit: litedown:::knit
+---
+```
 
--   Insert an HTML comment `<!-- rmarkdown v1 -->` to your document (anywhere in
-    the body after YAML).
-
--   Set an option in your `.Rprofile`:
-
-    ``` r
-    file.edit('~/.Rprofile')
-    options(rstudio.markdownToHTML = function(...) {
-      litedown::mark_html(...)
-    })
-    ```
-
-Then restart R, and you will be able to use the `Knit` button to render your (R)
-Markdown document with the **litedown** package alone.
+### Visual editor
 
 Since the Markdown syntax of **litedown** can be viewed as a small and strict
 subset of Pandoc's Markdown, you can use RStudio's visual Markdown editor to
