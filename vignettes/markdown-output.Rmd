@@ -21,7 +21,8 @@ This vignette shows how the output looks like in HTML from the other vignette `m
 
 # smartypants example
 cat(mark("1/2 (c)"))
+cat(mark("1/2 (c)", options = "+smartypants"))
 
 mkd <- paste(names(litedown:::pants), collapse = ' ')
-cat(mark(mkd))
+cat(mark(mkd, options = "+smartypants"))
 ```

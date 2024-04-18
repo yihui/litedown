@@ -355,11 +355,11 @@ build_output = function(format, options, template, meta) {
 markdown_options = function() {
   # options enabled by default
   x1 = c(
-    'smart', 'smartypants', 'embed_resources', 'js_math', 'js_highlight',
+    'smart', 'embed_resources', 'js_math', 'js_highlight',
     'superscript', 'subscript', 'latex_math', 'auto_identifiers',
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )
   # options disabled by default
-  x2 = c('toc', 'hardbreaks', 'tagfilter', 'number_sections')
+  x2 = c('toc', 'hardbreaks', 'tagfilter', 'number_sections', 'smartypants')
   sort(c(paste0('+', x1), paste0('-', x2)))
 }
