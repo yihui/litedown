@@ -35,21 +35,101 @@ vignette: >
 options(width = 80)
 ```
 
-The **litedown** package is built on top of **commonmark**. It renders Markdown
-to output formats supported by **commonmark**, and the primary output formats
-are HTML and LaTeX.
+The **litedown** package is a lightweight implementation of R Markdown built on
+top of **commonmark**. R Markdown is rendered via `litedown::fuse()`, which is
+similar to `rmarkdown::render()` and `knitr::knit()` but does not require
+**rmarkdown** or **knitr**. Markdown is rendered via `litedown::mark()`, which
+uses **commonmark** instead of Pandoc. The primary output formats are HTML and
+LaTeX.
 
-Historically, it uses a C library named **sundown**, which has been deleted and
-replaced by **commonmark** since v1.3 (2022-10-30). The main advantage of the
-latter is that it follows a clear and widely used spec, i.e., GFM ([GitHub
-Flavored Markdown](https://github.github.com/gfm/)), which can be seen as a
-subset of [Pandoc's Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown).
+The **commonmark** package follows the GFM ([GitHub Flavored
+Markdown](https://github.github.com/gfm/)) spec, which can be seen as a subset
+of [Pandoc's Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown).
 Therefore the **litedown** package can be viewed as a small subset of the
-**rmarkdown** package (the latter is based on Pandoc but the former doesn't
-depend on external tools). It aims at simplicity, lightweight, and speed, at the
-cost of giving up a lot of features. This package is intended for minimalists.
-Most users may want to use tools based on Pandoc instead, such as **rmarkdown**
-or Quarto.
+**rmarkdown** package (the latter is based on Pandoc). It aims at simplicity,
+lightweight, and speed, at the cost of giving up some advanced features. This
+package is intended for minimalists. Most users may prefer using tools based on
+Pandoc instead, such as **rmarkdown** or Quarto, which offer richer features.
+
+## Knitting
+
+R Markdown documents need to be knitted to Markdown before being rendered to a
+target output format. The function `litedown::fuse()` plays a role similar to
+`knitr::knit()`. It "fuses" program code with narratives, i.e., it executes all
+code in the source document and interweaves results with narratives in the
+output document. Similar to **knitr**, **litedown** supports code chunks and
+inline code.
+
+### Code chunks
+
+A code chunk consists of the language name, chunk options in pipe comments, and
+the code:
+
+```` md
+```{lang}
+#| chunk options
+
+code
+```
+````
+
+Currently, a subset of [**knitr** chunk options](https://yihui.org/knitr/) are
+supported, which can be accessed in `litedown::reactor()`. To get an option
+value, use `reactor("NAME")`, where `NAME` is the option name (e.g.,
+`fig.width`). To set an option globally, use `reactor(NAME = VALUE)`.
+Alternatively, you can manipulate the value returned by `reactor()` directly,
+which is essentially an environment:
+
+``` r
+opts = litedown::reactor()
+opts$fig.width  # get an option
+opts$echo = FALSE  # set an option
+```
+
+Code chunks inside other code blocks are not parsed or evaluated, which provides
+a way to write verbatim code chunks, e.g.,
+
+````` md
+````markdown
+Some verbatim content.
+
+```{r}
+1 + 1
+```
+````
+`````
+
+### Inline code
+
+The syntax for inline code expressions is `` `{lang} code` ``, where `lang` is
+the language name, e.g., `r`. Spaces are allowed after the opening backtick and
+before the closing backtick. If the `code` happens to contain `N` backticks, you
+will need to use at least `N + 1` backticks outside, e.g.,
+``` ``{r} paste("`", rnorm(1), "`") `` ```. An inline code expression inside
+another piece of inline code is not parsed or evaluated, which provides a way to
+write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
+
+Comma-separated chunk options can also be provided to inline code expressions
+after the language name, e.g., `` `{r, eval=FALSE} code` ``.
+
+### Comparison to **knitr**
+
+Major differences between **knitr** and **litedown** include:
+
+| knitr                                                                                                                                     | litedown                                                                                                    |
+|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Supports multiple graphical devices for a chunk.                                                                                          | Only supports one device for a chunk (but there are multiple choices for this device).                      |
+| Depending on certain chunk options, figure output could be both Markdown (`![]()`) and raw HTML (`<img>`) / LaTeX (`\includegraphics{}`). | Always use Markdown syntax for figures.                                                                     |
+| The document parser is based on regular expressions and not robust.                                                                       | The parser is based on **commonmark**, which is more robust and makes it easier to write verbatim elements. |
+| Supports a large number of chunk options and language engines.                                                                            | Supports a limited number of chunk options and engines.                                                     |
+| Supports chunk hooks and output hooks.                                                                                                    | No hooks at the moment.                                                                                     |
+| The package is more than 12 years old and quite mature.                                                                                   | The package is new and still experimental.                                                                  |
+
+If you feel any indispensable features are missing in **litedown**, please feel
+free to suggest them in [Github issues](https://github.com/yihui/litedown).
+However, please remember that the goal of **litedown** is far from
+re-implementing **knitr** or Pandoc. Some features may never be re-implemented,
+especially when the implementation is not simple enough.
 
 ## Markdown Syntax
 
@@ -335,8 +415,7 @@ formats beyond HTML and LaTeX.
 
 The main function to convert Markdown to other formats is `litedown::mark()`;
 `mark_html()` and `mark_latex()` are simple wrapper functions for HTML and LaTeX
-output, respectively. The function `mark()` generates a document fragment by
-default, and the wrapper functions `mark_*()` generates full documents.
+output, respectively.
 
 You can either call `litedown::mark()` to render a Markdown document
 programmatically, or click the `Knit` button in RStudio to render a (Markdown or
