@@ -450,8 +450,12 @@ new_opts = function() {
     if (n == 0) return(.opts)
     if (is.null(nms <- names(v))) {
       if (all(vapply(v, is.character, TRUE))) return(opt_get(unlist(v)))
+      if (n > 1) warning(
+        'When not all unnamed arguments are character, only the first argument is used (',
+        n, ' were received).'
+      )
       if (is.null(nms <- names(v <- v[[1]])) || any(nms == '')) stop(
-        'The first unnamed argument must take a value of a named list.'
+        'When the first unnamed argument is not character, it must be a named list.'
       )
     }
     if (any(nms == '')) stop('All arguments must be either named or unnamed.')
@@ -461,7 +465,46 @@ new_opts = function() {
   }
 }
 
-# chunk options
+#' Get and set chunk options
+#'
+#' Chunk options are stored in an environment returned by `reactor()`. Option
+#' values can be queried by passing their names to `reactor()`, and set by
+#' passing named values.
+#' @param ... Named values (for setting options) or unnamed values (for getting
+#'   options).
+#' @return With no arguments, `reactor()` returns an environment that stores the
+#'   options, which can also be used to get or set options. For example, with
+#'   `opts = reactor()`, `opts$name` returns an option value, and `opts$name =
+#'   value` sets an option to a value.
+#'
+#'   With named arguments, `reactor()` sets options and returns a list of their
+#'   old values (e.g., `reactor(echo = FALSE, fig.width = 8)`). The returned
+#'   list can be passed to `reactor()` later to restore the options.
+#'
+#'   With unnamed arguments, `reactor()` returns option values after received
+#'   option names as input. If one name is received, its value is returned
+#'   (e.g., `reactor('echo')`). If multiple names are received, a named list of
+#'   values is returned (e.g., `reactor(c('echo', 'fig.width'))`). A special
+#'   case is that if only one unnamed argument is received and it takes a list
+#'   of named values, the list will be used to set options, e.g.,
+#'   `reactor(list(echo = FALSE, fig.width = 8))`, which is equivalent to
+#'   `reactor(echo = FALSE, fig.width = 8)`.
+#' @export
+#' @examples
+#' # get options
+#' litedown::reactor('echo')
+#' litedown::reactor(c('echo', 'fig.width'))
+#'
+#' # set options
+#' old = litedown::reactor(echo = FALSE, fig.width = 8)
+#' litedown::reactor(c('echo', 'fig.width'))
+#' litedown::reactor(old)  # restore options
+#'
+#' # use the environment directly
+#' opts = litedown::reactor()
+#' opts$echo
+#' mget(c('echo', 'fig.width'), opts)
+#' ls(opts)  # built-in options
 reactor = new_opts()
 reactor(
   eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
