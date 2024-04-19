@@ -33,3 +33,8 @@ The output format of a vignette can be specified in the `output` field of the
 YAML metadata, e.g., `litedown::html_format` (for HTML vignettes) or
 `litedown::latex_format` (for PDF vignettes). If no output format is specified,
 the default is HTML.
+
+The vignette file can be either `.Rmd` or `.md`. The former is processed by
+`litedown::fuse()`, and the latter is converted by `litedown::mark()`. Please
+avoid using the same base filename for two `.Rmd` and `.md` files, since their
+output files may overwrite each other.

@@ -20,7 +20,14 @@
 # weave or tangle?
 vig_fun = function(weave = TRUE) {
   function(file, quiet = FALSE, ...) {
-    if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
+    # fuse() .Rmd and mark() .md
+    if (grepl('[.]Rmd$', file)) {
+      if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
+    } else if (weave) mark(file) else {
+      f = xfun::with_ext(file, '.R')
+      writeLines(character(), f)
+      f
+    }
   }
 }
 
