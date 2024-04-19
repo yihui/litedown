@@ -90,7 +90,7 @@ mark = function(
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
   if (is.null(template)) template = get_option(
-    sprintf('litedown.%s.template', format), length(yaml) > 0
+    sprintf('litedown.%s.template', format), 'yaml' %in% names(part)
   )
   # template = FALSE means no template; other values mean the default template
   if (!is.character(template)) template = if (!isFALSE(template))
