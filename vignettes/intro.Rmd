@@ -61,8 +61,8 @@ inline code.
 
 ### Code chunks
 
-A code chunk consists of the language name, chunk options in pipe comments, and
-the code:
+A code chunk consists of the language name, chunk options (in the chunk header
+or pipe comments), and the code:
 
 ```` md
 ```{lang}
@@ -112,13 +112,25 @@ or the inline code `{r} pi`.
 -->
 ````
 
+If `N + 1` pairs of curly braces are used in the opening fence, the chunk fences
+(with `N` pairs of curly braces) and chunk options will be shown in the output,
+which can be useful for telling readers the full source of a chunk, e.g.,
+
+```` md
+```{{r}}
+#| echo = TRUE, eval = FALSE
+
+1 + 1
+```
+````
+
 ### Inline code
 
 The syntax for inline code expressions is `` `{lang} code` ``, where `lang` is
 the language name, e.g., `r`. Spaces are allowed after the opening backtick and
 before the closing backtick. If the `code` happens to contain `N` backticks, you
 will need to use at least `N + 1` backticks outside, e.g.,
-``` ``{r} paste("`", rnorm(1), "`") `` ```. An inline code expression inside
+``` ``{r} paste("`", rnorm(1), "`")`` ```. An inline code expression inside
 another piece of inline code is not parsed or evaluated, which provides a way to
 write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
 

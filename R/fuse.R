@@ -134,6 +134,10 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
       rx_opts = paste0('^(`{3,}|~{3,})\\s*([{]+)', rx_engine, '(.*?)\\s*[}]+\\s*$')
       o = regmatches(code[1], regexec(rx_opts, code[1]))[[1]]
       if (length(o)) {
+        # if two or more `{` is used, we will write chunk fences to output
+        if (nchar(o[3]) > 1) b$fences = c(
+          sub('{{', '{', sub('}}\\s*$', '}', code[1]), fixed = TRUE), code[N]
+        )
         o = if (o[5] != '') xfun::csv_options(o[5])
       }
       code = code[-c(1, N)]  # remove fences
@@ -355,7 +359,7 @@ fuse_code = function(x, envir, blocks) {
   if (!opts$include) return('')
 
   # decide the number of backticks to wrap up output
-  fence = xfun::make_fence(unlist(res))
+  fence = xfun::make_fence(c(unlist(res), x$fences))
 
   # deal with figure alt text, captions, and environment
   env = opts$fig.env; alt = opts$fig.alt; cap = opts$fig.cap
@@ -379,7 +383,7 @@ fuse_code = function(x, envir, blocks) {
   i = 0  # plot counter
 
   # generate markdown output
-  out = unlist(lapply(res, function(x) {
+  out = lapply(res, function(x) {
     type = sub('record_', '', class(x))
     if (type == 'source') {
       if (!opts$echo) return()
@@ -410,10 +414,20 @@ fuse_code = function(x, envir, blocks) {
       }
       xfun::fenced_block(x, a, fence)
     }
-  }))
+  })
+  out = add_fences(out, x, fence)
+  out = unlist(out)
   if (!is.null(opts$attr.chunk)) out = xfun::fenced_block(out, opts$attr.chunk, char = ':')
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
+}
+
+# if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
+# include chunk fences in the output (and also pipe comments if exist)
+add_fences = function(out, x, fence) {
+  if (length(x$fences) != 2) return(out)
+  fences = list(c(x$fences[1], x$comments), x$fences[2])
+  append(lapply(fences, xfun::fenced_block, '.md', fence), out, 1)
 }
 
 new_record = function(x, class) structure(x, class = paste0('record_', class))
