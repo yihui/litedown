@@ -50,8 +50,11 @@ new_env = function(...) new.env(..., parent = emptyenv())
 parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
   if (!missing(text)) text = xfun::split_lines(text)
   xml = commonmark::markdown_xml(text, sourcepos = TRUE)
-  # TODO: should we support chunk options in chunk header? (for now only in body)
-  r = '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]([a-zA-Z0-9_]+)[}]")? xml:space="[^>]*>([^<]*)<'
+  rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
+  r = paste0(
+    '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
+    rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
+  )
   m = regmatches(xml, gregexec(r, xml, perl = TRUE))[[1]]
 
   res = list()
@@ -118,15 +121,26 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
       if (!grepl(sub('^[\t >]*', '', p), code[N])) stop(
         'The fences of the code block do not match:\n\n', code[1], '\n', code[N]
       )
-      code = code[-c(1, N)]  # remove fences
       p = gsub('[`~]+$', '', p)
-      i = startsWith(code, p)
-      code[i] = substr(code[i], nchar(p) + 1, nchar(code[i]))  # remove indentation or >
-      if (p != '') b$prefix = p
-      # trailing spaces in the prefix may have been trimmed: yihui/knitr#1446
-      code[!i] = gsub(gsub('(.+?)\\s+$', '^\\1', p), '', code[!i])
+      if (p != '') {
+        i = startsWith(code, p)
+        # remove indentation or >
+        code[i] = substr(code[i], nchar(p) + 1, nchar(code[i]))
+        # trailing spaces in the prefix may have been trimmed: yihui/knitr#1446
+        code[!i] = gsub(gsub('(.+?)\\s+$', '^\\1', p), '', code[!i])
+        b$prefix = p
+      }
+      # possible comma-separated chunk options in header
+      rx_opts = paste0('^(`{3,}|~{3,})\\s*([{]+)', rx_engine, '(.*?)\\s*[}]+\\s*$')
+      o = regmatches(code[1], regexec(rx_opts, code[1]))[[1]]
+      if (length(o)) {
+        o = if (o[5] != '') xfun::csv_options(o[5])
+      }
+      code = code[-c(1, N)]  # remove fences
       code = xfun::divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
+      # merge chunk options from header into pipe comment options
+      if (length(o)) b$options = merge_list(o, b$options)
       b$options$engine = b$info
       b$info = NULL  # the info is stored in chunk options as `engine`
     } else if (length(p <- b$pos) > 0) {
