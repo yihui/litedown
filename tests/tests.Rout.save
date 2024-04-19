@@ -52,27 +52,27 @@ Type 'q()' to quit R.
 <p>foo
 bar</p>
 
-> cat(mark("foo\nbar\n", options = "hardbreaks"))
+> cat(mark("foo\nbar\n", options = "+hardbreaks"))
 <p>foo<br />
 bar</p>
 
 > mkd <- c("`$x$` is inline math $x$!", "", "Display style:", 
-+     "", "$$x + y$$", "", "\\begin{eqnarray}\na^{2}+b^{2} & = & c^{2}\\\\\n\\sin^{2}(x ..." ... [TRUNCATED] 
++     "", "$$x + y$$", "", "\\begin{align}\na^{2}+b^{2} & = c^{2}\\\\\n\\sin^{2}(x)+\\c ..." ... [TRUNCATED] 
 
 > cat(mark(mkd))
 <p><code>$x$</code> is inline math \(x\)!</p>
 <p>Display style:</p>
 <p>$$x + y$$</p>
-<p>\begin{eqnarray} a^{2}+b^{2} &amp; = &amp; c^{2}\\ \sin^{2}(x)+\cos^{2}(x) &amp; = &amp; 1 \end{eqnarray}</p>
+<p>\begin{align} a^{2}+b^{2} &amp; = c^{2}\\ \sin^{2}(x)+\cos^{2}(x) &amp; = 1 \end{align}</p>
 
 > cat(mark(mkd, options = "-latex_math"))
 <p><code>$x$</code> is inline math $x$!</p>
 <p>Display style:</p>
 <p>$$x + y$$</p>
-<p>\begin{eqnarray}
-a^{2}+b^{2} &amp; = &amp; c^{2}\
-\sin^{2}(x)+\cos^{2}(x) &amp; = &amp; 1
-\end{eqnarray}</p>
+<p>\begin{align}
+a^{2}+b^{2} &amp; = c^{2}\
+\sin^{2}(x)+\cos^{2}(x) &amp; = 1
+\end{align}</p>
 
 > cat(mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n"))
 <table>
@@ -141,12 +141,14 @@ Content Cell  | Content Cell</p>
 <pre><code class="language-r js" id="foo">1 + 1;
 </code></pre>
 
-> cat(mark("```{.r .js #foo style=\"color:red;\"}\n1 + 1;\n```"))
-<pre><code class="language-r js" id="foo" style="color:red;">1 + 1;
+> cat(mark("```{.r .js #foo style=\"background:lime;\"}\n1 + 1;\n```"))
+<pre><code class="language-r js" id="foo" style="background:lime;">1 + 1;
 </code></pre>
 
-> cat(mark("````\n```{r, echo=TRUE}\n1 + 1;\n```\n````"))
-<pre><code>```{r, echo=TRUE}
+> cat(mark("````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````"))
+<pre><code>A _code chunk_:
+
+```{r, echo=TRUE}
 1 + 1;
 ```
 </code></pre>

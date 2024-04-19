@@ -32,15 +32,15 @@ cat(mark(mkd, options = "+number_sections+toc"))
 
 # hard_wrap example
 cat(mark("foo\nbar\n"))
-cat(mark("foo\nbar\n", options = "hardbreaks"))
+cat(mark("foo\nbar\n", options = "+hardbreaks"))
 
 # latex math example
 mkd <- c(
   "`$x$` is inline math $x$!", "", "Display style:", "", "$$x + y$$", "",
-  "\\\\begin{eqnarray}
-a^{2}+b^{2} & = & c^{2}\\\\\\\\
-\\\\sin^{2}(x)+\\\\cos^{2}(x) & = & 1
-\\\\end{eqnarray}"
+  "\\\\begin{align}
+a^{2}+b^{2} & = c^{2}\\\\\\\\
+\\\\sin^{2}(x)+\\\\cos^{2}(x) & = 1
+\\\\end{align}"
 )
 
 cat(mark(mkd))
@@ -81,8 +81,8 @@ cat(mark('```r\n1 + 1;\n```'))
 cat(mark('```{.r}\n1 + 1;\n```'))
 cat(mark('```{.r .js}\n1 + 1;\n```'))
 cat(mark('```{.r .js #foo}\n1 + 1;\n```'))
-cat(mark('```{.r .js #foo style="color:red;"}\n1 + 1;\n```'))
-cat(mark('````\n```{r, echo=TRUE}\n1 + 1;\n```\n````'))
+cat(mark('```{.r .js #foo style="background:lime;"}\n1 + 1;\n```'))
+cat(mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````'))
 
 # raw blocks
 cat(mark('```{=html}\n<p>raw HTML</p>\n```'))
