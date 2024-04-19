@@ -16,7 +16,7 @@
 #'   `mark('foo.md', format = 'latex')` will generate an output file
 #'   \file{foo.tex} by default.
 #' @param text A character vector of the Markdown text. By default, it is read
-#'   from `file`.
+#'   from `input`.
 #' @param format An output format supported by \pkg{commonmark}, e.g., `'html'`,
 #'   `'man'`, and `'text'`, etc. See the
 #'   [`markdown_*()`][commonmark::commonmark] renderers in \pkg{commonmark}.
@@ -33,8 +33,8 @@
 #'   ...)` will replace the `$title$` variable in the template. See the Section
 #'   \dQuote{YAML metadata} in the vignette `vignette('intro', package =
 #'   'litedown')` for supported variables.
-#' @return Invisible `NULL` when output is to a file, otherwise a character
-#'   vector of the rendered output.
+#' @return The output file path if output is written to a file, otherwise a
+#'   character vector of the rendered output.
 #' @seealso The spec of GitHub Flavored Markdown:
 #'   <https://github.github.com/gfm/>
 #' @import utils

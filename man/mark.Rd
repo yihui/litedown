@@ -35,7 +35,7 @@ with an extension corresponding to the \code{format} argument, e.g.,
 \file{foo.tex} by default.}
 
 \item{text}{A character vector of the Markdown text. By default, it is read
-from \code{file}.}
+from \code{input}.}
 
 \item{format}{An output format supported by \pkg{commonmark}, e.g., \code{'html'},
 \code{'man'}, and \code{'text'}, etc. See the
@@ -56,8 +56,8 @@ to fill out the template by their names and values, e.g., \code{list(title = ...
 \item{...}{Arguments to be passed to \code{mark()}.}
 }
 \value{
-Invisible \code{NULL} when output is to a file, otherwise a character
-vector of the rendered output.
+The output file path if output is written to a file, otherwise a
+character vector of the rendered output.
 }
 \description{
 Render Markdown to an output format via the \pkg{commonmark} package. The

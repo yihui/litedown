@@ -24,9 +24,7 @@ vig_fun = function(weave = TRUE) {
     if (grepl('[.]Rmd$', file)) {
       if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
     } else if (weave) mark(file) else {
-      f = xfun::with_ext(file, '.R')
-      writeLines(character(), f)
-      f
+      xfun::write_utf8(character(), xfun::with_ext(file, '.R'))
     }
   }
 }
