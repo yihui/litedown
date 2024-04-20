@@ -252,6 +252,11 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   blocks = parse_rmd(input, text)
   res = .fuse(blocks, input, envir, quiet)
 
+  # keep the markdown output if keep_md = TRUE is set in YAML output format
+  if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
+    xfun::write_utf8(res, xfun::with_ext(output, '.md'))
+  }
+
   mark(input, output, res)
 }
 
