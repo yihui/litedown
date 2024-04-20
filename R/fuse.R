@@ -269,7 +269,7 @@ fiss = function(input, output = '.R', text = NULL) {
   res = unlist(lapply(blocks, function(b) {
     if (b$type == 'code_chunk' && !isFALSE(b$options$purl)) c(b$source, '')
   }))
-  if (is_output_file(output)) xfun::write_utf8(res, output) else res
+  if (is_output_file(output)) xfun::write_utf8(res, output) else xfun::raw_string(res)
 }
 
 .fuse = function(blocks, input, envir, quiet) {

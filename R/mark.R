@@ -39,7 +39,8 @@
 #'   \dQuote{YAML metadata} in the vignette `vignette('intro', package =
 #'   'litedown')` for supported variables.
 #' @return The output file path if output is written to a file, otherwise a
-#'   character vector of the rendered output.
+#'   character vector of the rendered output (wrapped in [xfun::raw_string()]
+#'   for clearer printing).
 #' @seealso The spec of GitHub Flavored Markdown:
 #'   <https://github.github.com/gfm/>
 #' @import utils
@@ -299,7 +300,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # for RStudio to capture the output path when previewing the output
     if (Sys.getenv('RMARKDOWN_PREVIEW_DIR') != '') message('Output created: ', output)
     xfun::write_utf8(ret, output)
-  } else ret
+  } else xfun::raw_string(ret)
 }
 
 # insert body and meta variables into a template

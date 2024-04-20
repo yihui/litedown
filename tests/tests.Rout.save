@@ -27,13 +27,14 @@ Type 'q()' to quit R.
 
 > mkd <- c("# Header 1", "p1", "## Header 2", "p2")
 
-> cat(mark(mkd, options = "+number_sections"))
+> mark(mkd, options = "+number_sections")
 <h1 id="header-1"><span class="section-number">1.</span> Header 1</h1>
 <p>p1</p>
 <h2 id="header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
-> cat(mark(mkd, options = "+number_sections+toc"))
+
+> mark(mkd, options = "+number_sections+toc")
 <div id="TOC">
 <ul class="numbered">
 <li><a href="#header-1"><span class="section-number">1.</span> Header 1</a>
@@ -48,24 +49,28 @@ Type 'q()' to quit R.
 <h2 id="header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
-> cat(mark("foo\nbar\n"))
+
+> mark("foo\nbar\n")
 <p>foo
 bar</p>
 
-> cat(mark("foo\nbar\n", options = "+hardbreaks"))
+
+> mark("foo\nbar\n", options = "+hardbreaks")
 <p>foo<br />
 bar</p>
+
 
 > mkd <- c("`$x$` is inline math $x$!", "", "Display style:", 
 +     "", "$$x + y$$", "", "\\begin{align}\na^{2}+b^{2} & = c^{2}\\\\\n\\sin^{2}(x)+\\c ..." ... [TRUNCATED] 
 
-> cat(mark(mkd))
+> mark(mkd)
 <p><code>$x$</code> is inline math \(x\)!</p>
 <p>Display style:</p>
 <p>$$x + y$$</p>
 <p>\begin{align} a^{2}+b^{2} &amp; = c^{2}\\ \sin^{2}(x)+\cos^{2}(x) &amp; = 1 \end{align}</p>
 
-> cat(mark(mkd, options = "-latex_math"))
+
+> mark(mkd, options = "-latex_math")
 <p><code>$x$</code> is inline math $x$!</p>
 <p>Display style:</p>
 <p>$$x + y$$</p>
@@ -74,7 +79,8 @@ a^{2}+b^{2} &amp; = c^{2}\
 \sin^{2}(x)+\cos^{2}(x) &amp; = 1
 \end{align}</p>
 
-> cat(mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n"))
+
+> mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n")
 <table>
 <thead>
 <tr>
@@ -94,58 +100,73 @@ a^{2}+b^{2} &amp; = c^{2}\
 </tbody>
 </table>
 
-> cat(mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n", 
-+     opti .... [TRUNCATED] 
+
+> mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n", 
++     options  .... [TRUNCATED] 
 <p>First Header  | Second Header
 ———–– | ———––
 Content Cell  | Content Cell
 Content Cell  | Content Cell</p>
 
-> cat(mark("https://www.r-project.org/"))
+
+> mark("https://www.r-project.org/")
 <p><a href="https://www.r-project.org/">https://www.r-project.org/</a></p>
 
-> cat(mark("https://www.r-project.org/", options = "-autolink"))
+
+> mark("https://www.r-project.org/", options = "-autolink")
 <p>https://www.r-project.org/</p>
 
-> cat(mark("~~awesome~~"))
+
+> mark("~~awesome~~")
 <p><del>awesome</del></p>
 
-> cat(mark("~~awesome~~", options = "-strikethrough"))
+
+> mark("~~awesome~~", options = "-strikethrough")
 <p>~~awesome~~</p>
 
-> cat(mark("2^10^"))
+
+> mark("2^10^")
 <p>2<sup>10</sup></p>
 
-> cat(mark("2^10^", options = "-superscript"))
+
+> mark("2^10^", options = "-superscript")
 <p>2^10^</p>
 
-> cat(mark("H~2~O"))
+
+> mark("H~2~O")
 <p>H<sub>2</sub>O</p>
 
-> cat(mark("H~2~O", options = "-subscript"))
+
+> mark("H~2~O", options = "-subscript")
 <p>H~2~O</p>
 
-> cat(mark("```r\n1 + 1;\n```"))
+
+> mark("```r\n1 + 1;\n```")
 <pre><code class="language-r">1 + 1;
 </code></pre>
 
-> cat(mark("```{.r}\n1 + 1;\n```"))
+
+> mark("```{.r}\n1 + 1;\n```")
 <pre><code class="language-r">1 + 1;
 </code></pre>
 
-> cat(mark("```{.r .js}\n1 + 1;\n```"))
+
+> mark("```{.r .js}\n1 + 1;\n```")
 <pre><code class="language-r js">1 + 1;
 </code></pre>
 
-> cat(mark("```{.r .js #foo}\n1 + 1;\n```"))
+
+> mark("```{.r .js #foo}\n1 + 1;\n```")
 <pre><code class="language-r js" id="foo">1 + 1;
 </code></pre>
 
-> cat(mark("```{.r .js #foo style=\"background:lime;\"}\n1 + 1;\n```"))
+
+> mark("```{.r .js #foo style=\"background:lime;\"}\n1 + 1;\n```")
 <pre><code class="language-r js" id="foo" style="background:lime;">1 + 1;
 </code></pre>
 
-> cat(mark("````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````"))
+
+> mark("````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````")
 <pre><code>A _code chunk_:
 
 ```{r, echo=TRUE}
@@ -153,14 +174,18 @@ Content Cell  | Content Cell</p>
 ```
 </code></pre>
 
-> cat(mark("```{=html}\n<p>raw HTML</p>\n```"))
+
+> mark("```{=html}\n<p>raw HTML</p>\n```")
 <p>raw HTML</p>
 
-> cat(mark("```{=latex}\n<p>raw HTML</p>\n```"))
+
+> mark("```{=latex}\n<p>raw HTML</p>\n```")
+
 
 > mkd = "<style>a {}</style><script type=\"text/javascript\">console.log(\"No!\");</script>\n[Hello](#)"
 
-> cat(mark(mkd))
+> mark(mkd)
 <style>a {}</style><script type="text/javascript">console.log("No!");</script>
 <p><a href="#">Hello</a></p>
+
 > 

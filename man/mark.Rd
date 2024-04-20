@@ -61,7 +61,8 @@ to fill out the template by their names and values, e.g., \code{list(title = ...
 }
 \value{
 The output file path if output is written to a file, otherwise a
-character vector of the rendered output.
+character vector of the rendered output (wrapped in \code{\link[xfun:raw_string]{xfun::raw_string()}}
+for clearer printing).
 }
 \description{
 The function \code{fuse()} extracts and runs code from code chunks

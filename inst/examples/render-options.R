@@ -3,12 +3,12 @@ library(litedown)
 # toc example
 mkd <- c("# Header 1", "p1", "## Header 2", "p2")
 
-cat(mark(mkd, options = "+number_sections"))
-cat(mark(mkd, options = "+number_sections+toc"))
+mark(mkd, options = "+number_sections")
+mark(mkd, options = "+number_sections+toc")
 
 # hard_wrap example
-cat(mark("foo\nbar\n"))
-cat(mark("foo\nbar\n", options = "+hardbreaks"))
+mark("foo\nbar\n")
+mark("foo\nbar\n", options = "+hardbreaks")
 
 # latex math example
 mkd <- c(
@@ -19,53 +19,53 @@ a^{2}+b^{2} & = c^{2}\\\\
 \\end{align}"
 )
 
-cat(mark(mkd))
-cat(mark(mkd, options = "-latex_math"))
+mark(mkd)
+mark(mkd, options = "-latex_math")
 
 # tables example (need 4 spaces at beginning of line here)
-cat(mark("
+mark("
 First Header  | Second Header
 ------------- | -------------
 Content Cell  | Content Cell
 Content Cell  | Content Cell
-"))
+")
 
 # but not here
-cat(mark("
+mark("
 First Header  | Second Header
 ------------- | -------------
 Content Cell  | Content Cell
 Content Cell  | Content Cell
-", options = '-table'))
+", options = '-table')
 
 # autolink example
-cat(mark("https://www.r-project.org/"))
-cat(mark("https://www.r-project.org/", options = "-autolink"))
+mark("https://www.r-project.org/")
+mark("https://www.r-project.org/", options = "-autolink")
 
 # strikethrough example
-cat(mark("~~awesome~~"))
-cat(mark("~~awesome~~", options = "-strikethrough"))
+mark("~~awesome~~")
+mark("~~awesome~~", options = "-strikethrough")
 
 # superscript and subscript examples
-cat(mark("2^10^"))
-cat(mark("2^10^", options = "-superscript"))
-cat(mark("H~2~O"))
-cat(mark("H~2~O", options = "-subscript"))
+mark("2^10^")
+mark("2^10^", options = "-superscript")
+mark("H~2~O")
+mark("H~2~O", options = "-subscript")
 
 # code blocks
-cat(mark('```r\n1 + 1;\n```'))
-cat(mark('```{.r}\n1 + 1;\n```'))
-cat(mark('```{.r .js}\n1 + 1;\n```'))
-cat(mark('```{.r .js #foo}\n1 + 1;\n```'))
-cat(mark('```{.r .js #foo style="background:lime;"}\n1 + 1;\n```'))
-cat(mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````'))
+mark('```r\n1 + 1;\n```')
+mark('```{.r}\n1 + 1;\n```')
+mark('```{.r .js}\n1 + 1;\n```')
+mark('```{.r .js #foo}\n1 + 1;\n```')
+mark('```{.r .js #foo style="background:lime;"}\n1 + 1;\n```')
+mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````')
 
 # raw blocks
-cat(mark('```{=html}\n<p>raw HTML</p>\n```'))
-cat(mark('```{=latex}\n<p>raw HTML</p>\n```'))
+mark('```{=html}\n<p>raw HTML</p>\n```')
+mark('```{=latex}\n<p>raw HTML</p>\n```')
 
 # skip_html tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
-cat(mark(mkd))
+mark(mkd)
 # TODO: wait for https://github.com/r-lib/commonmark/issues/15 to be fixed
-# cat(mark(mkd, options = "tagfilter"))
+# mark(mkd, options = "tagfilter")
