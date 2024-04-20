@@ -42,9 +42,10 @@ the \code{input} file if provided.}
 \item{envir}{An environment in which the code is to be evaluated.}
 
 \item{quiet}{If \code{TRUE}, do not show the progress bar. If \code{FALSE}, the
-progress bar will be shown after a number of seconds. The number can be set
-in a global option, e.g., \code{options(litedown.progress.delay = 10)} (the
-default is \code{2}).}
+progress bar will be shown after a number of seconds, which can be set via
+a global \link[=options]{option} \code{litedown.progress.delay} (the default is \code{2}).
+THe progress bar output can be set via a global option
+\code{litedown.progress.output} (the default is \code{\link[=stderr]{stderr()}}).}
 
 \item{options}{Options to be passed to the renderer. See \code{\link[=markdown_options]{markdown_options()}}
 for details. This argument can take either a character vector of the form

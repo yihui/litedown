@@ -200,9 +200,10 @@ get_loc = function(block, input = NULL, lines = block$lines) {
 #' @rdname mark
 #' @param envir An environment in which the code is to be evaluated.
 #' @param quiet If `TRUE`, do not show the progress bar. If `FALSE`, the
-#'   progress bar will be shown after a number of seconds. The number can be set
-#'   in a global option, e.g., `options(litedown.progress.delay = 10)` (the
-#'   default is `2`).
+#'   progress bar will be shown after a number of seconds, which can be set via
+#'   a global [option][options] `litedown.progress.delay` (the default is `2`).
+#'   THe progress bar output can be set via a global option
+#'   `litedown.progress.output` (the default is [stderr()]).
 #' @export
 #' @examples
 #' library(litedown)
@@ -274,17 +275,13 @@ fiss = function(input, output = '.R', text = NULL) {
   p_lab = ifelse(p_lab == '', '', sprintf(' [%s] ', p_lab))
   p_len = max(c(0, nchar(p_lab))) + 5  # 5 == nchar('100% ')
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
-  t0 = Sys.time()
-  if (is.logical(quiet)) {
-    # quiet = TRUE -> delay = Inf, and quiet = FALSE -> delay = 0
-    td = if (quiet) Inf else 0
-  } else {
-    # quiet = number -> delay = this number, and quiet = FALSE
-    td = quiet; quiet = FALSE
-  }
+  p_out = getOption('litedown.progress.output', stderr())
+  t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
   p_bar = function(i, n) {
-    if (quiet || Sys.time() - t0 < td) return()
-    cat(p_clr, if (i < n) c(p_lab[i], as.character(round(i/n * 100)), '%'), sep = '')
+    if (!quiet && Sys.time() - t0 > td) cat(
+      p_clr, if (i < n) c(p_lab[i], as.character(round(i/n * 100)), '%'),
+      sep = '', file = p_out
+    )
   }
 
   res = character(n)
