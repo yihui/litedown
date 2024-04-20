@@ -439,9 +439,7 @@ formats beyond HTML and LaTeX.
 
 ## Markdown Rendering
 
-The main function to convert Markdown to other formats is `litedown::mark()`;
-`mark_html()` and `mark_latex()` are simple wrapper functions for HTML and LaTeX
-output, respectively.
+The main function to convert Markdown to other formats is `litedown::mark()`.
 
 You can either call `litedown::mark()` to render a Markdown document
 programmatically, or click the `Knit` button in RStudio to render a (Markdown or

@@ -38,10 +38,10 @@ presentation.
 
 <!--# class="fade" -->
 
-Equivalently, you can specify them in the arguments of `litedown::mark_html()`:
+Equivalently, you can specify them in the arguments of `litedown::mark()`:
 
 ``` r
-litedown::mark_html("test.md", output = "test.html", meta = list(
+litedown::mark("test.md", meta = list(
   css = c("default", "snap"),
   js = "snap"
 ))

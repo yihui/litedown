@@ -303,23 +303,6 @@ mark = function(input = NULL, output = NULL, text = NULL, options = NULL, meta =
   } else ret
 }
 
-#' @rdname mark
-#' @param ... Arguments to be passed to `mark()`.
-#' @export
-#' @examples
-#'
-#' mark_html('Hello _World_!')
-#' # write HTML to an output file
-#' mark_html('_Hello_, **World**!', output = tempfile())
-mark_html = function(...) mark(..., format = 'html')
-
-#' @export
-#' @rdname mark
-#' @examples
-#'
-#' mark_latex('Hello _World_!')
-mark_latex = function(...) mark(..., format = 'latex')
-
 # insert body and meta variables into a template
 build_output = function(format, options, template, meta) {
   tpl = one_string(template, test = TRUE)
