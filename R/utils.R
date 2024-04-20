@@ -104,11 +104,12 @@ match_replace = function(x, pattern, replace = identity, ...) {
 # if `text` is NULL and `input` is a file, read it; otherwise use the `text`
 # argument as input
 read_input = function(input, text) {
+  if (missing(input)) input = NULL
   if (is.null(text)) {
-    if (!is.character(input)) stop("Either 'input' or 'text' must be provided.")
+    if (is.null(input)) stop("Either 'input' or 'text' must be provided.")
     text = if (is_file(input)) xfun::read_utf8(input) else input
   }
-  xfun::split_lines(text)
+  structure(xfun::split_lines(text), input = if (is_file(input)) input)
 }
 
 # test if an input is a file path; if shouldn't be treated as file, use I()
@@ -118,7 +119,7 @@ is_file = function(x) {
 }
 
 is_output_file = function(x) {
-  is.character(x) && !x %in% names(md_formats)
+  is.character(x) && !(x %in% names(md_formats) || grepl('^[.]', x))
 }
 
 # make an output filename with the format and input name
@@ -129,9 +130,9 @@ auto_output = function(input, output, format = NULL) {
   if (is.character(output)) {
     # if `output` is an extension, make a full file path based on input
     if (grepl('^[.]', output)) {
-      if (is_file(input)) output = xfun::with_ext(input, output) else return(NA)
+      if (is_file(input)) output = xfun::with_ext(input, output)
     }
-    check_output(input, output)
+    if (is_file(input)) check_output(input, output)
   }
   output
 }

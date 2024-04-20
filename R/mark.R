@@ -1,27 +1,28 @@
-#' Render Markdown to an output format
+#' Render Markdown and R Markdown
 #'
-#' Render Markdown to an output format via the \pkg{commonmark} package.
+#' The function `mark()` renders Markdown to an output format via the
+#' \pkg{commonmark} package.
 #' @param input A character vector to provide the input file path or text. If
-#'   not provided, the `text` argument must be provided instead. The vector will
-#'   be treated as a file path if it is a single string, and points to an
-#'   existing file or has a filename extension. In other cases, the vector will
-#'   be treated as the `text` argument input. To avoid ambiguity, if a string
-#'   should be treated as `text` input when it happens to be an existing file
-#'   path or has an extension, wrap it in [I()], or simply use the `text`
+#'   not provided, the `text` argument must be provided instead. The `input`
+#'   vector will be treated as a file path if it is a single string, and points
+#'   to an existing file or has a filename extension. In other cases, the vector
+#'   will be treated as the `text` argument input. To avoid ambiguity, if a
+#'   string should be treated as `text` input when it happens to be an existing
+#'   file path or has an extension, wrap it in [I()], or simply use the `text`
 #'   argument instead.
-#' @param output An output file path or a filename extension (`.html`, `.tex`,
-#'   `.xml`, `.man`, `.markdown`, or `.txt`). In the latter case, the output
-#'   file path will use the extension on the same base filename as the input
-#'   file if the `input` is a file. If `output` is not character (e.g., `NA`),
-#'   the results will be returned as a character vector instead of being written
-#'   to a file. If `output` is `NULL` or an extension, and the input is a file
-#'   path, the output file path will have the same base name as the input file,
-#'   with an extension corresponding to the output format. The output format is
-#'   retrieved from the first value in the `output` field of the YAML metadata
-#'   of the `input` (e.g., `litedown::html_format` will generate HTML output).
-#'   The `output` argument can also take an output format name (possible values
-#'   are `html`, `latex`, `xml`, `man`, `commonmark`, and `text`). If no output
-#'   format is detected or provided, the default is HTML.
+#' @param output An output file path or a filename extension (e.g., `.html`,
+#'   `.tex`, `.xml`, `.man`, `.markdown`, or `.txt`). In the latter case, the
+#'   output file path will use the extension on the same base filename as the
+#'   input file if the `input` is a file. If `output` is not character (e.g.,
+#'   `NA`), the results will be returned as a character vector instead of being
+#'   written to a file. If `output` is `NULL` or an extension, and the input is
+#'   a file path, the output file path will have the same base name as the input
+#'   file, with an extension corresponding to the output format. The output
+#'   format is retrieved from the first value in the `output` field of the YAML
+#'   metadata of the `input` (e.g., `litedown::html_format` will generate HTML
+#'   output). The `output` argument can also take an output format name
+#'   (possible values are `html`, `latex`, `xml`, `man`, `commonmark`, and
+#'   `text`). If no output format is detected or provided, the default is HTML.
 #' @param text A character vector as the text input. By default, it is read from
 #'   the `input` file if provided.
 #' @param options Options to be passed to the renderer. See [markdown_options()]
@@ -44,7 +45,7 @@
 #' @import utils
 #' @export
 #' @examples
-#' library(litedown)
+#'
 #' mark(c('Hello _World_!', '', 'Welcome to **litedown**.'))
 #' # if input appears to be a file path but should be treated as text, use I()
 #' mark(I('This is *not* a file.md'))
@@ -52,16 +53,14 @@
 #' mark(text = 'This is *not* a file.md')
 #'
 #' # output to a file
-#' mark('_Hello_, **World**!', output = tempfile())
+#' (mark('_Hello_, **World**!', output = tempfile()))
 #'
-#' # convert to LaTeX
+#' # convert to other formats
 #' mark('Hello _World_!', '.tex')
-#'
-#' # a few corner cases
-#' mark(character(0))
-#' mark('')
-mark = function(input = NULL, output = NULL, text = NULL, options = NULL, meta = list()) {
-  text = read_input(input, text)
+#' mark('Hello _**`World`**_!', 'xml')
+#' mark('Hello _**`World`**_!', 'text')
+mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()) {
+  text = read_input(input, text); input = attr(text, 'input')
   part = xfun::yaml_body(text); yaml = part$yaml; text = part$body
 
   format = detect_format(output, yaml)

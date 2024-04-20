@@ -10,3 +10,6 @@ if (file.create(f)) {
   mark(f)
   unlink(f)
 }
+
+mark(character(0))
+mark('')

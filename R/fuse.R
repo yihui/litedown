@@ -192,12 +192,78 @@ get_loc = function(block, input = NULL, lines = block$lines) {
   }
 }
 
-# fuse code with text
-fuse = function(
-  input = NULL, output = NULL, text = xfun::read_utf8(input),
-  format = c('html', 'latex', 'markdown'), envir = parent.frame(), quiet = FALSE
-) {
-  fuse_wrapper(input, output, text, format[1], '.markdown', .fuse, input, envir, quiet)
+#' @description The function `fuse()` extracts and runs code from code chunks
+#'   and inline code expressions in R Markdown, and interweaves the results with
+#'   the rest of text in the input, which is similar to what [knitr::knit()] and
+#'   [rmarkdown::render()] do. The function `fiss()` extracts code from the
+#'   input, and is similar to [knitr::purl()].
+#' @rdname mark
+#' @param envir An environment in which the code is to be evaluated.
+#' @param quiet If `TRUE`, do not show the progress bar. If `FALSE`, the
+#'   progress bar will be shown after a number of seconds. The number can be set
+#'   in a global option, e.g., `options(litedown.progress.delay = 10)` (the
+#'   default is `2`).
+#' @export
+#' @examples
+#' library(litedown)
+#' doc = c('```{r}', '1 + 1', '```', '', '$\\pi$ = `{r} pi`.')
+#' fuse(doc)
+#' fuse(doc, '.tex')
+#' fiss(doc)
+fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE) {
+  text = read_input(input, text); input = attr(text, 'input')
+  yaml = xfun::yaml_body(text)$yaml
+  format = detect_format(output, yaml)
+  output = auto_output(input, output, format)
+  output_base = if (is_output_file(output)) xfun::sans_ext(output)
+
+  # cleaning up some objects on exit
+  opts = reactor(); on.exit(reactor(opts), add = TRUE)
+  if (chunk_counter$get() == 0) on.exit(chunk_counter$reset(), add = TRUE)
+  oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
+
+  # set working directory if unset
+  if (is_file(input) && is.null(opts$wd)) opts$wd = dirname(normalizePath(input))
+
+  # store output dir so we can calculate relative paths for plot files later
+  .env$wd.out = xfun::normalize_path(
+    if (is.null(output_base)) {
+      if (is.character(.env$wd.out)) .env$wd.out else '.'
+    } else dirname(output_base)
+  )
+
+  # set default device to 'pdf' for LaTeX output, and 'png' for other formats
+  if (is.null(opts$dev)) {
+    opts$dev = if (format == 'latex') 'pdf' else 'png'
+  }
+  # fig.path = output_files/ if `output` is a path, otherwise use litedown_files
+  if (is.null(opts$fig.path)) opts$fig.path = paste0(
+    output_base %||% 'litedown', '_files/'
+  )
+  # make sure fig.path is absolute path
+  if (xfun::is_rel_path(opts$fig.path))
+    opts$fig.path = file.path(getwd(), opts$fig.path)
+  # clean up the figure folder on exit if it's empty
+  on.exit(xfun::del_empty_dir({
+    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
+  }), add = TRUE)
+
+  blocks = parse_rmd(input, text)
+  res = .fuse(blocks, input, envir, quiet)
+
+  mark(input, output, res)
+}
+
+#' @rdname mark
+#' @export
+fiss = function(input, output = '.R', text = NULL) {
+  text = read_input(input, text); input = attr(text, 'input')
+  output = auto_output(input, output, NULL)
+  blocks = parse_rmd(input, text)
+  res = unlist(lapply(blocks, function(b) {
+    if (b$type == 'code_chunk' && !isFALSE(b$options$purl)) c(b$source, '')
+  }))
+  if (is_output_file(output)) xfun::write_utf8(res, output) else res
 }
 
 .fuse = function(blocks, input, envir, quiet) {
@@ -241,69 +307,6 @@ fuse = function(
 # an internal function for RStudio IDE to recognize the custom knit function
 # when users hit the Knit button
 knit = function(input, ...) fuse(input, envir = parent.frame())
-
-# extract code from input
-fiss = function(input = NULL, output = NULL, text = xfun::read_utf8(input)) {
-  fuse_wrapper(input, output, text, '', '.R', .fiss)
-}
-
-.fiss = function(blocks) {
-  res = lapply(blocks, function(b) {
-    if (b$type == 'code_chunk' && !isFALSE(b$options$purl)) c(b$source, '')
-  })
-  unlist(res)
-}
-
-fuse_wrapper = function(input, output, text, format, ext, process_fun, ...) {
-  if (auto_name <- is.null(output) && is_file(input)) {
-    output = check_output(input, xfun::with_ext(input, ext))
-  }
-
-  # cleaning up some objects on exit
-  opts = reactor(); on.exit(reactor(opts), add = TRUE)
-  if (chunk_counter$get() == 0) on.exit(chunk_counter$reset(), add = TRUE)
-  oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
-
-  # set working directory if unset
-  if (is_file(input) && is.null(opts$wd)) opts$wd = dirname(normalizePath(input))
-
-  # store output dir so we can calculate relative paths for plot files later
-  .env$wd.out = xfun::normalize_path(
-    if (is.character(output)) dirname(output) else {
-      if (is.character(.env$wd.out)) .env$wd.out else '.'
-    }
-  )
-
-  # set default device to 'pdf' for LaTeX output, and 'png' for other formats
-  if (is.null(opts$dev)) {
-    opts$dev = if (format == 'latex') 'pdf' else 'png'
-  }
-  # fig.path = output_files/ if `output` is a path, otherwise use litedown_files
-  if (is.null(opts$fig.path)) opts$fig.path = paste0(
-    if (is.character(output)) xfun::sans_ext(output) else 'litedown', '_files/'
-  )
-  # make sure fig.path is absolute path
-  if (xfun::is_rel_path(opts$fig.path))
-    opts$fig.path = file.path(getwd(), opts$fig.path)
-  # clean up the figure folder on exit if it's empty
-  on.exit(xfun::del_empty_dir({
-    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
-  }), add = TRUE)
-
-  blocks = parse_rmd(input, text)
-  res = process_fun(blocks, ...)
-
-  if (format %in% c('html', 'latex')) {
-    res = mark(text = res, format = format)
-    if (auto_name) output = auto_output(input, format)
-  }
-  # TODO: build PDF for format == 'latex'?
-  if (is.character(output)) {
-    # for RStudio to capture the output path and display it in RStudio Viewer
-    if (Sys.getenv('RSTUDIO') == '1') message('Output created: ', output)
-    xfun::write_utf8(res, output)
-  } else res
-}
 
 fuse_code = function(x, envir, blocks) {
   # merge local chunk options into global options

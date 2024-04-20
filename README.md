@@ -52,9 +52,9 @@ learn more about possible HTML applications based on this package.
 
 R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function `litedown::fuse()` plays a role similar to
-`knitr::knit()`. It fuses program code with narratives, i.e., it executes all
-code in the source document and interweaves results with narratives in the
-output document.
+`knitr::knit()` and `rmarkdown::render()`. It fuses program code with
+narratives, i.e., it executes code in the source document and interweaves
+results with narratives in the output document.
 
 ## Scope
 
