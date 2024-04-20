@@ -20,3 +20,4 @@ entities.
 \examples{
 cat(litedown:::smartypants("1/2 (c)\n"))
 }
+\keyword{internal}

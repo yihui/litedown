@@ -37,6 +37,7 @@ eval_lang = function(x, envir) {
 #' entities.
 #' @param text A character vector of the Markdown text.
 #' @return A character vector of the transformed text.
+#' @keywords internal
 #' @examples
 #' cat(litedown:::smartypants("1/2 (c)\n"))
 smartypants = function(text) {
