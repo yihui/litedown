@@ -101,22 +101,44 @@ match_replace = function(x, pattern, replace = identity, ...) {
   x
 }
 
+# if `text` is NULL and `input` is a file, read it; otherwise use the `text`
+# argument as input
+read_input = function(input, text) {
+  if (is.null(text)) {
+    if (!is.character(input)) stop("Either 'input' or 'text' must be provided.")
+    text = if (is_file(input)) xfun::read_utf8(input) else input
+  }
+  xfun::split_lines(text)
+}
+
 # test if an input is a file path; if shouldn't be treated as file, use I()
 is_file = function(x) {
   length(x) == 1 && !inherits(x, 'AsIs') && is.character(x) &&
-    suppressWarnings(xfun::file_exists(x))
+    (xfun::file_ext(x) != '' || suppressWarnings(xfun::file_exists(x)))
 }
 
-# make an output filename with the format name
-auto_output = function(input, format) {
-  ext = switch(format, commonmark = 'markdown', latex = 'tex', text = 'txt', format)
-  output = xfun::with_ext(input, ext)
-  check_output(input, output)
+is_output_file = function(x) {
+  is.character(x) && !x %in% names(md_formats)
+}
+
+# make an output filename with the format and input name
+auto_output = function(input, output, format = NULL) {
+  # change NULL to a filename extension
+  if (is.null(output) && !is.null(format)) output = md_formats[format]
+  # non-character `output` means the output shouldn't be written to a file
+  if (is.character(output)) {
+    # if `output` is an extension, make a full file path based on input
+    if (grepl('^[.]', output)) {
+      if (is_file(input)) output = xfun::with_ext(input, output) else return(NA)
+    }
+    check_output(input, output)
+  }
+  output
 }
 
 # make sure not to overwrite input file inadvertently
 check_output = function(input, output) {
-  if (xfun::same_path(input, output))
+  if (xfun::file_exists(input) && xfun::same_path(input, output))
     stop('The output file path is the same as input: ', input)
   output
 }

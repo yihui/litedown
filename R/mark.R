@@ -1,25 +1,29 @@
 #' Render Markdown to an output format
 #'
-#' Render Markdown to an output format via the \pkg{commonmark} package. The
-#' function `mark_html()` is a shorthand of `mark(format = 'html')`, and
-#' `mark_latex()` is a shorthand of `mark(format = 'latex')`.
-#' @param input Path to an input file. If not provided, it is presumed that the
-#'   `text` argument will be used instead. This argument can also take a
-#'   character vector of Markdown text directly. To avoid ambiguity in the
-#'   latter case, a single character string input will be treated as a file if
-#'   the file exists. If a string should be treated as Markdown text when it
-#'   happens to be a file path, wrap it in [I()].
-#' @param output Output file path. If not character, the results will be
-#'   returned as a character vector. If not specified and the input is a file
+#' Render Markdown to an output format via the \pkg{commonmark} package.
+#' @param input A character vector to provide the input file path or text. If
+#'   not provided, the `text` argument must be provided instead. The vector will
+#'   be treated as a file path if it is a single string, and points to an
+#'   existing file or has a filename extension. In other cases, the vector will
+#'   be treated as the `text` argument input. To avoid ambiguity, if a string
+#'   should be treated as `text` input when it happens to be an existing file
+#'   path or has an extension, wrap it in [I()], or simply use the `text`
+#'   argument instead.
+#' @param output An output file path or a filename extension (`.html`, `.tex`,
+#'   `.xml`, `.man`, `.markdown`, or `.txt`). In the latter case, the output
+#'   file path will use the extension on the same base filename as the input
+#'   file if the `input` is a file. If `output` is not character (e.g., `NA`),
+#'   the results will be returned as a character vector instead of being written
+#'   to a file. If `output` is `NULL` or an extension, and the input is a file
 #'   path, the output file path will have the same base name as the input file,
-#'   with an extension corresponding to the `format` argument, e.g.,
-#'   `mark('foo.md', format = 'latex')` will generate an output file
-#'   \file{foo.tex} by default.
-#' @param text A character vector of the Markdown text. By default, it is read
-#'   from `input`.
-#' @param format An output format supported by \pkg{commonmark}, e.g., `'html'`,
-#'   `'man'`, and `'text'`, etc. See the
-#'   [`markdown_*()`][commonmark::commonmark] renderers in \pkg{commonmark}.
+#'   with an extension corresponding to the output format. The output format is
+#'   retrieved from the first value in the `output` field of the YAML metadata
+#'   of the `input` (e.g., `litedown::html_format` will generate HTML output).
+#'   The `output` argument can also take an output format name (possible values
+#'   are `html`, `latex`, `xml`, `man`, `commonmark`, and `text`). If no output
+#'   format is detected or provided, the default is HTML.
+#' @param text A character vector as the text input. By default, it is read from
+#'   the `input` file if provided.
 #' @param options Options to be passed to the renderer. See [markdown_options()]
 #'   for details. This argument can take either a character vector of the form
 #'   `"+option1 option2-option3"` (use `+` or a space to enable an option, and
@@ -42,25 +46,27 @@
 #' @examples
 #' library(litedown)
 #' mark(c('Hello _World_!', '', 'Welcome to **litedown**.'))
-#' # a few corner cases
-#' mark(character(0))
-#' mark('')
-#' # if input happens to be a file path but should be treated as text, use I()
+#' # if input appears to be a file path but should be treated as text, use I()
 #' mark(I('This is *not* a file.md'))
 #' # that's equivalent to
 #' mark(text = 'This is *not* a file.md')
-mark = function(
-  input = NULL, output = NULL, text = NULL, format = c('html', 'latex'),
-  options = NULL, meta = list()
-) {
-  if (is.null(text)) {
-    if (!is.character(input)) stop("Either 'input' or 'text' must be provided.")
-    text = if (is_file(input)) xfun::read_utf8(input) else input
-  }
-  text = xfun::split_lines(text)
-
+#'
+#' # output to a file
+#' mark('_Hello_, **World**!', output = tempfile())
+#'
+#' # convert to LaTeX
+#' mark('Hello _World_!', '.tex')
+#'
+#' # a few corner cases
+#' mark(character(0))
+#' mark('')
+mark = function(input = NULL, output = NULL, text = NULL, options = NULL, meta = list()) {
+  text = read_input(input, text)
   part = xfun::yaml_body(text); yaml = part$yaml; text = part$body
-  format = format[1]
+
+  format = detect_format(output, yaml)
+  output = auto_output(input, output, format)
+
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
     yaml[intersect(names(yaml), c('title', 'author', 'date'))],
@@ -68,8 +74,6 @@ mark = function(
     meta
   )
   meta = normalize_meta(meta)
-
-  if (missing(output) && is_file(input)) output = auto_output(input, format)
 
   render_fun = tryCatch(
     getFromNamespace(paste0('markdown_', tolower(format)), 'commonmark'),
@@ -291,8 +295,12 @@ mark = function(
     if (grepl('\n\\title{}\n', ret, fixed = TRUE))
       ret = gsub('\n(\\\\title\\{}|\\\\maketitle)\n', '\n', ret)
   }
-
-  if (is.character(output)) xfun::write_utf8(ret, output) else ret
+  # TODO: build PDF for format == 'latex'?
+  if (is_output_file(output)) {
+    # for RStudio to capture the output path when previewing the output
+    if (Sys.getenv('RMARKDOWN_PREVIEW_DIR') != '') message('Output created: ', output)
+    xfun::write_utf8(ret, output)
+  } else ret
 }
 
 #' @rdname mark

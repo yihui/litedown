@@ -8,7 +8,7 @@ output_format = function(to = 'html') {
       to = to, keep_tex = keep_tex, latex_engine = latex_engine, args = '--template'
     )
     opts$convert_fun = function(input, output, ...) {
-      mark(input, output, NULL, to, options, meta)
+      mark(input, output, NULL, options, meta)
     }
     rmarkdown::output_format(
       NULL, opts, keep_md = keep_md,
@@ -92,3 +92,26 @@ yaml_field = function(yaml, format, name = 'meta') {
   if (!grepl('_format$', i)) out = do.call(map_args, out)
   out[[name]]
 }
+
+# get output format from YAML's `output` field
+yaml_format = function(yaml) {
+  if (is.list(out <- yaml[['output']])) out = names(out)
+  out = xfun::grep_sub('^litedown:::?([^_]+)_.*', '\\1', out)
+  if (length(out) < 1) 'html' else out[1]
+}
+
+# determine output format based on output file name and input's YAML
+detect_format = function(output, yaml) {
+  res = if (is.character(output)) {
+    if (output %in% names(md_formats)) output else {
+      ext = xfun::file_ext(output)
+      if (ext == 'pdf') 'latex' else names(which(md_formats == paste0('.', ext)))
+    }
+  }
+  if (length(res) == 1) res else yaml_format(yaml)
+}
+
+md_formats = c(
+  html = '.html', xml = '.xml', man = '.man', commonmark = '.markdown',
+  text = '.txt', latex = '.tex'
+)
