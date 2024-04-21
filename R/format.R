@@ -1,32 +1,26 @@
-output_format = function(to = 'html') {
-  to
-  function(
-    meta = NULL, template = NULL, options = NULL, keep_md = FALSE,
-    keep_tex = FALSE, latex_engine = 'xelatex'
-  ) {
-    opts = rmarkdown::pandoc_options(
-      to = to, keep_tex = keep_tex, latex_engine = latex_engine, args = '--template'
-    )
-    opts$convert_fun = function(input, output, ...) {
-      mark(input, output, NULL, options, meta)
-    }
-    rmarkdown::output_format(
-      NULL, opts, keep_md = keep_md,
-      pre_processor = function(meta, input, runtime, knit_meta, ...) {
-        # knitr::knit_meta() has been emptied at this stage and only available
-        # in the `knit_meta` argument; make a copy in .env so that it can be
-        # accessed in add_html_deps() later
-        .env$knit_meta = knit_meta; NULL
-      },
-      on_exit = function() .env$knit_meta = NULL,
-      clean_supporting = 'local' %in% normalize_options(options)[['embed_resources']]
-    )
+output_format = function(to, options, meta, template, keep_md, ...) {
+  opts = rmarkdown::pandoc_options(to = to, ...)
+  opts$convert_fun = function(input, output, ...) {
+    mark(input, output, options, meta, text = NULL)
   }
+  rmarkdown::output_format(
+    NULL, opts, keep_md = keep_md,
+    pre_processor = function(meta, input, runtime, knit_meta, ...) {
+      # knitr::knit_meta() has been emptied at this stage and only available in
+      # the `knit_meta` argument; make a copy in .env so that it can be accessed
+      # in add_html_deps() later
+      .env$knit_meta = knit_meta; NULL
+    },
+    on_exit = function() .env$knit_meta = NULL,
+    clean_supporting = 'local' %in% normalize_options(options)[['embed_resources']]
+  )
 }
 
-#' Output formats for the \pkg{rmarkdown} package
+#' Output formats in YAML metadata
 #'
-#' Convenience functions for \pkg{rmarkdown} users.
+#' The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
+#' formats can be configured in the `output` field of the YAML metadata of the
+#' Markdown document.
 #'
 #' The \pkg{rmarkdown} package converts Markdown using Pandoc by default, and it
 #' also accept custom converting tools. The output formats here provide the
@@ -35,18 +29,27 @@ output_format = function(to = 'html') {
 #' absolutely not necessary to rely on \pkg{rmarkdown}. The only point is
 #' convenience. If you do not use `rmarkdown::render()` or the Knit button, you
 #' can definitely just call `litedown::mark()` directly.
-#' @param meta,template,options Arguments to be passed to [mark()].
+#' @param meta,options Arguments to be passed to [mark()].
+#' @param template A template file path.
 #' @param keep_md,keep_tex Whether to keep the intermediate \file{.md} and
 #'   \file{.tex} files generated from \file{.Rmd}.
 #' @param latex_engine The LaTeX engine to compile \file{.tex} to \file{.pdf}.
-#'   This argument and `keep_tex` are for `latex_format()` only, and ignored in
-#'   `html_format()`.
 #' @export
-html_format = output_format('html')
+html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
+  output_format('html', options, meta, template, keep_md)
+}
 
 #' @rdname html_format
 #' @export
-latex_format = output_format('latex')
+latex_format = function(
+  options = NULL, meta = NULL, template = NULL, keep_md = FALSE,
+  keep_tex = FALSE, latex_engine = 'xelatex'
+) {
+  output_format(
+    'latex', options, meta, template, keep_md,
+    keep_tex = keep_tex, latex_engine = latex_engine
+  )
+}
 
 # compatibility layers to rmarkdown::[html|pdf]_document
 html_document = function(...) do.call(html_format, map_args(...))

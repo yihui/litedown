@@ -3,38 +3,33 @@
 \name{html_format}
 \alias{html_format}
 \alias{latex_format}
-\title{Output formats for the \pkg{rmarkdown} package}
+\title{Output formats in YAML metadata}
 \usage{
-html_format(
-  meta = NULL,
-  template = NULL,
-  options = NULL,
-  keep_md = FALSE,
-  keep_tex = FALSE,
-  latex_engine = "xelatex"
-)
+html_format(options = NULL, meta = NULL, template = NULL, keep_md = FALSE)
 
 latex_format(
+  options = NULL,
   meta = NULL,
   template = NULL,
-  options = NULL,
   keep_md = FALSE,
   keep_tex = FALSE,
   latex_engine = "xelatex"
 )
 }
 \arguments{
-\item{meta, template, options}{Arguments to be passed to \code{\link[=mark]{mark()}}.}
+\item{meta, options}{Arguments to be passed to \code{\link[=mark]{mark()}}.}
+
+\item{template}{A template file path.}
 
 \item{keep_md, keep_tex}{Whether to keep the intermediate \file{.md} and
 \file{.tex} files generated from \file{.Rmd}.}
 
-\item{latex_engine}{The LaTeX engine to compile \file{.tex} to \file{.pdf}.
-This argument and \code{keep_tex} are for \code{latex_format()} only, and ignored in
-\code{html_format()}.}
+\item{latex_engine}{The LaTeX engine to compile \file{.tex} to \file{.pdf}.}
 }
 \description{
-Convenience functions for \pkg{rmarkdown} users.
+The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
+formats can be configured in the \code{output} field of the YAML metadata of the
+Markdown document.
 }
 \details{
 The \pkg{rmarkdown} package converts Markdown using Pandoc by default, and it
