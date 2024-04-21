@@ -33,7 +33,6 @@ Type 'q()' to quit R.
 <h2 id="header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
-
 > mark(mkd, options = "+number_sections+toc")
 <div id="TOC">
 <ul class="numbered">
@@ -49,16 +48,13 @@ Type 'q()' to quit R.
 <h2 id="header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
-
 > mark("foo\nbar\n")
 <p>foo
 bar</p>
 
-
 > mark("foo\nbar\n", options = "+hardbreaks")
 <p>foo<br />
 bar</p>
-
 
 > mkd <- c("`$x$` is inline math $x$!", "", "Display style:", 
 +     "", "$$x + y$$", "", "\\begin{align}\na^{2}+b^{2} & = c^{2}\\\\\n\\sin^{2}(x)+\\c ..." ... [TRUNCATED] 
@@ -69,7 +65,6 @@ bar</p>
 <p>$$x + y$$</p>
 <p>\begin{align} a^{2}+b^{2} &amp; = c^{2}\\ \sin^{2}(x)+\cos^{2}(x) &amp; = 1 \end{align}</p>
 
-
 > mark(mkd, options = "-latex_math")
 <p><code>$x$</code> is inline math $x$!</p>
 <p>Display style:</p>
@@ -78,7 +73,6 @@ bar</p>
 a^{2}+b^{2} &amp; = c^{2}\
 \sin^{2}(x)+\cos^{2}(x) &amp; = 1
 \end{align}</p>
-
 
 > mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n")
 <table>
@@ -100,7 +94,6 @@ a^{2}+b^{2} &amp; = c^{2}\
 </tbody>
 </table>
 
-
 > mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n", 
 +     options  .... [TRUNCATED] 
 <p>First Header  | Second Header
@@ -108,63 +101,49 @@ a^{2}+b^{2} &amp; = c^{2}\
 Content Cell  | Content Cell
 Content Cell  | Content Cell</p>
 
-
 > mark("https://www.r-project.org/")
 <p><a href="https://www.r-project.org/">https://www.r-project.org/</a></p>
-
 
 > mark("https://www.r-project.org/", options = "-autolink")
 <p>https://www.r-project.org/</p>
 
-
 > mark("~~awesome~~")
 <p><del>awesome</del></p>
-
 
 > mark("~~awesome~~", options = "-strikethrough")
 <p>~~awesome~~</p>
 
-
 > mark("2^10^")
 <p>2<sup>10</sup></p>
-
 
 > mark("2^10^", options = "-superscript")
 <p>2^10^</p>
 
-
 > mark("H~2~O")
 <p>H<sub>2</sub>O</p>
 
-
 > mark("H~2~O", options = "-subscript")
 <p>H~2~O</p>
-
 
 > mark("```r\n1 + 1;\n```")
 <pre><code class="language-r">1 + 1;
 </code></pre>
 
-
 > mark("```{.r}\n1 + 1;\n```")
 <pre><code class="language-r">1 + 1;
 </code></pre>
-
 
 > mark("```{.r .js}\n1 + 1;\n```")
 <pre><code class="language-r js">1 + 1;
 </code></pre>
 
-
 > mark("```{.r .js #foo}\n1 + 1;\n```")
 <pre><code class="language-r js" id="foo">1 + 1;
 </code></pre>
 
-
 > mark("```{.r .js #foo style=\"background:lime;\"}\n1 + 1;\n```")
 <pre><code class="language-r js" id="foo" style="background:lime;">1 + 1;
 </code></pre>
-
 
 > mark("````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````")
 <pre><code>A _code chunk_:
@@ -174,10 +153,8 @@ Content Cell  | Content Cell</p>
 ```
 </code></pre>
 
-
 > mark("```{=html}\n<p>raw HTML</p>\n```")
 <p>raw HTML</p>
-
 
 > mark("```{=latex}\n<p>raw HTML</p>\n```")
 
@@ -187,5 +164,4 @@ Content Cell  | Content Cell</p>
 > mark(mkd)
 <style>a {}</style><script type="text/javascript">console.log("No!");</script>
 <p><a href="#">Hello</a></p>
-
 > 

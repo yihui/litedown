@@ -296,6 +296,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       ret = gsub('\n(\\\\title\\{}|\\\\maketitle)\n', '\n', ret)
   }
 
+  ret = sub('\n$', '', ret)
   if (is_output_file(output)) {
     # build PDF for LaTeX output when the output file is .pdf
     is_pdf = FALSE
