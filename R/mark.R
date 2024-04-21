@@ -295,11 +295,24 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (grepl('\n\\title{}\n', ret, fixed = TRUE))
       ret = gsub('\n(\\\\title\\{}|\\\\maketitle)\n', '\n', ret)
   }
-  # TODO: build PDF for format == 'latex'?
+
   if (is_output_file(output)) {
+    # build PDF for LaTeX output when the output file is .pdf
+    is_pdf = FALSE
+    if (format == 'latex') {
+      latex_engine = yaml_field(yaml, format, 'latex_engine')
+      if (is.character(latex_engine) || xfun::file_ext(output) == 'pdf') {
+        is_pdf = TRUE
+        tex = xfun::with_ext(output, '.tex')
+        if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
+          on.exit(file.remove(tex), add = TRUE)
+        xfun::write_utf8(ret, tex)
+        output = tinytex::latexmk(tex, latex_engine %||% 'xelatex')
+      }
+    }
     # for RStudio to capture the output path when previewing the output
     if (Sys.getenv('RMARKDOWN_PREVIEW_DIR') != '') message('Output created: ', output)
-    xfun::write_utf8(ret, output)
+    if (is_pdf) invisible(output) else xfun::write_utf8(ret, output)
   } else xfun::raw_string(ret)
 }
 
