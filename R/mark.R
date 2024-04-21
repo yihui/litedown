@@ -311,8 +311,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         output = tinytex::latexmk(tex, latex_engine %||% 'xelatex')
       }
     }
-    # for RStudio to capture the output path when previewing the output
-    if (Sys.getenv('RMARKDOWN_PREVIEW_DIR') != '') message('Output created: ', output)
+    # for RStudio to capture the output path when previewing the output (the env
+    # var `RMARKDOWN_PREVIEW_DIR` will be non-empty); don't emit the message
+    # when rendering Rmd with rmarkdown::render() because render() will do it
+    if (Sys.getenv('RMARKDOWN_PREVIEW_DIR') != '' && !'knit_meta' %in% ls(.env))
+      message('Output created: ', output)
     if (is_pdf) invisible(output) else xfun::write_utf8(ret, output)
   } else xfun::raw_string(ret)
 }
