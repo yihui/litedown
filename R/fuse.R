@@ -213,7 +213,7 @@ get_loc = function(block, input = NULL, lines = block$lines) {
 #' fiss(doc)
 fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE) {
   text = read_input(input, text); input = attr(text, 'input')
-  yaml = xfun::yaml_body(text)$yaml
+  yaml = yaml_body(text)$yaml
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
   output_base = if (is_output_file(output)) xfun::sans_ext(output)

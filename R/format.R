@@ -84,22 +84,34 @@ map_args = function(
   list(meta = meta, options = opts, ...)
 }
 
+# split YAML and body from text input, and normalize rmarkdown output formats in
+# YAML to litedown's formats
+yaml_body = function(text) {
+  res = xfun::yaml_body(text)
+  if (length(out <- res$yaml[['output']]) == 0 || !is.list(out)) return(res)
+  fmt = c(
+    html_document = 'litedown::html_format',
+    html_vignette = 'litedown::html_format',
+    pdf_document = 'litedown::latex_format'
+  )
+  for (i in intersect(names(fmt), names(out))) {
+    out[[i]] = if (is.list(out[[i]])) do.call(map_args, out[[i]]) else list()
+    names(out)[names(out) == i] = fmt[i]
+  }
+  res$yaml$output = out
+  res
+}
+
 # get metadata from a certain field under an output format
 yaml_field = function(yaml, format, name = 'meta') {
-  if (!is.list(out <- yaml[['output']])) return()
-  if (format == 'latex') format = '(latex|pdf)'
-  # try any (html|latex)_* output format
-  i = grep(sprintf('^litedown:::?%s_', format), names(out), value = TRUE)[1]
-  if (!is.list(out <- out[[i]])) return()
-  # compatibility with rmarkdown::(html|latex|pdf)_document
-  if (!grepl('_format$', i)) out = do.call(map_args, out)
-  out[[name]]
+  i = sprintf('litedown::%s_format', format)
+  if (is.list(out <- yaml[['output']][[i]])) out[[name]]
 }
 
 # get output format from YAML's `output` field
 yaml_format = function(yaml) {
   if (is.list(out <- yaml[['output']])) out = names(out)
-  out = xfun::grep_sub('^litedown:::?([^_]+)_.*', '\\1', out)
+  out = xfun::grep_sub('^litedown::([^_]+)_.*', '\\1', out)
   if (length(out) < 1) 'html' else out[1]
 }
 

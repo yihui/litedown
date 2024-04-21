@@ -62,7 +62,7 @@
 #' mark('Hello _**`World`**_!', 'text')
 mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()) {
   text = read_input(input, text); input = attr(text, 'input')
-  part = xfun::yaml_body(text); yaml = part$yaml; text = part$body
+  part = yaml_body(text); yaml = part$yaml; text = part$body
 
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
