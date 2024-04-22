@@ -182,7 +182,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     )
   } else if (format == 'html' && length(p) < length(text)) {
     # hide spaces so that attributes won't be dropped: {.lang foo} -> {.lang!id!foo}
-    r4 = '^([> ]*```+)(\\{.+})\\s*$'
+    r4 = '^([> ]*```+\\s*)(\\{.+})\\s*$'
     text = match_replace(text, r4, function(x) {
       x1 = sub(r4, '\\1', x)
       x2 = sub(r4, '\\2', x)
