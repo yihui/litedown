@@ -136,7 +136,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   p = NULL  # indices of prose
-  find_prose = function() if (is.null(p)) p <<- xfun::prose_index(text)
+  find_prose = function() if (is.null(p)) p <<- prose_index(text)
   # superscript and subscript; for now, we allow only characters alnum|*|(|) for
   # script text but can consider changing this rule upon users' request
   r2 = '(?<!`)\\^([[:alnum:]*()]+?)\\^(?!`)'

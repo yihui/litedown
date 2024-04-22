@@ -42,7 +42,7 @@ eval_lang = function(x, envir) {
 #' cat(litedown:::smartypants("1/2 (c)\n"))
 smartypants = function(text) {
   text = split_lines(text)
-  i = xfun::prose_index(text)
+  i = prose_index(text)
   r = '(?<!`)\\((c|r|tm)\\)|(\\d+/\\d+)(?!`)'
   text[i] = match_replace(text[i], r, function(z) {
     y = pants[z]
