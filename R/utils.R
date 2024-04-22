@@ -903,8 +903,8 @@ add_html_deps = function(meta, output, embed = TRUE) {
     'It seems the document contains HTML dependencies, which require ',
     'the rmarkdown package but it is not available.'
   )
-  deps = rmarkdown::flatten_html_dependencies(deps)
-  deps = rmarkdown::html_dependency_resolver(deps)
+  deps = rmarkdown:::flatten_html_dependencies(deps)
+  deps = rmarkdown:::html_dependency_resolver(deps)
   if (length(deps) == 0) return(meta)
   d1 = d2 = NULL
   # if resources need to be embedded, use their absolute paths; otherwise copy
@@ -915,7 +915,7 @@ add_html_deps = function(meta, output, embed = TRUE) {
     }
     d1 = 'libs'; d2 = '.'
   }
-  deps = rmarkdown::html_dependencies_as_string(deps, d1, d2)
+  deps = rmarkdown:::html_dependencies_as_string(deps, d1, d2)
   meta[['header-includes']] = paste(deps, one_string(meta[['header-includes']], test = TRUE), sep = '\n')
   meta
 }
