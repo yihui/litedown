@@ -1,4 +1,11 @@
+is_rmd_preview = function() Sys.getenv('RMARKDOWN_PREVIEW_DIR') != ''
+
 output_format = function(to, options, meta, template, keep_md, ...) {
+  if (is_rmd_preview()) xfun::do_once(message(
+    "It appears that you clicked the 'Knit' button in RStudio to render the document, ",
+    "but perhaps should add a top-level field 'knit: litedown:::knit' to the YAML metadata, ",
+    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render().\n"
+  ), 'litedown.rmarkdown.reminder')
   opts = rmarkdown::pandoc_options(to = to, ...)
   opts$convert_fun = function(input, output, ...) {
     mark(input, output, options, meta, text = NULL)
@@ -22,13 +29,37 @@ output_format = function(to, options, meta, template, keep_md, ...) {
 #' formats can be configured in the `output` field of the YAML metadata of the
 #' Markdown document.
 #'
-#' The \pkg{rmarkdown} package converts Markdown using Pandoc by default, and it
-#' also accept custom converting tools. The output formats here provide the
-#' custom converting function [mark()] to \pkg{rmarkdown}, so that users can
-#' take advantage of [rmarkdown::render()] and the Knit button in RStudio. It is
-#' absolutely not necessary to rely on \pkg{rmarkdown}. The only point is
-#' convenience. If you do not use `rmarkdown::render()` or the Knit button, you
-#' can definitely just call `litedown::mark()` directly.
+#' The output format functions have two purposes. The main purpose is to make it
+#' possible (and easier) to configure the output formats using YAML metadata
+#' inside a document, e.g.,
+#'
+#' ```yaml
+#' ---
+#' output:
+#'   litedown::html_format:
+#'     options:
+#'       toc: true
+#'     keep_md: true
+#'   litedown::latex_format:
+#'     latex_engine: pdflatex
+#' ---
+#' ```
+#'
+#' The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
+#' [knitr::knit()] and [mark()] (instead of Pandoc), and also use the `Knit`
+#' button in RStudio. Although you can render R Markdown to Markdown via either
+#' `knitr::knit()` or [fuse()], please note that the two ways are not 100%
+#' compatible with each other. If you choose to use \pkg{litedown}, we recommend
+#' that you use `fuse()` instead. If you want `fuse()` to work with the `Knit`
+#' button in RStudio, you have to add a special field to YAML:
+#'
+#' ```yaml
+#' ---
+#' knit: litedown:::knit
+#' ---
+#' ```
+#'
+#' Without this field, RStudio will use \pkg{knitr} to render R Markdown.
 #' @param meta,options Arguments to be passed to [mark()].
 #' @param template A template file path.
 #' @param keep_md,keep_tex Whether to keep the intermediate \file{.md} and

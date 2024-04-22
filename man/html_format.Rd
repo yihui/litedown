@@ -32,11 +32,33 @@ formats can be configured in the \code{output} field of the YAML metadata of the
 Markdown document.
 }
 \details{
-The \pkg{rmarkdown} package converts Markdown using Pandoc by default, and it
-also accept custom converting tools. The output formats here provide the
-custom converting function \code{\link[=mark]{mark()}} to \pkg{rmarkdown}, so that users can
-take advantage of \code{\link[rmarkdown:render]{rmarkdown::render()}} and the Knit button in RStudio. It is
-absolutely not necessary to rely on \pkg{rmarkdown}. The only point is
-convenience. If you do not use \code{rmarkdown::render()} or the Knit button, you
-can definitely just call \code{litedown::mark()} directly.
+The output format functions have two purposes. The main purpose is to make it
+possible (and easier) to configure the output formats using YAML metadata
+inside a document, e.g.,
+
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
+output:
+  litedown::html_format:
+    options:
+      toc: true
+    keep_md: true
+  litedown::latex_format:
+    latex_engine: pdflatex
+---
+}\if{html}{\out{</div>}}
+
+The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
+\code{\link[knitr:knit]{knitr::knit()}} and \code{\link[=mark]{mark()}} (instead of Pandoc), and also use the \code{Knit}
+button in RStudio. Although you can render R Markdown to Markdown via either
+\code{knitr::knit()} or \code{\link[=fuse]{fuse()}}, please note that the two ways are not 100\%
+compatible with each other. If you choose to use \pkg{litedown}, we recommend
+that you use \code{fuse()} instead. If you want \code{fuse()} to work with the \code{Knit}
+button in RStudio, you have to add a special field to YAML:
+
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
+knit: litedown:::knit
+---
+}\if{html}{\out{</div>}}
+
+Without this field, RStudio will use \pkg{knitr} to render R Markdown.
 }
