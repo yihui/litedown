@@ -4,27 +4,34 @@
 \alias{parse_rmd}
 \title{Parse an R Markdown document}
 \usage{
-parse_rmd(input = NULL, text = xfun::read_utf8(input))
+parse_rmd(input = NULL, text = NULL)
 }
 \arguments{
-\item{input}{The input file.}
+\item{input}{A character vector to provide the input file path or text. If
+not provided, the \code{text} argument must be provided instead. The \code{input}
+vector will be treated as a file path if it is a single string, and points
+to an existing file or has a filename extension. In other cases, the vector
+will be treated as the \code{text} argument input. To avoid ambiguity, if a
+string should be treated as \code{text} input when it happens to be an existing
+file path or has an extension, wrap it in \code{\link[=I]{I()}}, or simply use the \code{text}
+argument instead.}
 
-\item{text}{A character vector of the Rmd source. If provided, the \code{input}
-argument will be ignored.}
+\item{text}{A character vector as the text input. By default, it is read from
+the \code{input} file if provided.}
 }
 \value{
 A list of code chunks and text blocks:
-
-Code chunks are of the form \code{list(source, type = "code_chunk", options, comments, ...)}: \code{source} is a character vector of the source code of a
+\itemize{
+\item Code chunks are of the form \code{list(source, type = "code_chunk", options,   comments, ...)}: \code{source} is a character vector of the source code of a
 code chunk, \code{options} is a list of chunk options, and \code{comments} is a
 vector of pipe comments.
-
-Text blocks are of the form \code{list(source, type = "text_block", ...)}. If
+\item Text blocks are of the form \code{list(source, type = "text_block", ...)}. If
 the text block does not contain any inline code, \code{source} will be a
 character string (lines of text concatenated by line breaks), otherwise it
 will be a list with members that are either character strings (normal text
 fragments) or lists of the form \code{list(code, options)} (\code{code} is the inline
-code, and \code{options} contains its options specified inside \code{`{lang, ...}`}).
+code, and \code{options} contains its options specified inside \code{`{lang, ...}`  }).
+}
 
 Both code chunks and text blocks have a list member named \code{lines} that
 stores their line numbers in the input.
@@ -45,11 +52,10 @@ An inline code fragment is of the form \code{`{lang} code`} embedded in
 Markdown text.
 }
 \examples{
-res = litedown::parse_rmd(text = c("```{r}\n1+1\n```",
-    "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"))
+library(litedown)
+res = parse_rmd(c("```{r}\n1+1\n```", "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"))
 str(res)
-# evaluate inline code and combine results with text
-# fragments
+# evaluate inline code and combine results with text fragments
 txt = lapply(res[[2]]$source, function(x) {
     if (is.character(x))
         x else eval(parse(text = x$code))

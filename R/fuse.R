@@ -15,18 +15,16 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'
 #' An inline code fragment is of the form `` `{lang} code` `` embedded in
 #' Markdown text.
-#' @param input The input file.
-#' @param text A character vector of the Rmd source. If provided, the `input`
-#'   argument will be ignored.
+#' @inheritParams mark
 #' @export
 #' @return A list of code chunks and text blocks:
 #'
-#'   Code chunks are of the form `list(source, type = "code_chunk", options,
+#'   - Code chunks are of the form `list(source, type = "code_chunk", options,
 #'   comments, ...)`: `source` is a character vector of the source code of a
 #'   code chunk, `options` is a list of chunk options, and `comments` is a
 #'   vector of pipe comments.
 #'
-#'   Text blocks are of the form `list(source, type = "text_block", ...)`. If
+#'   - Text blocks are of the form `list(source, type = "text_block", ...)`. If
 #'   the text block does not contain any inline code, `source` will be a
 #'   character string (lines of text concatenated by line breaks), otherwise it
 #'   will be a list with members that are either character strings (normal text
@@ -40,15 +38,16 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   If any code chunks have labels (specified via the chunk option `label`),
 #'   the whole returned list will be named using the labels.
 #' @examples
-#' res = litedown::parse_rmd(text = c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
+#' library(litedown)
+#' res = parse_rmd(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
 #' str(res)
 #' # evaluate inline code and combine results with text fragments
 #' txt = lapply(res[[2]]$source, function(x) {
 #'   if (is.character(x)) x else eval(parse(text = x$code))
 #' })
 #' paste(unlist(txt), collapse = '')
-parse_rmd = function(input = NULL, text = read_utf8(input)) {
-  if (!missing(text)) text = split_lines(text)
+parse_rmd = function(input = NULL, text = NULL) {
+  text = read_input(input, text); input = attr(text, 'input')
   xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
   r = paste0(
