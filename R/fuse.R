@@ -272,8 +272,10 @@ fiss = function(input, output = '.R', text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   output = auto_output(input, output, NULL)
   blocks = parse_rmd(input, text)
+  # TODO: what should we do for non-R code? also consider eval=FALSE and error=TRUE
   res = unlist(lapply(blocks, function(b) {
-    if (b$type == 'code_chunk' && !isFALSE(b$options$purl)) c(b$source, '')
+    if (b$type == 'code_chunk' && !isFALSE(b$options$purl) && b$options$engine == 'r')
+      c(b$source, '')
   }))
   if (is_output_file(output)) write_utf8(res, output) else raw_string(res)
 }
