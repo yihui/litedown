@@ -449,9 +449,14 @@ fuse_code = function(x, envir, blocks) {
       fenced_block(x, a, fence)
     }
   })
-  out = add_fences(out, x, fence)
+  a = opts$attr.chunk
+  if (length(x$fences) == 2) {
+    # add a class name to the chunk output so we can style it differently
+    a = c(a, '.fenced-chunk')
+    out = add_fences(out, x, fence)
+  }
   out = unlist(out)
-  if (!is.null(opts$attr.chunk)) out = fenced_block(out, opts$attr.chunk, char = ':')
+  if (!is.null(a)) out = fenced_block(out, a, char = ':')
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
 }
@@ -459,9 +464,8 @@ fuse_code = function(x, envir, blocks) {
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
 # include chunk fences in the output (and also pipe comments if exist)
 add_fences = function(out, x, fence) {
-  if (length(x$fences) != 2) return(out)
   fences = list(c(x$fences[1], x$comments), x$fences[2])
-  append(lapply(fences, fenced_block, '.md', fence), out, 1)
+  append(lapply(fences, fenced_block, c('.md', '.code-fence'), fence), out, 1)
 }
 
 new_record = function(x, class) structure(x, class = paste0('record_', class))
