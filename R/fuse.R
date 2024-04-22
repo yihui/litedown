@@ -83,9 +83,15 @@ parse_rmd = function(input = NULL, text = NULL) {
   if (!length(m) || !length(m <- m[, m[2, ] != 'code_block' | m[9, ] != '', drop = FALSE]))
     return(res)
 
+  m = m[, m[2, ] == 'code', drop = FALSE]
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
-  m = m[, m[2, ] == 'code' & grepl(rx_inline, m[9, ]), drop = FALSE]
+  # look for `r expr` if `{lang}` not found (for compatibility with knitr)
+  if (!any(j <- grepl(rx_inline, m[9, ])) && getOption('litedown.enable.knitr_inline', FALSE)) {
+    rx_inline = '^(r) +(.+?)\\s*$'
+    j = grepl(rx_inline, m[9, ])
+  }
+  m = m[, j, drop = FALSE]
   for (i in seq_len(ncol(m))) {
     pos = as.integer(m[3:6, i]); i1 = pos[1]; i2 = pos[3]
     for (j in seq_along(res)) {
@@ -181,6 +187,15 @@ parse_rmd = function(input = NULL, text = NULL) {
   if (!all(nms == '')) names(res) = nms
 
   res
+}
+
+# convert knitr's inline `r code` to litedown's `{r} code`
+convert_knitr = function(input) {
+  x = read_utf8(input)
+  r = '(?<!(^``))(?<!(\n``))`r[ #]([^`]+)\\s*`'
+  i = prose_index(x)
+  x[i] = gsub(r, '`{r} \\3`', x[i], perl = TRUE)
+  write_utf8(x, input)
 }
 
 # return a string to point out the error location

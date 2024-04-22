@@ -137,6 +137,13 @@ write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
 Comma-separated chunk options can also be provided to inline code expressions
 after the language name, e.g., `` `{r, eval=FALSE} code` ``.
 
+For **knitr** users, please note that the syntax `` `r code` `` is not supported
+by default. You have to wrap the language name `r` in curly braces. As a
+temporary workaround, you may set `options(litedown.enable.knitr_inline = TRUE)`
+in your `.Rprofile` to make **litedown** recognize `` `r code` ``, but we
+recommend that you convert the document via `litedown:::convert_knitr()` instead
+if you decide to stay with **litedown** in the long run.
+
 ### Comparison to **knitr**
 
 Major differences between **knitr** and **litedown** include:
