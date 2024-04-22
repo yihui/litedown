@@ -105,13 +105,14 @@ parse_rmd = function(input = NULL, text = NULL) {
     res[[j[i]]] = b
   }
 
-  opts = options('xfun.handle_error.loc_fun')
-  on.exit(options(opts), add = TRUE)
+  opts = options(xfun.handle_error.loc_fun = get_loc)
+  oenv = as.list(.env)
+  on.exit({ options(opts); reset_env(oenv, .env) }, add = TRUE)
+  .env$input = input  # store the input name for get_loc()
 
   # remove code fences, and extract code in text blocks
   for (j in seq_along(res)) {
     b = res[[j]]
-    options(xfun.handle_error.loc_fun = get_loc(NULL, input, b$lines))
     if (b$type == 'code_chunk') {
       code = b$source
       N = length(code)
@@ -141,6 +142,7 @@ parse_rmd = function(input = NULL, text = NULL) {
         o = if (o[5] != '') csv_options(o[5])
       }
       code = code[-c(1, N)]  # remove fences
+      save_pos(b$lines)
       code = xfun::divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
       # merge chunk options from header into pipe comment options
@@ -168,8 +170,9 @@ parse_rmd = function(input = NULL, text = NULL) {
         z = x[i]
         if (i %% 2 == 1) return(z)
         z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
+        p2 = pos[, i / 2]; save_pos(p2)
         list(
-          code = z[2], pos = pos[, i / 2],
+          code = z[2], pos = p2,
           options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
         )
       })
@@ -195,13 +198,16 @@ convert_knitr = function(input) {
   write_utf8(x, input)
 }
 
-# return a string to point out the error location
-get_loc = function(block, input = NULL, lines = block$lines) {
-  function(label) {
-    l = if (length(lines) > 0) paste(lines, collapse = '-')
-    paste0(l, label, if (label == '') ' ', sprintf('(%s)', input))
-  }
+# return a string to indicate the error location
+get_loc = function(label) {
+  l = .env$source_pos; n = length(l)
+  if (n == 4) l = sprintf('%d:%d-%d:%d', l[1], l[2], l[3], l[4])  # row1:col1-row2:col2
+  if (n == 2) l = sprintf('%d-%d', l[1], l[2])  # row1-row2
+  paste0(l, label, if (label == '') ' ', sprintf('(%s)', .env$input))
 }
+
+# save line numbers in .env to be used in error messages
+save_pos = function(x) .env$source_pos = x
 
 #' @description The function `fuse()` extracts and runs code from code chunks
 #'   and inline code expressions in R Markdown, and interweaves the results with
@@ -261,6 +267,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   }), add = TRUE)
 
   blocks = parse_rmd(input, text)
+  .env$input = input
   res = .fuse(blocks, input, envir, quiet)
 
   # keep the markdown output if keep_md = TRUE is set in YAML output format
@@ -311,7 +318,7 @@ fiss = function(input, output = '.R', text = NULL) {
 
   res = character(n)
   for (i in seq_len(n)) {
-    b = blocks[[i]]
+    b = blocks[[i]]; save_pos(b$lines)
     res[i] = xfun:::handle_error(
       if (b$type == 'code_chunk') {
         one_string(fuse_code(b, envir, blocks))
@@ -319,7 +326,7 @@ fiss = function(input, output = '.R', text = NULL) {
         one_string(fuse_text(b, envir), '')
       },
       function(e, loc) sprintf('Quitting from lines %s', loc),
-      p_lab[i], get_loc(b, input)
+      p_lab[i], get_loc
     )
     p_bar(i, n)
   }
@@ -481,6 +488,7 @@ fuse_text = function(x, envir) {
 }
 
 exec_inline = function(x, envir) {
+  save_pos(x$pos)
   o = x$options
   if (o$engine != 'r') {
     warning("The inline engine '", o$engine, "' is not supported yet")
