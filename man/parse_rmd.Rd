@@ -34,7 +34,7 @@ code, and \code{options} contains its options specified inside \code{`{lang, ...
 }
 
 Both code chunks and text blocks have a list member named \code{lines} that
-stores their line numbers in the input.
+stores their starting and ending line numbers in the input.
 
 If any code chunks have labels (specified via the chunk option \code{label}),
 the whole returned list will be named using the labels.

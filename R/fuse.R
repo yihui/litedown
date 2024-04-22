@@ -33,7 +33,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   ``).
 #'
 #'   Both code chunks and text blocks have a list member named `lines` that
-#'   stores their line numbers in the input.
+#'   stores their starting and ending line numbers in the input.
 #'
 #'   If any code chunks have labels (specified via the chunk option `label`),
 #'   the whole returned list will be named using the labels.
@@ -58,24 +58,24 @@ parse_rmd = function(input = NULL, text = NULL) {
 
   res = list()
   # add a block of text and the line range info
-  add_block = function(p, ...) {
-    res[[length(res) + 1]] <<- list(source = text[p], ..., lines = p)
+  add_block = function(l1, l2, ...) {
+    res[[length(res) + 1]] <<- list(source = text[l1:l2], ..., lines = c(l1, l2))
     res
   }
 
   n = length(text)
-  i = 1  # the possible start line number of text blocks
+  i = 1L  # the possible start line number of text blocks
   for (j in which(m[2, ] == 'code_block')) {
     # start (3) and end (5) line numbers for code chunks
     pos = as.integer(m[c(3, 5), j]); i1 = pos[1]; i2 = pos[2]
     # add the possible text block before the current code chunk
-    if (i1 > i) add_block(i:(i1 - 1), type = 'text_block')
+    if (i1 > i) add_block(i, i1 - 1L, type = 'text_block')
     # add the code chunk
-    add_block(i1:i2, info = m[8, j], type = 'code_chunk')
-    i = i2 + 1  # the earliest line for the next text block is next line
+    add_block(i1, i2, info = m[8, j], type = 'code_chunk')
+    i = i2 + 1L  # the earliest line for the next text block is next line
   }
   # if there are lines remaining, they must be a text block
-  if (i <= n) add_block(i:n, type = 'text_block')
+  if (i <= n) add_block(i, n, type = 'text_block')
 
   # code blocks must have non-empty info strings
   if (!length(m) || !length(m <- m[, m[2, ] != 'code_block' | m[9, ] != '', drop = FALSE]))
@@ -195,7 +195,7 @@ convert_knitr = function(input) {
 # return a string to point out the error location
 get_loc = function(block, input = NULL, lines = block$lines) {
   function(label) {
-    l = if (length(lines) > 0) paste(range(lines), collapse = '-')
+    l = if (length(lines) > 0) paste(lines, collapse = '-')
     paste0(l, label, if (label == '') ' ', sprintf('(%s)', input))
   }
 }
