@@ -257,7 +257,14 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     xfun::write_utf8(res, xfun::with_ext(output, '.md'))
   }
 
-  mark(input, output, res)
+  # if output = '.md' or 'markdown', no need for further mark() conversion
+  if (is.character(output) && grepl('[.]md$|^markdown$', output)) {
+    if (is_output_file(output) && output != 'markdown') {
+      xfun::write_utf8(res, output)
+    } else xfun::raw_string(res)
+  } else {
+    mark(input, output, res)
+  }
 }
 
 #' @rdname mark
