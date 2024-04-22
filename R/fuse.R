@@ -97,10 +97,11 @@ parse_rmd = function(input = NULL, text = NULL) {
     b = res[[j[i]]]; l = b$lines
     # calculate new position of code after we concatenate all lines of this block by \n
     s = nchar(b$source)
-    b$pos = c(b$pos, c(
+    b$col = c(b$col, c(
       sum(s[seq_len(i1 - l[1])] + 1) + pos[2],
       sum(s[seq_len(i2 - l[1])] + 1) + pos[4]
     ))
+    b$pos = c(b$pos, pos)
     res[[j[i]]] = b
   }
 
@@ -146,7 +147,7 @@ parse_rmd = function(input = NULL, text = NULL) {
       if (length(o)) b$options = merge_list(o, b$options)
       b$options$engine = b$info
       b$info = NULL  # the info is stored in chunk options as `engine`
-    } else if (length(p <- b$pos) > 0) {
+    } else if (length(p <- b$col) > 0) {
       p = matrix(p, nrow = 2)
       x = one_string(b$source)
       x1 = substring(x, p[1, ], p[2, ])  # code
@@ -160,13 +161,15 @@ parse_rmd = function(input = NULL, text = NULL) {
       x2[N] = gsub('^`+', '', x2[N])  # leading ` of last
       # ` at both ends for text in the middle
       if (N > 2) x2[2:(N - 1)] = gsub('^`+|`+$', '', x2[2:(N - 1)])
+      # position of code c(row1, col1, row2, col2)
+      pos = matrix(b$pos, nrow = 4)
       x = head(c(rbind(x2, c(x1, ''))), -1)
       x = lapply(seq_along(x), function(i) {
         z = x[i]
         if (i %% 2 == 1) return(z)
         z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
         list(
-          code = z[2],
+          code = z[2], pos = pos[, i / 2],
           options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
         )
       })
@@ -174,7 +177,7 @@ parse_rmd = function(input = NULL, text = NULL) {
     } else {
       b$source = paste(b$source, collapse = '\n')
     }
-    b$pos = NULL  # position not useful anymore
+    b$pos = b$col = NULL  # positions not useful anymore
     res[[j]] = b
   }
   nms = vapply(res, function(x) x$options[['label']] %||% '', character(1))
