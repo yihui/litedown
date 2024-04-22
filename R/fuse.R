@@ -65,16 +65,14 @@ parse_rmd = function(input = NULL, text = NULL) {
 
   n = length(text)
   i = 1  # the possible start line number of text blocks
-  if (length(m)) {
-    for (j in which(m[2, ] == 'code_block')) {
-      # start (3) and end (5) line numbers for code chunks
-      pos = as.integer(m[c(3, 5), j]); i1 = pos[1]; i2 = pos[2]
-      # add the possible text block before the current code chunk
-      if (i1 > i) add_block(i:(i1 - 1), type = 'text_block')
-      # add the code chunk
-      add_block(i1:i2, info = m[8, j], type = 'code_chunk')
-      i = i2 + 1  # the earliest line for the next text block is next line
-    }
+  for (j in which(m[2, ] == 'code_block')) {
+    # start (3) and end (5) line numbers for code chunks
+    pos = as.integer(m[c(3, 5), j]); i1 = pos[1]; i2 = pos[2]
+    # add the possible text block before the current code chunk
+    if (i1 > i) add_block(i:(i1 - 1), type = 'text_block')
+    # add the code chunk
+    add_block(i1:i2, info = m[8, j], type = 'code_chunk')
+    i = i2 + 1  # the earliest line for the next text block is next line
   }
   # if there are lines remaining, they must be a text block
   if (i <= n) add_block(i:n, type = 'text_block')
