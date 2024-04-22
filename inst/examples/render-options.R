@@ -64,8 +64,8 @@ mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````')
 mark('```{=html}\n<p>raw HTML</p>\n```')
 mark('```{=latex}\n<p>raw HTML</p>\n```')
 
-# skip_html tags
+# filter out HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
 mark(mkd)
-# TODO: wait for https://github.com/r-lib/commonmark/issues/15 to be fixed
+# tagfiler doesn't work: https://github.com/r-lib/commonmark/issues/15
 # mark(mkd, options = "tagfilter")
