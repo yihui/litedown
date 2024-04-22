@@ -142,7 +142,7 @@ yaml_field = function(yaml, format, name = 'meta') {
 # get output format from YAML's `output` field
 yaml_format = function(yaml) {
   if (is.list(out <- yaml[['output']])) out = names(out)
-  out = xfun::grep_sub('^litedown::([^_]+)_.*', '\\1', out)
+  out = grep_sub('^litedown::([^_]+)_.*', '\\1', out)
   if (length(out) < 1) 'html' else out[1]
 }
 
@@ -150,7 +150,7 @@ yaml_format = function(yaml) {
 detect_format = function(output, yaml) {
   res = if (is.character(output)) {
     if (output %in% names(md_formats)) output else {
-      ext = xfun::file_ext(output)
+      ext = file_ext(output)
       if (ext == 'pdf') 'latex' else names(which(md_formats == paste0('.', ext)))
     }
   }

@@ -41,7 +41,7 @@ eval_lang = function(x, envir) {
 #' @examples
 #' cat(litedown:::smartypants("1/2 (c)\n"))
 smartypants = function(text) {
-  text = xfun::split_lines(text)
+  text = split_lines(text)
   i = xfun::prose_index(text)
   r = '(?<!`)\\((c|r|tm)\\)|(\\d+/\\d+)(?!`)'
   text[i] = match_replace(text[i], r, function(z) {
@@ -108,15 +108,15 @@ read_input = function(input, text) {
   if (missing(input)) input = NULL
   if (is.null(text)) {
     if (is.null(input)) stop("Either 'input' or 'text' must be provided.")
-    text = if (is_file(input)) xfun::read_utf8(input) else input
+    text = if (is_file(input)) read_utf8(input) else input
   }
-  structure(xfun::split_lines(text), input = if (is_file(input)) input)
+  structure(split_lines(text), input = if (is_file(input)) input)
 }
 
 # test if an input is a file path; if shouldn't be treated as file, use I()
 is_file = function(x) {
   length(x) == 1 && !inherits(x, 'AsIs') && is.character(x) &&
-    (xfun::file_ext(x) != '' || suppressWarnings(xfun::file_exists(x)))
+    (file_ext(x) != '' || suppressWarnings(file_exists(x)))
 }
 
 is_output_file = function(x) {
@@ -131,7 +131,7 @@ auto_output = function(input, output, format = NULL) {
   if (is.character(output)) {
     # if `output` is an extension, make a full file path based on input
     if (grepl('^[.]', output)) {
-      if (is_file(input)) output = xfun::with_ext(input, output)
+      if (is_file(input)) output = with_ext(input, output)
     }
     if (is_file(input)) check_output(input, output)
   }
@@ -140,7 +140,7 @@ auto_output = function(input, output, format = NULL) {
 
 # make sure not to overwrite input file inadvertently
 check_output = function(input, output) {
-  if (xfun::file_exists(input) && xfun::same_path(input, output))
+  if (file_exists(input) && xfun::same_path(input, output))
     stop('The output file path is the same as input: ', input)
   output
 }
@@ -285,7 +285,7 @@ set_highlight = function(meta, options, html) {
 # figure out which language support files are needed for highlight.js/prism.js
 lang_files = function(package, path, langs) {
   u = jsdelivr(path, '')
-  x = xfun::download_cache$get(u, 'text')
+  x = download_cache$get(u, 'text')
   x = one_string(x)
 
   warn = function(l1, l2, url) warning(
@@ -366,7 +366,7 @@ lang_files = function(package, path, langs) {
 
 # test if a URL can be downloaded
 downloadable = function(u, type = 'text') {
-  !xfun::try_error(xfun::download_cache$get(u, type))
+  !xfun::try_error(download_cache$get(u, type))
 }
 
 # quote a vector and combine by commas
@@ -382,7 +382,7 @@ get_option = function(name, default = NULL) {
 
 # if a string is a file path and test = TRUE, read the file; then concatenate elements by \n
 one_string = function(x, by = '\n', test = FALSE) {
-  if (test && is_file(x)) x = xfun::read_utf8(x)
+  if (test && is_file(x)) x = read_utf8(x)
   paste(x, collapse = by)
 }
 
@@ -647,10 +647,10 @@ embed_resources = function(x, embed = 'local') {
     z3 = sub(r, '\\3', z)
     # skip images already base64 encoded
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
-      if (xfun::file_exists(f <- URLdecode(z2[i]))) {
-        z2[i] = xfun::base64_uri(f)
+      if (file_exists(f <- URLdecode(z2[i]))) {
+        z2[i] = base64_uri(f)
       } else if (embed[1] && is_https(f)) {
-        z2[i] = xfun::download_cache$get(f, 'base64')
+        z2[i] = download_cache$get(f, 'base64')
       }
     }
     paste0(z1, z2, z3)
@@ -756,7 +756,7 @@ resolve_dups = function(x) {
 
 # add filename extensions to paths without extensions
 add_ext = function(x, ext) {
-  i = xfun::file_ext(x) == ''
+  i = file_ext(x) == ''
   x[i] = paste0(x[i], ext)
   x
 }
@@ -797,17 +797,17 @@ resolve_files = function(x, ext = 'css') {
   x[i] = jsdelivr(x[i], '')
 
   # built-in resources in this package
-  i = dirname(x) == '.' & xfun::file_ext(x) == '' & !xfun::file_exists(x)
+  i = dirname(x) == '.' & file_ext(x) == '' & !file_exists(x)
   x[i & (x == 'slides')] = 'snap'  # alias slides.css -> snap.css
   files = list.files(pkg_file('resources'), sprintf('[.]%s$', ext), full.names = TRUE)
-  b = xfun::sans_ext(basename(files))
+  b = sans_ext(basename(files))
   if (any(!x[i] %in% b)) stop(
     "Invalid '", ext, "' option: ", paste0("'", setdiff(x[i], b), "'", collapse = ', '),
     " (possible values are: ", paste0("'", b, "'", collapse = ','), ")"
   )
   x[i] = files[match(x[i], b)]
   x = c(x[i], x[!i])
-  x = if (ext %in% c('css', 'js')) gen_tags(x, ext) else xfun::read_all(x)
+  x = if (ext %in% c('css', 'js')) gen_tags(x, ext) else read_all(x)
   I(x)
 }
 
@@ -844,7 +844,7 @@ gen_tags = function(...) mapply(gen_tag, ...)
 # read CSS/JS and embed external fonts/background images, etc.
 resolve_external = function(x, web = TRUE, ext = '') {
   # download and cache web resources
-  txt = if (web) xfun::download_cache$get(x, 'text', handler = function(code) {
+  txt = if (web) download_cache$get(x, 'text', handler = function(code) {
     # remove jsdelivr comments
     if (grepl('^https://cdn[.]jsdelivr[.]net/', x)) {
       code = gsub(
@@ -855,7 +855,7 @@ resolve_external = function(x, web = TRUE, ext = '') {
     }
     code
   }) else {
-    base64_url(x, xfun::read_utf8(x), ext)
+    base64_url(x, read_utf8(x), ext)
   }
 }
 
@@ -865,11 +865,11 @@ base64_url = function(url, code, ext) {
   # embed fonts in mathjax's js
   if (grepl('^https://cdn[.]jsdelivr[.]net/npm/mathjax.+[.]js$', url)) {
     r = '.*?fontURL:[^"]+\\("([^"]+)".*'  # output/chtml/fonts/woff-v2
-    p = xfun::grep_sub(r, '\\1', code)
+    p = grep_sub(r, '\\1', code)
     if (length(p) == 1) code = match_replace(
       code, '(?<=src:\'url\\(")(%%URL%%/[^"]+)(?="\\))', function(u) {
         u = sub('%%URL%%', paste(d, p, sep = '/'), u, fixed = TRUE)
-        unlist(lapply(u, function(x) xfun::download_cache$get(x, 'base64')))
+        unlist(lapply(u, function(x) download_cache$get(x, 'base64')))
       }
     ) else warning(
       'Unable to determine the font path in MathJax. Please report an issue to ',
@@ -886,7 +886,7 @@ base64_url = function(url, code, ext) {
       i = !is_https(z2)
       z2[i] = paste(d, z2[i], sep = '/')
       z2 = unlist(lapply(z2, function(x) {
-        if (is_https(x)) xfun::download_cache$get(x, 'base64') else xfun::base64_uri(x)
+        if (is_https(x)) download_cache$get(x, 'base64') else base64_uri(x)
       }))
       paste0(z1, z2, z3)
     })
@@ -896,10 +896,10 @@ base64_url = function(url, code, ext) {
 
 # resolve HTML dependencies and write out the appropriate HTML code to `header-includes`
 add_html_deps = function(meta, output, embed = TRUE) {
-  if (!xfun::loadable('knitr')) return(meta)
+  if (!loadable('knitr')) return(meta)
   deps = c(knitr::knit_meta(), .env$knit_meta)
   if (length(deps) == 0 || !any(vapply(deps, inherits, logical(1), 'html_dependency'))) return(meta)
-  if (!xfun::loadable('rmarkdown')) stop(
+  if (!loadable('rmarkdown')) stop(
     'It seems the document contains HTML dependencies, which require ',
     'the rmarkdown package but it is not available.'
   )

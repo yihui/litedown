@@ -47,8 +47,8 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   if (is.character(x)) x else eval(parse(text = x$code))
 #' })
 #' paste(unlist(txt), collapse = '')
-parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
-  if (!missing(text)) text = xfun::split_lines(text)
+parse_rmd = function(input = NULL, text = read_utf8(input)) {
+  if (!missing(text)) text = split_lines(text)
   xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
   r = paste0(
@@ -116,7 +116,7 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
       code = b$source
       N = length(code)
       # a code block may be indented or inside a blockquote
-      p = xfun::grep_sub('^([\t >]*)(`{3,}|~{3,}).*', '\\1\\2', code[1])
+      p = grep_sub('^([\t >]*)(`{3,}|~{3,}).*', '\\1\\2', code[1])
       if (length(p) == 0) stop('Possibly malformed code block fence: ', code[1])
       if (!grepl(sub('^[\t >]*', '', p), code[N])) stop(
         'The fences of the code block do not match:\n\n', code[1], '\n', code[N]
@@ -138,7 +138,7 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
         if (nchar(o[3]) > 1) b$fences = c(
           sub('{{', '{', sub('}}\\s*$', '}', code[1]), fixed = TRUE), code[N]
         )
-        o = if (o[5] != '') xfun::csv_options(o[5])
+        o = if (o[5] != '') csv_options(o[5])
       }
       code = code[-c(1, N)]  # remove fences
       code = xfun::divide_chunk(b$info, code)
@@ -168,7 +168,7 @@ parse_rmd = function(input = NULL, text = xfun::read_utf8(input)) {
         z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
         list(
           code = z[2],
-          options = xfun::csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
+          options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
         )
       })
       b$source = x
@@ -216,7 +216,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   yaml = yaml_body(text)$yaml
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
-  output_base = if (is_output_file(output)) xfun::sans_ext(output)
+  output_base = if (is_output_file(output)) sans_ext(output)
 
   # cleaning up some objects on exit
   opts = reactor(); on.exit(reactor(opts), add = TRUE)
@@ -254,14 +254,14 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
 
   # keep the markdown output if keep_md = TRUE is set in YAML output format
   if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
-    xfun::write_utf8(res, xfun::with_ext(output, '.md'))
+    write_utf8(res, with_ext(output, '.md'))
   }
 
   # if output = '.md' or 'markdown', no need for further mark() conversion
   if (is.character(output) && grepl('[.]md$|^markdown$', output)) {
     if (is_output_file(output) && output != 'markdown') {
-      xfun::write_utf8(res, output)
-    } else xfun::raw_string(res)
+      write_utf8(res, output)
+    } else raw_string(res)
   } else {
     mark(input, output, res)
   }
@@ -276,7 +276,7 @@ fiss = function(input, output = '.R', text = NULL) {
   res = unlist(lapply(blocks, function(b) {
     if (b$type == 'code_chunk' && !isFALSE(b$options$purl)) c(b$source, '')
   }))
-  if (is_output_file(output)) xfun::write_utf8(res, output) else xfun::raw_string(res)
+  if (is_output_file(output)) write_utf8(res, output) else raw_string(res)
 }
 
 .fuse = function(blocks, input, envir, quiet) {
@@ -345,7 +345,7 @@ fuse_code = function(x, envir, blocks) {
     !cond
   }
   if (test_source('file')) {
-    x$source = xfun::read_all(opts$file)
+    x$source = read_all(opts$file)
   } else if (test_source('code')) {
     x$source = opts$code
   } else if (test_source('ref.label')) {
@@ -420,7 +420,7 @@ fuse_code = function(x, envir, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      if (is.null(env)) img else xfun::fenced_block(
+      if (is.null(env)) img else fenced_block(
         c(img, '', sprintf('<span>#fig:%s</span> %s', lab, cap)), env, char = ':'
       )
     } else {
@@ -430,12 +430,12 @@ fuse_code = function(x, envir, blocks) {
       } else {
         x = paste0(opts$comment, x)  # comment out text output
       }
-      xfun::fenced_block(x, a, fence)
+      fenced_block(x, a, fence)
     }
   })
   out = add_fences(out, x, fence)
   out = unlist(out)
-  if (!is.null(opts$attr.chunk)) out = xfun::fenced_block(out, opts$attr.chunk, char = ':')
+  if (!is.null(opts$attr.chunk)) out = fenced_block(out, opts$attr.chunk, char = ':')
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
 }
@@ -445,7 +445,7 @@ fuse_code = function(x, envir, blocks) {
 add_fences = function(out, x, fence) {
   if (length(x$fences) != 2) return(out)
   fences = list(c(x$fences[1], x$comments), x$fences[2])
-  append(lapply(fences, xfun::fenced_block, '.md', fence), out, 1)
+  append(lapply(fences, fenced_block, '.md', fence), out, 1)
 }
 
 new_record = function(x, class) structure(x, class = paste0('record_', class))
@@ -568,7 +568,7 @@ engines(
 )
 
 eng_html = function(x, before = NULL, after = NULL) {
-  out = xfun::fenced_block(c(before, x$source, after), '=html')
+  out = fenced_block(c(before, x$source, after), '=html')
   list(new_source(x$source), new_record(out, 'asis'))
 }
 

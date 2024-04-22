@@ -5,6 +5,9 @@
 #' then to an output document format. The main differences between this package
 #' and \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e.,
 #' fewer dependencies), and it also has fewer Markdown features.
+#' @importFrom xfun base64_uri csv_options download_cache fenced_block
+#'   file_exists file_ext grep_sub loadable raw_string read_all read_utf8
+#'   sans_ext split_lines with_ext write_utf8
 '_PACKAGE'
 
 .env = new.env(parent = emptyenv())
@@ -24,14 +27,14 @@ vig_fun = function(weave = TRUE) {
     if (grepl('[.]Rmd$', file)) {
       if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
     } else if (weave) mark(file) else {
-      xfun::write_utf8(character(), xfun::with_ext(file, '.R'))
+      write_utf8(character(), with_ext(file, '.R'))
     }
   }
 }
 
 # filter out code from document so aspell() won't spell check code
 vig_filter = function(ifile, encoding) {
-  x = xfun::read_utf8(ifile)
+  x = read_utf8(ifile)
   # TODO: implement knitr:::knit_filter based on parse_rmd()
   structure(x, control = '-H -t')
 }

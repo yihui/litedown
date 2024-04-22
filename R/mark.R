@@ -131,7 +131,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         # replace math with !id-n-id! where n is the index of the math
         sprintf('!%s-%d-%s!', id, length(maths) + seq_along(x), id)
       })
-      text = xfun::split_lines(text)
+      text = split_lines(text)
     }
   }
 
@@ -302,12 +302,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     is_pdf = FALSE
     if (format == 'latex') {
       latex_engine = yaml_field(yaml, format, 'latex_engine')
-      if (is.character(latex_engine) || xfun::file_ext(output) == 'pdf') {
+      if (is.character(latex_engine) || file_ext(output) == 'pdf') {
         is_pdf = TRUE
-        tex = xfun::with_ext(output, '.tex')
+        tex = with_ext(output, '.tex')
         if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
           on.exit(file.remove(tex), add = TRUE)
-        xfun::write_utf8(ret, tex)
+        write_utf8(ret, tex)
         output = tinytex::latexmk(tex, latex_engine %||% 'xelatex')
       }
     }
@@ -316,8 +316,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # render() will do it)
     if (is_rmd_preview() && !'knit_meta' %in% ls(.env))
       message('Output created: ', output)
-    if (is_pdf) invisible(output) else xfun::write_utf8(ret, output)
-  } else xfun::raw_string(ret)
+    if (is_pdf) invisible(output) else write_utf8(ret, output)
+  } else raw_string(ret)
 }
 
 # insert body and meta variables into a template
