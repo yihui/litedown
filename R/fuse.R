@@ -92,22 +92,18 @@ parse_rmd = function(input = NULL, text = NULL) {
     j = grepl(rx_inline, m[9, ])
   }
   m = m[, j, drop = FALSE]
+  n_start = unlist(lapply(res, function(x) x$lines[1]))  # starting line numbers
+  j = findInterval(m[3, ], n_start)  # find which block each inline code belongs to
   for (i in seq_len(ncol(m))) {
     pos = as.integer(m[3:6, i]); i1 = pos[1]; i2 = pos[3]
-    for (j in seq_along(res)) {
-      b = res[[j]]; l = b$lines
-      # find the text block that this code belongs to
-      if (i1 %in% l) {
-        # calculate new position of code after we concatenate all lines of this block by \n
-        s = nchar(b$source)
-        b$pos = c(b$pos, c(
-          sum(s[seq_len(i1 - l[1])] + 1) + pos[2],
-          sum(s[seq_len(i2 - l[1])] + 1) + pos[4]
-        ))
-        res[[j]] = b
-        break
-      }
-    }
+    b = res[[j[i]]]; l = b$lines
+    # calculate new position of code after we concatenate all lines of this block by \n
+    s = nchar(b$source)
+    b$pos = c(b$pos, c(
+      sum(s[seq_len(i1 - l[1])] + 1) + pos[2],
+      sum(s[seq_len(i2 - l[1])] + 1) + pos[4]
+    ))
+    res[[j[i]]] = b
   }
 
   opts = options('xfun.handle_error.loc_fun')
