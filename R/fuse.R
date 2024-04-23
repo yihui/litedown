@@ -329,12 +329,6 @@ fiss = function(input, output = '.R', text = NULL) {
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  p_bar = function(i, n, lab) {
-    if (!quiet && Sys.time() - t0 > td) cat(
-      p_clr, if (i < n) c(lab, as.character(round(i/n * 100)), '%'),
-      sep = '', file = p_out
-    )
-  }
 
   # the chunk option `order` determines the execution order of chunks
   o = block_order(blocks)
@@ -350,7 +344,10 @@ fiss = function(input, output = '.R', text = NULL) {
       function(e, loc) sprintf('Quitting from lines %s', loc),
       p_lab[k], get_loc
     )
-    p_bar(i, n, p_lab[k])
+    if (!quiet && Sys.time() - t0 > td) cat(
+      p_clr, if (i < n) c(p_lab[k], as.character(round(i/n * 100)), '%'),
+      sep = '', file = p_out
+    )
   }
   res
 }
