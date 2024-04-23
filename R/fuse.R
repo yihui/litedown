@@ -209,6 +209,26 @@ get_loc = function(label) {
 # save line numbers in .env to be used in error messages
 save_pos = function(x) .env$source_pos = x
 
+# get the execution order of code/text blocks via the `order` option (higher
+# values indicate higher priority)
+block_order = function(res) {
+  check = function(b) {
+    if (is.null(o <- b$options[['order']]) || length(o) == 1) o else stop(
+      "The chunk option 'order' must be either NULL or of length 1. ",
+      sprintf("Check lines %d-%d", b$lines[1], b$lines[2]),
+      sprintf(" (%s)", .env$input), "."
+    )
+  }
+  x = lapply(res, function(b) {
+    if (b$type == 'code_chunk') return(check(b) %||% 0)
+    if (!is.list(b$source)) return(0)
+    for (s in b$source)
+      if (is.list(s) && !is.null(o <- check(s))) return(o)
+    0
+  })
+  order(unlist(x), decreasing = TRUE)
+}
+
 #' @description The function `fuse()` extracts and runs code from code chunks
 #'   and inline code expressions in R Markdown, and interweaves the results with
 #'   the rest of text in the input, which is similar to what [knitr::knit()] and
@@ -309,26 +329,28 @@ fiss = function(input, output = '.R', text = NULL) {
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  p_bar = function(i, n) {
+  p_bar = function(i, n, lab) {
     if (!quiet && Sys.time() - t0 > td) cat(
-      p_clr, if (i < n) c(p_lab[i], as.character(round(i/n * 100)), '%'),
+      p_clr, if (i < n) c(lab, as.character(round(i/n * 100)), '%'),
       sep = '', file = p_out
     )
   }
 
+  # the chunk option `order` determines the execution order of chunks
+  o = block_order(blocks)
   res = character(n)
   for (i in seq_len(n)) {
-    b = blocks[[i]]; save_pos(b$lines)
-    res[i] = xfun:::handle_error(
+    k = o[i]; b = blocks[[k]]; save_pos(b$lines)
+    res[k] = xfun:::handle_error(
       if (b$type == 'code_chunk') {
         one_string(fuse_code(b, envir, blocks))
       } else {
         one_string(fuse_text(b, envir), '')
       },
       function(e, loc) sprintf('Quitting from lines %s', loc),
-      p_lab[i], get_loc
+      p_lab[k], get_loc
     )
-    p_bar(i, n)
+    p_bar(i, n, p_lab[k])
   }
   res
 }
@@ -575,7 +597,7 @@ reactor = new_opts()
 reactor(
   eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
   warning = TRUE, message = TRUE, error = FALSE, include = TRUE,
-  strip.white = TRUE,
+  strip.white = TRUE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
   cache = FALSE, cache.path = NULL,  # TODO: cache not implemented
