@@ -185,6 +185,8 @@ parse_rmd = function(input = NULL, text = NULL) {
   }
   nms = vapply(res, function(x) x$options[['label']] %||% '', character(1))
   if (!all(nms == '')) names(res) = nms
+  # TODO: should we support inline chunk references? If we do, I'd prefer a new
+  # syntax, e.g., `${label}`, instead of knitr's <<label>> syntax
 
   res
 }
