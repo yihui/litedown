@@ -29,8 +29,8 @@ vector of pipe comments.
 the text block does not contain any inline code, \code{source} will be a
 character string (lines of text concatenated by line breaks), otherwise it
 will be a list with members that are either character strings (normal text
-fragments) or lists of the form \code{list(code, options)} (\code{code} is the inline
-code, and \code{options} contains its options specified inside \code{`{lang, ...}`  }).
+fragments) or lists of the form \code{list(source, options, ...)} (\code{source} is
+the inline code, and \code{options} contains its options specified inside \code{  `{lang, ...}`}).
 }
 
 Both code chunks and text blocks have a list member named \code{lines} that
@@ -48,7 +48,7 @@ A code chunk must start with a fence of the form \verb{```\{lang\}}, where
 \code{lang} is the language name, e.g., \code{r} or \code{python}. The body of a code chunk
 can start with chunk options written in "pipe comments", e.g., \verb{#| eval = TRUE, echo = FALSE} (the CSV syntax) or \verb{#| eval: true} (the YAML syntax).
 
-An inline code fragment is of the form \code{`{lang} code`} embedded in
+An inline code fragment is of the form \code{`{lang} source`} embedded in
 Markdown text.
 }
 \examples{
@@ -58,7 +58,7 @@ str(res)
 # evaluate inline code and combine results with text fragments
 txt = lapply(res[[2]]$source, function(x) {
     if (is.character(x))
-        x else eval(parse(text = x$code))
+        x else eval(parse(text = x$source))
 })
 paste(unlist(txt), collapse = "")
 }

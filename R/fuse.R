@@ -13,7 +13,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' can start with chunk options written in "pipe comments", e.g., `#| eval =
 #' TRUE, echo = FALSE` (the CSV syntax) or `#| eval: true` (the YAML syntax).
 #'
-#' An inline code fragment is of the form `` `{lang} code` `` embedded in
+#' An inline code fragment is of the form `` `{lang} source` `` embedded in
 #' Markdown text.
 #' @inheritParams mark
 #' @export
@@ -28,9 +28,9 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   the text block does not contain any inline code, `source` will be a
 #'   character string (lines of text concatenated by line breaks), otherwise it
 #'   will be a list with members that are either character strings (normal text
-#'   fragments) or lists of the form `list(code, options)` (`code` is the inline
-#'   code, and `options` contains its options specified inside `` `{lang, ...}`
-#'   ``).
+#'   fragments) or lists of the form `list(source, options, ...)` (`source` is
+#'   the inline code, and `options` contains its options specified inside ``
+#'   `{lang, ...}` ``).
 #'
 #'   Both code chunks and text blocks have a list member named `lines` that
 #'   stores their starting and ending line numbers in the input.
@@ -43,7 +43,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' str(res)
 #' # evaluate inline code and combine results with text fragments
 #' txt = lapply(res[[2]]$source, function(x) {
-#'   if (is.character(x)) x else eval(parse(text = x$code))
+#'   if (is.character(x)) x else eval(parse(text = x$source))
 #' })
 #' paste(unlist(txt), collapse = '')
 parse_rmd = function(input = NULL, text = NULL) {
@@ -172,7 +172,7 @@ parse_rmd = function(input = NULL, text = NULL) {
         z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
         p2 = pos[, i / 2]; save_pos(p2)
         list(
-          code = z[2], pos = p2,
+          source = z[2], pos = p2,
           options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
         )
       })
@@ -513,7 +513,7 @@ exec_inline = function(x, envir) {
     warning("The inline engine '", o$engine, "' is not supported yet")
     return('')
   }
-  res = eval(xfun::parse_only(x$code), envir)
+  res = eval(xfun::parse_only(x$source), envir)
   # TODO: allow for custom coercion functions here
   as.character(res)
 }
