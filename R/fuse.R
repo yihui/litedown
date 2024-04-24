@@ -272,9 +272,9 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     } else dirname(output_base)
   )
 
-  # set default device to 'pdf' for LaTeX output, and 'png' for other formats
+  # set default device to 'cairo_pdf' for LaTeX output, and 'png' for other formats
   if (is.null(opts$dev)) {
-    opts$dev = if (format == 'latex') 'pdf' else 'png'
+    opts$dev = if (format == 'latex') 'cairo_pdf' else 'png'
   }
   # fig.path = output_files/ if `output` is a path, otherwise use litedown_files
   if (is.null(opts$fig.path)) opts$fig.path = paste0(
