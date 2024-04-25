@@ -276,14 +276,18 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (is.null(opts$dev)) {
     opts$dev = if (format == 'latex') 'cairo_pdf' else 'png'
   }
-  # fig.path = output-files/ if `output` is a path, otherwise use litedown-files
-  # (we don't use `*_files` because of rstudio/rmarkdown#2550)
-  if (is.null(opts$fig.path)) opts$fig.path = paste0(
-    output_base %||% 'litedown', '-files/'
-  )
-  # make sure fig.path is absolute path
-  if (xfun::is_rel_path(opts$fig.path))
-    opts$fig.path = file.path(getwd(), opts$fig.path)
+  # set default figure and cache paths
+  set_path = function(name) {
+    # fig.path = output-files/ if `output` is a path, otherwise use
+    # litedown-files/ (we don't use *_files because of rstudio/rmarkdown#2550)
+    if (is.null(p <- opts[[name]])) p = paste0(
+      output_base %||% 'litedown', c(fig.path = '-files/', cache.path = '-cache/')[name]
+    )
+    # make sure path is absolute so it will be immune to setwd() (in code chunks)
+    if (xfun::is_rel_path(p)) p = file.path(getwd(), p)
+    opts[[name]] = p
+  }
+  set_path('fig.path'); set_path('cache.path')
   # clean up the figure folder on exit if it's empty
   on.exit(xfun::del_empty_dir({
     if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
