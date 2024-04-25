@@ -110,6 +110,7 @@ parse_rmd = function(input = NULL, text = NULL) {
   on.exit({ options(opts); reset_env(oenv, .env) }, add = TRUE)
   .env$input = input  # store the input name for get_loc()
 
+  i1 = 0  # code chunk index
   # remove code fences, and extract code in text blocks
   for (j in seq_along(res)) {
     b = res[[j]]
@@ -145,6 +146,10 @@ parse_rmd = function(input = NULL, text = NULL) {
       save_pos(b$lines)
       code = xfun::divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
+      # default label is chunk-i
+      i1 = i1 + 1
+      if (is.null(o[['label']]) && is.null(b$options[['label']]))
+        o['label'] = list(label = sprintf('chunk-%d', i1))
       # merge chunk options from header into pipe comment options
       if (length(o)) b$options = merge_list(o, b$options)
       b$options$engine = b$info
@@ -402,7 +407,7 @@ fuse_code = function(x, envir, blocks) {
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
-  lab = opts$label %||% sprintf('unnamed-chunk-%d', chunk_counter$inc())
+  lab = opts$label
   args$dev.path = paste0(args$dev.path, lab)
   args$dev.args = merge_list(
     list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
