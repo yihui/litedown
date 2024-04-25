@@ -381,7 +381,7 @@ fuse_code = function(x, envir, blocks) {
   # fuse child documents (empty the `child` option to avoid infinite recursion)
   if (length(opts$child)) return(unlist(lapply(reactor(child = NULL)$child, function(.) {
     child = .env$child; .env$child = TRUE; on.exit(.env$child <- child)
-    fuse(., output = NA, format = 'markdown', envir = envir, quiet = TRUE)
+    fuse(., output = 'markdown', envir = envir, quiet = TRUE)
   })))
 
   # the source code could be from these chunk options: file, code, or ref.label
