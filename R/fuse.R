@@ -276,9 +276,10 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (is.null(opts$dev)) {
     opts$dev = if (format == 'latex') 'cairo_pdf' else 'png'
   }
-  # fig.path = output_files/ if `output` is a path, otherwise use litedown_files
+  # fig.path = output-files/ if `output` is a path, otherwise use litedown-files
+  # (we don't use `*_files` because of rstudio/rmarkdown#2550)
   if (is.null(opts$fig.path)) opts$fig.path = paste0(
-    output_base %||% 'litedown', '_files/'
+    output_base %||% 'litedown', '-files/'
   )
   # make sure fig.path is absolute path
   if (xfun::is_rel_path(opts$fig.path))
