@@ -146,12 +146,12 @@ parse_rmd = function(input = NULL, text = NULL) {
       save_pos(b$lines)
       code = xfun::divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
-      # default label is chunk-i
+      # default label is chunk-i (or parent-label-i for child documents)
       i1 = i1 + 1
-      if (is.null(o[['label']]) && is.null(b$options[['label']]))
-        o['label'] = list(label = sprintf('chunk-%d', i1))
-      # merge chunk options from header into pipe comment options
-      if (length(o)) b$options = merge_list(o, b$options)
+      # merge chunk options from header with pipe comment options
+      b$options = merge_list(list(
+        label = sprintf('%s-%d', (if (isTRUE(.env$child)) reactor('label')) %||% 'chunk', i1)
+      ), o, b$options)
       b$options$engine = b$info
       b$info = NULL  # the info is stored in chunk options as `engine`
     } else if (length(p <- b$col) > 0) {
@@ -381,10 +381,11 @@ fuse_code = function(x, envir, blocks) {
   }
   for (i in names(opts)) opts[[i]] = eval_lang(opts[[i]], envir)
 
-  # fuse child documents
-  if (length(opts$child)) return(unlist(lapply(
-    opts$child, fuse, output = NA, format = 'markdown', envir = envir, quiet = TRUE
-  )))
+  # fuse child documents (empty the `child` option to avoid infinite recursion)
+  if (length(opts$child)) return(unlist(lapply(reactor(child = NULL)$child, function(.) {
+    child = .env$child; .env$child = TRUE; on.exit(.env$child <- child)
+    fuse(., output = NA, format = 'markdown', envir = envir, quiet = TRUE)
+  })))
 
   # the source code could be from these chunk options: file, code, or ref.label
   test_source = function(name) {
