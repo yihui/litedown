@@ -336,12 +336,16 @@ fiss = function(input, output = '.R', text = NULL) {
   p_len = max(c(0, nchar(p_lab))) + 5  # 5 == nchar('100% ')
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
+  p_bar = if (quiet) function(x) {} else function(x) {
+    if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
+  }
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
 
   # the chunk option `order` determines the execution order of chunks
   o = block_order(blocks)
   res = character(n)
   for (i in seq_len(n)) {
+    p_bar(c(p_lab[k], as.character(round((i - 1)/n * 100)), '%'))
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
     res[k] = xfun:::handle_error(
       if (b$type == 'code_chunk') {
@@ -352,10 +356,7 @@ fiss = function(input, output = '.R', text = NULL) {
       function(e, loc) sprintf('Quitting from lines %s', loc),
       p_lab[k], get_loc
     )
-    if (!quiet && Sys.time() - t0 > td) cat(
-      p_clr, if (i < n) c(p_lab[k], as.character(round(i/n * 100)), '%'),
-      sep = '', file = p_out
-    )
+    p_bar(p_clr)
   }
   res
 }

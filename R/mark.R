@@ -315,7 +315,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # emit the message when rendering Rmd with rmarkdown::render() because
     # render() will do it)
     if (is_rmd_preview() && !'knit_meta' %in% ls(.env))
-      message('Output created: ', output)
+      message('\nOutput created: ', output)
     if (is_pdf) invisible(output) else write_utf8(ret, output)
   } else raw_string(ret)
 }
