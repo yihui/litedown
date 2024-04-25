@@ -34,9 +34,6 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'
 #'   Both code chunks and text blocks have a list member named `lines` that
 #'   stores their starting and ending line numbers in the input.
-#'
-#'   If any code chunks have labels (specified via the chunk option `label`),
-#'   the whole returned list will be named using the labels.
 #' @examples
 #' library(litedown)
 #' res = parse_rmd(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
@@ -188,8 +185,6 @@ parse_rmd = function(input = NULL, text = NULL) {
     b$pos = b$col = NULL  # positions not useful anymore
     res[[j]] = b
   }
-  nms = vapply(res, function(x) x$options[['label']] %||% '', character(1))
-  if (!all(nms == '')) names(res) = nms
   # TODO: should we support inline chunk references? If we do, I'd prefer a new
   # syntax, e.g., `${label}`, instead of knitr's <<label>> syntax
 
@@ -333,10 +328,11 @@ fiss = function(input, output = '.R', text = NULL) {
 
 .fuse = function(blocks, input, envir, quiet) {
   n = length(blocks)
+  nms = vapply(blocks, function(x) x$options[['label']] %||% '', character(1))
+  names(blocks) = nms
 
   # a simple progress indicator
-  p_lab = names(blocks) %||% rep('', n)  # labels to be displayed in progress
-  p_lab = ifelse(p_lab == '', '', sprintf(' [%s] ', p_lab))
+  p_lab = ifelse(nms == '', '', sprintf(' [%s] ', nms))  # labels to display
   p_len = max(c(0, nchar(p_lab))) + 5  # 5 == nchar('100% ')
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())

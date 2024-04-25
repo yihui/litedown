@@ -35,9 +35,6 @@ the inline code, and \code{options} contains its options specified inside \code{
 
 Both code chunks and text blocks have a list member named \code{lines} that
 stores their starting and ending line numbers in the input.
-
-If any code chunks have labels (specified via the chunk option \code{label}),
-the whole returned list will be named using the labels.
 }
 \description{
 Parse an Rmd document into code chunks, inline code expressions, and text
