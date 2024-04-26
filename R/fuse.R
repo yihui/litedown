@@ -446,7 +446,7 @@ fuse_code = function(x, envir, blocks) {
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
   # if figure env is provided, merge all plots in one env
-  if (!is.null(env)) res = c(p1, new_plot(unlist(p2)))
+  if (!is.null(env)) res = c(p1, list(new_plot(unlist(p2))))
   i = 0  # plot counter
 
   # generate markdown output
