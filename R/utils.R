@@ -26,9 +26,7 @@ gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
 
 dropNULL = function(x) x[!vapply(x, is.null, logical(1))]
 
-eval_lang = function(x, envir) {
-  if (is.symbol(x) || is.language(x)) eval(x, envir) else x
-}
+is_lang = function(x) is.symbol(x) || is.language(x)
 
 #' Convert some ASCII strings to HTML entities
 #'

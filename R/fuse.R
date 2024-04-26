@@ -370,13 +370,14 @@ fuse_code = function(x, envir, blocks) {
   old = reactor(x$options); on.exit(reactor(old), add = TRUE)
   opts = reactor()
 
-  # evaluate `wd` for now to make sure we set the right working directory before
-  # evaluating anything else
-  opts$wd = eval_lang(opts$wd, envir)
+  # delayed assignment to evaluate a chunk option only when it is actually used
+  lapply(names(opts), function(i) {
+    if (is_lang(o <- opts[[i]])) delayedAssign(i, eval(o, envir), environment(), opts)
+  })
+  # set the working directory before evaluating anything else
   if (is.character(opts$wd)) {
     owd = setwd(opts$wd); on.exit(setwd(owd), add = TRUE)
   }
-  for (i in names(opts)) opts[[i]] = eval_lang(opts[[i]], envir)
 
   # fuse child documents (empty the `child` option to avoid infinite recursion)
   if (length(opts$child)) return(unlist(lapply(reactor(child = NULL)$child, function(.) {
