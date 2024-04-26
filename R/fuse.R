@@ -259,7 +259,6 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
 
   # cleaning up some objects on exit
   opts = reactor(); on.exit(reactor(opts), add = TRUE)
-  if (chunk_counter$get() == 0) on.exit(chunk_counter$reset(), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
 
   # set working directory if unset

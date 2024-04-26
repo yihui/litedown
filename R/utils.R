@@ -16,9 +16,6 @@ new_counter = function() {
   )
 }
 
-# for unnamed code chunks
-chunk_counter = new_counter()
-
 # use PCRE by default (which seems to handle multibyte chars better)
 gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
 
