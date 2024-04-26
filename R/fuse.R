@@ -416,10 +416,10 @@ fuse_code = function(x, envir, blocks) {
   res = if (opts$eval) {
     if (lang == 'r') {
       do.call(xfun::record, c(list(code = x$source, envir = envir), args))
-    } else if (is.function(eng <- engines(lang))) eng(x) else {
-      warning("The engine '", lang, "' is not supported yet.")
-      return('')
-    }
+    } else if (is.function(eng <- engines(lang))) eng(x) else list(
+      new_source(x$source),
+      new_record(sprintf("The engine '%s' is not supported yet.", lang), 'warning')
+    )
   } else {
     list(new_source(x$source))
   }
