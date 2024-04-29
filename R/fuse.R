@@ -418,7 +418,7 @@ fuse_code = function(x, envir, blocks) {
       do.call(xfun::record, c(list(code = x$source, envir = envir), args))
     } else if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
-      new_record(sprintf("The engine '%s' is not supported yet.", lang), 'warning')
+      new_warning(sprintf("The engine '%s' is not supported yet.", lang))
     )
   } else {
     list(new_source(x$source))
@@ -506,10 +506,10 @@ add_fences = function(out, x, fence) {
   append(lapply(fences, fenced_block, c('.md', '.code-fence'), fence), out, 1)
 }
 
-new_record = function(x, class) structure(x, class = paste0('record_', class))
-new_source = function(x) new_record(x, 'source')
-new_output = function(x) new_record(x, 'output')
-new_plot   = function(x) new_record(x, 'plot')
+new_source = function(x) xfun::record_new(x, 'source')
+new_warning = function(x) xfun::record_new(x, 'warning')
+new_plot = function(x) xfun::record_new(x, 'plot')
+new_asis = function(x) xfun::record_new(x, 'asis')
 
 is_plot = function(x) inherits(x, 'record_plot')
 
@@ -628,7 +628,7 @@ engines(
 
 eng_html = function(x, before = NULL, after = NULL) {
   out = fenced_block(c(before, x$source, after), '=html')
-  list(new_source(x$source), new_record(out, 'asis'))
+  list(new_source(x$source), new_asis(out))
 }
 
 #' @export
