@@ -470,9 +470,9 @@ fuse_code = function(x, envir, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      if (is.null(env)) img else fenced_block(
-        c(img, '', sprintf('<span>#fig:%s</span> %s', lab, cap)), env, char = ':'
-      )
+      if (is.null(env)) img else fenced_div(c(
+        img, if (length(cap)) c('', fenced_div(cap, '.fig-caption'))
+      ), c(env, sprintf('#fig-%s', lab)))
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
