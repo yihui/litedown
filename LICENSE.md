@@ -1,5 +1,6 @@
 # MIT License
 
+Copyright (c) 2023 Posit Software, PBC
 Copyright (c) 2024 Yihui Xie
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
