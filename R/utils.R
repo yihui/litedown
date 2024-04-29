@@ -4,17 +4,15 @@ reset_env = function(x = list(), envir) {
   list2env(x, envir)
 }
 
-# create a counter with methods
-new_counter = function() {
-  i = 0L
+# counters for elements to be cross-referenced (e.g., fig, tab)
+counters = local({
+  db = NULL
   list(
-    get = function() i,
-    inc = function() {
-      i <<- i + 1L
-    },
-    reset = function() i <<- 0L
+    get = function() db,
+    inc = function(name) db[[name]] <<- (db[[name]] %||% 0L) + 1L,
+    del = function(name) db <<- NULL
   )
-}
+})
 
 # use PCRE by default (which seems to handle multibyte chars better)
 gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
