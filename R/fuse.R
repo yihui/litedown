@@ -492,10 +492,12 @@ fuse_code = function(x, envir, blocks) {
     out = add_fences(out, x, fence)
   }
   out = unlist(out)
-  if (!is.null(a)) out = fenced_block(out, a, char = ':')
+  if (!is.null(a)) out = fenced_div(out, a)
   if (!is.null(x$prefix)) out = paste0(x$prefix, out)
   out
 }
+
+fenced_div = function(...) fenced_block(..., char = ':')
 
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
 # include chunk fences in the output (and also pipe comments if exist)
