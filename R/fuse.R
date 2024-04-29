@@ -398,7 +398,7 @@ fuse_code = function(x, envir, blocks) {
     x$source = unlist(lapply(blocks[opts$ref.label], `[[`, 'source'))
   }
 
-  args = reactor('fig.path', 'fig.ext', 'dev', 'dev.args', 'error', 'cache')
+  args = reactor('fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error', 'cache')
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
@@ -447,7 +447,7 @@ fuse_code = function(x, envir, blocks) {
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
   # if figure env is provided, merge all plots in one env
-  if (!is.null(env)) res = c(p1, list(new_plot(unlist(p2))))
+  if (pn && !is.null(env)) res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
   i = 0  # plot counter
 
   # generate markdown output
@@ -462,8 +462,8 @@ fuse_code = function(x, envir, blocks) {
       if (opts$results == 'hide') return()
       if (any(c(opts$results, type) == 'asis')) return(x)
     }
-    if (type == 'warning' && !opts$warning) return()
-    if (type == 'message' && !opts$message) return()
+    if (type == 'warning' && !isTRUE(opts$warning)) return()
+    if (type == 'message' && !isTRUE(opts$message)) return()
     if (type == 'plot') {
       n = length(x); i2 = i + seq_len(n); i <<- i + n
       img = sprintf(
@@ -478,6 +478,8 @@ fuse_code = function(x, envir, blocks) {
       if (type == 'source') {
         a = c(paste0('.', lang), a)  # use engine name as class name
       } else {
+        if (type == 'message') x = sub('\n$', '', x)
+        x = split_lines(x)
         x = paste0(opts$comment, x)  # comment out text output
       }
       fenced_block(x, a, fence)
