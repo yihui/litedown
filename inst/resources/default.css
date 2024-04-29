@@ -8,24 +8,13 @@ body {
 }
 body, .footnotes, code { font-size: .9em; }
 li li { font-size: .95em; }
-*, *:before, *:after {
-  box-sizing: inherit;
-}
+*, *:before, *:after { box-sizing: inherit; }
 pre, img { max-width: 100%; }
-pre, pre:hover {
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-pre code {
-  display: block;
-  overflow-x: auto;
-}
+pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
+pre code { display: block; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre) > code, code[class], .box > div { background-color: #f8f8f8; }
-pre > code:not([class]), pre > .language-plain, .box {
-  background-color: inherit;
-  border: 1px solid #eee;
-}
+pre > code:not([class]), pre > .language-plain, .box { background-color: inherit; border: 1px solid #eee; }
 pre > .message { border-color: #9eeaf9; }
 pre > .warning { background: #fff3cd; border-color: #fff3cd; }
 pre > .error { background: #f8d7da; border-color: #f8d7da; }
@@ -41,10 +30,7 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
 .box > :first-child, .box > :first-child > p:first-child { margin-top: 0; }
 .box > :last-child, .box > :last-child > p:last-child { margin-bottom: 0; }
 .figure > p { text-align: center; }
-table {
-  margin: auto;
-  border-top: 1px solid #666;
-}
+table { margin: auto; border-top: 1px solid #666; }
 table thead th { border-bottom: 1px solid #ddd; }
 th, td { padding: 5px; }
 thead, tfoot, tr:nth-child(even) { background: #eee; }
@@ -63,17 +49,10 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .footnote-ref a::before { content: "["; }
 .footnote-ref a::after { content: "]"; }
-section.footnotes::before {
-  content: "";
-  display: block;
-  max-width: 20em;
-}
+section.footnotes::before { content: ""; display: block; max-width: 20em; }
 
 @media print {
-  body {
-    font-size: 12pt;
-    max-width: 100%;
-  }
+  body { font-size: 12pt; max-width: 100%; }
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
