@@ -1,8 +1,5 @@
 new_env = function(...) new.env(..., parent = emptyenv())
 
-# an internal environment to store some intermediate data
-.env = new_env()
-
 #' Parse an R Markdown document
 #'
 #' Parse an Rmd document into code chunks, inline code expressions, and text
@@ -257,7 +254,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   output = auto_output(input, output, format)
   output_base = if (is_output_file(output)) sans_ext(output)
 
-  # cleaning up some objects on exit
+  # restore and clean up some objects on exit
   opts = reactor(); on.exit(reactor(opts), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
 
@@ -401,7 +398,7 @@ fuse_code = function(x, envir, blocks) {
     x$source = unlist(lapply(blocks[opts$ref.label], `[[`, 'source'))
   }
 
-  args = reactor('fig.path', 'fig.ext', 'dev', 'dev.args', 'error')
+  args = reactor('fig.path', 'fig.ext', 'dev', 'dev.args', 'error', 'cache')
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
@@ -409,6 +406,10 @@ fuse_code = function(x, envir, blocks) {
   args$dev.path = paste0(args$dev.path, lab)
   args$dev.args = merge_list(
     list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
+  )
+  args$cache = list(
+    path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
+    hash = opts$cache.hash, keep = opts$cache.keep, id = lab, rw = opts$cache.rw
   )
 
   lang = opts$engine

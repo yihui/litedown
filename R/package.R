@@ -10,7 +10,8 @@
 #'   read_utf8 sans_ext split_lines with_ext write_utf8
 '_PACKAGE'
 
-.env = new.env(parent = emptyenv())
+# an internal environment to store some intermediate objects
+.env = new_env()
 
 # register vignette engines
 .onLoad = function(lib, pkg) {
