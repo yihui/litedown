@@ -104,7 +104,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   render = function(x, clean = FALSE) {
     if (length(x) == 0) return(x)
     res = do.call(render_fun, c(list(text = x), render_args))
-    if (clean) res = gsub('^<p[^>]*>|(</p>)?\n$', '', res)
+    if (clean) res = I(gsub('^<p[^>]*>|(</p>)?\n$', '', res))
     res
   }
 
