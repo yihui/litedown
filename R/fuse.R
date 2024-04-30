@@ -506,10 +506,10 @@ add_fences = function(out, x, fence) {
   append(lapply(fences, fenced_block, c('.md', '.code-fence'), fence), out, 1)
 }
 
-new_source = function(x) xfun::record_new(x, 'source')
-new_warning = function(x) xfun::record_new(x, 'warning')
-new_plot = function(x) xfun::record_new(x, 'plot')
-new_asis = function(x) xfun::record_new(x, 'asis')
+new_source = function(x) xfun::new_record(x, 'source')
+new_warning = function(x) xfun::new_record(x, 'warning')
+new_plot = function(x) xfun::new_record(x, 'plot')
+new_asis = function(x) xfun::new_record(x, 'asis')
 
 is_plot = function(x) inherits(x, 'record_plot')
 
