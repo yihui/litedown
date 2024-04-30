@@ -328,7 +328,6 @@ build_output = function(format, options, template, meta) {
     set_meta = function(name, value) {
       if (!name %in% names(meta)) meta[[name]] <<- value
     }
-    set_meta('title', first_heading(b))
     set_meta('css', 'default')
     meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)

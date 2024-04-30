@@ -158,12 +158,6 @@ restore_html = function(x) {
   x
 }
 
-# find the first heading in html
-first_heading = function(html) {
-  m = regexpr(r <- '<(h[1-6])[^>]*?>(.+?)</\\1>', html, perl = TRUE)
-  gsub(r, '\\2', regmatches(html, m))
-}
-
 .requireMathJS = function(x) {
   regs = c('\\\\\\(.+?\\\\\\)', '[$]{2}.+?[$]{2}', '\\\\\\[.+?\\\\\\]')
   for (i in regs) if (any(grepl(i, x, perl = TRUE))) return(TRUE)
