@@ -124,7 +124,7 @@ auto_output = function(input, output, format = NULL) {
   # non-character `output` means the output shouldn't be written to a file
   if (is.character(output)) {
     # if `output` is an extension, make a full file path based on input
-    if (grepl('^[.]', output)) {
+    if (grepl('^[.]', output) && sans_ext(output) == '') {
       if (is_file(input)) output = with_ext(input, output)
     }
     if (is_file(input)) check_output(input, output)
