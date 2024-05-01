@@ -93,9 +93,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   template = yaml_field(yaml, format, 'template')
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
-  if (is.null(template)) template = get_option(
-    sprintf('litedown.%s.template', format), 'yaml' %in% names(part)
-  )
+  if (is.null(template))
+    template = get_option('template', format, 'yaml' %in% names(part))
   # template = FALSE means no template; other values mean the default template
   if (!is.character(template)) template = if (!isFALSE(template))
     pkg_file('resources', sprintf('litedown.%s', format))

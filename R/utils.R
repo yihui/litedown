@@ -359,12 +359,9 @@ downloadable = function(u, type = 'text') {
 # quote a vector and combine by commas
 comma_list = function(x) paste0('"', x, '"', collapse = ', ')
 
-# get an option using a case-insensitive name
-get_option = function(name, default = NULL) {
-  x = options()
-  i = match(tolower(name), tolower(names(x)))
-  i = i[!is.na(i)]
-  if (length(i) == 0) default else x[[i[1]]]
+# get an option specific to an output format
+get_option = function(name, format, ...) {
+  getOption(sprintf('litedown.%s.%s', format, name), ...)
 }
 
 # if a string is a file path and test = TRUE, read the file; then concatenate elements by \n
@@ -677,7 +674,7 @@ embed_resources = function(x, embed = 'local') {
 }
 
 normalize_options = function(x, format = 'html') {
-  g = get_option(sprintf('litedown.%s.options', format))
+  g = get_option('options', format)
   x = option2list(x)
   n = names(x)
   # default options
