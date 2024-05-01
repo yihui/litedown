@@ -114,7 +114,7 @@ is_file = function(x) {
 }
 
 is_output_file = function(x) {
-  is.character(x) && !(x %in% names(md_formats) || is_ext(x))
+  is.character(x) && !(x %in% c(names(md_formats), 'markdown') || is_ext(x))
 }
 
 is_ext = function(x) grepl('^[.]', x) && sans_ext(x) == ''
