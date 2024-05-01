@@ -500,6 +500,8 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
       z = gsub('\\\\([#%])', '\\1', z)
     }
     z2 = f2(sub(r, s, z))
+    # {-} is a shorthand of {.unnumbered}
+    z2[z2 == '-'] = '.unnumbered'
     # convert #id to id="" and .class to class=""
     z2 = match_replace(z2, r2, function(a) {
       i = grep('^[.]', a)
