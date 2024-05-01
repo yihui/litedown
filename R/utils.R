@@ -114,8 +114,10 @@ is_file = function(x) {
 }
 
 is_output_file = function(x) {
-  is.character(x) && !(x %in% names(md_formats) || grepl('^[.]', x))
+  is.character(x) && !(x %in% names(md_formats) || is_ext(x))
 }
+
+is_ext = function(x) grepl('^[.]', x) && sans_ext(x) == ''
 
 # make an output filename with the format and input name
 auto_output = function(input, output, format = NULL) {
@@ -125,7 +127,7 @@ auto_output = function(input, output, format = NULL) {
   if (is.character(output)) {
     if (startsWith(output, 'markdown:')) output = 'markdown'
     # if `output` is an extension, make a full file path based on input
-    if (grepl('^[.]', output) && sans_ext(output) == '') {
+    if (is_ext(output)) {
       if (is_file(input)) output = with_ext(input, output)
     }
     if (is_file(input)) check_output(input, output)
