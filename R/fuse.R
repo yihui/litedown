@@ -48,7 +48,9 @@ parse_rmd = function(input = NULL, text = NULL) {
     '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
     rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
   )
-  m = regmatches(xml, gregexec(r, xml, perl = TRUE))[[1]]
+  m = regmatches(xml, gregexec(r, xml, perl = TRUE))[[1]] %|% matrix(character(), 9)
+  # code blocks must have non-empty info strings
+  m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
 
   res = list()
   # add a block of text and the line range info
@@ -71,9 +73,7 @@ parse_rmd = function(input = NULL, text = NULL) {
   # if there are lines remaining, they must be a text block
   if (i <= n) add_block(i, n, type = 'text_block')
 
-  # code blocks must have non-empty info strings
-  if (!length(m) || !length(m <- m[, m[2, ] != 'code_block' | m[9, ] != '', drop = FALSE]))
-    return(res)
+  if (!length(m)) return(res)
 
   m = m[, m[2, ] == 'code', drop = FALSE]
   # find out inline code `{lang} expr`
