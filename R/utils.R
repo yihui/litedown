@@ -17,7 +17,8 @@ counters = local({
 # use PCRE by default (which seems to handle multibyte chars better)
 gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
 
-`%||%` = function(x, y) if (is.null(x)) y else x
+`%|%` = function(x, y) if (length(x)) x else y
+if (getRversion() < '4.4.0') `%||%` = function(x, y) if (is.null(x)) y else x
 
 dropNULL = function(x) x[!vapply(x, is.null, logical(1))]
 
