@@ -123,6 +123,7 @@ auto_output = function(input, output, format = NULL) {
   if (is.null(output) && !is.null(format)) output = md_formats[format]
   # non-character `output` means the output shouldn't be written to a file
   if (is.character(output)) {
+    if (startsWith(output, 'markdown:')) output = 'markdown'
     # if `output` is an extension, make a full file path based on input
     if (grepl('^[.]', output) && sans_ext(output) == '') {
       if (is_file(input)) output = with_ext(input, output)

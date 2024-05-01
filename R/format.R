@@ -149,11 +149,21 @@ yaml_format = function(yaml) {
 # determine output format based on output file name and input's YAML
 detect_format = function(output, yaml) {
   res = if (is.character(output)) {
+    # check if output is a known format, e.g., output = 'html'
     if (output %in% names(md_formats)) output else {
+      # check file extension, e.g., output = '.pdf'
       ext = file_ext(output)
-      if (ext == 'pdf') 'latex' else names(which(md_formats == paste0('.', ext)))
+      if (ext == 'pdf') 'latex' else {
+        names(which(md_formats == paste0('.', ext))) %|%
+          # output = 'markdown:format', e.g., markdown:latex means the final
+          # format is latex but the intermediate output should be markdown
+          if (startsWith(output, 'markdown:')) intersect(
+            sub('^markdown:', '', output), names(md_formats)
+          )
+      }
     }
   }
+  # if unable to detect format from `output`, try YAML
   if (length(res) == 1) res else yaml_format(yaml)
 }
 
