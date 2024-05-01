@@ -715,7 +715,7 @@ namedBool = function(x, val = TRUE) as.list(setNames(rep(val, length(x)), x))
 # normalize metadata variable names: change _ to -
 normalize_meta = function(x) {
   # make sure some variables are available in metadata
-  x = merge_list(list(classoption = '', documentclass = 'article'), x)
+  x = merge_list(list(classoption = '', documentclass = 'article', body_class = 'body'), x)
   names(x) = gsub('_', '-', names(x))
   x
 }
