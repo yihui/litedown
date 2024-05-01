@@ -3,6 +3,7 @@
 S3method(print,litedown_env)
 export(fiss)
 export(fuse)
+export(fuse_book)
 export(html_format)
 export(latex_format)
 export(mark)
