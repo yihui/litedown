@@ -297,10 +297,13 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
     write_utf8(res, with_ext(output, '.md'))
   }
+  fuse_output(input, output, res)
+}
 
-  # if output = '.md' or 'markdown', no need for further mark() conversion
+# if output = '.md' or 'markdown', no need for further mark() conversion
+fuse_output = function(input, output, res) {
   if (is.character(output) && grepl('[.]md$|^markdown$', output)) {
-    if (is_output_file(output) && output != 'markdown') {
+    if (is_output_file(output)) {
       write_utf8(res, output)
     } else raw_string(res)
   } else {
