@@ -333,8 +333,13 @@ build_output = function(format, options, template, meta) {
     # special handling for css/js "files" that have no extensions
     for (i in c('css', 'js')) meta[[i]] = resolve_files(meta[[i]], i)
   }
+  sub_vars(tpl, meta)
+}
+
+# substitute all variables in template with their values
+sub_vars = function(tpl, meta) {
   # find all variables in the template
-  vars = unlist(regmatches(tpl, gregexpr('[$][-[:alnum:]]+[$]', tpl)))
+  vars = unlist(regmatches(tpl, gregexpr('[$][-_[:alnum:]]+[$]', tpl)))
   # insert $body$ at last in case the body contain any $variables$ accidentally
   if (!is.na(i <- match('$body$', vars))) vars = c(vars[-i], vars[i])
   for (v in vars) {
