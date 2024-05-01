@@ -285,7 +285,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   if (format == 'html') {
     ret = xfun::in_dir(
-      if (is_file(input)) dirname(input) else '.',
+      dirname(output_path(input, output) %||% '.'),
       embed_resources(ret, options[['embed_resources']])
     )
     ret = clean_html(ret)

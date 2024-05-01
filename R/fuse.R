@@ -252,7 +252,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   yaml = yaml_body(text)$yaml
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
-  output_base = if (is_output_file(output)) sans_ext(output)
+  output_base = sans_ext(output_path(input, output))
 
   # restore and clean up some objects on exit
   opts = reactor(); on.exit(reactor(opts), add = TRUE)

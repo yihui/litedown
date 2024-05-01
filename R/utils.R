@@ -135,6 +135,11 @@ auto_output = function(input, output, format = NULL) {
   output
 }
 
+# fall back to input path if output path is not available
+output_path = function(input, output) {
+  if (is_output_file(output)) output else if (is_file(input)) input
+}
+
 # make sure not to overwrite input file inadvertently
 check_output = function(input, output) {
   if (file_exists(input) && xfun::same_path(input, output))
