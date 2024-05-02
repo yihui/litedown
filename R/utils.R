@@ -806,7 +806,7 @@ resolve_files = function(x, ext = 'css') {
 }
 
 # generate tags for css/js depending on whether they need to be embedded or offline
-gen_tag = function(x, ext = '', embed_https = FALSE, embed_local = FALSE) {
+gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALSE) {
   if (ext == 'css') {
     t1 = '<link rel="stylesheet" href="%s">'
     t2 = c('<style type="text/css">', '</style>')
