@@ -1,3 +1,11 @@
+```         
+  ______  
+ /   ⚡  \
+/litedown\
+\   ⚡    /
+ \______/
+```
+
 # A lightweight version of R Markdown
 
 <!-- badges: start -->
@@ -7,14 +15,6 @@
 release](https://www.r-pkg.org/badges/version/litedown)](https://cran.r-project.org/package=litedown)
 
 <!-- badges: end -->
-
-```         
-  ______  
- /   ⚡  \
-/litedown\
-\   ⚡    /
- \______/
-```
 
 ## Overview
 
