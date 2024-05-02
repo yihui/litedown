@@ -1,0 +1,34 @@
+body {
+  max-width: none;
+}
+.body, ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+h1 {
+  text-align: left;
+  font-size: 1em;
+}
+.box {
+  width: 30em;
+  flex-grow: 1;
+  margin: .5em;
+}
+pre > code:not([class]) {
+  border: none;
+  padding: 0 1em 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul {
+  width: 100%;
+  padding-left: .5em;
+}
+li {
+  display: inline-block;
+  margin-right: 2em;
+}
+em, code {
+  font-size: .8em;
+  opacity: .5;
+}
