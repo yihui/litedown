@@ -838,7 +838,7 @@ gen_tags = function(...) mapply(gen_tag, ...)
 # read CSS/JS and embed external fonts/background images, etc.
 resolve_external = function(x, web = TRUE, ext = '') {
   # download and cache web resources
-  txt = if (web) download_cache$get(x, 'text', handler = function(code) {
+  if (web) download_cache$get(x, 'text', handler = function(code) {
     # remove jsdelivr comments
     if (grepl('^https://cdn[.]jsdelivr[.]net/', x)) {
       code = gsub(
