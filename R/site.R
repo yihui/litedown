@@ -74,7 +74,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div
     c(
-      '::: {.chapter .body}', out, '', '::: chapter-end',
+      '::: {.chapter .body}', out, '', '::: {.chapter-end .side .side-right}',
       sub_vars(chapter_end, list(input = I(x))), ':::', ':::'
     )
   })
