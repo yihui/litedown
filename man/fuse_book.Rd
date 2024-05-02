@@ -66,12 +66,14 @@ top-level YAML field \code{litedown}, e.g.,
 litedown:
   book:
     new_session: true
+    chapter_begin: "Information before a chapter."
     chapter_end: "This chapter was generated from `$input$`."
 ---
 }\if{html}{\out{</div>}}
 
 The option \code{new_session} specifies whether to render each input file in the
-current R session or a separate new R session; \code{chapter_end} specifies
-additional text to be appended to the content of each file, which accepts
-some variables (e.g., \verb{$input$} is the current input file path).
+current R session or a separate new R session; \code{chapter_begin} and
+\code{chapter_end} specify text to be added to the beginning and end of each file,
+respectively, which accepts some variables (e.g., \verb{$input$} is the current
+input file path).
 }

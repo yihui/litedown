@@ -30,14 +30,16 @@
 #' litedown:
 #'   book:
 #'     new_session: true
+#'     chapter_begin: "Information before a chapter."
 #'     chapter_end: "This chapter was generated from `$input$`."
 #' ---
 #' ```
 #'
 #' The option `new_session` specifies whether to render each input file in the
-#' current R session or a separate new R session; `chapter_end` specifies
-#' additional text to be appended to the content of each file, which accepts
-#' some variables (e.g., `$input$` is the current input file path).
+#' current R session or a separate new R session; `chapter_begin` and
+#' `chapter_end` specify text to be added to the beginning and end of each file,
+#' respectively, which accepts some variables (e.g., `$input$` is the current
+#' input file path).
 #' @inheritParams fuse
 #' @param input A directory or a vector of file paths. By default, all
 #'   `.Rmd`/`.md` files under the current working directory are used as the
@@ -59,13 +61,14 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   text = read_utf8(input[1]); part = yaml_body(text); yaml = part$yaml
   format = detect_format(output, yaml)
   output = auto_output(input[1], output, format)
-  cfg = yaml[['litedown']]
-  new_session = cfg[['new_session']] %||% FALSE
-  chapter_end = cfg[['chapter_end']] %||% "Source: `$input$`"
+  cfg = merge_list(list(
+    new_session = FALSE, chapter_begin = '', chapter_end = "Source: `$input$`"
+  ), yaml[['litedown']])
+
   res = lapply(input, function(x) {
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
       fmt = paste0('markdown:', format)  # generate intermediate markdown output
-      if (new_session) {
+      if (cfg$new_session) {
         xfun::Rscript_call(litedown::fuse, list(x, fmt))
       } else {
         fuse(x, fmt, NULL, envir)
@@ -73,20 +76,28 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     }
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div
+    info = function(cls) c(
+      sprintf('::: {.chapter-%s .side .side-right}', cls),
+      sub_vars(cfg[[sprintf('chapter_%s', cls)]], list(input = I(x))), ':::'
+    )
+    # for the first input, the fenced Divs should be inserted after YAML
+    h = if ('yaml' %in% names(part) && x == input[1]) {
+      out = split_lines(out)
+      if (length(i <- xfun:::locate_yaml(out)) >= 2) {
+        i = seq_len(i[2]); h = out[i]; out = out[-i]
+        h
+      }
+    }
     c(
-      '::: {.chapter .body}', out, '', '::: {.chapter-end .side .side-right}',
-      sub_vars(chapter_end, list(input = I(x))), ':::', ':::'
+      h, sprintf('::: {.chapter .body data-source="%s"}', x),
+      info('begin'), '', out, '', info('end'), ':::'
     )
   })
-  res = split_lines(unlist(res))
-  # for the first input, the container starting fence should be moved after YAML
-  if ('yaml' %in% names(part) && length(i <- xfun:::locate_yaml(res[-1])) >= 2)
-    res = append(res[-1], res[1], i[2] + 1)
   tweak_options(format, yaml, list(
     body_class = '', css = c("@default", "@article"),
     js = c("@sidenotes", "@appendix")
   ))
-  fuse_output(input[1], output, res)
+  fuse_output(input[1], output, unlist(res))
 }
 
 # find input files under a directory
