@@ -820,6 +820,10 @@ gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALS
     warning('MathJax.js cannot be embedded. Please use MathJax v3 instead.')
     embed_https = FALSE
   }
+  # a global option to disable embedding for non-existent local files
+  if (is_rel && embed_local && !file_exists(x)) {
+    embed_local = getOption('litedown.embed.check', !startsWith(x, int_prefix))
+  }
   if ((is_rel && !embed_local) || (is_web && !embed_https)) {
     # linking for 1) local rel paths that don't need to be embedded, or 2) web
     # resources that don't need to be accessed offline

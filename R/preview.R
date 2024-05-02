@@ -15,9 +15,22 @@ peek = function(dir = '.', ...) in_dir(dir, {
 
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
-  if (dir.exists(path)) list(payload = dir_page(path)) else {
+  # deal with "internal" files
+  if (startsWith(path, int_prefix) && !file.exists(path)) return(file_page(
+    pkg_file('resources', sub(int_prefix, '', path, fixed = TRUE)), TRUE
+  ))
+  res = if (dir.exists(path)) list(payload = dir_page(path)) else {
     file_page(path, !identical(query[['preview']], '1'))
   }
+  res
+}
+
+int_prefix = '.@litedown/'
+# request for /.@litedown/asset should resolve to files under inst/resources/
+internal_asset = function(x, path) {
+  n = base::gregexpr('/', path, fixed = TRUE)[[1]]
+  n = if (length(n) == 1 && n < 0) 0 else length(n)
+  paste0(strrep('../', n), int_prefix, x)
 }
 
 dir_page = function(dir = '.') {
@@ -44,25 +57,31 @@ dir_page = function(dir = '.') {
       if (d) '' else sprintf(' _[%s](<%s>) %s_', file_size(f), b, file_time(f))
     )
   }))
-  res = c('---', '---', '', unlist(res))
-  mark(res, meta = list(title = dir_title(dir), css = c('default', 'server')))
+  tweak_internal(dir, css = c('default.css', 'server.css'))
+  mark(unlist(res), meta = list(title = dir_title(dir)))
+}
+
+# set up special options for mark()
+tweak_internal = function(path, css = 'default.css') {
+  opt = options(litedown.html.template = TRUE, litedown.html.meta = list(
+    css = internal_asset(css, path)
+  ), litedown.html.options = list(embed_resources = FALSE))
+  xfun::exit_call(function() options(opt))
 }
 
 file_page = function(x, raw) {
   res = file_resp(x, raw)
-  if (!'payload' %in% names(res)) return(res)
+  if (is.null(p <- res$payload)) return(res)
   # inject navigation links to the top of the page
   nav = commonmark::markdown_html(dir_title(x))
   nav = sub('<p>', '<p style="font-size: .8em;">', nav, fixed = TRUE)
-  res$payload = sub('<body>', paste0('<body>\n', nav), res$payload, fixed = TRUE)
+  res$payload = sub('<body>', paste0('<body>\n', nav), p, fixed = TRUE)
   res
 }
 
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  if (is.null(getOption('litedown.html.template'))) {
-    opt = options(litedown.html.template = TRUE); on.exit(opt)
-  }
+  tweak_internal(x)
   # TODO: support .R
   if (ext == 'md') {
     list(payload = mark(x, 'html'))
