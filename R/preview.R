@@ -14,6 +14,13 @@
 #' @param ... Other arguments to be passed to [xfun::new_app()].
 #' @export
 peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
+  # a proxy server to return files under inst/resources/
+  s = xfun::new_app('.litedown', function(path, ...) {
+    file_raw(pkg_file('resources', path))
+  }, open = FALSE)
+  # load litedown assets via http://127.0.0.1:port/custom/.litedown/assets
+  asset_url = function(path) paste0(s, path)
+
   t1 = list()  # store modification times of files
   check_time = function(path) {
     !is.na(t2 <- file.mtime(path)) && {
@@ -21,7 +28,17 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       (!is.null(t) && t2 > t)
     }
   }
+
   xfun::new_app('litedown', function(path, query, post, headers) {
+    # set up proper default options for mark()
+    opt = options(
+      litedown.html.template = TRUE,
+      litedown.html.meta = list(
+        css = asset_url(c('default.css', if (dir.exists(path)) 'server.css'))
+      ),
+      litedown.html.options = list(embed_resources = FALSE)
+    )
+    on.exit(options(opt), add = TRUE)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
     if (live && length(post)) {
@@ -30,7 +47,7 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       type = rawToChar(post)  # the POST body is the type of request
       resp = ''
       if (type == 'asset') {
-        if (check_time(internal_get(path) %||% path)) resp = '1'
+        if (check_time(path)) resp = '1'
       } else if (type == 'page') {
         if (check_time(path)) resp = '1'
       } else if (type == 'book') {
@@ -44,7 +61,7 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     if (!live || is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
       return(res)
     res$payload = sub(
-      '</head>', paste0(gen_tag(internal_asset('server.js', path)), '</head>'), p,
+      '</head>', paste0(gen_tag(asset_url('server.js')), '</head>'), p,
       fixed = TRUE
     )
     res
@@ -53,23 +70,9 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
 
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
-  # deal with "internal" files
-  if (!is.null(int_path <- internal_get(path))) return(file_page(int_path, TRUE))
   if (dir.exists(path)) list(payload = dir_page(path)) else {
     file_page(path, !identical(query[['preview']], '1'))
   }
-}
-
-int_prefix = '.@litedown/'
-# request for /.@litedown/asset should resolve to files under inst/resources/
-internal_asset = function(x, path) {
-  n = base::gregexpr('/', path, fixed = TRUE)[[1]]
-  n = if (length(n) == 1 && n < 0) 0 else length(n)
-  paste0(strrep('../', n), int_prefix, x)
-}
-internal_get = function(path) {
-  if (startsWith(path, int_prefix) && !file.exists(path))
-    pkg_file('resources', sub(int_prefix, '', path, fixed = TRUE))
 }
 
 dir_page = function(dir = '.') {
@@ -98,18 +101,10 @@ dir_page = function(dir = '.') {
       if (d) '' else sprintf(' _[%s](<%s>) %s_', file_size(f), b, file_time(f))
     )
   }))
-  tweak_internal(dir, css = c('default.css', 'server.css'))
   mark(unlist(res), meta = list(title = dir_title(dir)))
 }
 
-# set up special options for mark()
-tweak_internal = function(path, css = 'default.css') {
-  opt = options(litedown.html.template = TRUE, litedown.html.meta = list(
-    css = internal_asset(css, path)
-  ), litedown.html.options = list(embed_resources = FALSE))
-  xfun::exit_call(function() options(opt))
-}
-
+# add directory navigation to the top of the page
 file_page = function(x, raw) {
   res = file_resp(x, raw)
   if (is.null(p <- res$payload)) return(res)
@@ -120,9 +115,9 @@ file_page = function(x, raw) {
   res
 }
 
+# render the path to HTML if possible
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  tweak_internal(x)
   # TODO: support .R
   if (ext == 'md') {
     list(payload = mark(x, 'html'))
@@ -141,9 +136,14 @@ file_resp = function(x, raw) {
         !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
       list(payload = mark(fenced_block(txt, paste0('.', if (ext == '') 'plain' else ext))))
     } else {
-      list(file = normalizePath(x), `content-type` = type)
+      file_raw(x, type)
     }
   }
+}
+
+# return a raw file response
+file_raw = function(x, type = xfun:::guess_type(x)) {
+  list(file = normalizePath(x), `content-type` = type)
 }
 
 file_size = function(x) xfun::format_bytes(file.size(x))
