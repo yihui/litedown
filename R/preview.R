@@ -127,7 +127,14 @@ file_resp = function(x, raw) {
   if (ext == 'md') {
     list(payload = mark(x, 'html'))
   } else if (ext %in% c('rmd', 'qmd')) {
-    list(payload = fuse(x, 'html', envir = globalenv()))
+    # check if the file is for a book
+    txt = read_utf8(x)
+    yaml = yaml_body(txt)$yaml
+    list(payload = if ('book' %in% names(yaml[['litedown']])) {
+      fuse_book(dirname(x), 'html', globalenv())
+    } else {
+      fuse(x, 'html', txt, envir = globalenv())
+    })
   } else {
     type = xfun:::guess_type(x)
     if (!raw && (ext %in% c('js', 'latex', 'tex') || grepl('^text/', type)) &&
