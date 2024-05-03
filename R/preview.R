@@ -74,6 +74,8 @@ internal_get = function(path) {
 
 dir_page = function(dir = '.') {
   files = list.files(dir, full.names = TRUE)
+  # index.* files should appear first
+  files = files[order(!sans_ext(basename(files)) == 'index')]
   i1 = grepl(r <- '[.]([Rq]?md|R)$', files, ignore.case = TRUE)
   # order first by folder, then by .Rmd/.R, and other files go to the end
   res = lapply(files[i1], function(f) {
