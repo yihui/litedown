@@ -59,10 +59,10 @@
       // if the current script has been removed, stop the check
       if (!me.parentNode) return clearInterval(id);
       // don't refresh whole page when checking a book page
-      d.querySelector('div[data=source]') || check_one();
+      d.querySelector('div[data-source]') || check_one();
       check_one('[src]', 'src');  // <img> and <script>
       check_one('link[href]', 'href');  // css
-      check_one('div[data=source]', false, 'source');  // Rmd chapter
+      check_one('div[data-source]', false, 'source');  // Rmd chapter
     }
   });
 })(document);
