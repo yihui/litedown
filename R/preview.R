@@ -23,10 +23,11 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
 
   t1 = list()  # store modification times of files
   check_time = function(path) {
-    !is.na(t2 <- file.mtime(path)) && {
-      t = t1[[path]]; t1[[path]] <<- t2
-      (!is.null(t) && t2 > t)
-    }
+    t2 = if (dir.exists(path)) {
+      file.info(list.files(path, full.names = TRUE))[, 'mtime', drop = FALSE]
+    } else file.mtime(path)
+    t = t1[[path]]; t1[[path]] <<- t2
+    !is.null(t) && !identical(t2, t)
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
