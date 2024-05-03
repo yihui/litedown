@@ -47,9 +47,7 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       # request; for now, we simply ignore request headers
       type = rawToChar(post)  # the POST body is the type of request
       resp = ''
-      if (type == 'asset') {
-        if (check_time(path)) resp = '1'
-      } else if (type == 'page') {
+      if (type %in% c('asset', 'page')) {
         if (check_time(path)) resp = '1'
       } else if (type == 'book') {
         if (check_time(path)) resp = ''
