@@ -35,7 +35,7 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     opt = options(
       litedown.html.template = TRUE,
       litedown.html.meta = list(
-        css = asset_url(c('default.css', if (dir.exists(path)) 'server.css'))
+        css = asset_url(c('default.css', if (dir.exists(path)) 'listing.css'))
       ),
       litedown.html.options = list(embed_resources = FALSE)
     )
