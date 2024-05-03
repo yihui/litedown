@@ -7,22 +7,57 @@
 #' the preview. Clicking on a filename will bring up an HTML preview. To see its
 #' raw content, click on the link on its file size instead.
 #' @param dir A directory path.
+#' @param live Whether to enable live preview. If enabled, the browser page will
+#'   be automatically updated upon modification of local files used by the page
+#'   (e.g., the Markdown file or external CSS/JS/image files). If disabled, you
+#'   can manually refresh the page to fully re-render it.
 #' @param ... Other arguments to be passed to [xfun::new_app()].
 #' @export
-peek = function(dir = '.', ...) in_dir(dir, {
-  xfun::new_app('litedown', lite_handler, ...)
+peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
+  t1 = list()  # store modification times of files
+  check_time = function(path) {
+    !is.na(t2 <- file.mtime(path)) && {
+      t = t1[[path]]; t1[[path]] <<- t2
+      (!is.null(t) && t2 > t)
+    }
+  }
+  xfun::new_app('litedown', function(path, query, post, headers) {
+    # we keep POSTing to the page assets' URLs, and if an asset file has been
+    # modified, we return a response telling the browser to update it
+    if (live && length(post)) {
+      # we may need to check rawToChar(headers) to decide what to do for the
+      # request; for now, we simply ignore request headers
+      type = rawToChar(post)  # the POST body is the type of request
+      resp = ''
+      if (type == 'asset') {
+        if (check_time(internal_get(path) %||% path)) resp = '1'
+      } else if (type == 'page') {
+        if (check_time(path)) resp = '1'
+      } else if (type == 'book') {
+        if (check_time(path)) resp = ''
+      }
+      return(list(payload = resp))
+    }
+    res = lite_handler(path, as.list(query), post, headers)
+    # inject js to communicate with the R server via POST for live preview
+    p = res$payload
+    if (!live || is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
+      return(res)
+    res$payload = sub(
+      '</head>', paste0(gen_tag(internal_asset('server.js', path)), '</head>'), p,
+      fixed = TRUE
+    )
+    res
+  }, ...)
 })
 
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
   # deal with "internal" files
-  if (startsWith(path, int_prefix) && !file.exists(path)) return(file_page(
-    pkg_file('resources', sub(int_prefix, '', path, fixed = TRUE)), TRUE
-  ))
-  res = if (dir.exists(path)) list(payload = dir_page(path)) else {
+  if (!is.null(int_path <- internal_get(path))) return(file_page(int_path, TRUE))
+  if (dir.exists(path)) list(payload = dir_page(path)) else {
     file_page(path, !identical(query[['preview']], '1'))
   }
-  res
 }
 
 int_prefix = '.@litedown/'
@@ -31,6 +66,10 @@ internal_asset = function(x, path) {
   n = base::gregexpr('/', path, fixed = TRUE)[[1]]
   n = if (length(n) == 1 && n < 0) 0 else length(n)
   paste0(strrep('../', n), int_prefix, x)
+}
+internal_get = function(path) {
+  if (startsWith(path, int_prefix) && !file.exists(path))
+    pkg_file('resources', sub(int_prefix, '', path, fixed = TRUE))
 }
 
 dir_page = function(dir = '.') {

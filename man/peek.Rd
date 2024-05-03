@@ -4,10 +4,15 @@
 \alias{peek}
 \title{Preview Markdown and R Markdown files}
 \usage{
-peek(dir = ".", ...)
+peek(dir = ".", live = TRUE, ...)
 }
 \arguments{
 \item{dir}{A directory path.}
+
+\item{live}{Whether to enable live preview. If enabled, the browser page will
+be automatically updated upon modification of local files used by the page
+(e.g., the Markdown file or external CSS/JS/image files). If disabled, you
+can manually refresh the page to fully re-render it.}
 
 \item{...}{Other arguments to be passed to \code{\link[xfun:new_app]{xfun::new_app()}}.}
 }
