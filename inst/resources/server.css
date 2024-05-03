@@ -30,5 +30,7 @@ li {
 }
 em, code {
   font-size: .8em;
-  opacity: .5;
+}
+em:not(:hover), code:not(:hover) {
+  opacity: .7;
 }
