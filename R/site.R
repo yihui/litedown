@@ -125,12 +125,11 @@ tweak_options = function(format, yaml, meta = NULL, options = NULL) {
   nms = paste0('litedown.', format, c('.meta', '.options'))
   defaults = list(
     merge_list(
-      meta, yaml_field(yaml, format, 'meta'), .Options[[nms[1]]]
+      .Options[[nms[1]]], meta, yaml_field(yaml, format, 'meta')
     ),
     merge_list(
-      options,
-      list(toc = TRUE, number_sections = TRUE, embed_resources = FALSE),
-      .Options[[nms[2]]]
+      .Options[[nms[2]]], options,
+      list(toc = TRUE, number_sections = TRUE, embed_resources = FALSE)
     )
   )
   names(defaults) = nms
