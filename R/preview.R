@@ -33,7 +33,6 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   xfun::new_app('litedown', function(path, query, post, headers) {
     # set up proper default options for mark()
     opt = options(
-      litedown.html.template = TRUE,
       litedown.html.meta = list(
         css = asset_url(c('default.css', if (dir.exists(path)) 'listing.css'))
       ),
@@ -110,7 +109,7 @@ dir_page = function(dir = '.') {
       if (d) '' else info(f, b)
     )
   }))
-  mark(unlist(res), meta = list(title = dir_title(dir)))
+  mark_full(unlist(res), meta = list(title = dir_title(dir)))
 }
 
 # add directory navigation to the top of the page
@@ -129,7 +128,7 @@ file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
   # TODO: support .R
   if (ext == 'md') {
-    list(payload = mark(x, 'html'))
+    list(payload = mark_full(x, 'html'))
   } else if (ext %in% c('rmd', 'qmd')) {
     # check if the file is for a book
     txt = read_utf8(x)
@@ -137,17 +136,28 @@ file_resp = function(x, raw) {
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
       fuse_book(dirname(x), 'html', globalenv())
     } else {
-      fuse(x, 'html', txt, envir = globalenv())
+      fuse(x, 'html', c(if (is.null(yaml)) empty_yaml, txt), envir = globalenv())
     })
   } else {
     type = xfun:::guess_type(x)
     if (!raw && is_text_file(ext, type) &&
         !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
-      list(payload = mark(fenced_block(txt, paste0('.', if (ext == '') 'plain' else ext))))
+      list(payload = mark_full(
+        fenced_block(txt, paste0('.', if (ext == '') 'plain' else ext))
+      ))
     } else {
       file_raw(x, type)
     }
   }
+}
+
+# add empty YAML to make fuse() generate full HTML
+empty_yaml = c('---', '---')
+
+# generate full HTML output (instead of fragments)
+mark_full = function(...) {
+  opt = options(litedown.html.template = TRUE); on.exit(options(opt))
+  mark(...)
 }
 
 # guess if a file is a text file
