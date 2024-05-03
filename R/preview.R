@@ -134,7 +134,7 @@ file_resp = function(x, raw) {
     txt = read_utf8(x)
     yaml = yaml_body(txt)$yaml
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
-      fuse_book(dirname(x), 'html', globalenv())
+      in_dir(dirname(x), fuse_book('.', 'html', globalenv()))
     } else {
       fuse(x, 'html', c(if (is.null(yaml)) empty_yaml, txt), envir = globalenv())
     })
