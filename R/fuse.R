@@ -517,7 +517,7 @@ new_asis = function(x) xfun::new_record(x, 'asis')
 is_plot = function(x) inherits(x, 'record_plot')
 
 fuse_text = function(x, envir) {
-  if (is.character(src <- x$source)) return(src)
+  if (is.character(src <- x$source)) return(one_string(src))
   res = lapply(src, function(s) {
     if (is.character(s)) s else exec_inline(s, envir)
   })
