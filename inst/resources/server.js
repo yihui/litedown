@@ -21,7 +21,8 @@
       (q ? d.querySelectorAll(q) : [d.body]).forEach(el => {
         let u = q ? (a ? el[[a]] : el.dataset[[s]]) : location.href;
         // only check assets served by local server
-        if (a && u && !u.startsWith(location.origin)) return;
+        if (a && u && !(u.startsWith(location.origin) && u.includes('/custom/litedown/')))
+          return;
         if (el.dataset.wait) return;
         el.dataset.wait = 1;  // don't send another request while waiting
         new_req(u, q ? (a ? 'asset' : 'book') : 'page', e => {
