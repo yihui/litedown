@@ -1,5 +1,21 @@
 (d => {
   const me = d.currentScript;
+  function new_req(url, data, callback) {
+    const req = new XMLHttpRequest();
+    req.open('POST', url);
+    // let R know the type of the request
+    req.send(data);
+    req.onload = callback;
+  }
+  // add classes and events to edit buttons
+  d.querySelectorAll('a[href]').forEach(a => {
+    if (a.innerText !== '✎') return;
+    a.classList.add('pencil');
+    a.onclick = e => {
+      e.preventDefault();
+      new_req(a.href, 'open');
+    };
+  });
   window.addEventListener('load', () => {
     function check_one(q, a, s) {
       (q ? d.querySelectorAll(q) : [d.body]).forEach(el => {
@@ -8,11 +24,7 @@
         if (a && u && !u.startsWith(location.origin)) return;
         if (el.dataset.wait) return;
         el.dataset.wait = 1;  // don't send another request while waiting
-        const req = new XMLHttpRequest();
-        req.open('POST', u);
-        // let R know the type of the request
-        req.send(q ? (a ? 'asset' : 'book') : 'page');
-        req.onload = (e) => {
+        new_req(u, q ? (a ? 'asset' : 'book') : 'page', e => {
           const res = e.target.responseText;
           if (res !== '') {
             if (a) {
@@ -27,7 +39,7 @@
             }
           }
           el.dataset.wait = '';
-        };
+        });
       });
     }
 

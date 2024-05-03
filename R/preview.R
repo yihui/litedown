@@ -42,10 +42,15 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     on.exit(options(opt), add = TRUE)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
-    if (live && length(post)) {
-      # we may need to check rawToChar(headers) to decide what to do for the
-      # request; for now, we simply ignore request headers
-      type = rawToChar(post)  # the POST body is the type of request
+    type = if (length(post)) rawToChar(post) else ''
+    # we may need to check rawToChar(headers) to decide what to do for the
+    # request; for now, we simply ignore request headers, and treat the POST
+    # body as the type of request
+    if (type == 'open') {
+      xfun:::open_path(path, !dir.exists(path) && is_text_file(file = path))
+      return(list(payload = 'done'))
+    }
+    if (live && type != '') {
       resp = ''
       if (type %in% c('asset', 'page')) {
         if (check_time(path)) resp = '1'
@@ -60,8 +65,9 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     if (!live || is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
       return(res)
     res$payload = sub(
-      '</head>', paste0(gen_tag(asset_url('server.js')), '</head>'), p,
-      fixed = TRUE
+      '</head>',
+      one_string(c(gen_tags(asset_url(c('server.js', 'server.css'))), '</head>')),
+      p, fixed = TRUE
     )
     res
   }, ...)
@@ -78,15 +84,19 @@ dir_page = function(dir = '.') {
   files = list.files(dir, full.names = TRUE)
   # index.* files should appear first
   files = files[order(!sans_ext(basename(files)) == 'index')]
+  # show file size and mtime
+  info = function(f, b) {
+    sprintf(
+      '_( [%s](<%s>) %s%s)_', file_size(f), b, file_time(f),
+      if (is_text_file(file = f)) sprintf(' [&#9998;](%s)', b) else ''
+    )
+  }
   i1 = grepl(r <- '[.]([Rq]?md|R)$', files, ignore.case = TRUE)
   # order first by folder, then by .Rmd/.R, and other files go to the end
   res = lapply(files[i1], function(f) {
     b = basename(f)
     fenced_div(c(
-      fenced_div(c(
-        sprintf('[%s](<%s?preview=1>)', b, b),
-        sprintf('_([%s](<%s>) %s)_', file_size(f), b, file_time(f))
-      ), '.name'),
+      fenced_div(c(sprintf('[%s](<%s?preview=1>)', b, b), info(f, b)), '.name'),
       xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
   })
@@ -96,8 +106,8 @@ dir_page = function(dir = '.') {
     b = basename(f)
     if (d <- dir.exists(f)) b = paste0(b, '/')
     sprintf(
-      '- [%s](<%s%s>)%s', b, b, if (d) '' else '?preview=1',
-      if (d) '' else sprintf(' _[%s](<%s>) %s_', file_size(f), b, file_time(f))
+      '- [%s](<%s%s>) %s', b, b, if (d) '' else '?preview=1',
+      if (d) '' else info(f, b)
     )
   }))
   mark(unlist(res), meta = list(title = dir_title(dir)))
@@ -131,13 +141,18 @@ file_resp = function(x, raw) {
     })
   } else {
     type = xfun:::guess_type(x)
-    if (!raw && (ext %in% c('js', 'latex', 'tex') || grepl('^text/', type)) &&
+    if (!raw && is_text_file(ext, type) &&
         !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
       list(payload = mark(fenced_block(txt, paste0('.', if (ext == '') 'plain' else ext))))
     } else {
       file_raw(x, type)
     }
   }
+}
+
+# guess if a file is a text file
+is_text_file = function(ext = file_ext(file), type = xfun:::guess_type(file), file) {
+  (ext %in% c('js', 'latex', 'tex', 'xml') || grepl('^text/', type))
 }
 
 # return a raw file response
@@ -147,11 +162,14 @@ file_raw = function(x, type = xfun:::guess_type(x)) {
 
 file_size = function(x) xfun::format_bytes(file.size(x))
 file_time = function(x) format(file.mtime(x))
-dir_title = function(d) {
-  links = if (d != '.') {
-    if (file_exists(d)) d = dirname(d)
+dir_title = function(f) {
+  links = if (f != '.') {
+    d = if (file_exists(f)) dirname(f) else f
     d = if (d == '.') character() else unlist(strsplit(d, '/'))
-    sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './'))
+    c(
+      sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
+      if (is_text_file(file = f)) '[&#9998;](#)'
+    )
   }
   one_string(c(sprintf('_%s:_', xfun::normalize_path('.')), links), ' ')
 }
