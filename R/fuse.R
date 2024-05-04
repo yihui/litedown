@@ -255,7 +255,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   output_base = sans_ext(output_path(input, output))
 
   # restore and clean up some objects on exit
-  opts = reactor(); on.exit(reactor(opts), add = TRUE)
+  opts = reactor(); opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
 
   # set working directory if unset
