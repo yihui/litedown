@@ -53,6 +53,11 @@
       if (t.length === 3) el.innerText = `${t[1] - 1 + n}${t[2]}`;
     });
     el.outerHTML = w.innerHTML;
+    // update footnote numbers
+    const q = 'a[id^="fnref-"]';
+    w.querySelector(q) && d.querySelectorAll(q).forEach((el, i) => {
+      el.innerText = i + 1;
+    });
     w.remove();
   }
   // to reload <script src>, it has to be destroyed and re-created
