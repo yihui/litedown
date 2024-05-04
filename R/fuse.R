@@ -615,7 +615,7 @@ reactor(
   strip.white = TRUE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
-  cache = FALSE, cache.path = NULL,  # TODO: cache not implemented
+  cache = FALSE, cache.path = NULL,
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
   fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
