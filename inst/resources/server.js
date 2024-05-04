@@ -6,9 +6,14 @@
     req.send(data);
     req.onload = callback;
   }
+  // add edit buttons for book chapters
+  d.querySelectorAll('div[data-source]').forEach(el => {
+    const u = el.dataset.source;
+    u && !el.querySelector('.pencil') && el.insertAdjacentHTML('afterbegin', `<a href="${u}">✎</a>`);
+  });
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {
-    if (a.innerText !== '✎') return;
+    if (a.innerText !== '✎' || a.classList.contains('pencil')) return;
     a.classList.add('pencil');
     a.onclick = e => {
       e.preventDefault();
