@@ -712,7 +712,7 @@ normalize_embed = function(x) {
 }
 
 #' @import stats
-namedBool = function(x, val = TRUE) as.list(setNames(rep(val, length(x)), x))
+named_bool = function(x, val = TRUE) as.list(setNames(rep(val, length(x)), x))
 
 # normalize metadata variable names: change _ to -
 normalize_meta = function(x) {
@@ -729,7 +729,7 @@ option2list = function(x) {
   x = unlist(strsplit(x, '\\s+'))
   x = setdiff(x, '')
   i = grepl('^-', x)
-  c(namedBool(sub('^[-]', '', x[i]), FALSE), namedBool(sub('^[+]', '', x[!i])))
+  c(named_bool(sub('^[-]', '', x[i]), FALSE), named_bool(sub('^[+]', '', x[!i])))
 }
 
 pkg_file = function(...) {
