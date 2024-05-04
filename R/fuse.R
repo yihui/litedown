@@ -287,7 +287,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   # clean up the figure folder on exit if it's empty
   on.exit(xfun::del_empty_dir({
     if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
-  }), add = TRUE)
+  }), add = TRUE, after = FALSE)
 
   blocks = chop(input, text)
   .env$input = input
