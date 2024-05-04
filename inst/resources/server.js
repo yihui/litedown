@@ -31,7 +31,7 @@
             el.tagName ==='SCRIPT' && update_script(el);
           } else if (s) {
             // update a book chapter (response is an HTML fragment)
-            el.outerHTML = res;
+            update_chapter(el, res);
             // also reload js
             d.querySelectorAll('script[src]').forEach(update_script);
           } else {
@@ -42,6 +42,18 @@
         el.dataset.wait = '';
       });
     });
+  }
+  function update_chapter(el, html) {
+    const w = d.createElement('div'); w.innerHTML = html;
+    // current chapter number
+    const n = +el.querySelector('.section-number')?.innerText.replace(/^([0-9]+).*/, '$1');
+    // change the leading 1 to n in section numbers
+    n && w.querySelectorAll('.section-number').forEach(el => {
+      const t = el.innerText.match(/^(\d+)(.*)/);
+      if (t.length === 3) el.innerText = `${t[1] - 1 + n}${t[2]}`;
+    });
+    el.outerHTML = w.innerHTML;
+    w.remove();
   }
   // to reload <script src>, it has to be destroyed and re-created
   function update_script(el) {
