@@ -540,7 +540,7 @@ exec_inline = function(x, envir) {
 # ..., and is based on environments, which are *mutable*
 new_opts = function() {
   # global chunk options
-  .opts = structure(new_env(), class = 'litedown_env')
+  .opts = structure(new_env(), class = c('litedown_env', 'environment'))
 
   opt_get = function(x, drop = length(x) == 1) {
     vs = mget(x, .opts, ifnotfound = list(NULL))
@@ -636,6 +636,6 @@ eng_html = function(x, before = NULL, after = NULL) {
 
 #' @export
 print.litedown_env = function(x, ...) {
-  str(as.list.environment(x, all.names = TRUE, sorted = TRUE), ...)
+  str(as.list(x, all.names = TRUE, sorted = TRUE), ...)
   invisible(x)
 }
