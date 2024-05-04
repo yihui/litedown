@@ -53,8 +53,12 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       resp = ''
       if (type %in% c('asset', 'page')) {
         if (check_time(path)) resp = '1'
-      } else if (type == 'book') {
-        if (check_time(path)) resp = ''
+      } else if (grepl('^book:', type) && check_time(path)) {
+        # type = book:foo/bar.Rmd; path = server/root/to/foo/bar.Rmd
+        f = sub('^book:', '', type)  # relative path of the book file
+        b = substr(path, 1, nchar(path) - nchar(f))  # base directory of book
+        if (b == '') b = '.'
+        resp = in_dir(b, fuse_book(c('.', f), 'html', globalenv()))
       }
       return(list(payload = resp))
     }
@@ -132,7 +136,7 @@ file_resp = function(x, raw) {
   } else if (ext %in% c('rmd', 'qmd')) {
     # check if the file is for a book
     txt = read_utf8(x)
-    yaml = yaml_body(txt)$yaml
+    yaml = xfun::yaml_body(txt)$yaml
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
       in_dir(dirname(x), fuse_book('.', 'html', globalenv()))
     } else {

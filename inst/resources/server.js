@@ -25,15 +25,17 @@
           return;
         if (el.dataset.wait) return;
         el.dataset.wait = 1;  // don't send another request while waiting
-        new_req(u, q ? (a ? 'asset' : 'book') : 'page', e => {
+        new_req(u, q ? (a ? 'asset' : `book:${u}`) : 'page', e => {
           const res = e.target.responseText;
           if (res !== '') {
             if (a) {
               el[a] = `${u.replace(/[?].*/, '')}?timestamp=${+new Date()}`;
               el.tagName ==='SCRIPT' && update_script(el);
             } else if (s) {
-              // update a book chapter
-              // el.outerHTML = res;  // also reload js
+              // update a book chapter (response is an HTML fragment)
+              el.outerHTML = res;
+              // also reload js
+              d.querySelectorAll('script[src]').forEach(update_script);
             } else {
               // the current page source file has changed; refresh page
               location.reload();

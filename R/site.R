@@ -53,19 +53,28 @@
 #'   argument.
 #' @export
 fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
-  if (length(input) == 1 && dir.exists(input)) input = find_input(input)
+  # when input is c(dir, file1, file2, ...), we find book files under dir, but
+  # only preview file1, file2, ...
+  if (dir.exists(input[1])) {
+    preview = input[-1]; input = input[1]
+  } else preview = NULL
+  # automatically search for book files if input is dir
+  if (auto <- length(input) == 1 && dir.exists(input)) input = find_input(input)
   if (length(input) == 0) stop('No input was provided or found.')
-  input = reorder_input(input)
-  input = sub('^[.]/+', '', input)
   # detect output format and config
   text = read_utf8(input[1]); part = yaml_body(text); yaml = part$yaml
   format = detect_format(output, yaml)
   output = auto_output(input[1], output, format)
   cfg = merge_list(list(
-    new_session = FALSE, chapter_begin = '', chapter_end = "Source: `$input$`"
+    new_session = FALSE, subdir = FALSE,
+    chapter_begin = '', chapter_end = "Source: `$input$`"
   ), yaml[['litedown']])
+  # if subdir = TRUE but input doesn't include files from subdir, redo the search
+  if (auto && isTRUE(cfg$subdir) && !any(grepl('/', input))) {
+    input = find_input(dirname(input[1]), TRUE)
+  }
 
-  res = lapply(input, function(x) {
+  res = lapply(preview %|% input, function(x) {
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
       fmt = paste0('markdown:', format)  # generate intermediate markdown output
       if (cfg$new_session) {
@@ -74,6 +83,9 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
         fuse(x, fmt, NULL, envir)
       }
     }
+    # remove YAML in the preview mode since we only need the body
+    if (length(preview)) out = xfun::yaml_body(split_lines(out))$body
+
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div
     info = function(cls) c(
@@ -81,7 +93,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       sub_vars(cfg[[sprintf('chapter_%s', cls)]], list(input = I(x))), ':::'
     )
     # for the first input, the fenced Divs should be inserted after YAML
-    h = if ('yaml' %in% names(part) && x == input[1]) {
+    h = if (length(preview) == 0 && 'yaml' %in% names(part) && x == input[1]) {
       out = split_lines(out)
       if (length(i <- xfun:::locate_yaml(out)) >= 2) {
         i = seq_len(i[2]); h = out[i]; out = out[-i]
@@ -96,13 +108,13 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   tweak_options(format, yaml, list(
     body_class = '', css = c("@default", "@article"),
     js = c("@sidenotes", "@appendix")
-  ))
+  ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res))
 }
 
 # find input files under a directory
-find_input = function(d) {
-  x = list.files(d, '[.][Rq]?md$', full.names = TRUE, recursive = grepl('/$', d))
+find_input = function(d, deep = grepl('/$', d)) {
+  x = list.files(d, '[.][Rq]?md$', full.names = TRUE, recursive = deep)
   # exclude .* and _* files
   x = x[!grepl('^[_.]', basename(x))]
   # exclude readme
@@ -110,6 +122,8 @@ find_input = function(d) {
   # for .md files, don't include them if they have .Rmd/.qmd files
   b = sans_ext(x); i = file_ext(x) == 'md'
   x = x[!i | !(b %in% sub('[.][Rq]md$', '', x))]
+  x = reorder_input(x)
+  x = sub('^[.]/+', '', x)
   x
 }
 
@@ -121,7 +135,7 @@ reorder_input = function(x) {
 }
 
 # temporarily set global metadata and options (inheriting from index.Rmd)
-tweak_options = function(format, yaml, meta = NULL, options = NULL) {
+tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) {
   nms = paste0('litedown.', format, c('.meta', '.options'))
   defaults = list(
     merge_list(
@@ -129,7 +143,7 @@ tweak_options = function(format, yaml, meta = NULL, options = NULL) {
     ),
     merge_list(
       .Options[[nms[2]]], options,
-      list(toc = TRUE, number_sections = TRUE, embed_resources = FALSE)
+      list(toc = toc, number_sections = TRUE, embed_resources = FALSE)
     )
   )
   names(defaults) = nms
