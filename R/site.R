@@ -106,8 +106,8 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '', css = c("@default", "@article", "@book@1.12.0"),
-    js = c("@sidenotes", "@appendix", "@toc-highlight")
+    body_class = '', css = jsd_version(c("@default", "@article", "@book")),
+    js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight"))
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res))
 }
@@ -150,6 +150,9 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
   opts = options(defaults)
   xfun::exit_call(function() options(opts))
 }
+
+# use a specific version of jsdelivr assets
+jsd_version = function(x, v = '@1.12.1') paste0(x, v)
 
 # TODO: fuse() files individually into .html; use meta variables header-includes
 # / include-before / include-after to customize <head>, nav bar, footer; it may
