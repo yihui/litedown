@@ -812,6 +812,11 @@ Variables specific to the HTML template:
         `CDN/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css`
         extension over `.min.css`, you can use `@default.css`.
 
+    -   `@foo@version` (a filename followed by a version number) will be
+        converted to `CDN/npm/@xiee/utils@version/css/foo.min.css`, e.g.,
+        `@article@1.12.0` means
+        `CDN/npm/@xiee/utils@1.12.0/css/article.min.css`.
+
     -   `@path/to/file` (i.e., a value that contains slashes) will be converted
         to `CDN/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
         converted to `CDN/npm/@xiee/utils/js/center-img.min.js`.

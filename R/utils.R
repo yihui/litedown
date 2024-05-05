@@ -765,6 +765,10 @@ resolve_files = function(x, ext = 'css') {
   # @foo -> jsdelivr.net/npm/@xiee/utils/ext/foo.min.ext
   i0 = grepl('^@', x)
   x[i0] = sub('^@', '', x[i0])
+  # @foo@version -> @npm/@xiee/utils@version/foo
+  i = i0 & !grepl('[/,]', x)
+  x[i] = sub('^(.+?)@(.+)$', sprintf('npm/@xiee/utils@\\2/%s/\\1', ext), x[i])
+
   # if no extension is specified, use .min.ext
   x[i0] = add_ext(x[i0], min_ext)
   i = i0 & !grepl('[/,]', x)

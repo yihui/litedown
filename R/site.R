@@ -106,8 +106,8 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '', css = c("@default", "@article"),
-    js = c("@sidenotes", "@appendix")
+    body_class = '', css = c("@default", "@article", "@book@1.12.0"),
+    js = c("@sidenotes", "@appendix", "@toc-highlight")
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res))
 }
