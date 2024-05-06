@@ -629,6 +629,46 @@ number_sections = function(x) {
   })
 }
 
+# number elements such as headings and figures, etc and resolve cross-references
+number_refs = function(x, r) {
+  db = list()  # element numbers
+
+  # first, find numbered section headings
+  r2 = '<h[1-6][^>]*? id="(sec-[^"]+)"[^>]*><span class="section-number">([0-9.]+)</span>'
+  m = regmatches(x, gregexec(r2, x))[[1]]
+  if (length(m)) {
+    ids = m[2, ]
+    db = setNames(m[3, ], ids)
+  }
+
+  # then find and number other elements
+  r2 = sprintf('<a href="#@%s"></a>', r)
+  db2 = list()
+  x = match_replace(x, r2, function(z) {
+    type = sub(r2, '\\1', z)
+    id = sub(r2, '\\1-\\2', z)
+    ids = split(id, type)
+    db2 <<- unlist(unname(lapply(ids, function(id) setNames(seq_along(id), id))))
+    sprintf('<span class="ref-number-%s">%d</span>', rep(names(ids), lengths(ids)), db2[id])
+  })
+  db = unlist(c(db, db2))
+  ids = names(db)
+  if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ' '))
+
+  # finally, resolve cross-references
+  r2 = sprintf('<a href="#(%s)">@\\1</a>', r)
+  match_replace(x, r2, function(z) {
+    type = sub(r2, '\\2', z)
+    id = sub(r2, '\\2-\\3', z)
+    sprintf('<a class="cross-ref-%s" href="#%s">%s</a>', type, id, db[id])
+  })
+}
+
+# add a special anchor [](#@id) to text, to be used to resolved cross-references
+add_ref = function(id, type, x = NULL) {
+  c(sprintf('[](#@%s-%s)', type, id), x)
+}
+
 #' @importFrom utils URLdecode
 embed_resources = function(x, embed = 'local') {
   if (length(x) == 0) return(x)

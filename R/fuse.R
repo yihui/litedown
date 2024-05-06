@@ -474,7 +474,7 @@ fuse_code = function(x, envir, blocks) {
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
       if (is.null(env)) img else fenced_div(c(
-        img, if (length(cap)) c('', fenced_div(cap, '.fig-caption'))
+        img, if (length(cap)) c('', fenced_div(add_ref(lab, 'fig', cap), '.fig-caption'))
       ), c(env, sprintf('#fig-%s', lab)))
     } else {
       a = opts[[paste0('attr.', type)]]

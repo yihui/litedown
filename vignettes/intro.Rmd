@@ -420,6 +420,29 @@ only the first class name will be used as the LaTeX environment name. However,
 all class names will be used if the output format is HTML (e.g.,
 `<div class="a b c">`).
 
+#### Cross-references
+
+To cross-reference an element, it must be numberd first. For section headings,
+the numbers are automatically generated if the `number_sections` option is true.
+For other elements, they must contain empty anchors of the form `[](#@ID)`,
+where `ID` is the ID of the element to be referenced. For figures, these anchors
+are automatically generated if the chunk options `fig.cap` (figure caption) and
+`fig.env` are not empty, e.g.,
+
+```` md
+```{r}
+#| nice-plot, fig.cap="A nice caption", fig.env=".figure"
+
+plot(cars)
+```
+````
+
+To refer to an element in the text, use the syntax `@ID`, e.g.,
+
+``` md
+Please see @fig-nice-plot for an overview of the `cars` data.
+```
+
 #### Smart HTML entities
 
 "Smart" HTML entities can be represented by ASCII characters, e.g., you can

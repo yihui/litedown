@@ -191,6 +191,18 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     })
   }
 
+  # turn @ref into [@ref](#ref) and resolve cross-references later in JS; for
+  # latex output, turn @ref to \ref{}
+  r_ref = '([a-z]+)-([-_[:alnum:]]+)'  # must start with letters followed by -
+  r5 = paste0('(^|(?<=\\s))@', r_ref)
+  if (test_feature('cross_refs', r5)) {
+    text[p] = match_replace(text[p], r5, function(x) {
+      sprintf('[%s](%s)', x, sub('^@', '#', x))
+    })
+  }
+
+  # TODO: support [@citation]
+
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
 
@@ -238,6 +250,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
     ret = add_toc(ret, options)
+    # number figures and tables, etc.
+    ret = number_refs(ret, r_ref)
   } else if (format == 'latex') {
     ret = render_footnotes(ret)  # render [^n] footnotes
     if (has_math) {
@@ -269,6 +283,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       x
     }, perl = FALSE)
     # fix horizontal rules from --- (\linethickness doesn't work)
+    # TODO: cross-refs for latex output
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
     if (isTRUE(options[['toc']])) ret = paste0('\\tableofcontents\n', ret)
@@ -368,7 +383,7 @@ markdown_options = function() {
   # options enabled by default
   x1 = c(
     'smart', 'embed_resources', 'js_math', 'js_highlight',
-    'superscript', 'subscript', 'latex_math', 'auto_identifiers',
+    'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )
   # options disabled by default
