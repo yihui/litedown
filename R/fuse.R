@@ -611,7 +611,7 @@ new_opts = function() {
 reactor = new_opts()
 reactor(
   eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
-  warning = TRUE, message = TRUE, error = FALSE, include = TRUE,
+  warning = TRUE, message = TRUE, error = NA, include = TRUE,
   strip.white = TRUE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',

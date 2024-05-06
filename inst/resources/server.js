@@ -30,6 +30,10 @@
       el.dataset.wait = 1;  // don't send another request while waiting
       new_req(u, q ? (a ? 'asset' : `book:${u}`) : 'page', e => {
         const res = e.target.responseText;
+        if (e.target.status !== 200) {
+          el.innerHTML = `<pre><code class="error">${res}</code></pre>`;
+          return;
+        }
         if (res !== '') {
           if (a) {
             el[a] = `${u.replace(/[?].*/, '')}?timestamp=${+new Date()}`;
