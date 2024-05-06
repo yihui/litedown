@@ -7,11 +7,20 @@
 #' fewer dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun base64_uri csv_options download_cache fenced_block
 #'   file_exists file_ext grep_sub in_dir loadable prose_index raw_string
-#'   read_all read_utf8 sans_ext split_lines with_ext write_utf8
+#'   read_all read_utf8 record_print sans_ext split_lines with_ext write_utf8
 '_PACKAGE'
 
 # an internal environment to store some intermediate objects
 .env = new_env()
+
+#' @export
+record_print.data.frame = function(x, ...) {
+  xfun::new_record(c(xfun::md_table(x), ''), 'asis')
+}
+
+#' @export
+record_print.matrix = record_print.data.frame
+
 
 # register vignette engines
 .onLoad = function(lib, pkg) {
