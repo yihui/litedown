@@ -13,10 +13,9 @@
 #' ---
 #' output:
 #'   litedown::html_format:
-#'     meta:
-#'       css: ["@default", "custom.css"]
 #'     options:
-#'       number_sections: false
+#'       toc:
+#'         depth: 4
 #'   litedown::latex_format:
 #'     meta:
 #'       documentclass: "book"
