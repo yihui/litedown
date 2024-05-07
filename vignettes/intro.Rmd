@@ -458,11 +458,10 @@ knitr::kable(t(as.matrix(p)), col.names = sprintf('`%s`', names(p)))
 
 As mentioned earlier, a lot of features in Pandoc's Markdown are not supported
 in the **litedown** package. Any feature that you find missing in previous
-sections is likely to be unavailable, such as citations and figure/table
-captions. In addition, a lot of R Markdown and Quarto (both are based on Pandoc)
-features are not supported, either. Some HTML features may be implemented via
-JavaScript, but currently it is not straightforward and may be improved in
-future.
+sections is likely to be unavailable, such as citations. In addition, a lot of R
+Markdown and Quarto (both are based on Pandoc) features are not supported,
+either. Some HTML features may be implemented via JavaScript, but currently it
+is not straightforward and may be improved in future.
 
 Pandoc can convert Markdown to many output formats, such as Word, PowerPoint,
 LaTeX beamer, and EPUB. The **litedown** package is unlikely to support output
