@@ -169,7 +169,7 @@ mark_full = function(...) {
 
 # guess if a file is a text file
 is_text_file = function(ext = file_ext(file), type = xfun:::guess_type(file), file) {
-  (ext %in% c('js', 'latex', 'tex', 'xml') || grepl('^text/', type))
+  (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
 # return a raw file response
