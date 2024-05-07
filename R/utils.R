@@ -646,7 +646,7 @@ number_refs = function(x, r) {
   }
 
   # then find and number other elements
-  r2 = sprintf('<a href="#@%s"></a>', r)
+  r2 = sprintf('<a href="#@%s"> ?</a>', r)
   db2 = list()
   x = match_replace(x, r2, function(z) {
     type = sub(r2, '\\1', z)
