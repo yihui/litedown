@@ -30,6 +30,17 @@ record_print.data.frame = function(x, ...) {
 record_print.matrix = record_print.data.frame
 
 #' @export
+record_print.tbl_df = function(x, ...) {
+  x = as.data.frame(x)
+  if ('limit' %in% names(list(...))) {
+    record_print.data.frame(x, ...)
+  } else {
+    limit = getOption('xfun.md_table.limit', getOption('pillar.print_min', 10))
+    record_print.data.frame(x, ..., limit = limit)
+  }
+}
+
+#' @export
 record_print.knitr_kable = function(x, ...) {
   if ((fmt <- attr(x, 'format')) %in% c('html', 'latex'))
     x = fenced_block(x, paste0('=', fmt))
