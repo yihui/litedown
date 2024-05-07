@@ -274,10 +274,10 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   }
   # set default figure and cache paths
   set_path = function(name) {
-    # fig.path = output-files/ if `output` is a path, otherwise use
-    # litedown-files/ (we don't use *_files because of rstudio/rmarkdown#2550)
+    # fig.path = output__files/ if `output` is a path, otherwise use
+    # litedown__files/ (we don't use _files because of rstudio/rmarkdown#2550)
     if (is.null(p <- opts[[name]])) p = paste0(
-      output_base %||% 'litedown', c(fig.path = '-files/', cache.path = '-cache/')[name]
+      output_base %||% 'litedown', c(fig.path = '__files/', cache.path = '__cache/')[name]
     )
     # make sure path is absolute so it will be immune to setwd() (in code chunks)
     if (xfun::is_rel_path(p)) p = file.path(getwd(), p)
