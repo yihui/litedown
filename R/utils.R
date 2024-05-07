@@ -395,7 +395,7 @@ build_toc = function(html, n = 3) {
   x = gsub('<toc id="([^"]+)">(.+?)</toc>', '<a href="#\\1">\\2</a>', x)
   x = gsub('</?toc>', '', x)
   # add class 'numbered' to the first <ul> if any heading is numbered
-  if (length(grep('<span class="section-number">', x)))
+  if (length(grep('<span class="section-number[^"]*">', x)))
     x = sub('<ul>', '<ul class="numbered">', x)
   paste0('<div id="TOC">\n', x, '</div>')
 }
@@ -580,7 +580,7 @@ number_sections = function(x) {
   h = sub('</h([1-6])>', '\\1', unlist(regmatches(x, m)))
   if (length(h) == 0) return(x)  # no headings
   h = min(as.integer(h))  # highest level of headings
-  r = '<h([1-6])([^>]*)>(?!<span class="section-number">)'
+  r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
   n = rep(0, 6)  # counters for all levels of headings
   # test if a class name exists in attributes
   has_class = function(x, class) {
@@ -622,8 +622,11 @@ number_sections = function(x) {
       s = if (h > 1) n[-(1:(h - 1))] else n
       s = paste(num_sections(s), collapse = '.')
       s = gsub('([.]0)+$', '', s)  # remove trailing 0's
-      if (!grepl('[.]', s)) s = paste0(s, '.')  # '1. section' instead of '1 section'
-      z[i] = paste0(z[i], sprintf('<span class="section-number">%s</span> ', s))
+      # if section number doesn't contain '.', assign a class 'main-number' to the number
+      z[i] = paste0(z[i], sprintf(
+        '<span class="section-number%s">%s</span> ',
+        ifelse(grepl('[.]', s), '', ' main-number'), s
+      ))
     }
     z
   })
@@ -635,7 +638,7 @@ number_refs = function(x, r) {
   db = list()  # element numbers
 
   # first, find numbered section headings
-  r2 = '<h[1-6][^>]*? id="(sec-[^"]+)"[^>]*><span class="section-number">([0-9.]+)</span>'
+  r2 = '<h[1-6][^>]*? id="(sec-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
   m = regmatches(x, gregexec(r2, x))[[1]]
   if (length(m)) {
     ids = m[2, ]

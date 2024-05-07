@@ -152,7 +152,7 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
 }
 
 # use a specific version of jsdelivr assets
-jsd_version = function(x, v = '@1.12.1') paste0(x, v)
+jsd_version = function(x, v = '@1.12.2') paste0(x, v)
 
 # TODO: fuse() files individually into .html; use meta variables header-includes
 # / include-before / include-after to customize <head>, nav bar, footer; it may
