@@ -339,27 +339,30 @@ fiss = function(input, output = '.R', text = NULL) {
   p_len = p_len + sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1 + 3  # 1 = '#'; 3 = ' | '
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
-  p_bar = if (quiet) function(x) {} else function(x) {
+  p_bar = function(x) {
     if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
   }
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
+  opt = options('error'); on.exit(options(opt), add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
   o = block_order(blocks)
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
-    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
-    res[k] = xfun:::handle_error(
-      if (b$type == 'code_chunk') {
-        one_string(fuse_code(b, envir, blocks))
-      } else {
-        one_string(fuse_text(b, envir), '')
-      },
-      function(e, loc) sprintf('Quitting from %s', loc),
-      p_lab[k], get_loc
-    )
-    p_bar(p_clr)
+    # print the quit message only for quiet = TRUE because the same message has
+    # been included in progress bar when quiet = FALSE
+    if (quiet) {
+      options(error = function() message('Quitting from ', get_loc(p_lab[k])))
+    } else {
+      p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
+    }
+    res[k] = if (b$type == 'code_chunk') {
+      one_string(fuse_code(b, envir, blocks))
+    } else {
+      one_string(fuse_text(b, envir), '')
+    }
+    if (!quiet) p_bar(p_clr)
   }
   res
 }
