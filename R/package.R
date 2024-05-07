@@ -6,8 +6,9 @@
 #' and \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e.,
 #' fewer dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun base64_uri csv_options download_cache fenced_block
-#'   file_exists file_ext grep_sub in_dir loadable prose_index raw_string
-#'   read_all read_utf8 record_print sans_ext split_lines with_ext write_utf8
+#'   file_exists file_ext grep_sub in_dir loadable new_record prose_index
+#'   raw_string read_all read_utf8 record_print sans_ext split_lines with_ext
+#'   write_utf8
 '_PACKAGE'
 
 # an internal environment to store some intermediate objects
@@ -15,7 +16,14 @@
 
 #' @export
 record_print.data.frame = function(x, ...) {
-  xfun::new_record(c(xfun::md_table(x), ''), 'asis')
+  tab = xfun::md_table(x, ...)
+  opt = reactor()
+  if (length(cap <- opt$tab.cap)) {
+    cap = fenced_div(add_ref(opt$label, 'tab', cap), '.tab-caption')
+    tab = if (opt$tab.pos == 'top') c(cap, '', tab) else c(tab, '', cap)
+    tab = fenced_div(tab, c(opt$tab.env %||% '.table', sprintf('#tab-%s', opt$label)))
+  }
+  new_record(c(tab, ''), 'asis')
 }
 
 #' @export

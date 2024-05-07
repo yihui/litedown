@@ -618,6 +618,7 @@ reactor(
   cache = FALSE, cache.path = NULL,
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
   fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
+  tab.cap = NULL, tab.env = NULL, tab.pos = 'top',
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
   wd = NULL
 )
