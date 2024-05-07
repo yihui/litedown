@@ -244,6 +244,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     }, 'html', function(z2) gsub(id4, ' ', restore_html(z2)))
     # some code blocks with "attributes" are verbatim ones
     ret = match_replace(ret, '```+\\{.+}', function(x) gsub(id4, ' ', x, fixed = TRUE))
+    # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
+    ret = gsub(
+      '(<table>)(?s)(.+?</table>)\n<p>(Table)?: (?s)(.+?)</p>',
+      '\\1\n<caption>\\4</caption>\\2', ret, perl = TRUE
+    )
     # auto identifiers
     if (isTRUE(options[['auto_identifiers']])) ret = auto_identifier(ret)
     # number sections

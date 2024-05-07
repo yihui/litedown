@@ -94,6 +94,23 @@ a^{2}+b^{2} &amp; = c^{2}\
 </tbody>
 </table>
 
+> mark("\n| a | b |\n|---|--:|\n| A | 9 |\n\nTable: A table _caption_.\n")
+<table>
+<caption>A table <em>caption</em>.</caption>
+<thead>
+<tr>
+<th>a</th>
+<th align="right">b</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+
 > mark("\nFirst Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell\n", 
 +     options  .... [TRUNCATED] 
 <p>First Header  | Second Header

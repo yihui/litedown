@@ -46,7 +46,7 @@ a^{2}+b^{2} & = c^{2}\\\\\\\\
 mark(mkd)
 mark(mkd, options = "-latex_math")
 
-# tables example (need 4 spaces at beginning of line here)
+# table example
 mark("
 First Header  | Second Header
 ------------- | -------------
@@ -54,7 +54,16 @@ Content Cell  | Content Cell
 Content Cell  | Content Cell
 ")
 
-# but not here
+# caption
+mark("
+| a | b |
+|---|--:|
+| A | 9 |
+
+Table: A table _caption_.
+")
+
+# no table
 mark("
 First Header  | Second Header
 ------------- | -------------
