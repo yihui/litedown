@@ -401,7 +401,10 @@ fuse_code = function(x, envir, blocks) {
     x$source = unlist(lapply(blocks[opts$ref.label], `[[`, 'source'))
   }
 
-  args = reactor('fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error', 'cache')
+  args = reactor(
+    'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
+    'cache', 'print', 'print.args'
+  )
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
@@ -619,6 +622,7 @@ reactor(
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
   fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
   tab.cap = NULL, tab.env = NULL, tab.pos = 'top',
+  print = NULL, print.args = NULL,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
   wd = NULL
 )
