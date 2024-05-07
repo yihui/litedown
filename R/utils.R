@@ -631,6 +631,7 @@ number_sections = function(x) {
 
 # number elements such as headings and figures, etc and resolve cross-references
 number_refs = function(x, r) {
+  if (length(x) == 0) return(x)
   db = list()  # element numbers
 
   # first, find numbered section headings
