@@ -29,6 +29,12 @@ record_print.data.frame = function(x, ...) {
 #' @export
 record_print.matrix = record_print.data.frame
 
+#' @export
+record_print.knitr_kable = function(x, ...) {
+  if ((fmt <- attr(x, 'format')) %in% c('html', 'latex'))
+    x = fenced_block(x, paste0('=', fmt))
+  new_record(c(x, ''), 'asis')
+}
 
 # register vignette engines
 .onLoad = function(lib, pkg) {

@@ -2,6 +2,7 @@
 
 S3method(print,litedown_env)
 S3method(record_print,data.frame)
+S3method(record_print,knitr_kable)
 S3method(record_print,matrix)
 export(chop)
 export(fiss)
