@@ -18,6 +18,9 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   s = xfun::new_app('.litedown', function(path, ...) {
     file_raw(pkg_file('resources', path))
   }, open = FALSE)
+  # the URL needs to be translated on RStudio Server
+  if (Sys.getenv('RS_SESSION_URL') != '' && loadable('rstudioapi'))
+    s = rstudioapi::translateLocalUrl(s, TRUE)
   # load litedown assets via http://127.0.0.1:port/custom/.litedown/assets
   asset_url = function(path) paste0(s, path)
 
