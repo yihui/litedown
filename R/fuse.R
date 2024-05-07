@@ -200,9 +200,9 @@ convert_knitr = function(input) {
 # return a string to indicate the error location
 get_loc = function(label) {
   l = .env$source_pos; n = length(l)
-  if (n == 4) l = sprintf('%d:%d-%d:%d', l[1], l[2], l[3], l[4])  # row1:col1-row2:col2
-  if (n == 2) l = sprintf('%d-%d', l[1], l[2])  # row1-row2
-  paste0(l, label, if (label == '') ' ', sprintf('(%s)', .env$input))
+  if (n == 4) l = sprintf('#%d:%d-%d:%d', l[1], l[2], l[3], l[4])  # row1:col1-row2:col2
+  if (n == 2) l = sprintf('#%d-%d', l[1], l[2])  # row1-row2
+  paste0(.env$input, l, if (label == '') ' ', label)
 }
 
 # save line numbers in .env to be used in error messages
@@ -332,7 +332,11 @@ fiss = function(input, output = '.R', text = NULL) {
 
   # a simple progress indicator
   p_lab = ifelse(nms == '', '', sprintf(' [%s] ', nms))  # labels to display
-  p_len = max(c(0, nchar(p_lab))) + 5  # 5 == nchar('100% ')
+  # we need to know how many spaces we need to wipe out previous progress text
+  # of the form: X% | input_file#line1-line2 [label]
+  p_len = if (length(input)) nchar(input) else 0  # length of input path
+  p_len = p_len + max(c(0, nchar(p_lab))) + 4  # 4 == nchar('100%')
+  p_len = p_len + sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1 + 3  # 1 = '#'; 3 = ' | '
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
   p_bar = if (quiet) function(x) {} else function(x) {
@@ -344,15 +348,15 @@ fiss = function(input, output = '.R', text = NULL) {
   o = block_order(blocks)
   res = character(n)
   for (i in seq_len(n)) {
-    p_bar(c(p_lab[k], as.character(round((i - 1)/n * 100)), '%'))
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
+    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
     res[k] = xfun:::handle_error(
       if (b$type == 'code_chunk') {
         one_string(fuse_code(b, envir, blocks))
       } else {
         one_string(fuse_text(b, envir), '')
       },
-      function(e, loc) sprintf('Quitting from lines %s', loc),
+      function(e, loc) sprintf('Quitting from %s', loc),
       p_lab[k], get_loc
     )
     p_bar(p_clr)
