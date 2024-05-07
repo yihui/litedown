@@ -343,7 +343,7 @@ fiss = function(input, output = '.R', text = NULL) {
     if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
   }
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  opt = options(error = getOption('error'), readr.show_progress = FALSE)
+  opt = options(error = getOption('error'), rstudio.notebook.executing = TRUE)
   on.exit(options(opt), add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
