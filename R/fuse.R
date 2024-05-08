@@ -555,8 +555,21 @@ exec_inline = function(x, envir) {
     return(sprintf('`{%s} %s`', o$engine, x$source))
   }
   res = eval(xfun::parse_only(x$source), envir)
-  # TODO: allow for custom coercion functions here
-  as.character(res)
+  if (is.numeric(res) && length(res) == 1) sci_num(res) else as.character(res)
+}
+
+# change scientific notation to LaTeX math
+sci_num = function(x) {
+  s = getOption('litedown.inline.signif', 3)
+  p = getOption('litedown.inline.power', 6)
+  r = '^(-)?([0-9.]+)e([-+])0*([0-9]+)$'
+  x = format(signif(x, s), scientific = x != 0 && abs(log10(x)) >= p)
+  if (!grepl(r, x)) return(x)
+  n = regmatches(x, regexec(r, x))[[1]]
+  sprintf(
+    '%s%s10^{%s%s}', n[2], if (n[3] == '1') '' else paste(n[3], '\\times '),
+    if (n[4] == '+') '' else n[4], n[5]
+  )
 }
 
 # similar to the base R options() interface but for litedown options / engines /
