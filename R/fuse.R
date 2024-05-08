@@ -348,15 +348,18 @@ fiss = function(input, output = '.R', text = NULL) {
   p_len = p_len + sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1 + 3  # 1 = '#'; 3 = ' | '
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
+  p_yes = FALSE; t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
   p_bar = function(x) {
-    if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
+    if (!quiet && (p_yes || Sys.time() - t0 > td)) {
+      cat(x, sep = '', file = p_out)
+      p_yes <<- TRUE
+    }
   }
-  t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
   # if error occurs, print error location with a clickable file link
   k = n - 1  # when exiting, k should be n instead
   on_error = function() {
     if (k == n) return()  # blocks have been successfully fused
-    if (!quiet) p_bar(p_clr)
+    p_bar(p_clr)
     # should we check if ANSI links are actually supported? e.g., via
     # Sys.getenv('RSTUDIO_CLI_HYPERLINKS')
     if (length(input)) .env$input = sprintf(
@@ -373,15 +376,13 @@ fiss = function(input, output = '.R', text = NULL) {
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
-    if (!quiet) {
-      p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
-    }
+    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
     res[k] = if (b$type == 'code_chunk') {
       one_string(fuse_code(b, blocks))
     } else {
       one_string(fuse_text(b), '')
     }
-    if (!quiet) p_bar(p_clr)
+    p_bar(p_clr)
   }
   k = n
   res
