@@ -19,6 +19,9 @@ gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
 
 `%|%` = function(x, y) if (length(x)) x else y
 if (getRversion() < '4.4.0') `%||%` = function(x, y) if (is.null(x)) y else x
+set_names = function(x, nm) {
+  names(x) = nm; x
+}
 
 dropNULL = function(x) x[!vapply(x, is.null, logical(1))]
 
@@ -55,7 +58,7 @@ fracs = local({
   )
   n2 = c('1/7', '1/9', '1/10')
   x2 = seq_along(n2) + 8527  # &#8528;, 8529, 8530
-  setNames(c(sprintf('&frac%s;', gsub('/', '', n1)), sprintf('&#%d;', x2)), c(n1, n2))
+  set_names(c(sprintf('&frac%s;', gsub('/', '', n1)), sprintf('&#%d;', x2)), c(n1, n2))
 })
 
 pants = c(fracs, c('(c)' = '&copy;', '(r)' = '&reg;', '(tm)' = '&trade;'))
@@ -332,7 +335,7 @@ lang_files = function(package, path, langs) {
     x = lapply(regmatches(x, m), function(z) {
       z = gsub('[]["]', '', z)
       unlist(lapply(strsplit(z, '[:,]'), function(y) {
-        setNames(list(y[-1]), y[1])
+        set_names(list(y[-1]), y[1])
       }), recursive = FALSE)
     })
     # x1 is dependencies; x2 is aliases
@@ -642,7 +645,7 @@ number_refs = function(x, r) {
   m = regmatches(x, gregexec(r2, x))[[1]]
   if (length(m)) {
     ids = m[2, ]
-    db = setNames(m[3, ], ids)
+    db = set_names(m[3, ], ids)
   }
 
   # then find and number other elements
@@ -652,7 +655,7 @@ number_refs = function(x, r) {
     type = sub(r2, '\\1', z)
     id = sub(r2, '\\1-\\2', z)
     ids = split(id, type)
-    db2 <<- unlist(unname(lapply(ids, function(id) setNames(seq_along(id), id))))
+    db2 <<- unlist(unname(lapply(ids, function(id) set_names(seq_along(id), id))))
     sprintf('<span class="ref-number-%s">%d</span>', rep(names(ids), lengths(ids)), db2[id])
   })
   db = unlist(c(db, db2))
@@ -755,8 +758,7 @@ normalize_embed = function(x) {
   x
 }
 
-#' @import stats
-named_bool = function(x, val = TRUE) as.list(setNames(rep(val, length(x)), x))
+named_bool = function(x, val = TRUE) as.list(set_names(rep(val, length(x)), x))
 
 # normalize metadata variable names: change _ to -
 normalize_meta = function(x) {
