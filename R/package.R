@@ -14,6 +14,15 @@
 # an internal environment to store some intermediate objects
 .env = new_env()
 
+#' The `fuse()` environment
+#'
+#' Get the environment passed to the `envir` argument of [fuse()], i.e., the
+#' environment in which code chunks and inline code are evaluated.
+#' @return When called during `fuse()`, it returns the `envir` argument value of
+#'   `fuse()`. When called outside `fuse()`, it returns the global environment.
+#' @export
+fuse_env = function() .env$global %||% globalenv()
+
 #' @export
 record_print.data.frame = function(x, ...) {
   tab = xfun::md_table(x, ...)

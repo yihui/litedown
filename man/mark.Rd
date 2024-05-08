@@ -39,7 +39,8 @@ output). The \code{output} argument can also take an output format name
 \item{text}{A character vector as the text input. By default, it is read from
 the \code{input} file if provided.}
 
-\item{envir}{An environment in which the code is to be evaluated.}
+\item{envir}{An environment in which the code is to be evaluated. It can be
+accessed via \code{\link[=fuse_env]{fuse_env()}} inside \code{\link[=fuse]{fuse()}}.}
 
 \item{quiet}{If \code{TRUE}, do not show the progress bar. If \code{FALSE}, the
 progress bar will be shown after a number of seconds, which can be set via

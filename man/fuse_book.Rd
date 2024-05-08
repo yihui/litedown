@@ -30,7 +30,8 @@ output). The \code{output} argument can also take an output format name
 (possible values are \code{html}, \code{latex}, \code{xml}, \code{man}, \code{commonmark}, and
 \code{text}). If no output format is detected or provided, the default is HTML.}
 
-\item{envir}{An environment in which the code is to be evaluated.}
+\item{envir}{An environment in which the code is to be evaluated. It can be
+accessed via \code{\link[=fuse_env]{fuse_env()}} inside \code{\link[=fuse]{fuse()}}.}
 }
 \value{
 An output file path or the output content, depending on the \code{output}

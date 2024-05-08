@@ -240,7 +240,8 @@ block_order = function(res) {
 #'   [rmarkdown::render()] do. The function `fiss()` extracts code from the
 #'   input, and is similar to [knitr::purl()].
 #' @rdname mark
-#' @param envir An environment in which the code is to be evaluated.
+#' @param envir An environment in which the code is to be evaluated. It can be
+#'   accessed via [fuse_env()] inside [fuse()].
 #' @param quiet If `TRUE`, do not show the progress bar. If `FALSE`, the
 #'   progress bar will be shown after a number of seconds, which can be set via
 #'   a global [option][options] `litedown.progress.delay` (the default is `2`).
@@ -273,6 +274,8 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
       if (is.character(.env$wd.out)) .env$wd.out else '.'
     } else dirname(output_base)
   )
+  # store the environment
+  .env$global = envir
 
   # set default device to 'cairo_pdf' for LaTeX output, and 'png' for other formats
   if (is.null(opts$dev)) {
@@ -297,7 +300,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
 
   blocks = chop(input, text)
   .env$input = input
-  res = .fuse(blocks, input, envir, quiet)
+  res = .fuse(blocks, input, quiet)
 
   # keep the markdown output if keep_md = TRUE is set in YAML output format
   if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
@@ -331,7 +334,7 @@ fiss = function(input, output = '.R', text = NULL) {
   if (is_output_file(output)) write_utf8(res, output) else raw_string(res)
 }
 
-.fuse = function(blocks, input, envir, quiet) {
+.fuse = function(blocks, input, quiet) {
   n = length(blocks)
   nms = vapply(blocks, function(x) x$options[['label']] %||% '', character(1))
   names(blocks) = nms
@@ -371,9 +374,9 @@ fiss = function(input, output = '.R', text = NULL) {
       p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
     }
     res[k] = if (b$type == 'code_chunk') {
-      one_string(fuse_code(b, envir, blocks))
+      one_string(fuse_code(b, blocks))
     } else {
-      one_string(fuse_text(b, envir), '')
+      one_string(fuse_text(b), '')
     }
     if (!quiet) p_bar(p_clr)
   }
@@ -384,14 +387,14 @@ fiss = function(input, output = '.R', text = NULL) {
 # when users hit the Knit button
 knit = function(input, ...) fuse(input, envir = parent.frame())
 
-fuse_code = function(x, envir, blocks) {
+fuse_code = function(x, blocks) {
   # merge local chunk options into global options
   old = reactor(x$options); on.exit(reactor(old), add = TRUE)
   opts = reactor()
 
   # delayed assignment to evaluate a chunk option only when it is actually used
   lapply(names(opts), function(i) {
-    if (is_lang(o <- opts[[i]])) delayedAssign(i, eval(o, envir), environment(), opts)
+    if (is_lang(o <- opts[[i]])) delayedAssign(i, eval(o, fuse_env()), environment(), opts)
   })
   # set the working directory before evaluating anything else
   if (is.character(opts$wd)) {
@@ -401,7 +404,7 @@ fuse_code = function(x, envir, blocks) {
   # fuse child documents (empty the `child` option to avoid infinite recursion)
   if (length(opts$child)) return(unlist(lapply(reactor(child = NULL)$child, function(.) {
     child = .env$child; .env$child = TRUE; on.exit(.env$child <- child)
-    fuse(., output = 'markdown', envir = envir, quiet = TRUE)
+    fuse(., output = 'markdown', envir = fuse_env(), quiet = TRUE)
   })))
 
   # the source code could be from these chunk options: file, code, or ref.label
@@ -426,7 +429,7 @@ fuse_code = function(x, envir, blocks) {
 
   lang = opts$engine
   res = if (opts$eval) {
-    if (is.function(eng <- engines(lang))) eng(x, envir) else list(
+    if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
       new_warning(sprintf("The engine '%s' is not supported yet.", lang))
     )
@@ -523,23 +526,23 @@ new_asis = function(x) xfun::new_record(x, 'asis')
 
 is_plot = function(x) inherits(x, 'record_plot')
 
-fuse_text = function(x, envir) {
+fuse_text = function(x) {
   if (is.character(src <- x$source)) return(one_string(src))
   res = lapply(src, function(s) {
-    if (is.character(s)) s else exec_inline(s, envir)
+    if (is.character(s)) s else exec_inline(s)
   })
   unlist(res)
 }
 
-exec_inline = function(x, envir) {
+exec_inline = function(x) {
   save_pos(x$pos)
   o = reactor(x$options); on.exit(reactor(o), add = TRUE)
   opts = reactor()
   lang = opts$engine
   if (lang == 'r') {
     expr = xfun::parse_only(x$source)
-    res = if (is.na(opts$error)) eval(expr, envir) else tryCatch(
-      eval(expr, envir), error = function(e) if (opts$error) e$message else ''
+    res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
+      eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
     )
     return(fmt_inline(res))
   }
@@ -655,15 +658,7 @@ reactor(
   wd = NULL
 )
 
-# language engines
-engines = new_opts()
-engines(
-  r = eng_r,
-  css = function(x) eng_html(x, '<style type="text/css">', '</style>'),
-  js = function(x) eng_html(x, '<script>', '</script>')
-)
-
-eng_r = function(x, envir) {
+eng_r = function(x) {
   opts = reactor()
   args = reactor(
     'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
@@ -677,10 +672,18 @@ eng_r = function(x, envir) {
   )
   args$cache = list(
     path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
-    hash = opts$cache.hash, keep = opts$cache.keep, id = lab, rw = opts$cache.rw
+    hash = opts$cache.hash, keep = opts$cache.keep, id = opts$label, rw = opts$cache.rw
   )
-  do.call(xfun::record, c(list(code = x$source, envir = envir), args))
+  do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
+
+# language engines
+engines = new_opts()
+engines(
+  r = eng_r,
+  css = function(x) eng_html(x, '<style type="text/css">', '</style>'),
+  js = function(x) eng_html(x, '<script>', '</script>')
+)
 
 eng_html = function(x, before = NULL, after = NULL) {
   out = fenced_block(c(before, x$source, after), '=html')
