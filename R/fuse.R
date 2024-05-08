@@ -510,8 +510,6 @@ fuse_code = function(x, blocks) {
   out
 }
 
-fenced_div = function(...) fenced_block(..., char = ':')
-
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
 # include chunk fences in the output (and also pipe comments if exist)
 add_fences = function(out, x, fence) {
