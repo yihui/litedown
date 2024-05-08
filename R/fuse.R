@@ -549,13 +549,24 @@ fuse_text = function(x, envir) {
 
 exec_inline = function(x, envir) {
   save_pos(x$pos)
-  o = x$options
-  if (o$engine != 'r') {
-    warning("The inline engine '", o$engine, "' is not supported yet")
-    return(sprintf('`{%s} %s`', o$engine, x$source))
+  o = reactor(x$options); on.exit(reactor(o), add = TRUE)
+  opts = reactor()
+  lang = opts$engine
+  if (lang == 'r') {
+    expr = xfun::parse_only(x$source)
+    res = if (is.na(opts$error)) eval(expr, envir) else tryCatch(
+      eval(expr, envir), error = function(e) if (opts$error) e$message else ''
+    )
+    return(fmt_inline(res))
   }
-  res = eval(xfun::parse_only(x$source), envir)
-  if (is.numeric(res) && length(res) == 1) sci_num(res) else as.character(res)
+  if (is.function(eng <- engines(lang))) eng(x, inline = TRUE) else {
+    warning("The inline engine '", lang, "' is not supported yet")
+    sprintf('`{%s} %s`', lang, x$source)
+  }
+}
+
+fmt_inline = function(x) {
+  if (is.numeric(x) && length(x) == 1) sci_num(x) else as.character(x)
 }
 
 # change scientific notation to LaTeX math
