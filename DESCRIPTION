@@ -23,6 +23,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown (>= 2.18),
+    rstudioapi,
     tinytex,
     yaml
 License: MIT + file LICENSE
