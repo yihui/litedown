@@ -67,7 +67,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   cfg = merge_list(list(
     new_session = FALSE, subdir = FALSE,
     chapter_begin = '', chapter_end = "Source: `$input$`"
-  ), yaml[['litedown']])
+  ), yaml[['litedown']][['book']])
   # if subdir = TRUE but input doesn't include files from subdir, redo the search
   if (auto && isTRUE(cfg$subdir) && !any(grepl('/', input))) {
     input = find_input(dirname(input[1]), TRUE)
