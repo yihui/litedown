@@ -13,7 +13,7 @@
 #'   can manually refresh the page to fully re-render it.
 #' @param ... Other arguments to be passed to [xfun::new_app()].
 #' @export
-peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
+roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   # a proxy server to return files under inst/resources/
   s = xfun::new_app('.litedown', function(path, ...) {
     file_raw(pkg_file('resources', path))
