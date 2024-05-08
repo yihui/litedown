@@ -352,8 +352,10 @@ fiss = function(input, output = '.R', text = NULL) {
     if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
   }
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  # set the error option to print error location with a clickable file link
-  opt = options(rstudio.notebook.executing = TRUE, error = function() {
+  # if error occurs, print error location with a clickable file link
+  k = n - 1  # when exiting, k should be n instead
+  on_error = function() {
+    if (k == n) return()  # blocks have been successfully fused
     if (!quiet) p_bar(p_clr)
     # should we check if ANSI links are actually supported? e.g., via
     # Sys.getenv('RSTUDIO_CLI_HYPERLINKS')
@@ -362,8 +364,9 @@ fiss = function(input, output = '.R', text = NULL) {
       xfun::normalize_path(input), input
     )
     message('Quitting from ', get_loc(p_lab[k]))
-  })
-  on.exit(options(opt), add = TRUE)
+  }
+  opt = options(rstudio.notebook.executing = TRUE)
+  on.exit({ options(opt); on_error() }, add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
   o = block_order(blocks)
@@ -380,6 +383,7 @@ fiss = function(input, output = '.R', text = NULL) {
     }
     if (!quiet) p_bar(p_clr)
   }
+  k = n
   res
 }
 
