@@ -537,15 +537,7 @@ fuse_text = function(x) {
 exec_inline = function(x) {
   save_pos(x$pos)
   o = reactor(x$options); on.exit(reactor(o), add = TRUE)
-  opts = reactor()
-  lang = opts$engine
-  if (lang == 'r') {
-    expr = xfun::parse_only(x$source)
-    res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
-      eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
-    )
-    return(fmt_inline(res))
-  }
+  lang = x$options$engine
   if (is.function(eng <- engines(lang))) eng(x, inline = TRUE) else {
     warning("The inline engine '", lang, "' is not supported yet")
     sprintf('`{%s} %s`', lang, x$source)
@@ -658,8 +650,15 @@ reactor(
   wd = NULL
 )
 
-eng_r = function(x) {
+eng_r = function(x, inline = FALSE) {
   opts = reactor()
+  if (inline) {
+    expr = xfun::parse_only(x$source)
+    res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
+      eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
+    )
+    return(fmt_inline(res))
+  }
   args = reactor(
     'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
     'cache', 'print', 'print.args'
