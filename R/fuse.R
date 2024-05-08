@@ -478,7 +478,7 @@ fuse_code = function(x, envir, blocks) {
 
   # generate markdown output
   out = lapply(res, function(x) {
-    type = sub('record_', '', class(x))
+    type = sub('record_', '', class(x)[1])
     if (type == 'source') {
       if (!opts$echo) return()
       x = one_string(x)
