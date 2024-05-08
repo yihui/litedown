@@ -208,6 +208,12 @@ get_loc = function(label) {
 # save line numbers in .env to be used in error messages
 save_pos = function(x) .env$source_pos = x
 
+# line/col info for ANSI links
+link_pos = function() {
+  l = .env$source_pos
+  sprintf('line = %d:col = %d', l[1], if (length(l) == 4) l[2] else 1)
+}
+
 # get the execution order of code/text blocks via the `order` option (higher
 # values indicate higher priority)
 block_order = function(res) {
@@ -343,7 +349,17 @@ fiss = function(input, output = '.R', text = NULL) {
     if (Sys.time() - t0 > td) cat(x, sep = '', file = p_out)
   }
   t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  opt = options(error = getOption('error'), rstudio.notebook.executing = TRUE)
+  # set the error option to print error location with a clickable file link
+  opt = options(rstudio.notebook.executing = TRUE, error = function() {
+    if (!quiet) p_bar(p_clr)
+    # should we check if ANSI links are actually supported? e.g., via
+    # Sys.getenv('RSTUDIO_CLI_HYPERLINKS')
+    if (length(input)) .env$input = sprintf(
+      "\033]8;%s;file://%s\a%s\033]8;;\a", link_pos(),
+      xfun::normalize_path(input), input
+    )
+    message('Quitting from ', get_loc(p_lab[k]))
+  })
   on.exit(options(opt), add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
@@ -351,11 +367,7 @@ fiss = function(input, output = '.R', text = NULL) {
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
-    # print the quit message only for quiet = TRUE because the same message has
-    # been included in progress bar when quiet = FALSE
-    if (quiet) {
-      options(error = function() message('Quitting from ', get_loc(p_lab[k])))
-    } else {
+    if (!quiet) {
       p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
     }
     res[k] = if (b$type == 'code_chunk') {
