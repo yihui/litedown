@@ -421,28 +421,12 @@ fuse_code = function(x, envir, blocks) {
     x$source = unlist(lapply(blocks[opts$ref.label], `[[`, 'source'))
   }
 
-  args = reactor(
-    'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
-    'cache', 'print', 'print.args'
-  )
-  # map chunk options to record() argument names
-  names(args)[1:2] = c('dev.path', 'dev.ext')
-  args = dropNULL(args)
   lab = opts$label
-  args$dev.path = paste0(args$dev.path, lab)
-  args$dev.args = merge_list(
-    list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
-  )
-  args$cache = list(
-    path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
-    hash = opts$cache.hash, keep = opts$cache.keep, id = lab, rw = opts$cache.rw
-  )
+  opts$fig.path = paste0(opts$fig.path, lab)
 
   lang = opts$engine
   res = if (opts$eval) {
-    if (lang == 'r') {
-      do.call(xfun::record, c(list(code = x$source, envir = envir), args))
-    } else if (is.function(eng <- engines(lang))) eng(x) else list(
+    if (is.function(eng <- engines(lang))) eng(x, envir) else list(
       new_source(x$source),
       new_warning(sprintf("The engine '%s' is not supported yet.", lang))
     )
@@ -674,9 +658,29 @@ reactor(
 # language engines
 engines = new_opts()
 engines(
+  r = eng_r,
   css = function(x) eng_html(x, '<style type="text/css">', '</style>'),
   js = function(x) eng_html(x, '<script>', '</script>')
 )
+
+eng_r = function(x, envir) {
+  opts = reactor()
+  args = reactor(
+    'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
+    'cache', 'print', 'print.args'
+  )
+  # map chunk options to record() argument names
+  names(args)[1:2] = c('dev.path', 'dev.ext')
+  args = dropNULL(args)
+  args$dev.args = merge_list(
+    list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
+  )
+  args$cache = list(
+    path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
+    hash = opts$cache.hash, keep = opts$cache.keep, id = lab, rw = opts$cache.rw
+  )
+  do.call(xfun::record, c(list(code = x$source, envir = envir), args))
+}
 
 eng_html = function(x, before = NULL, after = NULL) {
   out = fenced_block(c(before, x$source, after), '=html')
