@@ -551,7 +551,7 @@ sci_num = function(x) {
   s = getOption('litedown.inline.signif', 3)
   p = getOption('litedown.inline.power', 6)
   r = '^(-)?([0-9.]+)e([-+])0*([0-9]+)$'
-  x = format(signif(x, s), scientific = x != 0 && abs(log10(x)) >= p)
+  x = format(signif(x, s), scientific = x != 0 && abs(log10(abs(x))) >= p)
   if (!grepl(r, x)) return(x)
   n = regmatches(x, regexec(r, x))[[1]]
   sprintf(
