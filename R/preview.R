@@ -42,6 +42,10 @@ peek = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       litedown.html.options = list(embed_resources = FALSE)
     )
     on.exit(options(opt), add = TRUE)
+    # capture errors in fuse() because I don't know if it's possible to capture
+    # general errors in the handler; without capturing errors, users will see a
+    # plain-text error page, which may be hard to understand
+    opts = reactor(error = TRUE); on.exit(reactor(opts), add = TRUE)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
     type = if (length(post)) rawToChar(post) else ''
