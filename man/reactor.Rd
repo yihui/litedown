@@ -7,8 +7,7 @@
 reactor(...)
 }
 \arguments{
-\item{...}{Named values (for setting options) or unnamed values (for getting
-options).}
+\item{...}{Named values (for setting) or unnamed values (for getting).}
 }
 \value{
 With no arguments, \code{reactor()} returns an environment that stores the

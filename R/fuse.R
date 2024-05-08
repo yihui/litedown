@@ -597,8 +597,7 @@ new_opts = function() {
 #' Chunk options are stored in an environment returned by `reactor()`. Option
 #' values can be queried by passing their names to `reactor()`, and set by
 #' passing named values.
-#' @param ... Named values (for setting options) or unnamed values (for getting
-#'   options).
+#' @param ... Named values (for setting) or unnamed values (for getting).
 #' @return With no arguments, `reactor()` returns an environment that stores the
 #'   options, which can also be used to get or set options. For example, with
 #'   `opts = reactor()`, `opts$name` returns an option value, and `opts$name =
@@ -648,7 +647,7 @@ reactor(
   wd = NULL
 )
 
-eng_r = function(x, inline = FALSE) {
+eng_r = function(x, inline = FALSE, ...) {
   opts = reactor()
   if (inline) {
     expr = xfun::parse_only(x$source)
@@ -674,17 +673,38 @@ eng_r = function(x, inline = FALSE) {
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 
-# language engines
+#' Language engines
+#'
+#' Get or set language engines for evaluating code chunks and inline code.
+#'
+#' The usage is similar to [reactor()], e.g., `engines('LANG')` returns an
+#' engine function for the language `LANG`, and `engines(LANG = function(x,
+#' inline = FALSE, ...) {})` sets the engine for a language.
+#'
+#' An engine function should have three arguments:
+#'
+#' - `x`: An element in the [crack()] list (a code chunk or a text block).
+#'
+#' - `inline`: It indicates if `x` is from a code chunk or inline code.
+#'
+#' - `...`: Currently unused but recommended for future compatibility (more
+#'   arguments might be passed to the function).
+#'
+#' The function should return a character value.
+#' @inheritParams reactor
+#' @export
+#' @examples
+#' litedown::engines()  # built-in engines
 engines = new_opts()
 engines(
   r = eng_r,
-  css = function(x) eng_html(x, '<style type="text/css">', '</style>'),
-  js = function(x) eng_html(x, '<script>', '</script>')
+  css = function(x, ...) eng_html(x, '<style type="text/css">', '</style>', ...),
+  js = function(x, ...) eng_html(x, '<script>', '</script>', ...)
 )
 
-eng_html = function(x, before = NULL, after = NULL) {
+eng_html = function(x, before = NULL, after = NULL, inline = FALSE) {
   out = fenced_block(c(before, x$source, after), '=html')
-  list(new_source(x$source), new_asis(out))
+  if (inline) one_string(c(out, '')) else list(new_source(x$source), new_asis(out))
 }
 
 #' @export
