@@ -33,14 +33,14 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   stores their starting and ending line numbers in the input.
 #' @examples
 #' library(litedown)
-#' res = chop(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
+#' res = crack(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
 #' str(res)
 #' # evaluate inline code and combine results with text fragments
 #' txt = lapply(res[[2]]$source, function(x) {
 #'   if (is.character(x)) x else eval(parse(text = x$source))
 #' })
 #' paste(unlist(txt), collapse = '')
-chop = function(input = NULL, text = NULL) {
+crack = function(input = NULL, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
@@ -298,7 +298,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
   }), add = TRUE, after = FALSE)
 
-  blocks = chop(input, text)
+  blocks = crack(input, text)
   .env$input = input
   res = .fuse(blocks, input, quiet)
 
@@ -325,7 +325,7 @@ fuse_output = function(input, output, res) {
 fiss = function(input, output = '.R', text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   output = auto_output(input, output, NULL)
-  blocks = chop(input, text)
+  blocks = crack(input, text)
   # TODO: what should we do for non-R code? also consider eval=FALSE and error=TRUE
   res = unlist(lapply(blocks, function(b) {
     if (b$type == 'code_chunk' && !isFALSE(b$options$purl) && b$options$engine == 'r')
