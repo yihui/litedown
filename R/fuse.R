@@ -552,7 +552,7 @@ exec_inline = function(x, envir) {
   o = x$options
   if (o$engine != 'r') {
     warning("The inline engine '", o$engine, "' is not supported yet")
-    return('')
+    return(sprintf('`{%s} %s`', o$engine, x$source))
   }
   res = eval(xfun::parse_only(x$source), envir)
   # TODO: allow for custom coercion functions here
