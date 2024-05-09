@@ -7,3 +7,6 @@
 li .pencil {
   float: none;
 }
+td .pencil {
+  font-size: inherit;
+}

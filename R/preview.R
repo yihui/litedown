@@ -39,7 +39,8 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       litedown.html.meta = list(
         css = asset_url(c('default.css', if (dir.exists(path)) 'listing.css'))
       ),
-      litedown.html.options = list(embed_resources = FALSE)
+      litedown.html.options = list(embed_resources = FALSE),
+      litedown.roaming = TRUE
     )
     on.exit(options(opt), add = TRUE)
     # capture errors in fuse() because I don't know if it's possible to capture

@@ -302,6 +302,9 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   .env$input = input
   res = .fuse(blocks, input, quiet)
 
+  # save timing data if necessary
+  timing_data()
+
   # keep the markdown output if keep_md = TRUE is set in YAML output format
   if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
     write_utf8(res, with_ext(output, '.md'))
@@ -378,15 +381,79 @@ fiss = function(input, output = '.R', text = NULL) {
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
     p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
+    # record timing if requested
+    if (!isFALSE(time <- timing_path())) t1 = Sys.time()
     res[k] = if (b$type == 'code_chunk') {
       one_string(fuse_code(b, blocks))
     } else {
       one_string(fuse_text(b), '')
     }
+    if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, p_lab[k])
     p_bar(p_clr)
   }
   k = n
   res
+}
+
+record_time = function(x, lines, label) {
+  x = as.numeric(x)
+  gc(FALSE)
+  d = data.frame(
+    source = .env$input %||% '#text', line1 = lines[1], line2 = lines[2],
+    label = label, time = x
+  )
+  .env$time = append(.env$time, list(d))
+}
+
+#' Get the timing data of code chunks and text blocks in a document
+#'
+#' Timing can be enabled via the chunk option `time = TRUE` (e.g., set
+#' [litedown::reactor]`(time = TRUE)` in the first code chunk). After it is
+#' enabled, the execution time for code chunks and text blocks will be recorded.
+#' This function can be called to retrieve the timing data later in the document
+#' (e.g., in the last code chunk).
+#' @param threshold A number (time in seconds) to subset data with. Only rows
+#'   with time above this threshold are returned.
+#' @param sort Whether to sort the data by time in the decreasing order.
+#' @note By default, the data will be cleared after each call of [fuse()] and
+#'   will not be available outside [fuse()]. To store the data persistently, you
+#'   can set the `time` option to a file path. This is necessary if you want to
+#'   get the timing data for multiple input documents (such as all chapters of a
+#'   book). Each document needs to point the `time` option to the same path.
+#'   When you do not need timing any more, you will need to delete this file by
+#'   yourself.
+#' @return A data frame containing input file paths, line numbers, chunk labels,
+#'   and time. If no timing data is available, `NULL` is returned.
+#' @export
+timing_data = function(threshold = 0, sort = TRUE) {
+  d = .env$time
+  if (!is.null(d)) d = do.call(rbind, d)
+
+  if (is.character(path <- timing_path())) {
+    if (file_exists(path)) {
+      d2 = readRDS(path)
+      if (length(input <- .env$input)) d2 = subset(d2, source != input)
+      d = rbind(d2, d)
+    }
+    saveRDS(d, path)
+  }
+  if (is.null(d)) return(invisible(d))
+
+  # add edit links in the roam() mode
+  if (isTRUE(getOption('litedown.roaming')) && !all(i <- d$source == '#text')) {
+    d$source = ifelse(i, '', sprintf(
+      '%s [&#9998;](?path=%s&line=%d)', d$source, URLencode(d$source, TRUE), d$line1
+    ))
+  }
+  d = d[d$time > threshold, ]
+  if (sort) d = d[order(d$time, decreasing = TRUE), ]
+  d
+}
+
+timing_path = function() {
+  p = xfun::env_option('litedown.time')
+  if (is.character(p) && tolower(p) %in% c('true', 'false')) p = as.logical(p)
+  if (is.logical(p) || (is.character(p) && p != '')) p else reactor('time')
 }
 
 # an internal function for RStudio IDE to recognize the custom knit function
@@ -648,7 +715,7 @@ reactor(
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
   fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
   tab.cap = NULL, tab.env = NULL, tab.pos = 'top',
-  print = NULL, print.args = NULL,
+  print = NULL, print.args = NULL, time = FALSE,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
   wd = NULL
 )

@@ -72,6 +72,22 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   if (auto && isTRUE(cfg$subdir) && !any(grepl('/', input))) {
     input = find_input(dirname(input[1]), TRUE)
   }
+  # provide a simpler way to configure timing in YAML; only env vars are
+  # inherited in new R sessions, so we attach the timing path to R_LITEDOWN_TIME
+  if (is.character(p <- cfg$time)) {
+    # treat relative path as a path relative to the first input's cache dir
+    if (xfun::is_rel_path(p))
+      p = file.path(paste0(sans_ext(normalize_path(input[1])), '__cache'), p)
+    vars = xfun::set_envvar(c(R_LITEDOWN_TIME = p))
+    on.exit(xfun::set_envvar(vars), add = TRUE)
+    if (file_exists(p)) {
+      # filter out data from input files that do not belong to the book
+      d = readRDS(p)
+      if (!all(d$source %in% input)) {
+        d = d[i, ]; saveRDS(d, p)
+      }
+    } else xfun::dir_create(dirname(p))
+  }
 
   res = lapply(preview %|% input, function(x) {
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
