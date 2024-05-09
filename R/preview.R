@@ -64,12 +64,9 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       resp = ''
       if (type %in% c('asset', 'page')) {
         if (check_time(path)) resp = '1'
-      } else if (grepl('^book:', type) && check_time(path)) {
-        # type = book:foo/bar.Rmd; path = server/root/to/foo/bar.Rmd
-        f = sub('^book:', '', type)  # relative path of the book file
-        b = substr(path, 1, nchar(path) - nchar(f))  # base directory of book
-        if (b == '') b = '.'
-        resp = fuse_book(c(b, file.path(b, f)), 'html', globalenv())
+      } else if (grepl('^book:', type) && check_time(f <- sub('^book:', '', type))) {
+        # the book file path to preview is encoded in `type = book:foo/bar.Rmd`
+        resp = fuse_book(c(dirname(path), f), 'html', globalenv())
       }
       return(list(payload = resp))
     }
