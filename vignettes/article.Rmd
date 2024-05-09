@@ -57,7 +57,7 @@ only the CSS file `article.css`[^3] is required.
     care, you can definitely use the `.css` extension. The same thing applies to
     `.min.js` vs `.js`.
 
--   The JS file `sitenotes.js` is required only if you want to place certain
+-   The JS file `sidenotes.js` is required only if you want to place certain
     elements on the left or right side, such as the table of contents (TOC),
     footnotes, and sidenotes.
 
