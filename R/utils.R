@@ -660,14 +660,19 @@ number_refs = function(x, r) {
   })
   db = unlist(c(db, db2))
   ids = names(db)
-  if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ' '))
+  if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ', '))
 
   # finally, resolve cross-references
   r2 = sprintf('<a href="#(%s)">@\\1</a>', r)
   match_replace(x, r2, function(z) {
     type = sub(r2, '\\2', z)
     id = sub(r2, '\\2-\\3', z)
-    sprintf('<a class="cross-ref-%s" href="#%s">%s</a>', type, id, db[id])
+    i = id %in% ids
+    if (any(i)) z[i] = sprintf(
+      '<a class="cross-ref-%s" href="#%s">%s</a>', type[i], id[i], db[id[i]]
+    )
+    if (any(!i)) warning('Reference key(s) not found: ', one_string(id[!i], ', '))
+    z
   })
 }
 
