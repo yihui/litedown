@@ -395,13 +395,14 @@ fiss = function(input, output = '.R', text = NULL) {
   res
 }
 
+time_frame = function(s = NA_character_, l = integer(), lab = NA_character_, t = NA_real_) {
+  data.frame(source = s, line1 = l[1], line2 = l[2], label = lab, time = t)
+}
+
 record_time = function(x, lines, label) {
   x = as.numeric(x)
   gc(FALSE)
-  d = data.frame(
-    source = .env$input %||% '#text', line1 = lines[1], line2 = lines[2],
-    label = label, time = x
-  )
+  d = time_frame(.env$input %||% '#text', lines, label, x)
   .env$time = append(.env$time, list(d))
 }
 
@@ -415,6 +416,7 @@ record_time = function(x, lines, label) {
 #' @param threshold A number (time in seconds) to subset data with. Only rows
 #'   with time above this threshold are returned.
 #' @param sort Whether to sort the data by time in the decreasing order.
+#' @param total Whether to append the total time to the data.
 #' @note By default, the data will be cleared after each call of [fuse()] and
 #'   will not be available outside [fuse()]. To store the data persistently, you
 #'   can set the `time` option to a file path. This is necessary if you want to
@@ -425,7 +427,7 @@ record_time = function(x, lines, label) {
 #' @return A data frame containing input file paths, line numbers, chunk labels,
 #'   and time. If no timing data is available, `NULL` is returned.
 #' @export
-timing_data = function(threshold = 0, sort = TRUE) {
+timing_data = function(threshold = 0, sort = TRUE, total = TRUE) {
   d = .env$time
   if (!is.null(d)) d = do.call(rbind, d)
 
@@ -439,6 +441,7 @@ timing_data = function(threshold = 0, sort = TRUE) {
   }
   if (is.null(d)) return(invisible(d))
 
+  total = if (total) sum(d$time)
   # add edit links in the roam() mode
   if (isTRUE(getOption('litedown.roaming')) && !all(i <- d$source == '#text')) {
     d$source = ifelse(i, '', sprintf(
@@ -447,6 +450,7 @@ timing_data = function(threshold = 0, sort = TRUE) {
   }
   d = d[d$time > threshold, ]
   if (sort) d = d[order(d$time, decreasing = TRUE), ]
+  if (!is.null(total)) d = rbind(d, time_frame('Total', t = total))
   d
 }
 

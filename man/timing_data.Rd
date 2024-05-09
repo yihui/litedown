@@ -4,13 +4,15 @@
 \alias{timing_data}
 \title{Get the timing data of code chunks and text blocks in a document}
 \usage{
-timing_data(threshold = 0, sort = TRUE)
+timing_data(threshold = 0, sort = TRUE, total = TRUE)
 }
 \arguments{
 \item{threshold}{A number (time in seconds) to subset data with. Only rows
 with time above this threshold are returned.}
 
 \item{sort}{Whether to sort the data by time in the decreasing order.}
+
+\item{total}{Whether to append the total time to the data.}
 }
 \value{
 A data frame containing input file paths, line numbers, chunk labels,
