@@ -269,7 +269,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (is_file(input) && is.null(opts$wd)) opts$wd = dirname(normalizePath(input))
 
   # store output dir so we can calculate relative paths for plot files later
-  .env$wd.out = xfun::normalize_path(
+  .env$wd.out = normalize_path(
     if (is.null(output_base)) {
       if (is.character(.env$wd.out)) .env$wd.out else '.'
     } else dirname(output_base)
@@ -364,10 +364,11 @@ fiss = function(input, output = '.R', text = NULL) {
     # Sys.getenv('RSTUDIO_CLI_HYPERLINKS')
     if (length(input)) .env$input = sprintf(
       "\033]8;%s;file://%s\a%s\033]8;;\a", link_pos(),
-      xfun::normalize_path(input), input
+      normalize_path(input), input
     )
     message('Quitting from ', get_loc(p_lab[k]))
   }
+  # suppress tidyverse progress bars
   opt = options(rstudio.notebook.executing = TRUE)
   on.exit({ options(opt); on_error() }, add = TRUE)
 

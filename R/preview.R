@@ -193,5 +193,5 @@ dir_title = function(f) {
       if (is_text_file(file = f)) '[&#9998;](#)'
     )
   }
-  one_string(c(sprintf('_%s:_', xfun::normalize_path('.')), links), ' ')
+  one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
 }

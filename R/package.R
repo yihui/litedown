@@ -5,10 +5,10 @@
 #' then to an output document format. The main differences between this package
 #' and \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e.,
 #' fewer dependencies), and it also has fewer Markdown features.
-#' @importFrom xfun base64_uri csv_options download_cache fenced_block fenced_div
-#'   file_exists file_ext grep_sub in_dir loadable new_record prose_index
-#'   raw_string read_all read_utf8 record_print sans_ext split_lines with_ext
-#'   write_utf8
+#' @importFrom xfun base64_uri csv_options download_cache fenced_block
+#'   fenced_div file_exists file_ext grep_sub in_dir loadable new_record
+#'   normalize_path prose_index raw_string read_all read_utf8 record_print
+#'   sans_ext split_lines with_ext write_utf8
 '_PACKAGE'
 
 # an internal environment to store some intermediate objects
