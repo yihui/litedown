@@ -50,6 +50,7 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .main-number::after { content: "."; }
 .footnote-ref a::before { content: "["; }
 .footnote-ref a::after { content: "]"; }
+section.footnotes { margin-top: 2em; }
 section.footnotes::before { content: ""; display: block; max-width: 20em; }
 
 @media print {
