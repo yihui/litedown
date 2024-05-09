@@ -9,7 +9,7 @@
   // add edit buttons for book chapters
   d.querySelectorAll('div[data-source]').forEach(el => {
     const u = el.dataset.source;
-    u && !el.querySelector('.pencil') && el.insertAdjacentHTML('afterbegin', `<a href="${u}">✎</a>`);
+    u && !el.querySelector('.pencil') && el.insertAdjacentHTML('afterbegin', `<a href="?path=${u}">✎</a>`);
   });
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {

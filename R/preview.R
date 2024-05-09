@@ -46,6 +46,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     # general errors in the handler; without capturing errors, users will see a
     # plain-text error page, which may be hard to understand
     opts = reactor(error = TRUE); on.exit(reactor(opts), add = TRUE)
+    query = as.list(query)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
     type = if (length(post)) rawToChar(post) else ''
@@ -53,7 +54,10 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     # request; for now, we simply ignore request headers, and treat the POST
     # body as the type of request
     if (type == 'open') {
-      xfun:::open_path(path, !dir.exists(path) && is_text_file(file = path))
+      xfun:::open_path(
+        query[['path']] %||% path, !dir.exists(path) && is_text_file(file = path),
+        as.integer(query[['line']]) %|% -1L
+      )
       return(list(payload = 'done'))
     }
     if (live && type != '') {
@@ -65,11 +69,11 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
         f = sub('^book:', '', type)  # relative path of the book file
         b = substr(path, 1, nchar(path) - nchar(f))  # base directory of book
         if (b == '') b = '.'
-        resp = in_dir(b, fuse_book(c('.', f), 'html', globalenv()))
+        resp = fuse_book(c(b, file.path(b, f)), 'html', globalenv())
       }
       return(list(payload = resp))
     }
-    res = lite_handler(path, as.list(query), post, headers)
+    res = lite_handler(path, query, post, headers)
     # inject js to communicate with the R server via POST for live preview
     p = res$payload
     if (!live || is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
@@ -145,7 +149,7 @@ file_resp = function(x, raw) {
     txt = read_utf8(x)
     yaml = xfun::yaml_body(txt)$yaml
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
-      in_dir(dirname(x), fuse_book('.', 'html', globalenv()))
+      fuse_book(dirname(x), 'html', globalenv())
     } else {
       fuse(x, 'html', c(if (is.null(yaml)) empty_yaml, txt), envir = globalenv())
     })
