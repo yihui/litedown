@@ -4,7 +4,7 @@
 \alias{fuse}
 \alias{fiss}
 \alias{mark}
-\title{Render Markdown and R Markdown}
+\title{Render Markdown, R Markdown, and R scripts}
 \usage{
 fuse(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE)
 
@@ -69,8 +69,9 @@ for clearer printing).
 The function \code{fuse()} extracts and runs code from code chunks
 and inline code expressions in R Markdown, and interweaves the results with
 the rest of text in the input, which is similar to what \code{\link[knitr:knit]{knitr::knit()}} and
-\code{\link[rmarkdown:render]{rmarkdown::render()}} do. The function \code{fiss()} extracts code from the
-input, and is similar to \code{\link[knitr:knit]{knitr::purl()}}.
+\code{\link[rmarkdown:render]{rmarkdown::render()}} do. It also works on R scripts in a way similar to
+\code{\link[knitr:spin]{knitr::spin()}}. The function \code{fiss()} extracts code from the input, and is
+similar to \code{\link[knitr:knit]{knitr::purl()}}.
 
 The function \code{mark()} renders Markdown to an output format via the
 \pkg{commonmark} package.
@@ -97,6 +98,8 @@ mark("Hello _**`World`**_!", "xml")
 mark("Hello _**`World`**_!", "text")
 }
 \seealso{
+\code{\link[=sieve]{sieve()}}, for the syntax of R scripts to be passed to \code{\link[=fuse]{fuse()}}.
+
 The spec of GitHub Flavored Markdown:
 \url{https://github.github.com/gfm/}
 }

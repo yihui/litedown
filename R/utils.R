@@ -122,6 +122,13 @@ is_output_file = function(x) {
 
 is_ext = function(x) grepl('^[.]', x) && sans_ext(x) == ''
 
+# test if input is R code or not (this is based on heuristics and may not be robust)
+is_R = function(input, text) {
+  (is_file(input) && grepl('[.][Rrs]$', input)) || {
+    !length(grep('^\\s*```+\\{', text)) && !xfun::try_error(xfun::parse_only(text))
+  }
+}
+
 # make an output filename with the format and input name
 auto_output = function(input, output, format = NULL) {
   # change NULL to a filename extension

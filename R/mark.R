@@ -1,4 +1,4 @@
-#' Render Markdown and R Markdown
+#' Render Markdown, R Markdown, and R scripts
 #'
 #' The function `mark()` renders Markdown to an output format via the
 #' \pkg{commonmark} package.

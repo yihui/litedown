@@ -344,8 +344,9 @@ block_order = function(res) {
 #' @description The function `fuse()` extracts and runs code from code chunks
 #'   and inline code expressions in R Markdown, and interweaves the results with
 #'   the rest of text in the input, which is similar to what [knitr::knit()] and
-#'   [rmarkdown::render()] do. The function `fiss()` extracts code from the
-#'   input, and is similar to [knitr::purl()].
+#'   [rmarkdown::render()] do. It also works on R scripts in a way similar to
+#'   [knitr::spin()]. The function `fiss()` extracts code from the input, and is
+#'   similar to [knitr::purl()].
 #' @rdname mark
 #' @param envir An environment in which the code is to be evaluated. It can be
 #'   accessed via [fuse_env()] inside [fuse()].
@@ -354,6 +355,7 @@ block_order = function(res) {
 #'   a global [option][options] `litedown.progress.delay` (the default is `2`).
 #'   THe progress bar output can be set via a global option
 #'   `litedown.progress.output` (the default is [stderr()]).
+#' @seealso [sieve()], for the syntax of R scripts to be passed to [fuse()].
 #' @export
 #' @examples
 #' library(litedown)
@@ -363,7 +365,14 @@ block_order = function(res) {
 #' fiss(doc)
 fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE) {
   text = read_input(input, text); input = attr(text, 'input')
-  yaml = yaml_body(text)$yaml
+  # determine if the input is R or R Markdown
+  if (r_input <- is_R(input, text)) {
+    blocks = sieve(input, text)
+    yaml = yaml_body(blocks[[1]]$source)$yaml
+  } else {
+    blocks = crack(input, text)
+    yaml = yaml_body(text)$yaml
+  }
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
   output_base = sans_ext(output_path(input, output))
@@ -405,7 +414,6 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
   }), add = TRUE, after = FALSE)
 
-  blocks = crack(input, text)
   .env$input = input
   res = .fuse(blocks, input, quiet)
 
