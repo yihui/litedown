@@ -1,17 +1,16 @@
 new_env = function(...) new.env(..., parent = emptyenv())
 
-#' Parse an R Markdown document
+#' Parse R Markdown or R scripts
 #'
-#' Parse an Rmd document into code chunks, inline code expressions, and text
-#' fragments.
+#' Parse input into code chunks, inline code expressions, and text fragments:
+#' [crack()] is for parsing R Markdown, and [sieve()] is for R scripts.
 #'
-#' A code chunk must start with a fence of the form ```` ```{lang} ````, where
-#' `lang` is the language name, e.g., `r` or `python`. The body of a code chunk
-#' can start with chunk options written in "pipe comments", e.g., `#| eval =
-#' TRUE, echo = FALSE` (the CSV syntax) or `#| eval: true` (the YAML syntax).
-#'
-#' An inline code fragment is of the form `` `{lang} source` `` embedded in
-#' Markdown text.
+#' For R Markdown, a code chunk must start with a fence of the form ````
+#' ```{lang} ````, where `lang` is the language name, e.g., `r` or `python`. The
+#' body of a code chunk can start with chunk options written in "pipe comments",
+#' e.g., `#| eval = TRUE, echo = FALSE` (the CSV syntax) or `#| eval: true` (the
+#' YAML syntax). An inline code fragment is of the form `` `{lang} source` ``
+#' embedded in Markdown text.
 #' @inheritParams mark
 #' @export
 #' @return A list of code chunks and text blocks:
@@ -33,6 +32,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   stores their starting and ending line numbers in the input.
 #' @examples
 #' library(litedown)
+#' # parse R Markdown
 #' res = crack(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
 #' str(res)
 #' # evaluate inline code and combine results with text fragments
@@ -40,7 +40,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #'   if (is.character(x)) x else eval(parse(text = x$source))
 #' })
 #' paste(unlist(txt), collapse = '')
-crack = function(input = NULL, text = NULL) {
+crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
@@ -186,6 +186,113 @@ crack = function(input = NULL, text = NULL) {
   # syntax, e.g., `${label}`, instead of knitr's <<label>> syntax
 
   res
+}
+
+#' @details For R scripts, text blocks are extracted by removing the leading
+#'   `#'` tokens. All other lines are treated as R code, which can optionally be
+#'   separated into chunks by consecutive lines of `#|` comments (chunk options
+#'   are written in these comments). If no `#'` or `#|` tokens are found in the
+#'   script, the script will be divided into chunks that contain smallest
+#'   possible complete R expressions.
+#' @note For simplicity, [sieve()] does not support inline code expressions.
+#'   Text after `#'` is treated as pure Markdown.
+#'
+#'   It is a pure coincidence that the function names `crack()` and `sieve()`
+#'   weakly resemble Carson Sievert's name, but I will consider adding a class
+#'   name `sievert` to the returned value of `sieve()` if Carson becomes the
+#'   president of the United States someday, which may make the value
+#'   radioactive and introduce a new programming paradigm named _Radioactive
+#'   Programming_ (in case _Reactive Programming_ is no longer fun or cool).
+#' @rdname crack
+#' @export
+#' @examples
+#'
+#' # parse R code
+#' res = sieve(c("#' This is _doc_.", '', '#| eval=TRUE', '# this is code', '1 + 1'))
+#' str(res)
+sieve = function(input, text = NULL) {
+  text = read_input(input, text); input = attr(text, 'input')
+  n = length(text)
+  r = run_range(grepl("^#'( .+| *)$", text), xfun::is_blank(text))
+  nc = ncol(r)
+
+  # no #' or #|: split code into smallest expressions
+  if (nc == 0 && !any(startsWith(text, '#| '))) {
+    res = xfun::split_source(text, TRUE, TRUE)
+    res = .mapply(function(code, label) {
+      list(
+        source = c(code), type = 'code_chunk', lines = attr(code, 'lines'),
+        options = list(engine = 'r', label = label)
+      )
+    }, list(res, sprintf('chunk-%d', seq_along(res))), NULL)
+    return(res)
+  }
+
+  # split doc and code by #', and divide code by #|
+  res = list()
+  add_block = function(l1, l2, type = 'code_chunk', pipe = FALSE) {
+    x = text[l1:l2]
+    el = list(type = type, lines = as.integer(c(l1, l2)))
+    if (type == 'text_block') {
+      el$source = one_string(sub("^#' *", '', x))
+    } else {
+      if (all(xfun::is_blank(x))) return()
+      el = merge_list(if (pipe) partition(x) else list(source = x), el)
+      el$options$engine = 'r'
+    }
+    res[[length(res) + 1]] <<- el
+  }
+  partition = function(code) {
+    code = xfun::divide_chunk('r', code)
+    set_names(code[c('code', 'options', 'src')], c('source', 'options', 'comments'))
+  }
+  # detect #| and split a block of code into chunks
+  add_chunk = function(l1, l2) {
+    x = text[l1:l2]; N = length(x)
+    k = run_range(startsWith(x, '#| '))[1, ]
+    if ((n <- length(k)) == 0) return(add_block(l1, l2))
+    if (k[1] > 1) { k = c(1, k); n = n + 1 }  # make sure to scan from start
+    for (i in seq_len(n)) {
+      add_block(l1 - 1 + k[i], if (i == n) l2 else l1 - 1 + k[i + 1] - 1, pipe = TRUE)
+    }
+  }
+
+  i = 1
+  for (j in seq_len(nc)) {
+    i1 = r[1, j]; i2 = r[2, j]
+    if (i1 > i) add_chunk(i, i1 - 1)
+    add_block(i1, i2, type = 'text_block')
+    i = i2 + 1
+  }
+  if (i <= n) add_chunk(i, n)
+  # add possibly missing chunk labels
+  i = vapply(res, function(x) x$type == 'code_chunk', FALSE)
+  res[i] = .mapply(function(x, label) {
+    if (is.null(x$options$label)) x$options$label = label
+    x
+  }, list(res[i], sprintf('chunk-%d', seq_len(sum(i)))), NULL)
+  res
+}
+
+# ranges of TRUE runs in a logical vector
+run_range = function(x, extend = NULL) {
+  r = rle(x); l = r$lengths; i = r$values
+  i2 = cumsum(l); i1 = i2 - l + 1
+  i1 = i1[i]; i2 = i2[i]
+  # include adjacent blank lines, e.g., a blank line before or after #' should be doc
+  if (!is.null(extend)) {
+    k = extend[pmax(i1 - 1, 1)]  # check if previous line is empty
+    i1[k] = i1[k] - 1
+    k = extend[pmin(i2 + 1, length(extend))]  # check if next line is empty
+    i2[k] = i2[k] + 1
+    # merge adjacent runs, e.g., 1:2 and 2:4 -> 1:4
+    k = NULL
+    if ((n <- length(i1)) > 1) {
+      k = i2[1:(n - 1)] < i1[2:n]
+      i1 = i1[c(TRUE, k)]; i2 = i2[c(k, TRUE)]
+    }
+  }
+  rbind(i1, i2)
 }
 
 # convert knitr's inline `r code` to litedown's `{r} code`

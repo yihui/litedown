@@ -2,9 +2,12 @@
 % Please edit documentation in R/fuse.R
 \name{crack}
 \alias{crack}
-\title{Parse an R Markdown document}
+\alias{sieve}
+\title{Parse R Markdown or R scripts}
 \usage{
-crack(input = NULL, text = NULL)
+crack(input, text = NULL)
+
+sieve(input, text = NULL)
 }
 \arguments{
 \item{input}{A character vector to provide the input file path or text. If
@@ -37,19 +40,37 @@ Both code chunks and text blocks have a list member named \code{lines} that
 stores their starting and ending line numbers in the input.
 }
 \description{
-Parse an Rmd document into code chunks, inline code expressions, and text
-fragments.
+Parse input into code chunks, inline code expressions, and text fragments:
+\code{\link[=crack]{crack()}} is for parsing R Markdown, and \code{\link[=sieve]{sieve()}} is for R scripts.
 }
 \details{
-A code chunk must start with a fence of the form \verb{```\{lang\}}, where
-\code{lang} is the language name, e.g., \code{r} or \code{python}. The body of a code chunk
-can start with chunk options written in "pipe comments", e.g., \verb{#| eval = TRUE, echo = FALSE} (the CSV syntax) or \verb{#| eval: true} (the YAML syntax).
+For R Markdown, a code chunk must start with a fence of the form \verb{```\{lang\}}, where \code{lang} is the language name, e.g., \code{r} or \code{python}. The
+body of a code chunk can start with chunk options written in "pipe comments",
+e.g., \verb{#| eval = TRUE, echo = FALSE} (the CSV syntax) or \verb{#| eval: true} (the
+YAML syntax). An inline code fragment is of the form \code{`{lang} source`}
+embedded in Markdown text.
 
-An inline code fragment is of the form \code{`{lang} source`} embedded in
-Markdown text.
+For R scripts, text blocks are extracted by removing the leading
+\verb{#'} tokens. All other lines are treated as R code, which can optionally be
+separated into chunks by consecutive lines of \verb{#|} comments (chunk options
+are written in these comments). If no \verb{#'} or \verb{#|} tokens are found in the
+script, the script will be divided into chunks that contain smallest
+possible complete R expressions.
+}
+\note{
+For simplicity, \code{\link[=sieve]{sieve()}} does not support inline code expressions.
+Text after \verb{#'} is treated as pure Markdown.
+
+It is a pure coincidence that the function names \code{crack()} and \code{sieve()}
+weakly resemble Carson Sievert's name, but I will consider adding a class
+name \code{sievert} to the returned value of \code{sieve()} if Carson becomes the
+president of the United States someday, which may make the value
+radioactive and introduce a new programming paradigm named \emph{Radioactive
+Programming} (in case \emph{Reactive Programming} is no longer fun or cool).
 }
 \examples{
 library(litedown)
+# parse R Markdown
 res = crack(c("```{r}\n1+1\n```", "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"))
 str(res)
 # evaluate inline code and combine results with text fragments
@@ -58,4 +79,8 @@ txt = lapply(res[[2]]$source, function(x) {
         x else eval(parse(text = x$source))
 })
 paste(unlist(txt), collapse = "")
+
+# parse R code
+res = sieve(c("#' This is _doc_.", "", "#| eval=TRUE", "# this is code", "1 + 1"))
+str(res)
 }
