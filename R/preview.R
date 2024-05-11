@@ -139,17 +139,16 @@ file_page = function(x, raw) {
 # render the path to HTML if possible
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  # TODO: support .R
   if (ext == 'md') {
     list(payload = mark_full(x, 'html'))
-  } else if (ext %in% c('rmd', 'qmd')) {
+  } else if (ext %in% c('rmd', 'qmd', 'r')) {
     # check if the file is for a book
     txt = read_utf8(x)
-    yaml = xfun::yaml_body(txt)$yaml
+    yaml = xfun::yaml_body(if (ext == 'r') sub("^#' ?", '', txt) else txt)$yaml
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
       fuse_book(dirname(x), 'html', globalenv())
     } else {
-      fuse(x, 'html', c(if (is.null(yaml)) empty_yaml, txt), envir = globalenv())
+      fuse(x, 'html', c(if (is.null(yaml)) paste0(if (ext == 'r') "#' ", empty_yaml), txt), envir = globalenv())
     })
   } else {
     type = xfun:::guess_type(x)
