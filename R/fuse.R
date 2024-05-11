@@ -99,10 +99,7 @@ crack = function(input, text = NULL) {
     res[[j[i]]] = b
   }
 
-  opts = options(xfun.handle_error.loc_fun = get_loc)
-  oenv = as.list(.env)
-  on.exit({ options(opts); reset_env(oenv, .env) }, add = TRUE)
-  .env$input = input  # store the input name for get_loc()
+  set_error_handler(input)
 
   i1 = 0  # code chunk index
   # remove code fences, and extract code in text blocks
@@ -188,6 +185,13 @@ crack = function(input, text = NULL) {
   res
 }
 
+set_error_handler = function(input) {
+  opts = options(xfun.handle_error.loc_fun = get_loc)
+  oenv = as.list(.env)
+  xfun::exit_call(function() { options(opts); reset_env(oenv, .env) })
+  .env$input = input  # store the input name for get_loc()
+}
+
 #' @details For R scripts, text blocks are extracted by removing the leading
 #'   `#'` tokens. All other lines are treated as R code, which can optionally be
 #'   separated into chunks by consecutive lines of `#|` comments (chunk options
@@ -237,6 +241,7 @@ sieve = function(input, text = NULL) {
       el$source = one_string(sub("^#' *", '', x))
     } else {
       if (all(xfun::is_blank(x))) return()
+      save_pos(c(l1, l2))
       el = merge_list(if (pipe) partition(x) else list(source = x), el)
       el$options$engine = 'r'
     }
@@ -256,6 +261,8 @@ sieve = function(input, text = NULL) {
       add_block(l1 - 1 + k[i], if (i == n) l2 else l1 - 1 + k[i + 1] - 1, pipe = TRUE)
     }
   }
+
+  set_error_handler(input)
 
   i = 1
   for (j in seq_len(nc)) {
