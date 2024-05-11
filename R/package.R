@@ -78,7 +78,14 @@ vig_fun = function(weave = TRUE) {
 
 # filter out code from document so aspell() won't spell check code
 vig_filter = function(ifile, encoding) {
-  x = read_utf8(ifile)
-  # TODO: implement knitr:::knit_filter based on crack()
-  structure(x, control = '-H -t')
+  res = crack(ifile)
+  res = lapply(res, function(x) {
+    if (x$type == 'code_chunk') return(rep('', length(x$source)))
+    if (is.character(x$source)) x$source else {
+      one_string(unlist(lapply(x$source, function(s) {
+        if (is.character(s)) s else ''
+      })), '')
+    }
+  })
+  structure(split_lines(unlist(res)), control = '-H -t')
 }
