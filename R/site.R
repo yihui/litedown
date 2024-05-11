@@ -62,6 +62,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   if (length(input) == 0) stop('No input was provided or found.')
   # detect output format and config
   text = read_utf8(input[1]); part = yaml_body(text); yaml = part$yaml
+  full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input[1], output, format)
   cfg = merge_list(list(
@@ -124,7 +125,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     body_class = '', css = jsd_version(c("@default", "@article", "@book")),
     js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight"))
   ), toc = length(preview) == 0)
-  fuse_output(input[1], output, unlist(res))
+  fuse_output(input[1], output, unlist(res), full)
 }
 
 # find input files under a directory

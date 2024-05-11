@@ -64,6 +64,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   text = read_input(input, text); input = attr(text, 'input')
   part = yaml_body(text); yaml = part$yaml; text = part$body
 
+  full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
 
@@ -95,7 +96,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
   if (is.null(template))
-    template = get_option('template', format, 'yaml' %in% names(part))
+    template = get_option('template', format, full || 'yaml' %in% names(part))
   # template = FALSE means no template; other values mean the default template
   if (!is.character(template)) template = if (!isFALSE(template))
     pkg_file('resources', sprintf('litedown.%s', format))

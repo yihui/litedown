@@ -122,6 +122,9 @@ is_output_file = function(x) {
 
 is_ext = function(x) grepl('^[.]', x) && sans_ext(x) == ''
 
+# if output has an attribute full = TRUE
+is_output_full = function(x) isTRUE(attr(x, 'full'))
+
 # test if input is R code or not (this is based on heuristics and may not be robust)
 is_R = function(input, text) {
   (is_file(input) && grepl('[.][Rrs]$', input)) || {

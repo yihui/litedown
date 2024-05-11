@@ -67,7 +67,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
         if (check_time(path)) resp = '1'
       } else if (grepl('^book:', type) && check_time(f <- sub('^book:', '', type))) {
         # the book file path to preview is encoded in `type = book:foo/bar.Rmd`
-        resp = fuse_book(c(dirname(path), f), 'html', globalenv())
+        resp = fuse_book(c(dirname(path), f), full_output, globalenv())
       }
       return(list(payload = resp))
     }
@@ -140,15 +140,15 @@ file_page = function(x, raw) {
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
   if (ext == 'md') {
-    list(payload = mark_full(x, 'html'))
+    list(payload = mark_full(x))
   } else if (ext %in% c('rmd', 'qmd', 'r')) {
     # check if the file is for a book
     txt = read_utf8(x)
     yaml = xfun::yaml_body(if (ext == 'r') sub("^#' ?", '', txt) else txt)$yaml
     list(payload = if ('book' %in% names(yaml[['litedown']])) {
-      fuse_book(dirname(x), 'html', globalenv())
+      fuse_book(dirname(x), full_output, globalenv())
     } else {
-      fuse(x, 'html', c(if (is.null(yaml)) paste0(if (ext == 'r') "#' ", empty_yaml), txt), envir = globalenv())
+      fuse(x, full_output, txt, envir = globalenv())
     })
   } else {
     type = xfun:::guess_type(x)
@@ -163,14 +163,9 @@ file_resp = function(x, raw) {
   }
 }
 
-# add empty YAML to make fuse() generate full HTML
-empty_yaml = c('---', '---')
-
+full_output = structure('html', full = TRUE)
 # generate full HTML output (instead of fragments)
-mark_full = function(...) {
-  opt = options(litedown.html.template = TRUE); on.exit(options(opt))
-  mark(...)
-}
+mark_full = function(...) mark(..., output = full_output)
 
 # guess if a file is a text file
 is_text_file = function(ext = file_ext(file), type = xfun:::guess_type(file), file) {
