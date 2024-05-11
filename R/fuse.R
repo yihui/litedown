@@ -236,15 +236,21 @@ sieve = function(input, text = NULL) {
   res = list()
   add_block = function(l1, l2, type = 'code_chunk', pipe = FALSE) {
     x = text[l1:l2]
-    el = list(type = type, lines = as.integer(c(l1, l2)))
     if (type == 'text_block') {
-      el$source = one_string(sub("^#' *", '', x))
+      el = list(source = one_string(sub("^#' ?", '', x)))
     } else {
-      if (all(xfun::is_blank(x))) return()
+      if (all(i <- xfun::is_blank(x))) return()
+      # trim blank lines at both ends
+      i2 = range(which(!i))  # first and last non-empty lines
+      l1 = l1 + (i2[1] - 1)
+      l2 = l2 - (length(i) - i2[2])
       save_pos(c(l1, l2))
-      el = merge_list(if (pipe) partition(x) else list(source = x), el)
+      x = text[l1:l2]
+      el = if (pipe) partition(x) else list(source = x)
       el$options$engine = 'r'
     }
+    el$type = type
+    el$lines = as.integer(c(l1, l2))
     res[[length(res) + 1]] <<- el
   }
   partition = function(code) {
