@@ -84,7 +84,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     if (file_exists(p)) {
       # filter out data from input files that do not belong to the book
       d = readRDS(p)
-      if (!all(d$source %in% input)) {
+      if (!all(i <- d$source %in% input)) {
         d = d[i, ]; saveRDS(d, p)
       }
     } else xfun::dir_create(dirname(p))
