@@ -14,7 +14,9 @@ or \code{.md} files with the same base names as \code{.Rmd} files (e.g., \code{b
 will not be used if \code{bar.Rmd} exists). For a directory \code{input}, the file
 search will be recursive if \code{input} ends with a slash (i.e.,
 sub-directories will also be searched). If a file named \code{index.Rmd} or
-\code{index.md} exists, it will always be treated as the first input file.}
+\code{index.md} exists, it will always be treated as the first input file. Input
+files can also be specified in the config file \verb{_litedown.yml} (in the
+\code{input} field under \code{book}).}
 
 \item{output}{An output file path or a filename extension (e.g., \code{.html},
 \code{.tex}, \code{.xml}, \code{.man}, \code{.markdown}, or \code{.txt}). In the latter case, the
@@ -45,8 +47,8 @@ is written to one file, instead of one HTML file per chapter.
 }
 \details{
 If the output format (\code{\link[=html_format]{html_format()}} or \code{\link[=latex_format]{latex_format()}}) needs to be
-customized, the configurations should be set in the YAML metadata of the
-first input file (typically \code{index.Rmd}), e.g.,
+customized, the settings should be written in the config file
+\verb{_litedown.yml}, e.g.,
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{---
 output:
@@ -59,15 +61,14 @@ output:
       documentclass: "book"
 }\if{html}{\out{</div>}}
 
-In addition, you can configure the book via the \code{book} field under the
-top-level YAML field \code{litedown}, e.g.,
+In addition, you can configure the book via the \code{book} field, e.g.,
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{---
-litedown:
-  book:
-    new_session: true
-    chapter_begin: "Information before a chapter."
-    chapter_end: "This chapter was generated from `$input$`."
+book:
+  new_session: true
+  subdir: false
+  chapter_begin: "Information before a chapter."
+  chapter_end: "This chapter was generated from `$input$`."
 ---
 }\if{html}{\out{</div>}}
 

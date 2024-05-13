@@ -6,8 +6,8 @@
 #' is written to one file, instead of one HTML file per chapter.
 #'
 #' If the output format ([html_format()] or [latex_format()]) needs to be
-#' customized, the configurations should be set in the YAML metadata of the
-#' first input file (typically `index.Rmd`), e.g.,
+#' customized, the settings should be written in the config file
+#' `_litedown.yml`, e.g.,
 #'
 #' ```
 #' ---
@@ -21,16 +21,15 @@
 #'       documentclass: "book"
 #' ```
 #'
-#' In addition, you can configure the book via the `book` field under the
-#' top-level YAML field `litedown`, e.g.,
+#' In addition, you can configure the book via the `book` field, e.g.,
 #'
 #' ```
 #' ---
-#' litedown:
-#'   book:
-#'     new_session: true
-#'     chapter_begin: "Information before a chapter."
-#'     chapter_end: "This chapter was generated from `$input$`."
+#' book:
+#'   new_session: true
+#'   subdir: false
+#'   chapter_begin: "Information before a chapter."
+#'   chapter_end: "This chapter was generated from `$input$`."
 #' ---
 #' ```
 #'
@@ -47,7 +46,9 @@
 #'   will not be used if `bar.Rmd` exists). For a directory `input`, the file
 #'   search will be recursive if `input` ends with a slash (i.e.,
 #'   sub-directories will also be searched). If a file named `index.Rmd` or
-#'   `index.md` exists, it will always be treated as the first input file.
+#'   `index.md` exists, it will always be treated as the first input file. Input
+#'   files can also be specified in the config file `_litedown.yml` (in the
+#'   `input` field under `book`).
 #' @return An output file path or the output content, depending on the `output`
 #'   argument.
 #' @export
@@ -57,22 +58,30 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   if (dir.exists(input[1])) {
     preview = input[-1]; input = input[1]
   } else preview = NULL
-  # automatically search for book files if input is dir
-  if (auto <- length(input) == 1 && dir.exists(input)) input = find_input(input)
+
+  yaml = NULL
+  # search for book files or read from config if input is a dir
+  if (length(input) == 1 && dir.exists(input)) {
+    yaml = yml_config(input)
+    cfg = yaml[['book']]
+    input = file.path(input, cfg[['input']]) %|%
+      find_input(input, cfg[['subdir']] %||% grepl('/$', input))
+  } else {
+    # if input files are provided directly, read config from the dir of first file
+    cfg = if (length(input)) {
+      yaml = yml_config(dirname(input[1]))
+      yaml[['book']]
+    }
+  }
   if (length(input) == 0) stop('No input was provided or found.')
-  # detect output format and config
-  text = read_utf8(input[1]); part = yaml_body(text); yaml = part$yaml
+
   full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input[1], output, format)
   cfg = merge_list(list(
-    new_session = FALSE, subdir = FALSE,
-    chapter_begin = '', chapter_end = "Source: `$input$`"
-  ), yaml[['litedown']][['book']])
-  # if subdir = TRUE but input doesn't include files from subdir, redo the search
-  if (auto && isTRUE(cfg$subdir) && !any(grepl('/', input))) {
-    input = find_input(dirname(input[1]), TRUE)
-  }
+    new_session = FALSE, chapter_begin = '', chapter_end = "Source: `$input$`"
+  ), cfg)
+
   # provide a simpler way to configure timing in YAML; only env vars are
   # inherited in new R sessions, so we attach the timing path to R_LITEDOWN_TIME
   if (is.character(p <- cfg$time)) {
@@ -109,7 +118,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       sub_vars(cfg[[sprintf('chapter_%s', cls)]], list(input = I(x))), ':::'
     )
     # for the first input, the fenced Divs should be inserted after YAML
-    h = if (length(preview) == 0 && 'yaml' %in% names(part) && x == input[1]) {
+    h = if (length(preview) == 0 && x == input[1]) {
       out = split_lines(out)
       if (length(i <- xfun:::locate_yaml(out)) >= 2) {
         i = seq_len(i[2]); h = out[i]; out = out[-i]
@@ -126,6 +135,11 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight"))
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
+}
+
+# read the config file _litedown.yml
+yml_config = function(d) {
+  if (file_exists(cfg <- file.path(input, '_litedown.yml'))) xfun::yaml_load(cfg)
 }
 
 # find input files under a directory
