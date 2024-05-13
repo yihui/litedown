@@ -28,17 +28,17 @@
 #' book:
 #'   new_session: true
 #'   subdir: false
-#'   chapter_begin: "Information before a chapter."
-#'   chapter_end: "This chapter was generated from `$input$`."
 #'   pattern: "[.]R?md$"
+#'   chapter_before: "Information before a chapter."
+#'   chapter_after: "This chapter was generated from `$input$`."
 #' ---
 #' ```
 #'
 #' The option `new_session` specifies whether to render each input file in the
-#' current R session or a separate new R session; `chapter_begin` and
-#' `chapter_end` specify text to be added to the beginning and end of each file,
-#' respectively, which accepts some variables (e.g., `$input$` is the current
-#' input file path).
+#' current R session or a separate new R session; `chapter_before` and
+#' `chapter_after` specify text to be added to the beginning and end of each
+#' file, respectively, which accepts some variables (e.g., `$input$` is the
+#' current input file path).
 #' @inheritParams fuse
 #' @param input A directory or a vector of file paths. By default, all
 #'   `.Rmd`/`.md` files under the current working directory are used as the
@@ -80,7 +80,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   format = detect_format(output, yaml)
   output = auto_output(input[1], output, format)
   cfg = merge_list(list(
-    new_session = FALSE, chapter_begin = '', chapter_end = "Source: `$input$`"
+    new_session = FALSE, chapter_before = '', chapter_after = "Source: `$input$`"
   ), cfg)
 
   # provide a simpler way to configure timing in YAML; only env vars are
@@ -128,7 +128,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     }
     c(
       h, sprintf('::: {.chapter .body data-source="%s"}', x),
-      info('begin'), '', out, '', info('end'), ':::'
+      info('before'), '', out, '', info('after'), ':::'
     )
   })
   tweak_options(format, yaml, list(

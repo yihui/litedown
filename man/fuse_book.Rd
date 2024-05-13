@@ -67,14 +67,15 @@ In addition, you can configure the book via the \code{book} field, e.g.,
 book:
   new_session: true
   subdir: false
-  chapter_begin: "Information before a chapter."
-  chapter_end: "This chapter was generated from `$input$`."
+  pattern: "[.]R?md$"
+  chapter_before: "Information before a chapter."
+  chapter_after: "This chapter was generated from `$input$`."
 ---
 }\if{html}{\out{</div>}}
 
 The option \code{new_session} specifies whether to render each input file in the
-current R session or a separate new R session; \code{chapter_begin} and
-\code{chapter_end} specify text to be added to the beginning and end of each file,
-respectively, which accepts some variables (e.g., \verb{$input$} is the current
-input file path).
+current R session or a separate new R session; \code{chapter_before} and
+\code{chapter_after} specify text to be added to the beginning and end of each
+file, respectively, which accepts some variables (e.g., \verb{$input$} is the
+current input file path).
 }
