@@ -143,12 +143,11 @@ file_resp = function(x, raw) {
     list(payload = mark_full(x))
   } else if (ext %in% c('rmd', 'qmd', 'r')) {
     # check if the file is for a book
-    txt = read_utf8(x)
-    yaml = xfun::yaml_body(if (ext == 'r') sub("^#' ?", '', txt) else txt)$yaml
-    list(payload = if ('book' %in% names(yaml[['litedown']])) {
-      fuse_book(dirname(x), full_output, globalenv())
+    yaml = yml_config(dirname(x))
+    list(payload = if ('book' %in% names(yaml)) {
+      fuse_book(if (is_index(x)) dirname(x) else x, full_output, globalenv())
     } else {
-      fuse(x, full_output, txt, envir = globalenv())
+      fuse(x, full_output, envir = globalenv())
     })
   } else {
     type = xfun:::guess_type(x)

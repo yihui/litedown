@@ -159,10 +159,12 @@ find_input = function(d, deep = grepl('/$', d)) {
 
 # move index.[Rq]md to the first
 reorder_input = function(x) {
-  i = sans_ext(basename(x)) == 'index'
+  i = is_index(x)
   index = x[i][which.min(nchar(x[i]))]  # take the shortest path
   c(index, setdiff(x, index))
 }
+
+is_index = function(x) sans_ext(basename(x)) == 'index'
 
 # temporarily set global metadata and options (inheriting from index.Rmd)
 tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) {
