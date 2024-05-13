@@ -30,6 +30,7 @@
 #'   subdir: false
 #'   chapter_begin: "Information before a chapter."
 #'   chapter_end: "This chapter was generated from `$input$`."
+#'   pattern: "[.]R?md$"
 #' ---
 #' ```
 #'
@@ -65,7 +66,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     yaml = yml_config(input)
     cfg = yaml[['book']]
     input = file.path(input, cfg[['input']]) %|%
-      find_input(input, cfg[['subdir']] %||% grepl('/$', input))
+      find_input(input, cfg[['subdir']] %||% grepl('/$', input), cfg[['pattern']])
   } else {
     # if input files are provided directly, read config from the dir of first file
     cfg = if (length(input)) {
@@ -143,8 +144,9 @@ yml_config = function(d) {
 }
 
 # find input files under a directory
-find_input = function(d, deep = grepl('/$', d)) {
-  x = list.files(d, '[.][Rq]?md$', full.names = TRUE, recursive = deep)
+find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
+  if (!is.character(pattern)) pattern = '[.][Rq]?md$'
+  x = list.files(d, pattern, full.names = TRUE, recursive = deep)
   # exclude .* and _* files
   x = x[!grepl('^[_.]', basename(x))]
   # exclude readme
