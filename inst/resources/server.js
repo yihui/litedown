@@ -82,11 +82,11 @@
     el.remove();
   }
   function check_all() {
-    // don't refresh whole page when checking a book page
-    d.querySelector('div[data-source]') || check_one();
+    // don't refresh whole page when checking a book page of multiple source files
+    d.querySelectorAll('div[data-source]').length <= 1 ?
+      check_one() : check_one('div[data-source]', false, 'source');
     check_one('[src]', 'src');  // <img> and <script>
     check_one('link[href]', 'href');  // css
-    check_one('div[data-source]', false, 'source');  // Rmd chapter
   }
   function new_interval() {
     d.body.dataset.timerId = setInterval(check_all, 2000);
