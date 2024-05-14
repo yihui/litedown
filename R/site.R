@@ -1,3 +1,108 @@
+#' Fuse R Markdown documents individually under a directory
+#'
+#' Run [fuse()] on R Markdown documents individually to generate a website.
+#'
+#' If a directory contains a config file `_litedown.yml`, which has a YAML field
+#' `site`, the directory will be recognized as a site root directory. The YAML
+#' field `output` will be applied to all R Markdown files (an individual R
+#' Markdown file can provide its own `output` field in YAML to override the
+#' global config). For example:
+#'
+#' ```
+#' ---
+#' site:
+#'   rebuild: "outdated"
+#'   pattern: "[.]R?md$"
+#' output:
+#'   litedown::html_format:
+#'     meta:
+#'       css: ["@default"]
+#'       include_before: "[Home](/) [About](/about.html)"
+#'       include_after: "&copy; 2024 | [Edit]($input$)"
+#' ---
+#' ```
+#'
+#' The option `rebuild` determines whether to rebuild `.Rmd` files. Possible
+#' values are:
+#'
+#' - `newfile`: Build an input file if it does not have a `.html` output file.
+#'
+#' - `outdated`: Rebuild an input file if the modification time of its `.html`
+#' output file is newer than the input.
+#' @param input The root directory of the site, or a vector of input file paths.
+#' @return Output file paths (invisibly).
+#' @export
+fuse_site = function(input = '.') {
+  info = NULL
+  inputs = if (length(input) == 1 && dir.exists(input)) {
+    info = proj_info('', input)
+    find_input(input, TRUE, info$yaml[['site']][['pattern']])
+  } else {
+    info = proj_info(input[1])
+    input
+  }
+  output = with_ext(inputs, '.html')
+  cfg = merge_list(list(rebuild = 'outdated'), info$yaml[['site']])
+  b = cfg[['rebuild']]
+  if (b == 'outdated') b = 0
+  i = if (is.numeric(b)) filter_outdated(inputs, output, b) else {
+    if (b == 'newfile') !file_exists(output) else TRUE
+  }
+  opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
+  opts[['meta']] = merge_list(list(
+    include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
+  ), opts[['meta']])
+  opts[['options']] = merge_list(list(embed_resources = FALSE), opts[['options']])
+  lapply(inputs[i], function(x) {
+    res = if (grepl('[.]md$', x)) {
+      opts = set_site_options(opts, x); on.exit(options(opts))
+      mark(x, full_output)
+    } else {
+      xfun::Rscript_call(function(x, set_opts, opts, output) {
+        set_opts(opts, x)
+        litedown::fuse(x, output, envir = globalenv())
+      }, list(x, set_site_options, opts, full_output))
+    }
+    # resolve / to relative paths
+    if (!is.na(info$root)) {
+      up = xfun::relative_path(info$root, dirname(x))
+      if (up == '.') up = ''
+      res = match_replace(res, ' (href|src)(=")/', function(z) {
+        gsub('/$', up, z)
+      })
+    }
+    write_utf8(res, with_ext(x, '.html'))
+  })
+  invisible(output)
+}
+
+# set global options litedown.html.[meta|options] read from _litedown.yml
+set_site_options = function(opts, input) {
+  m = opts[['meta']]
+  for (i in c('include_before', 'include_after')) {
+    if (!is.character(m[[i]])) next
+    tag = if (i == 'include_before') 'nav' else 'footer'
+    x = mark(I(one_string(m[[i]], test = TRUE)))
+    x = gsub('^<p>(.*)</p>$', sprintf('<%s>\\1</%s>', tag, tag), x)
+    m[[i]] = sub_vars(x, list(input = I(input)))
+  }
+  opts[['meta']] = m
+  options(set_names(opts, paste0('litedown.html.', names(opts))))
+}
+
+filter_outdated = function(x, x2, n) {
+  m1 = file.mtime(x); m2 = file.mtime(x2); is.na(m2) | m1 - m2 > n
+}
+
+# build a nav menu from filenames under root directory
+nav_menu = function(info) {
+  if (is.na(info$root)) return('[Home](/index.html)')
+  files = find_input(info$root, FALSE, info$yaml[['site']][['pattern']])
+  b = basename(files)
+  x = gsub('[-_]', ' ', sans_ext(ifelse(is_index(b), 'home', b)))
+  sprintf('[%s](/%s)', tools::toTitleCase(x), with_ext(b, '.html'))
+}
+
 #' Fuse multiple R Markdown documents to a single output file
 #'
 #' This is a helper function to [fuse()] `.Rmd` files and convert all their
@@ -104,7 +209,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
       fmt = paste0('markdown:', format)  # generate intermediate markdown output
       if (cfg$new_session) {
-        xfun::Rscript_call(litedown::fuse, list(x, fmt))
+        xfun::Rscript_call(fuse, list(x, fmt))
       } else {
         fuse(x, fmt, NULL, envir)
       }
@@ -140,7 +245,8 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
 
 # read the config file _litedown.yml
 yml_config = function(d) {
-  if (file_exists(cfg <- file.path(input, '_litedown.yml'))) xfun::yaml_load(cfg)
+  if (file_exists(cfg <- file.path(d, '_litedown.yml')))
+    xfun::yaml_load(read_utf8(cfg))
 }
 
 # find input files under a directory
@@ -187,9 +293,3 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
 
 # use a specific version of jsdelivr assets
 jsd_version = function(x, v = '@1.12.3') paste0(x, v)
-
-# TODO: fuse() files individually into .html; use meta variables header-includes
-# / include-before / include-after to customize <head>, nav bar, footer; it may
-# be tricky to resolve relative paths (e.g., for nav links)
-fuse_site = function() {
-}

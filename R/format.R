@@ -136,7 +136,9 @@ yaml_body = function(text) {
 # get metadata from a certain field under an output format
 yaml_field = function(yaml, format, name = 'meta') {
   i = sprintf('litedown::%s_format', format)
-  if (is.list(out <- yaml[['output']][[i]])) out[[name]]
+  if (is.list(out <- yaml[['output']][[i]])) {
+    if (length(name) == 1) out[[name]] else out[name]
+  }
 }
 
 # get output format from YAML's `output` field

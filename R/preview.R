@@ -139,16 +139,15 @@ file_page = function(x, raw) {
 # render the path to HTML if possible
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  if (ext == 'md') {
-    list(payload = mark_full(x))
-  } else if (ext %in% c('rmd', 'qmd', 'r')) {
-    # check if the file is for a book
-    yaml = yml_config(dirname(x))
-    list(payload = if ('book' %in% names(yaml)) {
-      fuse_book(if (is_index(x)) dirname(x) else x, full_output, globalenv())
-    } else {
-      fuse(x, full_output, envir = globalenv())
-    })
+  if (ext %in% c('md', 'rmd', 'qmd', 'r')) {
+    # check if the file is for a book or site
+    info = proj_info(x)
+    list(payload = switch(
+      info$type,
+      book = fuse_book(if (info$index) info$root else x, full_output, globalenv()),
+      site = xfun::file_string(fuse_site(x)),
+      if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
+    ))
   } else {
     type = xfun:::guess_type(x)
     if (!raw && is_text_file(ext, type) &&
@@ -160,6 +159,22 @@ file_resp = function(x, raw) {
       file_raw(x, type)
     }
   }
+}
+
+# detect project type for a directory (_litedown.yml may be in an upper-level dir)
+proj_info = function(x, d = dirname(x)) {
+  while (length(yaml <- yml_config(d)) == 0) {
+    if (xfun::same_path(d, d2 <- file.path(d, '..'))) break
+    d = d2
+  }
+  # use the field 'type' if provided, otherwise look for 'book' or 'site'
+  type = yaml[['type']] %||% head(intersect(c('book', 'site'), names(yaml)), 1)
+  root = if (length(type)) d else NA
+  if (is.na(root)) type = 'default'
+  list(
+    type = type, root = root, yaml = yaml,
+    index = !is.na(root) && is_index(x) && xfun::same_path(x, file.path(root, basename(x)))
+  )
 }
 
 full_output = structure('html', full = TRUE)
