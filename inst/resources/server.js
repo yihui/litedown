@@ -6,6 +6,9 @@
     req.send(data);
     req.onload = callback;
   }
+  // remove empty frontmatter
+  const fm = d.querySelector('.frontmatter');
+  if (fm && !fm.innerText) fm.remove();
   // add edit buttons for book chapters
   d.querySelectorAll('div[data-source]').forEach(el => {
     const u = el.dataset.source;
