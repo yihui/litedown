@@ -171,6 +171,11 @@ proj_info = function(x, d = dirname(x)) {
   type = yaml[['type']] %||% head(intersect(c('book', 'site'), names(yaml)), 1)
   root = if (length(type)) d else NA
   if (is.na(root)) type = 'default'
+  # a file doesn't belong to a site if it doesn't match the site file pattern
+  if (type != 'default' && x != '') {
+    p = yaml[[type]][['pattern']] %||% site_pattern
+    if (!grepl(p, x)) type = 'default'
+  }
   list(
     type = type, root = root, yaml = yaml,
     index = !is.na(root) && is_index(x) && xfun::same_path(x, file.path(root, basename(x)))

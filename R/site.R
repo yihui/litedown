@@ -249,9 +249,11 @@ yml_config = function(d) {
     xfun::yaml_load(read_utf8(cfg))
 }
 
+site_pattern = '[.][Rq]?md$'
+
 # find input files under a directory
 find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
-  if (!is.character(pattern)) pattern = '[.][Rq]?md$'
+  if (!is.character(pattern)) pattern = site_pattern
   x = list.files(d, pattern, full.names = TRUE, recursive = deep)
   # exclude .* and _* files
   x = x[!grepl('^[_.]', basename(x))]
