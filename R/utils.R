@@ -866,7 +866,7 @@ resolve_files = function(x, ext = 'css') {
   b = sans_ext(basename(files))
   if (any(!x[i] %in% b)) stop(
     "Invalid '", ext, "' option: ", paste0("'", setdiff(x[i], b), "'", collapse = ', '),
-    " (possible values are: ", paste0("'", b, "'", collapse = ','), ")"
+    " (possible values are: ", paste0("'", b, "'", collapse = ', '), ")"
   )
   x[i] = files[match(x[i], b)]
   x = if (ext %in% c('css', 'js')) gen_tags(x, ext) else read_all(x)
