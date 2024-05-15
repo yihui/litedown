@@ -74,12 +74,13 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     res = lite_handler(path, query, post, headers)
     # inject js to communicate with the R server via POST for live preview
     p = res$payload
-    if (!live || is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
+    if (is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
       return(res)
     res$payload = sub(
-      '</head>',
-      one_string(c(gen_tags(asset_url(c('server.js', 'server.css'))), '</head>')),
-      p, fixed = TRUE
+      '</head>', one_string(c(
+        if (live) '<meta name="live-previewer" content="litedown::roam">',
+        gen_tags(asset_url(c('server.js', 'server.css'))), '</head>'
+      )), p, fixed = TRUE
     )
     res
   }, ...)

@@ -88,8 +88,10 @@
     check_one('[src]', 'src');  // <img> and <script>
     check_one('link[href]', 'href');  // css
   }
+  // do live preview only when requested
+  const live = d.querySelector('meta[name="live-previewer"]')?.content === 'litedown::roam';
   function new_interval() {
-    d.body.dataset.timerId = setInterval(check_all, 2000);
+    if (live) d.body.dataset.timerId = setInterval(check_all, 2000);
   }
   function open_line(container, path) {
     container.querySelectorAll('pre.line-numbers').forEach(pre => {
