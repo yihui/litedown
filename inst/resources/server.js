@@ -25,13 +25,13 @@
   });
   function check_one(q, a, s) {
     (q ? d.querySelectorAll(q) : [d.body]).forEach(el => {
-      let u = a ? el[[a]] : location.href;
+      let u = a ? el[a] : location.href;
       // only check assets served by local server
       if (a && u && !(u.startsWith(location.origin) && u.includes('/custom/litedown/')))
         return;
       if (el.dataset.wait) return;
       el.dataset.wait = 1;  // don't send another request while waiting
-      new_req(u, q ? (a ? 'asset' : `book:${el.dataset[[s]]}`) : 'page', e => {
+      new_req(u, q ? (a ? 'asset' : `book:${el.dataset[s]}`) : 'page', e => {
         const res = e.target.responseText;
         if (e.target.status !== 200) {
           el.innerHTML = `<pre><code class="error">${res}</code></pre>`;
