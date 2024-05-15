@@ -207,7 +207,7 @@ dir_title = function(f) {
     d = if (d == '.') character() else unlist(strsplit(d, '/'))
     c(
       sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
-      if (is_text_file(file = f)) '[&#9998;](#)'
+      if (file_exists(f)) basename(f), if (is_text_file(file = f)) '[&#9998;](#)'
     )
   }
   one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
