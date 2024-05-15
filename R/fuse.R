@@ -636,8 +636,6 @@ fuse_code = function(x, blocks) {
   }
 
   lab = opts$label
-  opts$fig.path = paste0(opts$fig.path, lab)
-
   lang = opts$engine
   res = if (opts$eval) {
     if (is.function(eng <- engines(lang))) eng(x) else list(
@@ -875,6 +873,7 @@ eng_r = function(x, inline = FALSE, ...) {
     'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
     'cache', 'print', 'print.args'
   )
+  if (is.character(args$fig.path)) args$fig.path = paste0(args$fig.path, opts$label)
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
