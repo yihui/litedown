@@ -18,8 +18,8 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     output formats (the primary formats are HTML and LaTeX).
 Imports:
     utils,
-    commonmark (>= 1.9.0),
-    xfun (>= 0.43.18)
+    commonmark (>= 1.9.1),
+    xfun (>= 0.44)
 Suggests:
     knitr,
     rmarkdown (>= 2.18),
