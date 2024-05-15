@@ -637,13 +637,13 @@ fuse_code = function(x, blocks) {
 
   lab = opts$label
   lang = opts$engine
-  res = if (opts$eval) {
+  res = if (isFALSE(opts$eval)) {
+    list(new_source(x$source))
+  } else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
       new_warning(sprintf("The engine '%s' is not supported yet.", lang))
     )
-  } else {
-    list(new_source(x$source))
   }
 
   if (!opts$include) return('')
@@ -885,6 +885,8 @@ eng_r = function(x, inline = FALSE, ...) {
     path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
     hash = opts$cache.hash, keep = opts$cache.keep, id = opts$label, rw = opts$cache.rw
   )
+  # support eval = 0, 1, 2 (pass to the 'verbose' argument of record())
+  if (is.numeric(opts$eval)) args$verbose = opts$eval
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 
