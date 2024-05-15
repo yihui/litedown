@@ -91,7 +91,23 @@
   function new_interval() {
     d.body.dataset.timerId = setInterval(check_all, 2000);
   }
-  window.addEventListener('load', new_interval);
+  function open_line(container, path) {
+    container.querySelectorAll('pre.line-numbers').forEach(pre => {
+      const n = +pre.dataset.start;
+      n && pre.querySelectorAll('.line-numbers-rows > span').forEach((s, i) => {
+        s.onclick = e => {
+          const u = `${location.href.replace(/[?#].*/, '')}?line=${n + i}`;
+          new_req(path ? `${u}&path=${path}` : u, 'open');
+        };
+      });
+    });
+  }
+  window.addEventListener('load', e => {
+    new_interval();
+    // also support opening files by clicking on line numbers in code blocks
+    chapters.length <= 1 ? open_line(d) :
+      chapters.forEach(el => open_line(el, el.dataset.source));
+  });
   // when updating a book chapter, this script will be reloaded, and we need to
   // clear the old interval and create a new loop
   if (d.body.dataset.timerId) {

@@ -137,6 +137,8 @@ crack = function(input, text = NULL) {
       save_pos(b$lines)
       code = xfun::divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
+      # starting line number of code
+      b$code_start = b$lines[1] + 1L + length(b$comments)
       # default label is chunk-i (or parent-label-i for child documents)
       i1 = i1 + 1
       # merge chunk options from header with pipe comment options
@@ -224,8 +226,9 @@ sieve = function(input, text = NULL) {
   if (nc == 0 && !any(startsWith(text, '#| '))) {
     res = xfun::split_source(text, TRUE, TRUE)
     res = .mapply(function(code, label) {
+      l = attr(code, 'lines')
       list(
-        source = c(code), type = 'code_chunk', lines = attr(code, 'lines'),
+        source = c(code), type = 'code_chunk', lines = l, code_start = l[1],
         options = list(engine = 'r', label = label)
       )
     }, list(res, sprintf('chunk-%d', seq_along(res))), NULL)
@@ -247,6 +250,7 @@ sieve = function(input, text = NULL) {
       save_pos(c(l1, l2))
       x = text[l1:l2]
       el = if (pipe) partition(x) else list(source = x)
+      el$code_start = l1 + length(el$comments)
       el$options$engine = 'r'
     }
     el$type = type
@@ -573,7 +577,7 @@ timing_data = function(threshold = 0, sort = TRUE, total = TRUE) {
 
   total = if (total) sum(d$time)
   # add edit links in the roam() mode
-  if (isTRUE(getOption('litedown.roaming')) && !all(i <- d$source == '#text')) {
+  if (is_roaming() && !all(i <- d$source == '#text')) {
     d$source = ifelse(i, '', sprintf(
       '%s [&#9998;](?path=%s&line=%d)', d$source, URLencode(d$source, TRUE), d$line1
     ))
@@ -670,11 +674,13 @@ fuse_code = function(x, blocks) {
   if (pn && !is.null(env)) res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
   i = 0  # plot counter
 
+  l1 = x$code_start  # starting line number of the whole code chunk
   # generate markdown output
   out = lapply(res, function(x) {
     type = sub('record_', '', class(x)[1])
     if (type == 'source') {
       if (!opts$echo) return()
+      l2 = attr(x, 'lines')[1]  # starting line number of a code block
       x = one_string(x)
       if (opts$strip.white) x = str_trim(x)
     }
@@ -697,6 +703,8 @@ fuse_code = function(x, blocks) {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
         a = c(paste0('.', lang), a)  # use engine name as class name
+        # add line numbers
+        if (is_roaming()) a = c(a, sprintf('.line-numbers data-start="%d"', l1 + l2 - 1))
       } else {
         if (type == 'message') x = sub('\n$', '', x)
         x = split_lines(x)

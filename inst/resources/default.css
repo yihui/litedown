@@ -13,7 +13,7 @@ pre, img { max-width: 100%; }
 pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
 pre code { display: block; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
-:not(pre) > code, code[class], .box > div { background-color: #f8f8f8; }
+:not(pre) > code, code[class], .line-numbers, .box > div { background-color: #f8f8f8; }
 pre > code:not([class]), pre > .language-plain, .box { background-color: inherit; border: 1px solid #eee; }
 pre > .message { border-color: #9eeaf9; }
 pre > .warning { background: #fff3cd; border-color: #fff3cd; }
@@ -25,6 +25,10 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
   border-left: 2px solid;
 }
 .code-fence:hover { opacity: inherit; }
+.line-numbers code { display: table; padding: 0 0 0 1em; }
+pre[class*=language-].line-numbers { padding: 1em 0; margin-left: 3.5em; }
+.line-numbers .line-numbers-rows { left: -3.5em; }
+.line-numbers-rows > span:before { padding-right: .5em; }
 .box { margin: 1em 0; }
 .box > :first-child > p:first-child, .box > :last-child > p:last-child { padding: 1em; }
 .box > :first-child, .box > :first-child > p:first-child { margin-top: 0; }

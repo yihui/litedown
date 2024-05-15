@@ -245,6 +245,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     }, 'html', function(z2) gsub(id4, ' ', restore_html(z2)))
     # some code blocks with "attributes" are verbatim ones
     ret = match_replace(ret, '```+\\{.+}', function(x) gsub(id4, ' ', x, fixed = TRUE))
+    # <pre><code class="line-numbers" data-start="N"> -> <pre class="line-numbers" data-start="N"><code>
+    ret = gsub(
+      '(<pre)(><code [^>]*?class="[^"]+?) (line-numbers)([^"]*"[^>]*?)( data-start="[0-9]+")',
+      '\\1 class="\\3"\\5\\2\\4', ret, perl = TRUE
+    )
+    # data-start is optional
+    ret = gsub(
+      '(<pre)(><code [^>]*?class="[^"]+?) (line-numbers)([^"]*")',
+      '\\1 class="\\3"\\2\\4', ret, perl = TRUE
+    )
     # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
     ret = gsub(
       '(<table>)(?s)(.+?</table>)\n<p>(Table)?: (?s)(.+?)</p>',

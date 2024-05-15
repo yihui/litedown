@@ -191,6 +191,8 @@ is_text_file = function(ext = file_ext(file), type = xfun:::guess_type(file), fi
   (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
+is_roaming = function() isTRUE(getOption('litedown.roaming'))
+
 # return a raw file response
 file_raw = function(x, type = xfun:::guess_type(x)) {
   list(file = normalizePath(x), `content-type` = type)
