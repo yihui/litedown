@@ -9,8 +9,9 @@
   // remove empty frontmatter
   const fm = d.querySelector('.frontmatter');
   if (fm && !fm.innerText) fm.remove();
+  const chapters = d.querySelectorAll('div[data-source]');
   // add edit buttons for book chapters
-  d.querySelectorAll('div[data-source]').forEach(el => {
+  chapters.forEach(el => {
     const u = el.dataset.source;
     u && !el.querySelector('.pencil') && el.insertAdjacentHTML('afterbegin', `<a href="?path=${u}">✎</a>`);
   });
@@ -83,8 +84,7 @@
   }
   function check_all() {
     // don't refresh whole page when checking a book page of multiple source files
-    d.querySelectorAll('div[data-source]').length <= 1 ?
-      check_one() : check_one('div[data-source]', false, 'source');
+    chapters.length <= 1 ? check_one() : check_one('div[data-source]', false, 'source');
     check_one('[src]', 'src');  // <img> and <script>
     check_one('link[href]', 'href');  // css
   }
