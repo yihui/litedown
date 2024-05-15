@@ -25,6 +25,9 @@ fuse_env = function() .env$global %||% globalenv()
 
 #' @export
 record_print.data.frame = function(x, ...) {
+  if (is.null(getOption('xfun.md_table.limit'))) {
+    opts = options(xfun.md_table.limit = 10); on.exit(options(opts), add = TRUE)
+  }
   tab = xfun::md_table(x, ...)
   opt = reactor()
   if (length(cap <- opt$tab.cap)) {
