@@ -63,7 +63,7 @@ fuse_site = function(input = '.') {
       opts = set_site_options(opts, x); on.exit(options(opts))
       mark(x, full_output)
     } else {
-      xfun::Rscript_call(
+      Rscript_call(
         function(x, opts, flag, output) {
           litedown:::set_site_options(opts, x, list(litedown.roaming = flag))
           litedown::fuse(x, output, envir = globalenv())
@@ -223,7 +223,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
       fmt = paste0('markdown:', format)  # generate intermediate markdown output
       if (cfg$new_session) {
-        xfun::Rscript_call(fuse, list(x, fmt))
+        Rscript_call(fuse, list(x, fmt))
       } else {
         fuse(x, fmt, NULL, envir)
       }
