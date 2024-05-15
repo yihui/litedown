@@ -63,10 +63,14 @@ fuse_site = function(input = '.') {
       opts = set_site_options(opts, x); on.exit(options(opts))
       mark(x, full_output)
     } else {
-      xfun::Rscript_call(function(x, set_opts, opts, flag, output) {
-        set_opts(opts, x, list(litedown.roaming = flag))
-        litedown::fuse(x, output, envir = globalenv())
-      }, list(x, set_site_options, opts, is_roaming(), full_output))
+      xfun::Rscript_call(
+        function(x, opts, flag, output) {
+          litedown:::set_site_options(opts, x, list(litedown.roaming = flag))
+          litedown::fuse(x, output, envir = globalenv())
+        },
+        list(x, opts, is_roaming(), full_output),
+        fail = paste('Failed to run litedown::fuse() on', x)
+      )
     }
     # resolve / to relative paths
     if (!is.na(info$root)) {
