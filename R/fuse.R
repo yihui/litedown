@@ -748,6 +748,7 @@ fuse_text = function(x) {
 exec_inline = function(x) {
   save_pos(x$pos)
   o = reactor(x$options); on.exit(reactor(o), add = TRUE)
+  if (isFALSE(reactor('eval'))) return('')
   lang = x$options$engine
   if (is.function(eng <- engines(lang))) eng(x, inline = TRUE) else {
     warning("The inline engine '", lang, "' is not supported yet")
