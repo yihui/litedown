@@ -73,6 +73,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     get_option('meta', format),
     yaml[intersect(names(yaml), c('title', 'author', 'date'))],
     yaml_field(yaml, format),
+    list(generator = I(paste('litedown', packageVersion('litedown')))),
     meta
   )
   meta = normalize_meta(meta)
