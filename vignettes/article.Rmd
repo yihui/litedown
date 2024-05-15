@@ -210,7 +210,7 @@ a quote, just use the blockquote syntax `>`, e.g.,
 ```{r}
 #| echo=FALSE
 
-knitr::kable(head(mtcars, 4))
+head(mtcars, 4)
 ```
 :::
 
