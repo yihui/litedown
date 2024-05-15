@@ -145,7 +145,7 @@ file_resp = function(x, raw) {
     list(payload = switch(
       info$type,
       book = fuse_book(if (info$index) info$root else x, full_output, globalenv()),
-      site = xfun::file_string(fuse_site(x)),
+      site = fuse_site(x),
       if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
     ))
   } else {

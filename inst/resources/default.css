@@ -9,6 +9,7 @@ body {
 body, .footnotes, code { font-size: .9em; }
 li li { font-size: .95em; }
 *, *:before, *:after { box-sizing: inherit; }
+a { color: steelblue; }
 pre, img { max-width: 100%; }
 pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
 pre code { display: block; overflow-x: auto; }

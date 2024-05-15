@@ -33,12 +33,13 @@
 #' @return Output file paths (invisibly).
 #' @export
 fuse_site = function(input = '.') {
-  info = NULL
+  info = NULL; preview = FALSE
   inputs = if (length(input) == 1 && dir.exists(input)) {
     info = proj_info('', input)
     find_input(input, TRUE, info$yaml[['site']][['pattern']])
   } else {
     info = proj_info(input[1])
+    preview = is_roaming() && length(input) == 1
     input
   }
   output = with_ext(inputs, '.html')
@@ -50,18 +51,22 @@ fuse_site = function(input = '.') {
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
+    css = jsd_version(c("@default", "@article", '@site')),
+    js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight")),
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
-  opts[['options']] = merge_list(list(embed_resources = FALSE), opts[['options']])
-  lapply(inputs[i], function(x) {
+  opts[['options']] = merge_list(
+    list(embed_resources = FALSE, toc = TRUE), opts[['options']]
+  )
+  out = lapply(inputs[i], function(x) {
     res = if (grepl('[.]md$', x)) {
       opts = set_site_options(opts, x); on.exit(options(opts))
       mark(x, full_output)
     } else {
-      xfun::Rscript_call(function(x, set_opts, opts, output) {
-        set_opts(opts, x)
+      xfun::Rscript_call(function(x, set_opts, opts, flag, output) {
+        set_opts(opts, x, list(litedown.roaming = flag))
         litedown::fuse(x, output, envir = globalenv())
-      }, list(x, set_site_options, opts, full_output))
+      }, list(x, set_site_options, opts, is_roaming(), full_output))
     }
     # resolve / to relative paths
     if (!is.na(info$root)) {
@@ -71,23 +76,25 @@ fuse_site = function(input = '.') {
         gsub('/$', up, z)
       })
     }
-    write_utf8(res, with_ext(x, '.html'))
+    if (preview) res else write_utf8(res, with_ext(x, '.html'))
   })
-  invisible(output)
+  if (preview) {
+    if (i) out[[1]] else file_string(output)
+  } else invisible(output)
 }
 
 # set global options litedown.html.[meta|options] read from _litedown.yml
-set_site_options = function(opts, input) {
+set_site_options = function(opts, input, extra = NULL) {
   m = opts[['meta']]
   for (i in c('include_before', 'include_after')) {
     if (!is.character(m[[i]])) next
     tag = if (i == 'include_before') 'nav' else 'footer'
     x = mark(I(one_string(m[[i]], test = TRUE)))
-    x = gsub('^<p>(.*)</p>$', sprintf('<%s>\\1</%s>', tag, tag), x)
+    x = sprintf('<%s>%s</%s>', tag, x, tag)
     m[[i]] = sub_vars(x, list(input = I(input)))
   }
   opts[['meta']] = m
-  options(set_names(opts, paste0('litedown.html.', names(opts))))
+  options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
 }
 
 filter_outdated = function(x, x2, n) {
@@ -100,7 +107,10 @@ nav_menu = function(info) {
   files = find_input(info$root, FALSE, info$yaml[['site']][['pattern']])
   b = basename(files)
   x = gsub('[-_]', ' ', sans_ext(ifelse(is_index(b), 'home', b)))
-  sprintf('[%s](/%s)', tools::toTitleCase(x), with_ext(b, '.html'))
+  sprintf(
+    '[%s](/%s)', tools::toTitleCase(x),
+    if (is_roaming()) paste0(b, '?preview=1') else with_ext(b, '.html')
+  )
 }
 
 #' Fuse multiple R Markdown documents to a single output file
@@ -294,4 +304,4 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
 }
 
 # use a specific version of jsdelivr assets
-jsd_version = function(x, v = '@1.12.4') paste0(x, v)
+jsd_version = function(x, v = '@1.12.6') paste0(x, v)
