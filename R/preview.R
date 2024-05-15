@@ -61,6 +61,25 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       )
       return(list(payload = 'done'))
     }
+    # render Rmd in new R sessions and save to file
+    if (type == 'save') {
+      ext = tolower(file_ext(path))
+      return(if (is_lite_ext(ext)) {
+        # check if the file is for a book or site
+        info = proj_info(path)
+        list(payload = paste('Rendered and saved:', switch(
+          info$type,
+          book = Rscript_call(fuse_book, list(info$root)),
+          site = { Rscript_call(fuse_site, list(info$root)); info$root },
+          if (ext == 'md') mark(path) else Rscript_call(fuse, list(path))
+        )))
+      } else {
+        list(payload = paste0(
+          "Unable to render '", path, "' (only ",
+          paste0('.', lite_exts, collapse = ', '), " are supported)."
+        ))
+      })
+    }
     if (live && type != '') {
       resp = ''
       if (type %in% c('asset', 'page')) {
@@ -137,10 +156,15 @@ file_page = function(x, raw) {
   res
 }
 
+# extensions that litedown can render
+lite_exts = c('md', 'rmd', 'qmd', 'r')
+
+is_lite_ext = function(ext = file_ext(file), file) tolower(ext) %in% lite_exts
+
 # render the path to HTML if possible
 file_resp = function(x, raw) {
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  if (ext %in% c('md', 'rmd', 'qmd', 'r')) {
+  if (is_lite_ext(ext)) {
     # check if the file is for a book or site
     info = proj_info(x)
     list(payload = switch(
@@ -207,7 +231,8 @@ dir_title = function(f) {
     d = if (d == '.') character() else unlist(strsplit(d, '/'))
     c(
       sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
-      if (file_exists(f)) basename(f), if (is_text_file(file = f)) '[&#9998;](#)'
+      if (file_exists(f)) basename(f), if (is_lite_ext(file = f)) '[&#10063;](#)',
+      if (is_text_file(file = f)) '[&#9998;](#)'
     )
   }
   one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')

@@ -1,8 +1,9 @@
-.pencil {
+.pencil, .save {
   text-decoration: none;
   font-size: 1.3em;
   font-style: normal;
   float: right;
+  margin-left: .5em;
 }
 li .pencil {
   float: none;
@@ -15,4 +16,8 @@ td .pencil {
 }
 .line-numbers-rows>span:before {
   cursor: pointer;
+}
+.waiting {
+  cursor: wait;
+  opacity: .5;
 }

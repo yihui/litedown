@@ -13,15 +13,31 @@
   // add edit buttons for book chapters
   chapters.forEach(el => {
     const u = el.dataset.source;
-    u && !el.querySelector('.pencil') && el.insertAdjacentHTML('afterbegin', `<a href="?path=${u}">✎</a>`);
+    u && !el.querySelector('.pencil') &&
+      el.insertAdjacentHTML('afterbegin', `<a href="?path=${u}" title="Open ${u}">✎</a>`);
   });
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {
     if (a.innerText !== '✎' || a.classList.contains('pencil')) return;
-    a.classList.add('pencil');
+    a.classList.add('pencil'); if (!a.title) a.title = 'Open';
     a.onclick = e => {
       e.preventDefault();
       new_req(a.href, 'open');
+    };
+  });
+  // add classes and events to save buttons
+  d.querySelectorAll('a[href]').forEach(a => {
+    if (a.innerText !== '❏' || a.classList.contains('save')) return;
+    a.classList.add('save'); a.title = 'Render and Save';
+    a.onclick = e => {
+      e.preventDefault();
+      const cls = d.body.classList;
+      if (cls.contains('waiting')) return;
+      cls.add('waiting');
+      new_req(a.href, 'save', e => {
+        alert(e.target.responseText);
+        cls.remove('waiting');
+      });
     };
   });
   function check_one(q, a, s) {
