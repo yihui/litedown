@@ -108,6 +108,9 @@
   const live = d.querySelector('meta[name="live-previewer"]')?.content === 'litedown::roam';
   function new_interval() {
     if (live) d.body.dataset.timerId = setInterval(check_all, 2000);
+    // also support opening files by clicking on line numbers in code blocks
+    chapters.length <= 1 ? open_line(d) :
+      chapters.forEach(el => open_line(el, el.dataset.source));
   }
   function open_line(container, path) {
     container.querySelectorAll('pre.line-numbers').forEach(pre => {
@@ -120,12 +123,7 @@
       });
     });
   }
-  window.addEventListener('load', e => {
-    new_interval();
-    // also support opening files by clicking on line numbers in code blocks
-    chapters.length <= 1 ? open_line(d) :
-      chapters.forEach(el => open_line(el, el.dataset.source));
-  });
+  window.addEventListener('load', new_interval);
   // when updating a book chapter, this script will be reloaded, and we need to
   // clear the old interval and create a new loop
   if (d.body.dataset.timerId) {
