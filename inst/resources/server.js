@@ -75,12 +75,13 @@
   function update_chapter(el, html) {
     const w = d.createElement('div'); w.innerHTML = html;
     // current chapter number
-    const n = +el.querySelector('.section-number')?.innerText.replace(/^([0-9]+).*/, '$1');
+    const n = el.querySelector('.section-number')?.innerText.replace(/^([0-9A-Z]+).*/, '$1');
     // change the leading 1 to n in section numbers
-    n && w.querySelectorAll('.section-number').forEach(el => {
+    w.querySelectorAll('.section-number').forEach(el => {
       const t = el.innerText.match(/^(\d+)(.*)/);
-      if (t.length === 3) el.innerText = `${t[1] - 1 + n}${t[2]}`;
+      if (t.length === 3) el.innerText = `${n.match(/[A-Z]/) ? n : (t[1] - 1 + (+n || 1))}${t[2]}`;
     });
+    w.firstElementChild.className = el.className;
     el.outerHTML = w.innerHTML;
     // update footnote numbers
     const q = 'a[id^="fnref-"]';
