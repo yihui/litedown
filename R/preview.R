@@ -86,7 +86,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
         if (check_time(path)) resp = '1'
       } else if (grepl('^book:', type) && check_time(f <- sub('^book:', '', type))) {
         # the book file path to preview is encoded in `type = book:foo/bar.Rmd`
-        resp = fuse_book(c(dirname(path), f), full_output, globalenv())
+        resp = fuse_book(c(dirname(path), f), 'html', globalenv())
       }
       return(list(payload = resp))
     }
