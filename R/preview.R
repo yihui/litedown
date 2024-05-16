@@ -231,7 +231,7 @@ dir_title = function(f) {
     d = if (d == '.') character() else unlist(strsplit(d, '/'))
     c(
       sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
-      if (file_exists(f)) basename(f), if (is_lite_ext(file = f)) '[&#10063;](#)',
+      if (file_exists(f)) basename(f), if (is_lite_ext(file = f)) '[&#8623;](#)',
       if (is_text_file(file = f)) '[&#9998;](#)'
     )
   }
