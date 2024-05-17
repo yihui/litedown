@@ -127,7 +127,7 @@ is_output_full = function(x) isTRUE(attr(x, 'full'))
 
 # test if input is R code or not (this is based on heuristics and may not be robust)
 is_R = function(input, text) {
-  (is_file(input) && grepl('[.][Rrs]$', input)) || {
+  if (is_file(input)) grepl('[.][Rrs]$', input) else {
     !length(grep('^\\s*```+\\{', text)) && !xfun::try_error(xfun::parse_only(text))
   }
 }
