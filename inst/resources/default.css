@@ -53,6 +53,11 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
 table, .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
+.ref-number-fig::after, .ref-number-tab::after { content: ":"; }
+.cross-ref-chp::before { content: "Chapter "; }
+.cross-ref-sec::before { content: "Section "; }
+.cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
+.cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
 .footnote-ref a::before { content: "["; }
 .footnote-ref a::after { content: "]"; }
 section.footnotes { margin-top: 2em; }
