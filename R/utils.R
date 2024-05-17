@@ -654,11 +654,11 @@ number_refs = function(x, r) {
   db = list()  # element numbers
 
   # first, find numbered section headings
-  r2 = '<h[1-6][^>]*? id="(sec-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
+  r2 = '<h[1-6][^>]*? id="((sec|chp)-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
   m = regmatches(x, gregexec(r2, x))[[1]]
   if (length(m)) {
     ids = m[2, ]
-    db = set_names(m[3, ], ids)
+    db = set_names(m[4, ], ids)
   }
 
   # then find and number other elements
