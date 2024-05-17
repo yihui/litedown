@@ -64,11 +64,11 @@ fuse_site = function(input = '.') {
       mark(x, full_output)
     } else {
       Rscript_call(
-        function(x, opts, flag, output) {
-          litedown:::set_site_options(opts, x, list(litedown.roaming = flag))
+        function(x, opts, set, flag, output) {
+          set(opts, x, list(litedown.roaming = flag))
           litedown::fuse(x, output, envir = globalenv())
         },
-        list(x, opts, is_roaming(), full_output),
+        list(x, opts, set_site_options, is_roaming(), full_output),
         fail = paste('Failed to run litedown::fuse() on', x)
       )
     }
