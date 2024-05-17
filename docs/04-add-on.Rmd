@@ -1,0 +1,400 @@
+# CSS/JS add-ons {#chp-addon}
+
+The **litedown** package aims at lightweight with a minimal number of features
+at its core, but you can add more features by yourself. In this chapter, we
+introduce some CSS/JS add-ons from the repository
+<https://github.com/yihui/misc.js>. You can load arbitrary external JS and CSS
+files via the `js` and `css` meta variables. There are numerous JS libraries and
+CSS frameworks on the web that you can use, and you do not have to use the ones
+mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
+HTML applications.
+
+Remember that the CSS and JS are introduced under the output format
+`litedown::html_format` in YAML metadata, e.g.,
+
+``` yaml
+---
+output:
+  litedown::html_format:
+    meta:
+      css: ["one.css", "two.css"]
+      js: ["three.js", "four.js"]
+---
+```
+
+For the sake of brevity, we will omit the full YAML fields in examples
+throughout this chapter but only use the `css` and `js` fields. A file name
+`foo.js` denotes the file under the `js/` directory of the aforementioned
+`yihui/misc.js` repository. Similarly, `foo.css` is under the `css/` directory.
+
+## HTML slides
+
+With `snap.css` and `snap.js`, you can create lightweight HTML slides:
+
+``` yaml
+css: ["@default", "@snap"]
+js: ["@snap"]
+```
+
+You can learn more in `vignette('slides', package = 'litedown')`.
+
+## HTML articles
+
+We can style an HTML page in an article format via the following CSS and JS:
+
+``` yaml
+css: ["@default", "@article"]
+js: ["@sidenotes", "@appendix"]
+```
+
+The `article.css` is mainly for styling the article frontmatter, body, and side
+content.
+
+-   The `sidenotes.js` is required only if you want to place certain elements on
+    the left or right side, such as the table of contents (TOC), footnotes, and
+    sidenotes.
+
+-   The `appendix.js` is required only if you have an appendix in the article.
+
+The web version of this book is also based on the article format, so you know
+what an article format looks like when you read the HTML version of the book.
+
+### The overall style
+
+The maximum width of the article body is 800px. For larger screens, this means
+there will be extra space in the left/right margin, where we can place auxiliary
+information, such as the TOC and footnotes. On smaller screens, the side content
+will be collapsed into the body.
+
+The article frontmatter, body, and optionally the appendix are placed in
+separate boxes.
+
+The default typeface is sans-serif, and you can customize it by supplying an
+external CSS file (via the `css` meta variable) or just embedding CSS in the
+document body, e.g.,
+
+```` md
+```{css, echo=FALSE}
+body {
+  font-family: Palatino, "Book Antiqua", Georgia, serif;
+  font-size: 1em;
+}
+```
+````
+
+### Side elements
+
+The TOC and footnotes are automatically placed in the margin if space permits.
+You can also write arbitrary content in the margin via a fenced `Div`.
+
+#### The TOC
+
+The TOC is sticky on the left side as you scroll down the article. If you do not
+like this behavior, you may cancel it via CSS:
+
+``` css
+#TOC {
+  top: unset;
+}
+```
+
+#### Footnotes
+
+Footnotes are moved to the right side. When you move your cursor over a footnote
+number in the body, the footnote will be moved next to your cursor. This can be
+convenient when you have multiple footnotes on a line, since you do not need to
+look for a specific footnote in the margin.
+
+#### Arbitrary sidenotes
+
+You can write anything in the margin by using a fenced `Div` with the classes
+`.side` and `.side-left` or `.side-right`.
+
+::: {.side .side-left}
+**Notice**
+
+Here is a note on the left side. Anything permitted by law is permitted here.
+Math? No problem!
+
+$$e^{i\theta}=\sin{\theta}+i\cos{\theta}$$
+
+When you have this sidenote "hammer", I'm sure you will hit a lot of nails into
+the margin, even if you do not have to.
+:::
+
+::: {.side .side-right}
+And here is a note on the right side. Seriously, we should let
+[commonmark](https://commonmark.org)'s authors know that fenced `Div`s really
+deserve first-class support! They can make Markdown infinitely customizable.
+:::
+
+``` markdown
+::: {.side .side-left}
+**Anything** on the left.
+:::
+```
+
+``` markdown
+::: {.side .side-right}
+_Anything_ on the right.
+:::
+```
+
+### Body elements
+
+Inside the article body, you can write a few special elements.
+
+#### Full-width elements
+
+When an element is wider than the article body, you can show it in its full
+width by enclosing the element in a fenced `Div` with the class `.fullwidth`,
+e.g.,
+
+``` markdown
+::: {.fullwidth}
+![text](path/to/image)
+:::
+```
+
+::: fullwidth
+![Sunspots](https://prose.yihui.org/post/2020/11/10/r-markdown-demo/index_files/figure-html/sunspots-1.svg)
+:::
+
+If you use R Markdown, you can generate a wide plot or table from an R code
+chunk, e.g.,
+
+```` markdown
+::: {.fullwidth}
+```{r}
+#| sunspots, echo=FALSE, fig.dim=c(14, 4),
+#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red', panel.first = grid())
+```
+:::
+````
+
+If you want to show code (`echo = TRUE`) but do not want the code to be in the
+full-width container, you can apply the `.fullwidth` class to the plot only,
+e.g.,
+
+```` md
+```{r}
+#| sunspots, fig.dim=c(14, 4), fig.env='.fullwidth .figure .box',
+#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red', panel.first = grid())
+```
+````
+
+#### Left/right quotes
+
+::: quote-right
+> Whenever you find that you are on the side of the majority, it is time to
+> pause and reflect.
+>
+> ---[Mark Twain](http://www.quotationspage.com/quotes/Mark_Twain/81)
+:::
+
+Sometimes you may want to add a quote but do not want it to take the full width
+in the body. You may use a fenced `Div` with the class `.quote-left` or
+`.quote-right`.
+
+Despite the class names, the content does not have to be a quote. If you do want
+a quote, just use the blockquote syntax `>`, e.g.,
+
+``` markdown
+::: {.quote-right}
+> This is a boring quote.
+>
+> ---Someone
+:::
+```
+
+#### Margin embedding
+
+::: embed-right
+```{r, echo=FALSE}
+head(mtcars, 4)
+```
+:::
+
+You can embed elements on the left or right margin using a fenced `Div` with the
+class `.embed-left` or `.embed-right`. These elements will float to the left or
+right and exceed the margin by about 200px, which can save some space in the
+article body. You can use the extra space to explain the embedded element with
+text.
+
+We have embedded a table of the first 4 rows of the `mtcars` data on the right
+margin, which you can see if the browser window is wide enough.
+
+## Tabbed sections
+
+You can load the script `tabsets.js` and CSS `tabsets.css` to create tabsets
+from sections (see [documentation
+here](https://yihui.org/en/2023/10/section-tabsets/)).
+
+``` yaml
+css: ["@tabsets"]
+js: ["@tabsets"]
+```
+
+## Code folding
+
+Code folding is supported by `fold-details.js` (see [documentation
+here](https://yihui.org/en/2023/09/code-folding/)).
+
+``` yaml
+js: ["@fold-details"]
+```
+
+## Callout blocks
+
+A callout block is a fenced Div with the class name `callout-*`. Callouts
+require `callout.css` and `callout.js`:
+
+``` yaml
+css: ["@callout"]
+js: ["@callout"]
+```
+
+For example:
+
+``` md
+::: callout-tip
+This is a tip.
+
+> You can write arbitrary content, such as a blockquote.
+
+::: callout-caution
+Even another callout!
+:::
+
+Is that cool?
+:::
+```
+
+Output:
+
+::: callout-tip
+This is a tip.
+
+> You can write arbitrary content, such as a blockquote.
+
+::: callout-caution
+Even another callout!
+:::
+
+Is that cool?
+:::
+
+The stylesheet `callout.css` supports styling three types of callouts: `tip`,
+`caution`, and `important`. For example:
+
+::: callout-caution
+Be careful when testing for strict equality of floating point numbers.
+
+```{r}
+seq(0, 1, .2) == c(0, .2, .4, .6, .8, 1)
+```
+:::
+
+::: callout-important
+For the sake of reproducibility, please remember to render an R Markdown
+document in a *new R session* before publishing or submitting the output
+document.
+:::
+
+You do not have to use `callout.css` but can define your own CSS rules, e.g.,
+
+``` css
+.callout-important {
+  background-color: red;
+  color: yellow;
+}
+```
+
+Under the hood, `callout.js` turns the fenced Div into a `<fieldset>` for the
+form:
+
+``` html
+<fieldset class="callout-*">
+  <legend>Title</legend>
+
+  Content.
+</fieldset>
+```
+
+The content comes from the original fenced Div. The title comes from the class
+name (converted to uppercase) by default. You can provide a custom title via the
+`data-legend` attribute of the Div, e.g.,
+
+``` md
+::: {.callout-tip data-legend="Information"}
+:::
+```
+
+The icons before the callout titles can be defined via CSS, e.g., you can add
+two exclamation marks before the title of `important` callouts:
+
+``` css
+.callout-important legend::before {
+  content: "!! ";
+}
+```
+
+The default icons defined in `callout.css` are essentially [UTF-8
+characters](https://www.w3schools.com/charsets/ref_utf_symbols.asp). In theory,
+there are hundreds of thousands of characters that you can choose from. Each
+character is 1 to 4 bytes. For example, you can define a `music` callout with
+the music note symbol ♫ in the CSS:
+
+``` css
+.callout-music {
+  background-color: springgreen;
+}
+.callout-music legend::before {
+  content: "♫ ";
+}
+```
+
+Then you can insert a `music` callout in your document:
+
+``` md
+::: callout-music
+Please listen to this lovely song.
+:::
+```
+
+## Right-align a quote footer
+
+You can use the script `right-quote.js` to right-align a blockquote footer if it
+starts with an em-dash (`---`).
+
+``` yaml
+js: ["@right-quote"]
+```
+
+## Add anchor links to headings
+
+The CSS is necessary only if you want to hide the anchors by default and reveal
+them on hover.
+
+``` yaml
+css: ["@heading-anchor"]
+js: ["@heading-anchor"]
+```
+
+## Style keyboard shortcuts
+
+The script `key-button.js` identifies keys and the CSS styles them, which can be
+useful for [showing keyboard
+shortcuts](https://yihui.org/en/2023/02/key-buttons/).
+
+``` yaml
+css: ["@key-buttons"]
+js: ["@key-buttons"]
+```
+
+Of course, you can combine any number of JS scripts and CSS files if you want
+multiple features.

@@ -1,0 +1,61 @@
+# Books and Websites
+
+Books and websites are usually based on multiple input files under a directory.
+For a directory to be recognized as a book or website project, it needs to
+contain a configuration file named `_litedown.yml`.
+
+If you want to customize the output formats `html_format` or `latex_format` for
+books or websites, you should do it in `_litedown.yml`, e.g.,
+
+``` yaml
+output:
+  litedown::html_format:
+    options:
+      toc:
+        depth: 4
+  litedown::latex_format:
+    meta:
+      documentclass: "book"
+```
+
+## Books
+
+The `_litedown.yml` file should contain a top-level field named `book`, which
+currently supports these options:
+
+``` yaml
+book:
+    new_session: false
+    subdir: false
+    pattern: "[.]R?md$"
+    chapter_before: "Information before a chapter."
+    chapter_after: "This chapter was generated from `$input$`."
+```
+
+You can choose whether to render each input file in a new R session, whether to
+search subdirectories for input files, the types of input files (e.g., you can
+use `.md` or `.R` files if you want), and additional information to be included
+before/after each chapter, in which you can use some variables such as
+`$input$`, which is the path of each input file.
+
+## Websites
+
+The `_litedown.yml` file should contain a top-level field named `site`, and you
+are likely to customize the `meta` variables `css`, `include_before`, and
+`include_after` for the `html_format`, e.g.,
+
+``` yaml
+site:
+  rebuild: "outdated"
+  pattern: "[.]R?md$"
+
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default"]
+      include_before: "[Home](/) [About](/about.html)"
+      include_after: "&copy; 2024 | [Edit]($input$)"
+```
+
+Basically, `include_before` can take a file or text input that will be used as
+the header of each web page, and `include_after` will be the footer.

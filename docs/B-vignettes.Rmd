@@ -1,16 +1,4 @@
----
-title: Building R package vignettes with litedown
-author: Yihui Xie
-date: "`{r} Sys.Date()`"
-output:
-  litedown::html_format:
-    meta:
-      css: ["@default"]
-vignette: >
-  %\VignetteEngine{litedown::vignette}
-  %\VignetteIndexEntry{Building R package vignettes with litedown}
-  %\VignetteEncoding{UTF-8}
----
+# Package vignettes
 
 To build package vignettes with **litedown**, first add this to the package
 `DESCRIPTION` file:
@@ -25,7 +13,7 @@ Then use the vignette engine `litedown::vignette` in the YAML metadata of a
 ``` yaml
 vignette: >
   %\VignetteEngine{litedown::vignette}
-  %\VignetteIndexEntry{Building R package vignettes with litedown}
+  %\VignetteIndexEntry{Your vignette title}
   %\VignetteEncoding{UTF-8}
 ```
 
@@ -36,5 +24,5 @@ the default is HTML.
 
 The vignette file can be either `.Rmd` or `.md`. The former is processed by
 `litedown::fuse()`, and the latter is converted by `litedown::mark()`. Please
-avoid using the same base filename for two `.Rmd` and `.md` files, since their
-output files may overwrite each other.
+avoid using the same base filename for two `.Rmd` and `.md` files, otherwise
+their output files will overwrite each other.

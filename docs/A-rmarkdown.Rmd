@@ -1,0 +1,44 @@
+# Appendix {.appendix}
+
+# For rmarkdown Users
+
+The **litedown** package has also provided two *internal* output formats for
+compatibility with **rmarkdown**: `litedown:::html_document` and
+`litedown:::pdf_document`.[^a-rmarkdown-1] The purpose is to make it a little
+easier to switch from **rmarkdown** to **litedown** by mapping some
+**rmarkdown** output format options to **litedown**.
+
+[^a-rmarkdown-1]: The triple-colon `:::` means these functions are not exported,
+    which is to avoid name conflicts between the two packages.
+
+For example, for an R Markdown document with the following output format:
+
+``` yaml
+output:
+  html_document:
+    toc: true
+    number_sections: true
+    anchor_sections: true
+    self_contained: false
+```
+
+You can switch to **litedown** simply by changing the output format name from
+`html_document` to `litedown:::html_document`. Internally, the above output
+format is transformed to:
+
+``` yaml
+output:
+  litedown::html_format:
+    options:
+      toc: true
+      number_sections: true
+      embed_resources: false
+    meta:
+      css: ["default", "@heading-anchor"]
+      js: ["@heading-anchor"]
+```
+
+Note that not all **rmarkdown** options are supported, and not even all
+supported options have exactly the same effects in **litedown**. The supported
+options include:
+`` {r} knitr::combine_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.

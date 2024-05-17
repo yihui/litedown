@@ -1,0 +1,43 @@
+# Authoring
+
+## The `Knit` button
+
+If you use the RStudio IDE, the `Knit` button can render R Markdown to a
+**litedown** output format specified in YAML (e.g., `litedown::html_format` or
+`litedown::latex_format`). Please also remember to add a top-level setting
+`knit: litedown:::knit` in YAML, otherwise RStudio will use `knitr::knit()`
+instead of `litedown::fuse()` to compile R Markdown.
+
+``` yaml
+---
+output:
+  litedown::html_format: null
+  litedown::latex_format: null
+knit: litedown:::knit
+---
+```
+
+## Live preview
+
+Unless it has become your muscle memory to click on the `Knit` button in
+RStudio, you may try to switch to `litedown::roam()` to preview your HTML
+output. It also allows you to render a document or project in a new R session by
+clicking on the ↯ button at the top, which is similar to what the `Knit` button
+does.
+
+By default, the preview will automatically refresh the content after you edit
+and save a file. If you prefer building the document only when you want to, you
+can turn off the live preview via `litedown::roam(live = FALSE)`. In this case,
+the document will be rebuilt only when you refresh the page by yourself.
+
+In the preview mode, you can click on the ✎ button to open a plain-text file in
+your editor. Code blocks in the preview mode will have line numbers
+automatically added to their left. If you click on a line number, it will bring
+you to the that line in the source document.
+
+## Visual editor
+
+Since the Markdown syntax of **litedown** can be viewed as a subset of Pandoc's
+Markdown, you can use RStudio's visual Markdown editor to author documents.
+Please bear in mind that most common, but not all, Markdown features are
+supported.

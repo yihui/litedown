@@ -1,0 +1,318 @@
+---
+title: "litedown: R Markdown Reimagined"
+author: "Yihui Xie"
+date: "`{r} Sys.Date()`"
+---
+
+# Preface {.unnumbered}
+
+::: callout-caution
+The **litedown** package is still new and experimental. The documentation is
+very incomplete. Besides, **litedown** was designed for minimalists with a
+limited scope. Average users should probably consider using **rmarkdown** or
+Quarto instead.
+:::
+
+> You may say I'm a dreamer\
+> But I'm not the only one\
+> I hope someday you'll join us\
+> And the world will live as one
+>
+> ---John Lennon, *Imagine*
+
+Imagine there's no PDF. It's easy if you try. No Word below us. Above us, only
+HTML.
+
+I do not mean PDF and Word are bad. I only lament the time that human beings
+spend on various document formats, given how much a static web page can do.
+
+## The past journey {.unnumbered}
+
+Having worked on the development of R Markdown for nearly 12 years, I have to
+confess that I have become a little perplexed about my work, although I clearly
+remember the exciting moments.
+
+-   The moment when I added syntax highlighting to `.Rnw` documents. Beautiful!
+
+-   The moment when I managed to generate a base R plot and a ggplot in the same
+    code chunk and place them side by side in LaTeX. Magic! Not to mention that
+    ggplot does not require an explicit `print()` call in a code chunk---you
+    probably do not even know what that means now.
+
+-   The moment when I saw the impossible-to-read diagram that shows all possible
+    conversions among numerous document formats on the Pandoc homepage.
+    Incredible!
+
+-   The moment when I discovered DZSlides in Pandoc. Wow! So PowerPoint and
+    LaTeX beamer were not the only choices for slides.
+
+-   The moment when some rstudio::conf attendees started applauding after I told
+    them that the PowerPoint support had been added to the development version
+    of **rmarkdown** when one person asked about it.
+
+-   The moment when I came across remark.js. And tufte.css. And GitBook. And
+    Hugo. And distill.pub. And **htmlwidgets**, **reticulate**, and so on.
+
+-   ...
+
+I think the work was largely meaningful. The only problem is I do not see an
+end. The list of exciting things to do goes on and on.
+
+## A question {.unnumbered}
+
+"At forty, I had no more doubts." Confucius said. Apparently, I'm not Confucius.
+On the contrary, as I'm turning forty, I'm having more doubts. I have been
+reflecting on the things that have kept me busy.
+
+If I were to summarize the 700+ episodes of Naruto in one sentence, I would use
+the question that Gaara (the Fifth Kazekage) asked Onoki (the Third Tsuchikage):
+
+> When did you all forsake yourselves?
+
+In my opinion, this question was the most critical turning point in the 700+
+episodes, reminding the 79-year-old Onoki and the rest of people of their
+original dreams. The shinobi world existed to put an end to wars, but it turned
+out to bring even more and larger-scale wars.
+
+When did we forsake simplicity? We create software to simplify things, but
+software often ends up in feature wars.
+
+Markdown was originally invented for simplicity. That is, to make it easier to
+write HTML. I used to take out my wallet and tell people that if they are unable
+to learn the basics of Markdown in 5 minutes, I'd award them 20 dollars. I also
+used to say "In HTML I Trust", which sounds like a joke, but I really love HTML
+and web technologies. Again, I do not mean other document formats are bad at
+all. It is just that I feel HTML has the greatest potential, and I hope to take
+full advantage of its power.[^1]
+
+[^1]: At one night, as I was thinking about Pandoc Lua filters, an obvious fact
+    suddenly came to my mind: suppose all I care about is HTML output, then the
+    good old JavaScript can actually play a perfect role of Lua filters, because
+    you can manipulate the DOM arbitrarily with JavaScript.
+
+In other words, I do not expect that "the (software) world will live as one". I
+just want to make the HTML world a little bit better.
+
+## Overview {.unnumbered}
+
+The **litedown** package is an attempt to reimagine R Markdown with one primary
+goal—do HTML, and do it well, with the minimalism principle. Before LaTeX fans
+walk away in disappointment, let me quickly clarify that LaTeX output is also
+supported, but please do not expect anything fancy before you learn to customize
+LaTeX templates. Most other output formats are not supported. No Word, RTF,
+PowerPoint, or EPUB.
+
+R Markdown is rendered via `litedown::fuse()`, which is similar to
+`rmarkdown::render()` and `knitr::knit()`. Markdown is rendered via
+`litedown::mark()`, which uses **commonmark** instead of Pandoc.
+
+The **commonmark** package follows the GFM (GitHub Flavored Markdown) spec,
+which can be seen as a subset of Pandoc's Markdown. Therefore the **litedown**
+package can be viewed as a small subset of the current R Markdown ecosystem (the
+latter is based on Pandoc). It aims at simplicity, lightweight, and speed, at
+the cost of giving up some advanced features. This package is intended for
+minimalists. Most users may prefer using tools based on Pandoc instead, such as
+**rmarkdown** or Quarto, which offer richer features.
+
+## Highlights {.unnumbered}
+
+### Small footprint {.unnumbered}
+
+Almost everything in **litedown** was written from scratch. The package is very
+lightweight. Currently, it has two dependencies, **commonmark** and
+**xfun**.[^2] It does not depend on **knitr** or Pandoc.
+
+[^2]: The **commonmark** dependency might be removed in the (far) future.
+
+It is a deliberate design choice to keep this package lightweight, to make it
+relatively easy to use and simple to maintain. The functions `mark()` and
+`fuse()` can be viewed as significantly trimmed-down versions of Pandoc and
+**knitr**, respectively.
+
+It is absolutely not the goal for **litedown** to become a substitute of tools
+based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not
+sure if you should choose **litedown** or **rmarkdown**/Quarto, you may want to
+choose the latter (especially Quarto).
+
+### Live preview everything {.unnumbered}
+
+To get started, run `litedown::roam()` and it will launch a file browser to let
+you preview everything that can be rendered to HTML, such as `.md`, `.Rmd`, and
+`.R` files. The rendering takes place in memory, which means it will not render
+`.html` files on your disk, unless you request so. The page will be
+automatically updated as you edit and save a file. This update-on-save feature
+can be turned off, and then you can manually refresh the page to re-render the
+file whenever you want.
+
+You can open any file in your editor or the default system application by
+clicking a button in the browser. You can also render a file or a project in a
+new R session by clicking a button in the browser.
+
+### Precise parser {.unnumbered}
+
+The R Markdown parser stores the precise line and column numbers of code
+elements. The location information is used in various places. For example, when
+an error occurs, you will get a message that tells you the precise location in
+the source. In editors that support ANSI links (such as the RStudio IDE), you
+can even click on the message to go to a specific line/column in the source
+document, so you can quickly and easily know where the error occurred exactly.
+When previewing `.Rmd` documents with `roam()`, you will see line numbers on the
+left side of code blocks. Clicking on these numbers will bring you to the lines
+in the source.
+
+Due to the fact that the parser is based on **commonmark** (instead of solely on
+regular expressions like **knitr**'s parser), it can precisely recognize code
+chunks and inline code, which means code within other verbatim code blocks or
+comments will be untouched. For example:
+
+````` md
+````md
+Below is not a code chunk but verbatim content
+inside a fenced code block (with four backticks).
+
+```{r}
+1 + 1
+```
+
+Inline code expressions like `{r} 1+1` are not
+parsed, either.
+````
+`````
+
+```` html
+<!--
+Feel free to comment out anything, such as a code chunk:
+
+```{r}
+1 + 1
+```
+-->
+````
+
+### Versioned CSS/JS assets {.unnumbered}
+
+By default, **litedown** produces bare minimal HTML output, but many features
+can be enabled by adding CSS/JS assets (see @chp-addon). You can freely choose
+whatever versions that work for you to avoid potential future breakage when the
+assets are upgraded. The assets are not bundled in the **litedown** package, but
+hosted on CDN, so updating **litedown** will not update your assets.
+
+The CSS and JS code for commonly used features do not depend on any frameworks
+such as Bootstrap or jQuery. They are simply vanilla code written from scratch.
+No generator was used (such as SCSS). The code is often relatively short, so you
+could just fork the code, modify it, publish your own version, and use it if you
+are not satisfied with the original version.
+
+### Chunk options management {.unnumbered}
+
+Chunk options are managed by an environment, i.e., `litedown::reactor()`. Using
+an environment (as compared to a list like **knitr**'s `opts_chunk`) means you
+can access the up-to-date chunk options anywhere, because environments in R are
+mutable. I cannot explain how awkward **knitr**'s `opts_current` has been. It is
+basically a lie—chunk options that you get from `opts_current` are not
+necessarily "current".
+
+### Non-linear order of execution {.unnumbered}
+
+A document does not have to be compiled in the linear order. With the chunk
+option `order`, you can specify code chunks and inline code expressions to be
+executed in an arbitrary order. For example, if you have an abstract in the
+beginning of a document, and the abstract needs to use a number calculated at
+the end of the document, you can let the abstract be compiled in the end,
+although it appears earlier in the document.
+
+I guess some users may want to kill me upon knowing this feature, and some may
+send me flowers (although I'm not sure if they want to thank me or prepare the
+flowers for my funeral). For those who want to kill me, please note that this
+feature does not mean **litedown** is as awful as Jupyter notebooks. It means
+you can specify a *fixed* order to execute code in the document. The order does
+not have to be from beginning to end, but it is *deterministic*. In other words,
+it does not mean you run code chunks in an arbitrary or random order that can
+detriment reproducibility.
+
+### Time code chunks {.unnumbered}
+
+If you want to figure out which code chunks are time-consuming, simply set the
+chunk option `litedown::reactor(time = TRUE)` in the beginning, and put
+`litedown::timing_data()` in the last code chunk. It will tell you detailed
+information. In the `roam()` preview, the data will also contain links to
+specific lines of code chunks, so you click to jump to a specific code chunk.
+
+### Table output for data frames by default {.unnumbered}
+
+Rectangular objects such as data frames (including tibbles) and matrices are
+printed as tables by default, and the number of rows is limited to 10 by default
+to avoid generating huge tables by accident.
+
+### Relieved pain of paths {.unnumbered}
+
+File paths (such as image paths) have been a mess in **knitr**. My deepest
+apologies for that. I have worked much harder in **litedown** in this regard.
+
+### Output in memory or to disk {.unnumbered}
+
+Functions such as `mark()`, `fuse()`, and `fuse_book()` can operate in memory
+without writing to disk. By default, if you pass a file input, you get a file
+output; if you pass text input, you get text output.
+
+### A new cache system {.unnumbered}
+
+You can feel more confident with using the chunk option `cache = TRUE` in
+**litedown** than in **knitr**. The new cache system is more robust and
+intelligent.
+
+### A book is a single HTML file {.unnumbered}
+
+Unlike **bookdown** and Quarto, `litedown::fuse_book()` renders multiple input
+files to a single output file. Yes, your whole precious book is in a single
+(HTML or PDF) file. Grab and go.
+
+The assumption of single-file output for books has made several things a lot
+easier. For example, if you want to search within the book, just press
+`Ctrl + F` or `Command + F` in your browser as you usually do on any other web
+page. You do not need a client-side search library. It is also quicker to jump
+between chapters because they are on the same page. If you want to print the
+HTML version of the book to PDF, just press `Ctrl + P` or `Command + P`.
+
+I know you have a concern: wouldn't the single HTML file be too heavy for the
+browser? The answer is: you should be fine if you do not have too many images.
+If you do, do not base64 encode them (which is the default), and you can also
+lazy-load images to make the book load faster.
+
+### R scripts as first-class citizens {.unnumbered}
+
+An R script has the same status as an R Markdown document. You can write
+Markdown in `#'` comments, and chunk options in `#|` comments (both are
+optional). These are the only two rules to remember. Compared to
+`knitr::spin()`, the rules are much simpler. Besides, R scripts are also
+carefully parsed into "code chunks", so their line numbers work as well as R
+Markdown's line numbers.
+
+Any application that you can create with R Markdown can be created with R
+scripts, such as books and websites.
+
+### Clean HTML output {.unnumbered}
+
+The HTML output generated from **litedown** is very clean. For example, code
+blocks in HTML output contain plain code, instead of full of `<span>` tags with
+random attributes. Clean HTML output means the output file size is smaller, and
+more importantly, it is easier to inspect the differences between two versions
+of output (e.g., in Git). Every time when you update the source document, you
+can know more clearly what has changed in the output, which can help you avoid
+unexpected changes before publishing the output.
+
+### Features out of scope {.unnumbered}
+
+Output formats besides HTML and LaTeX are unlikely to be supported.[^3] If other
+output formats are desired, you may use Pandoc to do the conversion.
+
+[^3]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
+    supported (thanks to the **commonmark** package), but perhaps they are not
+    very useful to average users.
+
+For tables, only pipe tables are supported. Other table formats are not
+recognized.
+
+At the moment, **litedown** mainly supports R as the computing language. Other
+languages might be added in the future, but please keep your expectation low,
+because the support is unlikely to be as good as R.
