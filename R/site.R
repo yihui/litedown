@@ -83,7 +83,7 @@ fuse_site = function(input = '.') {
     if (preview) res else write_utf8(res, with_ext(x, '.html'))
   })
   if (preview) {
-    if (i) out[[1]] else file_string(output)
+    if (i) out[[1]] else xfun::file_string(output)
   } else invisible(output)
 }
 
