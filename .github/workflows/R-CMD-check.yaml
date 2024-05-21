@@ -43,6 +43,11 @@ jobs:
           extra-packages: any::rcmdcheck, local::.
           needs: check
 
+      - name: Install dependencies for cairo_pdf device
+        if: runner.os == 'macOS'
+        run: |
+          brew --cask install xquartz
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
