@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies for cairo_pdf device
         if: runner.os == 'macOS'
         run: |
-          brew --cask install xquartz
+          brew install --cask xquartz
 
       - uses: r-lib/actions/check-r-package@v2
         with:
