@@ -39,7 +39,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          # install the package itself as we register vignette engine
+          extra-packages: any::rcmdcheck, local::.
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
