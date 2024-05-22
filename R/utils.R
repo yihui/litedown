@@ -598,6 +598,7 @@ number_sections = function(x) {
   h = min(as.integer(h))  # highest level of headings
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
   n = rep(0, 6)  # counters for all levels of headings
+  k0 = 6  # level of last unnumbered heading
   # test if a class name exists in attributes
   has_class = function(x, class) {
     grepl(sprintf(' class="([^"]+ )?%s( [^"]+)?"', class), x)
@@ -610,7 +611,12 @@ number_sections = function(x) {
       k = z1[i]
       if (k < 6) n[(k + 1):6] <<- 0
       # skip unnumbered sections
-      if (has_class(z2[i], 'unnumbered')) next
+      if (has_class(z2[i], 'unnumbered')) {
+        k0 <<- k; next
+      } else {
+        # don't number headings with level lower than last unnumbered heading
+        if (k > k0) next else k0 <<- 6
+      }
       if (has_class(z2[i], 'appendix')) {
         if (k != h) stop(
           "The 'appendix' attribute must be on the top-level heading (",
