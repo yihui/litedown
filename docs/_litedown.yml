@@ -5,5 +5,5 @@ book:
 output:
   litedown::html_format:
     meta:
-      css: ["@default@1.12.13", "@article@1.12.13", "@book@1.12.13", "@copy-button", "@heading-anchor", "@key-buttons", "@callout"]
+      css: ["@default@1.12.13", "@article@1.12.13", "@book@1.12.14", "@copy-button", "@heading-anchor", "@key-buttons", "@callout"]
       js: ["@sidenotes", "@appendix", "@toc-highlight", "@copy-button", "@external-link", "@heading-anchor", "@right-quote", "@key-buttons", "@callout"]

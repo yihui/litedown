@@ -187,7 +187,7 @@
     });
   }
   ['load', 'resize'].forEach(evt => window.addEventListener(evt, setScale));
-  // restore previsouly saved body class
+  // restore previously saved body class
   const bc = sessionStorage.getItem('body-class');
   if (bc) d.body.className += ' ' + bc;
 })(document);
