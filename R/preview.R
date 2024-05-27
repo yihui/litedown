@@ -12,6 +12,7 @@
 #'   (e.g., the Markdown file or external CSS/JS/image files). If disabled, you
 #'   can manually refresh the page to fully re-render it.
 #' @param ... Other arguments to be passed to [xfun::new_app()].
+#' @return A URL (invisibly) for the preview.
 #' @export
 roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   # a proxy server to return files under inst/resources/

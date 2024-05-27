@@ -35,8 +35,6 @@ is_lang = function(x) is.symbol(x) || is.language(x)
 #' @param text A character vector of the Markdown text.
 #' @return A character vector of the transformed text.
 #' @keywords internal
-#' @examples
-#' cat(litedown:::smartypants("1/2 (c)\n"))
 smartypants = function(text) {
   text = split_lines(text)
   i = prose_index(text)

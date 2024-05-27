@@ -9,13 +9,14 @@ engines(...)
 \arguments{
 \item{...}{Named values (for setting) or unnamed values (for getting).}
 }
+\value{
+The usage is similar to \code{\link[=reactor]{reactor()}}: \code{engines('LANG')} returns an
+engine function for the language \code{LANG}, and \code{engines(LANG = function(x, inline = FALSE, ...) {})} sets the engine for a language.
+}
 \description{
 Get or set language engines for evaluating code chunks and inline code.
 }
 \details{
-The usage is similar to \code{\link[=reactor]{reactor()}}, e.g., \code{engines('LANG')} returns an
-engine function for the language \code{LANG}, and \code{engines(LANG = function(x, inline = FALSE, ...) {})} sets the engine for a language.
-
 An engine function should have three arguments:
 \itemize{
 \item \code{x}: An element in the \code{\link[=crack]{crack()}} list (a code chunk or a text block).

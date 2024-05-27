@@ -26,6 +26,9 @@ latex_format(
 
 \item{latex_engine}{The LaTeX engine to compile \file{.tex} to \file{.pdf}.}
 }
+\value{
+An R Markdown output format.
+}
 \description{
 The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
 formats can be configured in the \code{output} field of the YAML metadata of the

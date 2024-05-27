@@ -894,10 +894,6 @@ eng_r = function(x, inline = FALSE, ...) {
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
 #'
-#' The usage is similar to [reactor()], e.g., `engines('LANG')` returns an
-#' engine function for the language `LANG`, and `engines(LANG = function(x,
-#' inline = FALSE, ...) {})` sets the engine for a language.
-#'
 #' An engine function should have three arguments:
 #'
 #' - `x`: An element in the [crack()] list (a code chunk or a text block).
@@ -909,6 +905,9 @@ eng_r = function(x, inline = FALSE, ...) {
 #'
 #' The function should return a character value.
 #' @inheritParams reactor
+#' @return The usage is similar to [reactor()]: `engines('LANG')` returns an
+#'   engine function for the language `LANG`, and `engines(LANG = function(x,
+#'   inline = FALSE, ...) {})` sets the engine for a language.
 #' @export
 #' @examples
 #' litedown::engines()  # built-in engines

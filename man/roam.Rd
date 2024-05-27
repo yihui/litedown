@@ -16,6 +16,9 @@ can manually refresh the page to fully re-render it.}
 
 \item{...}{Other arguments to be passed to \code{\link[xfun:new_app]{xfun::new_app()}}.}
 }
+\value{
+A URL (invisibly) for the preview.
+}
 \description{
 Launch a web page to list and preview files under a directory.
 }

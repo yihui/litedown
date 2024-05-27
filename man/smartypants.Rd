@@ -17,7 +17,4 @@ Transform ASCII strings \code{(c)} (copyright), \code{(r)} (registered trademark
 \code{(tm)} (trademark), and fractions \code{n/m} into \emph{smart} typographic HTML
 entities.
 }
-\examples{
-cat(litedown:::smartypants("1/2 (c)\n"))
-}
 \keyword{internal}
