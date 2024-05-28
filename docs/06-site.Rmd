@@ -25,11 +25,11 @@ currently supports these options:
 
 ``` yaml
 book:
-    new_session: false
-    subdir: false
-    pattern: "[.]R?md$"
-    chapter_before: "Information before a chapter."
-    chapter_after: "This chapter was generated from `$input$`."
+  new_session: false
+  subdir: false
+  pattern: "[.]R?md$"
+  chapter_before: "Information before a chapter."
+  chapter_after: "This chapter was generated from `$input$`."
 ```
 
 You can choose whether to render each input file in a new R session, whether to

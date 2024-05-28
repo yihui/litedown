@@ -115,6 +115,12 @@ the cost of giving up some advanced features. This package is intended for
 minimalists. Most users may prefer using tools based on Pandoc instead, such as
 **rmarkdown** or Quarto, which offer richer features.
 
+Is **litedown** really simple? From the developer's perspective, yes, it is,
+largely due to the limited scope of the package. From the user's perspective,
+some features are definitely not that simple. However, the point is that the
+core is simple and small, and you can enable or disable most features. What's
+more, you can implement features by yourself if you know CSS/JS.
+
 ## Highlights
 
 ### Small footprint
@@ -133,7 +139,8 @@ relatively easy to use and simple to maintain. The functions `mark()` and
 It is absolutely not the goal for **litedown** to become a substitute of tools
 based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not
 sure if you should choose **litedown** or **rmarkdown**/Quarto, you may want to
-choose the latter (especially Quarto).
+choose the latter (especially Quarto). Some **litedown** features may be ported
+into **knitr** in the future.
 
 ### Live preview everything
 
@@ -317,3 +324,6 @@ recognized.
 At the moment, **litedown** mainly supports R as the computing language. Other
 languages might be added in the future, but please keep your expectation low,
 because the support is unlikely to be as good as R.
+
+HTML widgets are not supported yet, but may be reimagined in the future with
+some minimal support.
