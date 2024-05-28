@@ -1,8 +1,8 @@
-# CSS/JS add-ons {#chp-addon}
+# CSS/JS assets {#chp-assets}
 
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we
-introduce some CSS/JS add-ons from the repository
+introduce some CSS/JS assets from the GitHub repository
 <https://github.com/yihui/misc.js>. You can load arbitrary external JS and CSS
 files via the `js` and `css` meta variables. There are numerous JS libraries and
 CSS frameworks on the web that you can use, and you do not have to use the ones
@@ -26,6 +26,30 @@ For the sake of brevity, we will omit the full YAML fields in examples
 throughout this chapter but only use the `css` and `js` fields. A file name
 `foo.js` denotes the file under the `js/` directory of the aforementioned
 `yihui/misc.js` repository. Similarly, `foo.css` is under the `css/` directory.
+
+All these CSS/JS resources can be used offline, and there are two ways to do it.
+One way is to clone the GitHub repo to your working directory, and use the files
+you need, e.g.,
+
+``` yaml
+js: ["repo/path/js/callout.js"]
+```
+
+Another way is to enable embedding resources:
+
+``` yaml
+output:
+  litedown::html_format:
+    meta:
+      js: ["@callout"]
+    options:
+      embed_resources: ["https"]
+```
+
+After you have embedded CSS/JS resources once when you have Internet access,
+these resources will be cached locally and will not require an Internet
+connection again. This solution works for any online resources, not limited to
+the `yihui/misc.js` repository.
 
 ## HTML slides
 

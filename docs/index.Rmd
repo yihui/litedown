@@ -9,7 +9,7 @@ date: "`{r} Sys.Date()`"
 ::: callout-caution
 The **litedown** package is still new and experimental. The documentation is
 very incomplete. Besides, **litedown** was designed for minimalists with a
-limited scope. Average users should probably consider using **rmarkdown** or
+limited scope. Average users should perhaps consider using **rmarkdown** or
 Quarto instead.
 :::
 
@@ -32,7 +32,8 @@ Having worked on the development of R Markdown for nearly 12 years, I have to
 confess that I have become a little perplexed about my work, although I clearly
 remember the exciting moments. For example:
 
--   The moment when I added syntax highlighting to `.Rnw` documents. Beautiful!
+-   The moment when I added syntax highlighting to R code in `.Rnw` documents.
+    Beautiful!
 
 -   The moment when I managed to generate a base R plot and a ggplot in the same
     code chunk and place them side by side in LaTeX. Magic! Not to mention that
@@ -192,7 +193,7 @@ Feel free to comment out anything, such as a code chunk:
 ### Versioned CSS/JS assets
 
 By default, **litedown** produces bare minimal HTML output, but many features
-can be enabled by adding CSS/JS assets (see @chp-addon). You can freely choose
+can be enabled by adding CSS/JS assets (see @chp-assets). You can freely choose
 whatever versions that work for you to avoid potential future breakage when the
 assets are upgraded. The assets are not bundled in the **litedown** package, but
 hosted on CDN, so updating **litedown** will not update your assets.
