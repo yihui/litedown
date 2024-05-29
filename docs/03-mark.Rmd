@@ -5,8 +5,7 @@ The main function to convert Markdown to other formats is `litedown::mark()`.
 You can either call `litedown::mark()` to render a Markdown document
 programmatically, or click the `Knit` button in RStudio to render a (Markdown or
 R Markdown) document interactively. The latter requires you to specify the
-output format in the `output` field in YAML metadata (see the section "[YAML
-metadata](#yaml-metadata)"), e.g.,
+output format in the `output` field in YAML metadata (@sec-yaml-metadata), e.g.,
 
 ``` yaml
 ---
@@ -30,7 +29,7 @@ control Markdown rendering. This argument can take either a list, e.g.,
 `list(toc = TRUE, smart = FALSE)`, or a character vector, e.g.,
 `c("+toc", "-smart")`, or equivalently, `+toc-smart`, where `+` means to enable
 an option, and `-` means to disable an option. The options can also be set in
-[YAML metadata](#yaml-metadata) (recommended). Available options are listed
+YAML metadata in @sec-yaml-metadata (recommended). Available options are listed
 below.
 
 ### `auto_identifiers`
@@ -109,11 +108,10 @@ By default, languages are automatically detected and the required JS files are
 automatically loaded. Normally you need to specify the `languages` array only if
 the automatic detection fails.
 
-Technically this option is a shorthand for setting the [metadata
-variables](#yaml-metadata) `css` and `js`. If you want full control, you may
-disable this option (set it to `false` or `null`) and use metadata variables
-directly, which requires more familiarity with the JS libraries and the jsdelivr
-CDN.
+Technically this option is a shorthand for setting the metadata variables `css`
+and `js` in @sec-yaml-metadata. If you want full control, you may disable this
+option (set it to `false` or `null`) and use metadata variables directly, which
+requires more familiarity with the JS libraries and the jsdelivr CDN.
 
 ### `js_math`
 
@@ -296,7 +294,7 @@ The template path can also take a logical value: `TRUE` means to use the default
 template, and `FALSE` means to generate only a fragment document without using
 any template.
 
-## YAML metadata {#yaml-metadata}
+## YAML metadata {#sec-yaml-metadata}
 
 Alternatively, the `meta` argument can read YAML metadata in the Markdown
 document. The following variables can be set in the top-level fields in YAML:
