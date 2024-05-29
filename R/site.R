@@ -177,6 +177,11 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   # only preview file1, file2, ...
   if (dir.exists(input[1])) {
     preview = input[-1]; input = input[1]
+    # in roaming mode, need to store cross-refs because the book may be
+    # partially rendered (in which case we can't resolve refs to other chapters)
+    if (is_roaming()) {
+      .env$current_book = input; on.exit(.env$current_book <- NULL, add = TRUE)
+    }
   } else preview = NULL
 
   yaml = NULL

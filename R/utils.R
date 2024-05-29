@@ -662,8 +662,11 @@ number_refs = function(x, r) {
   m = regmatches(x, gregexec(r2, x))[[1]]
   if (length(m)) {
     ids = m[2, ]
-    db = set_names(m[4, ], ids)
+    db = as.list(set_names(m[4, ], ids))
   }
+
+  # retrieve refs from all chapters for fuse_book()
+  if (is.character(b <- .env$current_book)) db = merge_list(.env$refs[[b]], db)
 
   # then find and number other elements
   r2 = sprintf('<a href="#@%s"> ?</a>', r)
@@ -678,6 +681,9 @@ number_refs = function(x, r) {
   db = unlist(c(db, db2))
   ids = names(db)
   if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ', '))
+
+  # save refs db for fuse_book()
+  if (is.character(b)) .env$refs[[b]] = db
 
   # finally, resolve cross-references
   r2 = sprintf('<a href="#(%s)">@\\1</a>', r)
