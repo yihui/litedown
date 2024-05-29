@@ -82,9 +82,20 @@
       if (t.length === 3) el.innerText = `${n.match(/[A-Z]/) ? n : (t[1] - 1 + (+n || 1))}${t[2]}`;
     });
     w.firstElementChild.className = el.className;
+    // TODO: update fig/tab numbers
+    let q = '[class^="ref-number-"]';
+    w.querySelector(q) && d.querySelectorAll(q).forEach(el => {
+    });
+    // update cross-references
+    w.querySelectorAll('a[class^="cross-ref-"][href^="#"]').forEach(el => {
+      const n = d.querySelector(el.getAttribute('href'))
+        ?.querySelector('.section-number,[class^="ref-number-"]')
+        ?.innerText;
+      if (n) el.innerText = n;
+    });
     el.outerHTML = w.innerHTML;
     // update footnote numbers
-    const q = 'a[id^="fnref-"]';
+    q = 'a[id^="fnref-"]';
     w.querySelector(q) && d.querySelectorAll(q).forEach((el, i) => {
       el.innerText = i + 1;
     });
