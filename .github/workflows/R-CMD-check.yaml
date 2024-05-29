@@ -51,3 +51,19 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+
+      - uses: actions/checkout@v3
+        if: runner.os == 'macOS'
+        with:
+          path: gh-pages
+          ref: gh-pages
+
+      - name: Publish documentation
+        if: runner.os == 'macOS'
+        run: |
+          Rscript -e 'litedown::fuse_book("docs")'
+          cd docs; cp -r *.html ../gh-pages/; cd ../gh-pages
+          git config user.name "Yihui Xie"
+          git config user.email "xie@yihui.name"
+          git add .
+          git commit -m "update docs" && git push || true
