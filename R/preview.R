@@ -81,6 +81,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
         ))
       })
     }
+    # TODO: should we implement Hugo's --navigateToChanged?
     if (live && type != '') {
       resp = ''
       if (type %in% c('asset', 'page')) {
