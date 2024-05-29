@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.0.20">
+<title>litedown: R Markdown Reimagined</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.13/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.13/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.14/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/callout.min.css">
+</head>
+<body>
+<div class="frontmatter">
+<div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
+<div class="author"><h2>Yihui Xie</h2></div>
+<div class="date"><h3>2024-05-29</h3></div>
+</div>
+<div class="">
+<div id="TOC">
+<ul class="numbered">
+<li><a href="#sec-preface">Preface</a>
+<ul>
+<li><a href="#sec-the-past-journey">The past journey</a></li>
+<li><a href="#sec-a-question">A question</a></li>
+<li><a href="#sec-overview">Overview</a></li>
+<li><a href="#sec-highlights">Highlights</a>
+<ul>
+<li><a href="#sec-small-footprint">Small footprint</a></li>
+<li><a href="#sec-live-preview-everything">Live preview everything</a></li>
+<li><a href="#sec-precise-parser">Precise parser</a></li>
+<li><a href="#sec-versioned-css-js-assets">Versioned CSS/JS assets</a></li>
+<li><a href="#sec-chunk-options-management">Chunk options management</a></li>
+<li><a href="#sec-non-linear-order-of-execution">Non-linear order of execution</a></li>
+<li><a href="#sec-time-code-chunks">Time code chunks</a></li>
+<li><a href="#sec-table-output-for-data-frames-by-default">Table output for data frames by default</a></li>
+<li><a href="#sec-relieved-pain-of-paths">Relieved pain of paths</a></li>
+<li><a href="#sec-output-in-memory-or-to-disk">Output in memory or to disk</a></li>
+<li><a href="#sec-a-new-cache-system">A new cache system</a></li>
+<li><a href="#sec-a-book-is-a-single-html-file">A book is a single HTML file</a></li>
+<li><a href="#sec-r-scripts-as-first-class-citizens">R scripts as first-class citizens</a></li>
+<li><a href="#sec-clean-html-output">Clean HTML output</a></li>
+<li><a href="#sec-features-out-of-scope">Features out of scope</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</a>
+<ul>
+<li><a href="#sec-code-chunks"><span class="section-number">1.1</span> Code chunks</a></li>
+<li><a href="#sec-inline-code"><span class="section-number">1.2</span> Inline code</a></li>
+<li><a href="#sec-r-scripts"><span class="section-number">1.3</span> R scripts</a></li>
+<li><a href="#sec-comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></a></li>
+</ul>
+</li>
+<li><a href="#sec-markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</a>
+<ul>
+<li><a href="#sec-basic-syntax"><span class="section-number">2.1</span> Basic syntax</a></li>
+<li><a href="#sec-add-on-features"><span class="section-number">2.2</span> Add-on features</a>
+<ul>
+<li><a href="#sec-raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</a></li>
+<li><a href="#sec-latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</a></li>
+<li><a href="#sec-superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</a></li>
+<li><a href="#sec-footnotes_1"><span class="section-number">2.2.4</span> Footnotes</a></li>
+<li><a href="#sec-attributes"><span class="section-number">2.2.5</span> Attributes</a></li>
+<li><a href="#sec-appendices"><span class="section-number">2.2.6</span> Appendices</a></li>
+<li><a href="#sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</a></li>
+<li><a href="#sec-cross-references"><span class="section-number">2.2.8</span> Cross-references</a></li>
+<li><a href="#sec-smart-html-entities"><span class="section-number">2.2.9</span> Smart HTML entities</a></li>
+</ul>
+</li>
+<li><a href="#sec-comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</a></li>
+</ul>
+</li>
+<li><a href="#sec-markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</a>
+<ul>
+<li><a href="#sec-markdown-options"><span class="section-number">3.1</span> Markdown options</a>
+<ul>
+<li><a href="#sec-auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></a></li>
+<li><a href="#sec-embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></a></li>
+<li><a href="#sec-js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></a></li>
+<li><a href="#sec-js-math"><span class="section-number">3.1.4</span> <code>js_math</code></a></li>
+<li><a href="#sec-latex-math_2"><span class="section-number">3.1.5</span> <code>latex_math</code></a></li>
+<li><a href="#sec-number-sections"><span class="section-number">3.1.6</span> <code>number_sections</code></a></li>
+<li><a href="#sec-smartypants"><span class="section-number">3.1.7</span> <code>smartypants</code></a></li>
+<li><a href="#sec-superscript"><span class="section-number">3.1.8</span> <code>superscript</code></a></li>
+<li><a href="#sec-subscript"><span class="section-number">3.1.9</span> <code>subscript</code></a></li>
+<li><a href="#sec-toc"><span class="section-number">3.1.10</span> <code>toc</code></a></li>
+<li><a href="#sec-top-level"><span class="section-number">3.1.11</span> <code>top_level</code></a></li>
+</ul>
+</li>
+<li><a href="#sec-templates"><span class="section-number">3.2</span> Templates</a></li>
+<li><a href="#sec-yaml-metadata"><span class="section-number">3.3</span> YAML metadata</a></li>
+</ul>
+</li>
+<li><a href="#chp-assets"><span class="section-number main-number">4</span> CSS/JS assets</a>
+<ul>
+<li><a href="#sec-html-slides"><span class="section-number">4.1</span> HTML slides</a></li>
+<li><a href="#sec-html-articles"><span class="section-number">4.2</span> HTML articles</a>
+<ul>
+<li><a href="#sec-the-overall-style"><span class="section-number">4.2.1</span> The overall style</a></li>
+<li><a href="#sec-side-elements"><span class="section-number">4.2.2</span> Side elements</a></li>
+<li><a href="#sec-body-elements"><span class="section-number">4.2.3</span> Body elements</a></li>
+</ul>
+</li>
+<li><a href="#sec-tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</a></li>
+<li><a href="#sec-code-folding"><span class="section-number">4.4</span> Code folding</a></li>
+<li><a href="#sec-callout-blocks"><span class="section-number">4.5</span> Callout blocks</a></li>
+<li><a href="#sec-right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</a></li>
+<li><a href="#sec-add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</a></li>
+<li><a href="#sec-style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</a></li>
+</ul>
+</li>
+<li><a href="#sec-authoring"><span class="section-number main-number">5</span> Authoring</a>
+<ul>
+<li><a href="#sec-the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</a></li>
+<li><a href="#sec-live-preview"><span class="section-number">5.2</span> Live preview</a></li>
+<li><a href="#sec-visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
+</ul>
+</li>
+<li><a href="#sec-books-and-websites"><span class="section-number main-number">6</span> Books and Websites</a>
+<ul>
+<li><a href="#sec-books"><span class="section-number">6.1</span> Books</a></li>
+<li><a href="#sec-websites"><span class="section-number">6.2</span> Websites</a></li>
+</ul>
+</li>
+<li><a href="#sec-appendix">Appendix</a></li>
+<li><a href="#sec-for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
+<li><a href="#sec-package-vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
+<li><a href="#sec-technical-notes"><span class="section-number main-number">C</span> Technical Notes</a>
+<ul>
+<li><a href="#sec-embedding-resources"><span class="section-number">C.1</span> Embedding resources</a></li>
+<li><a href="#sec-css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="chapter body" data-source="docs/index.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/index.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-preface" class="unnumbered">Preface</h1>
+<div class="callout-caution">
+<p>The <strong>litedown</strong> package is still new and experimental. The documentation is
+very incomplete. Besides, <strong>litedown</strong> was designed for minimalists with a
+limited scope. Average users should perhaps consider using <strong>rmarkdown</strong> or
+Quarto instead.</p>
+</div>
+<blockquote>
+<p>You may say I’m a dreamer<br />
+But I’m not the only one<br />
+I hope someday you’ll join us<br />
+And the world will live as one</p>
+<p>—John Lennon, <em>Imagine</em></p>
+</blockquote>
+<p>Imagine there’s no PDF. It’s easy if you try. No Word below us. Above us, only
+HTML.</p>
+<p>I do not mean PDF and Word are bad. I only lament the time that human beings
+spend on various document formats, given how much a static web page can do.</p>
+<h2 id="sec-the-past-journey">The past journey</h2>
+<p>Having worked on the development of R Markdown for nearly 12 years, I have to
+confess that I have become a little perplexed about my work, although I clearly
+remember the exciting moments. For example:</p>
+<ul>
+<li>
+<p>The moment when I added syntax highlighting to R code in <code>.Rnw</code> documents.
+Beautiful!</p>
+</li>
+<li>
+<p>The moment when I managed to generate a base R plot and a ggplot in the same
+code chunk and place them side by side in LaTeX. Magic! Not to mention that
+ggplot does not require an explicit <code>print()</code> call in a code chunk—you
+probably do not even know what that means now.</p>
+</li>
+<li>
+<p>The moment when I saw the impossible-to-read diagram that shows all possible
+conversions among numerous document formats on the Pandoc homepage.
+Incredible!</p>
+</li>
+<li>
+<p>The moment when I discovered DZSlides in Pandoc. Wow! So PowerPoint and
+LaTeX beamer were not the only choices for slides.</p>
+</li>
+<li>
+<p>The moment when some rstudio::conf attendees started applauding after I told
+them that the PowerPoint support had been added to the development version
+of <strong>rmarkdown</strong> when one person asked about it.</p>
+</li>
+<li>
+<p>The moment when I came across remark.js. And tufte.css. And GitBook. And
+Hugo. And distill.pub. And <strong>htmlwidgets</strong>, <strong>reticulate</strong>, and so on.</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+<p>I think the work was largely meaningful. The only problem is I do not see an
+end. The list of exciting things to do goes on and on.</p>
+<h2 id="sec-a-question">A question</h2>
+<p>“At forty, I had no more doubts.” Confucius said. Apparently, I’m not Confucius.
+On the contrary, as I’m turning forty, I’m having more doubts. I have been
+reflecting on the things that have kept me busy.</p>
+<p>If I were to summarize the 700+ episodes of Naruto in one sentence, I would use
+the question that Gaara (the Fifth Kazekage) asked Onoki (the Third Tsuchikage):</p>
+<blockquote>
+<p>When did you all forsake yourselves?</p>
+</blockquote>
+<p>In my opinion, this question was the most critical turning point in the 700+
+episodes, reminding the 79-year-old Onoki and the rest of people of their
+original dreams. The shinobi world existed to put an end to wars, but it turned
+out to bring even more and larger-scale wars.</p>
+<p>When did we forsake simplicity? We create software to simplify things, but
+software often ends up in feature wars.</p>
+<p>Markdown was originally invented for simplicity. That is, to make it easier to
+write HTML. I used to take out my wallet and tell people that if they are unable
+to learn the basics of Markdown in 5 minutes, I’d award them 20 dollars. I also
+used to say “In HTML I Trust”, which sounds like a joke, but I really love HTML
+and web technologies. Again, I do not mean other document formats are bad at
+all. It is just that I feel HTML has the greatest potential, and I hope to take
+full advantage of its power.<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" data-footnote-ref>1</a></sup></p>
+<p>In other words, I do not expect that “the (software) world will live as one”. I
+just want to make the HTML world a little bit better.</p>
+<h2 id="sec-overview">Overview</h2>
+<p>The <strong>litedown</strong> package is an attempt to reimagine R Markdown with one primary
+goal—do HTML, and do it well, with the minimalism principle. Before LaTeX fans
+walk away in disappointment, let me quickly clarify that LaTeX output is also
+supported, but please do not expect anything fancy before you learn to customize
+LaTeX templates. Most other output formats are not supported. No Word, RTF,
+PowerPoint, or EPUB.</p>
+<p>R Markdown is rendered via <code>litedown::fuse()</code>, which is similar to
+<code>rmarkdown::render()</code> and <code>knitr::knit()</code>. Markdown is rendered via
+<code>litedown::mark()</code>, which uses <strong>commonmark</strong> instead of Pandoc.</p>
+<p>The <strong>commonmark</strong> package follows the GFM (GitHub Flavored Markdown) spec,
+which can be seen as a subset of Pandoc’s Markdown. Therefore the <strong>litedown</strong>
+package can be viewed as a small subset of the current R Markdown ecosystem (the
+latter is based on Pandoc). It aims at simplicity, lightweight, and speed, at
+the cost of giving up some advanced features. This package is intended for
+minimalists. Most users may prefer using tools based on Pandoc instead, such as
+<strong>rmarkdown</strong> or Quarto, which offer richer features.</p>
+<p>Is <strong>litedown</strong> really simple? From the developer’s perspective, yes, it is,
+largely due to the limited scope of the package. From the user’s perspective,
+some features are definitely not that simple. However, the point is that the
+core is simple and small, and you can enable or disable most features. What’s
+more, you can implement features by yourself if you know CSS/JS.</p>
+<h2 id="sec-highlights">Highlights</h2>
+<h3 id="sec-small-footprint">Small footprint</h3>
+<p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
+lightweight. Currently, it has two dependencies, <strong>commonmark</strong> and
+<strong>xfun</strong>.<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>2</a></sup> It does not depend on <strong>knitr</strong> or Pandoc.</p>
+<p>It is a deliberate design choice to keep this package lightweight, to make it
+relatively easy to use and simple to maintain. The functions <code>mark()</code> and
+<code>fuse()</code> can be viewed as significantly trimmed-down versions of Pandoc and
+<strong>knitr</strong>, respectively.</p>
+<p>It is absolutely not the goal for <strong>litedown</strong> to become a substitute of tools
+based on <strong>knitr</strong> and Pandoc, such as <strong>rmarkdown</strong> and Quarto. If you are not
+sure if you should choose <strong>litedown</strong> or <strong>rmarkdown</strong>/Quarto, you may want to
+choose the latter (especially Quarto). Some <strong>litedown</strong> features may be ported
+into <strong>knitr</strong> in the future.</p>
+<h3 id="sec-live-preview-everything">Live preview everything</h3>
+<p>To get started, run <code>litedown::roam()</code> and it will launch a file browser to let
+you preview everything that can be rendered to HTML, such as <code>.md</code>, <code>.Rmd</code>, and
+<code>.R</code> files. The rendering takes place in memory, which means it will not render
+<code>.html</code> files on your disk, unless you request so. The page will be
+automatically updated as you edit and save a file. This update-on-save feature
+can be turned off, and then you can manually refresh the page to re-render the
+file whenever you want.</p>
+<p>You can open any file in your editor or the default system application by
+clicking a button in the browser. You can also render a file or a project in a
+new R session by clicking a button in the browser.</p>
+<h3 id="sec-precise-parser">Precise parser</h3>
+<p>The R Markdown parser stores the precise line and column numbers of code
+elements. The location information is used in various places. For example, when
+an error occurs, you will get a message that tells you the precise location in
+the source. In editors that support ANSI links (such as the RStudio IDE), you
+can even click on the message to go to a specific line/column in the source
+document, so you can quickly and easily know where the error occurred exactly.
+When previewing <code>.Rmd</code> documents with <code>roam()</code>, you will see line numbers on the
+left side of code blocks. Clicking on these numbers will bring you to the lines
+in the source.</p>
+<p>Due to the fact that the parser is based on <strong>commonmark</strong> (instead of solely on
+regular expressions like <strong>knitr</strong>’s parser), it can precisely recognize code
+chunks and inline code, which means code within other verbatim code blocks or
+comments will be untouched. For example:</p>
+<pre><code class="language-md">````md
+Below is not a code chunk but verbatim content
+inside a fenced code block (with four backticks).
+
+```{r}
+1 + 1
+```
+
+Inline code expressions like `{r} 1+1` are not
+parsed, either.
+````
+</code></pre>
+<pre><code class="language-html">&lt;!--
+Feel free to comment out anything, such as a code chunk:
+
+```{r}
+1 + 1
+```
+--&gt;
+</code></pre>
+<h3 id="sec-versioned-css-js-assets">Versioned CSS/JS assets</h3>
+<p>By default, <strong>litedown</strong> produces bare minimal HTML output, but many features
+can be enabled by adding CSS/JS assets (see <a class="cross-ref-chp" href="#chp-assets">4</a>). You can freely choose
+whatever versions that work for you to avoid potential future breakage when the
+assets are upgraded. The assets are not bundled in the <strong>litedown</strong> package, but
+hosted on CDN, so updating <strong>litedown</strong> will not update your assets.</p>
+<p>The CSS and JS code for commonly used features do not depend on any frameworks
+such as Bootstrap or jQuery. They are simply vanilla code written from scratch.
+No generator was used (such as SCSS). The code is often relatively short, so you
+could just fork the code, modify it, publish your own version, and use it if you
+are not satisfied with the original version.</p>
+<h3 id="sec-chunk-options-management">Chunk options management</h3>
+<p>Chunk options are managed by an environment, i.e., <code>litedown::reactor()</code>. Using
+an environment (as compared to a list like <strong>knitr</strong>’s <code>opts_chunk</code>) means you
+can access the up-to-date chunk options anywhere, because environments in R are
+mutable. I cannot explain how awkward <strong>knitr</strong>’s <code>opts_current</code> has been. It is
+basically a lie—chunk options that you get from <code>opts_current</code> are not
+necessarily “current”.</p>
+<h3 id="sec-non-linear-order-of-execution">Non-linear order of execution</h3>
+<p>A document does not have to be compiled in the linear order. With the chunk
+option <code>order</code>, you can specify code chunks and inline code expressions to be
+executed in an arbitrary order. For example, if you have an abstract in the
+beginning of a document, and the abstract needs to use a number calculated at
+the end of the document, you can let the abstract be compiled in the end,
+although it appears earlier in the document.</p>
+<p>I guess some users may want to kill me upon knowing this feature, and some may
+send me flowers (although I’m not sure if they want to thank me or prepare the
+flowers for my funeral). For those who want to kill me, please note that this
+feature does not mean <strong>litedown</strong> is as awful as Jupyter notebooks. It means
+you can specify a <em>fixed</em> order to execute code in the document. The order does
+not have to be from beginning to end, but it is <em>deterministic</em>. In other words,
+it does not mean you run code chunks in an arbitrary or random order that can
+detriment reproducibility.</p>
+<h3 id="sec-time-code-chunks">Time code chunks</h3>
+<p>If you want to figure out which code chunks are time-consuming, simply set the
+chunk option <code>litedown::reactor(time = TRUE)</code> in the beginning, and put
+<code>litedown::timing_data()</code> in the last code chunk. It will tell you detailed
+information. In the <code>roam()</code> preview, the data will also contain links to
+specific lines of code chunks, so you click to jump to a specific code chunk.</p>
+<h3 id="sec-table-output-for-data-frames-by-default">Table output for data frames by default</h3>
+<p>Rectangular objects such as data frames (including tibbles) and matrices are
+printed as tables by default, and the number of rows is limited to 10 by default
+to avoid generating huge tables by accident.</p>
+<h3 id="sec-relieved-pain-of-paths">Relieved pain of paths</h3>
+<p>File paths (such as image paths) have been a mess in <strong>knitr</strong>. My deepest
+apologies for that. I have worked much harder in <strong>litedown</strong> in this regard.</p>
+<h3 id="sec-output-in-memory-or-to-disk">Output in memory or to disk</h3>
+<p>Functions such as <code>mark()</code>, <code>fuse()</code>, and <code>fuse_book()</code> can operate in memory
+without writing to disk. By default, if you pass a file input, you get a file
+output; if you pass text input, you get text output.</p>
+<h3 id="sec-a-new-cache-system">A new cache system</h3>
+<p>You can feel more confident with using the chunk option <code>cache = TRUE</code> in
+<strong>litedown</strong> than in <strong>knitr</strong>. The new cache system is more robust and
+intelligent.</p>
+<h3 id="sec-a-book-is-a-single-html-file">A book is a single HTML file</h3>
+<p>Unlike <strong>bookdown</strong> and Quarto, <code>litedown::fuse_book()</code> renders multiple input
+files to a single output file. Yes, your whole precious book is in a single
+(HTML or PDF) file. Grab and go.</p>
+<p>The assumption of single-file output for books has made several things a lot
+easier. For example, if you want to search within the book, just press
+<code>Ctrl + F</code> or <code>Command + F</code> in your browser as you usually do on any other web
+page. You do not need a client-side search library. It is also quicker to jump
+between chapters because they are on the same page. If you want to print the
+HTML version of the book to PDF, just press <code>Ctrl + P</code> or <code>Command + P</code>.</p>
+<p>I know you have a concern: wouldn’t the single HTML file be too heavy for the
+browser? The answer is: you should be fine if you do not have too many images.
+If you do, do not base64 encode them (which is the default), and you can also
+lazy-load images to make the book load faster.</p>
+<h3 id="sec-r-scripts-as-first-class-citizens">R scripts as first-class citizens</h3>
+<p>An R script has the same status as an R Markdown document. You can write
+Markdown in <code>#'</code> comments, and chunk options in <code>#|</code> comments (both are
+optional). These are the only two rules to remember. Compared to
+<code>knitr::spin()</code>, the rules are much simpler. Besides, R scripts are also
+carefully parsed into “code chunks”, so their line numbers work as well as R
+Markdown’s line numbers.</p>
+<p>Any application that you can create with R Markdown can be created with R
+scripts, such as books and websites.</p>
+<h3 id="sec-clean-html-output">Clean HTML output</h3>
+<p>The HTML output generated from <strong>litedown</strong> is very clean. For example, code
+blocks in HTML output contain plain code, instead of full of <code>&lt;span&gt;</code> tags with
+random attributes. Clean HTML output means the output file size is smaller, and
+more importantly, it is easier to inspect the differences between two versions
+of output (e.g., in Git). Every time when you update the source document, you
+can know more clearly what has changed in the output, which can help you avoid
+unexpected changes before publishing the output.</p>
+<h3 id="sec-features-out-of-scope">Features out of scope</h3>
+<p>Output formats besides HTML and LaTeX are unlikely to be supported.<sup class="footnote-ref"><a href="#fn-3" id="fnref-3" data-footnote-ref>3</a></sup> If other
+output formats are desired, you may use Pandoc to do the conversion.</p>
+<p>For tables, only pipe tables are supported. Other table formats are not
+recognized.</p>
+<p>At the moment, <strong>litedown</strong> mainly supports R as the computing language. Other
+languages might be added in the future, but please keep your expectation low,
+because the support is unlikely to be as good as R.</p>
+<p>HTML widgets are not supported yet, but may be reimagined in the future with
+some minimal support.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/01-fuse.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/01-fuse.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</h1>
+<p>R Markdown documents need to be knitted to Markdown before being rendered to a
+target output format. The function <code>litedown::fuse()</code> plays a role similar to
+<code>knitr::knit()</code>. It “fuses” program code with narratives, i.e., it executes all
+code in the source document and interweaves results with narratives in the
+output document. Similar to <strong>knitr</strong>, <strong>litedown</strong> supports code chunks and
+inline code.</p>
+<h2 id="sec-code-chunks"><span class="section-number">1.1</span> Code chunks</h2>
+<p>A code chunk consists of the language name, chunk options (in the chunk header
+or pipe comments), and the code:</p>
+<pre><code class="language-md">```{lang}
+#| chunk options
+
+code
+```
+</code></pre>
+<p>Currently, a subset of <a href="https://yihui.org/knitr/"><strong>knitr</strong> chunk options</a> are
+supported, which can be accessed in <code>litedown::reactor()</code>. To get an option
+value, use <code>reactor(&quot;NAME&quot;)</code>, where <code>NAME</code> is the option name (e.g.,
+<code>fig.width</code>). To set an option globally, use <code>reactor(NAME = VALUE)</code>.
+Alternatively, you can manipulate the value returned by <code>reactor()</code> directly,
+which is essentially an environment:</p>
+<pre><code class="language-r">opts = litedown::reactor()
+opts$fig.width  # get an option
+opts$echo = FALSE  # set an option
+</code></pre>
+<p>Code chunks inside other code blocks are not parsed or evaluated, which provides
+a way to write verbatim code chunks, e.g.,</p>
+<pre><code class="language-md">````markdown
+Some verbatim content.
+
+```{r}
+1 + 1
+```
+````
+</code></pre>
+<p>Similarly, code in comments will not be recognized, either, e.g.,</p>
+<pre><code class="language-html">&lt;!--
+Do not run this chunk:
+
+```{r}
+1 + 1
+```
+
+or the inline code `{r} pi`.
+--&gt;
+</code></pre>
+<p>If <code>N + 1</code> pairs of curly braces are used in the opening fence, the chunk fences
+(with <code>N</code> pairs of curly braces) and chunk options will be shown in the output,
+which can be useful for telling readers the full source of a chunk, e.g.,</p>
+<pre><code class="language-md">```{{r}}
+#| echo = TRUE, eval = FALSE
+
+1 + 1
+```
+</code></pre>
+<h2 id="sec-inline-code"><span class="section-number">1.2</span> Inline code</h2>
+<p>The syntax for inline code expressions is <code>`{lang} code`</code>, where <code>lang</code> is
+the language name, e.g., <code>r</code>. Spaces are allowed after the opening backtick and
+before the closing backtick. If the <code>code</code> happens to contain <code>N</code> backticks, you
+will need to use at least <code>N + 1</code> backticks outside, e.g.,
+<code>``{r} paste(&quot;`&quot;, rnorm(1), &quot;`&quot;)``</code>. An inline code expression inside
+another piece of inline code is not parsed or evaluated, which provides a way to
+write verbatim inline code expressions, e.g., <code>`` `{lang} code` ``</code>.</p>
+<p>Comma-separated chunk options can also be provided to inline code expressions
+after the language name, e.g., <code>`{r, eval=FALSE} code`</code>.</p>
+<p>For <strong>knitr</strong> users, please note that the syntax <code>`r code`</code> is not supported
+by default. You have to wrap the language name <code>r</code> in curly braces. As a
+temporary workaround, you may set <code>options(litedown.enable.knitr_inline = TRUE)</code>
+in your <code>.Rprofile</code> to make <strong>litedown</strong> recognize <code>`r code`</code>, but we
+recommend that you convert the document via <code>litedown:::convert_knitr()</code> instead
+if you decide to stay with <strong>litedown</strong> in the long run.</p>
+<h2 id="sec-r-scripts"><span class="section-number">1.3</span> R scripts</h2>
+<p>Besides R Markdown, you can also pass an R script to <code>fuse()</code>. You can write
+Markdown content in <code>#'</code> comments, and group lines of code into chunks by <code>#|</code>
+comments, e.g.,</p>
+<pre><code class="language-r">#' ---
+#' title: An R script
+#' output:
+#'   litedown::latex_format: null
+#' ---
+#' 
+#' A _paragraph_.
+
+#| eval=FALSE
+1:10
+1 + 1
+
+#| fig.width=10, dev='pdf'
+plot(cars)
+</code></pre>
+<p>Both <code>#'</code> and <code>#|</code> comments are optional.</p>
+<h2 id="sec-comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></h2>
+<p>Major differences between <strong>knitr</strong> and <strong>litedown</strong> include:</p>
+<table>
+<thead>
+<tr>
+<th>knitr</th>
+<th>litedown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Supports multiple graphical devices for a chunk.</td>
+<td>Only supports one device for a chunk (but there are multiple choices for this device).</td>
+</tr>
+<tr>
+<td>Depending on certain chunk options, figure output could be both Markdown (<code>![]()</code>) and raw HTML (<code>&lt;img&gt;</code>) / LaTeX (<code>\includegraphics{}</code>).</td>
+<td>Always use Markdown syntax for figures.</td>
+</tr>
+<tr>
+<td>The document parser is based on regular expressions and not robust. Code chunks and inline expressions are not aware of their contexts (e.g., code blocks or comments).</td>
+<td>The parser is based on <strong>commonmark</strong>, which is more robust and makes it straightforward to write verbatim code (in a parent code block) or comment out code (in <code>&lt;!-- --&gt;</code> comments).</td>
+</tr>
+<tr>
+<td>Supports a large number of chunk options and language engines.</td>
+<td>Supports a limited number of chunk options and engines.</td>
+</tr>
+<tr>
+<td>Inline code does not support options or languages other than R.</td>
+<td>Inline code supports options and other languages.</td>
+</tr>
+<tr>
+<td>All code is executed in the linear order.</td>
+<td>Code chunks and inline code can be executed in a custom non-linear order defined by the chunk option <code>order</code> (higher values indicate higher priority).</td>
+</tr>
+<tr>
+<td>Supports chunk hooks and output hooks.</td>
+<td>No hooks at the moment.</td>
+</tr>
+<tr>
+<td>The package is more than 12 years old and quite mature.</td>
+<td>The package is new and still experimental.</td>
+</tr>
+</tbody>
+</table>
+<p>If you feel any indispensable features are missing in <strong>litedown</strong>, please feel
+free to suggest them in <a href="https://github.com/yihui/litedown">Github issues</a>.
+However, please remember that the goal of <strong>litedown</strong> is not to fully
+re-implement <strong>rmarkdown</strong>, <strong>knitr</strong> or Pandoc. Some features may never be
+re-implemented, especially when the implementation is not simple enough.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/02-syntax.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/02-syntax.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</h1>
+<h2 id="sec-basic-syntax"><span class="section-number">2.1</span> Basic syntax</h2>
+<p>For the full list of supported document elements, please read the GFM spec.
+Below is a quick summary:</p>
+<ul>
+<li>
+<p>Headings start with a number of <code>#</code>’s, e.g., <code>## level-two heading</code>.</p>
+</li>
+<li>
+<p>Inline elements: <code>**strong**</code>, <code>_emphasis_</code>, <code>~~strikethrough~~</code>,
+<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-02-syntax-1" id="fnref-02-syntax-1" data-footnote-ref>4</a></sup></p>
+</li>
+<li>
+<p>Inline code is written in a pair of backticks, e.g., <code>`code`</code>. Code
+blocks can be indented, or fenced by <code>```</code>.</p>
+</li>
+<li>
+<p>List items start with <code>-</code>, <code>+</code>, or <code>*</code>, e.g., <code>- item</code>. A task list item is
+a regular list item with <code>[ ]</code> or <code>[x]</code> in the beginning, e.g.,
+<code>- [ ] item</code>.</p>
+</li>
+<li>
+<p>Block quotes start with <code>&gt;</code>.</p>
+</li>
+<li>
+<p>Tables are created with <code>|</code> as the column separator (i.e., Pandoc’s pipe
+table, which can be generated by <code>knitr::kable(x, &quot;pipe&quot;)</code> or
+<code>xfun::md_table()</code>).</p>
+</li>
+</ul>
+<h2 id="sec-add-on-features"><span class="section-number">2.2</span> Add-on features</h2>
+<p>In addition to GFM features, the <strong>litedown</strong> package also supports the
+following features.</p>
+<h3 id="sec-raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</h3>
+<p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
+names <code>=latex</code> (or <code>=tex</code>) and <code>=html</code>, e.g.,</p>
+<pre><code class="language-markdown">```{=tex}
+This only appears in \LaTeX{} output.
+```
+</code></pre>
+<p>Raw LaTeX blocks will only appear in LaTeX output, and will be ignored in other
+output formats. Similarly, raw HTML blocks will only appear in HTML output. One
+exception is raw LaTeX blocks that are LaTeX math environments, which also work
+for HTML output (see the next section).</p>
+<h3 id="sec-latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</h3>
+<p>You can write both <code>$inline$</code> and <code>$$display$$</code> LaTeX math, e.g.,
+\(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\)</p>
+<p>$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$</p>
+<p>$$|x| = \begin{cases} x &amp;\text{if } x \geq 0 \\ -x &amp;\text{if } x &lt; 0 \end{cases}$$</p>
+<p>LaTeX math environments are also supported, e.g., below are an <code>align</code>
+environment and an <code>equation</code> environment:</p>
+<p>
+\begin{align}
+a^{2}+b^{2} &amp; =  c^{2}\\
+\sin^{2}(\theta)+\cos^{2}(\theta) &amp; =  1
+\end{align}
+
+\begin{equation}
+\begin{split}
+(a+b)^2 &amp;=(a+b)(a+b)\\
+  &amp;=a^2+2ab+b^2
+\end{split}
+\end{equation}
+</p>
+<p>These math environments can be written in raw LaTeX blocks, and they work for
+both LaTeX and HTML output, e.g.,</p>
+<pre><code class="language-markdown">```{=latex}
+\begin{align}
+a^{2}+b^{2} &amp; =  c^{2}\\
+\sin^{2}(\theta)+\cos^{2}(\theta) &amp; =  1
+\end{align}
+```
+</code></pre>
+<p>For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
+math environment can be rendered.</p>
+<h3 id="sec-superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</h3>
+<p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
+Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
+characters, <code>*</code>, <code>(</code>, and <code>)</code> are allowed in the scripts. For example, <code>a^b c^</code>
+will not be recognized as a superscript (because the space is not allowed). Note
+that GFM supports striking out text via <code>~text~</code>, but this feature has been
+disabled and replaced by the feature of subscripts in <strong>litedown</strong>. To strike
+out text, you must use a pair of <em>double</em> tildes.</p>
+<h3 id="sec-footnotes_1"><span class="section-number">2.2.4</span> Footnotes</h3>
+<p>Insert footnotes via <code>[^n]</code>, where <code>n</code> is a footnote number (a unique
+identifier). The footnote content should be defined in a separate block starting
+with <code>[^n]:</code>. For example:</p>
+<pre><code class="language-markdown">Insert a footnote here.[^1]
+
+[^1]: This is the footnote.
+</code></pre>
+<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-02-syntax-2" id="fnref-02-syntax-2" data-footnote-ref>5</a></sup> and there
+are two caveats if the document is intended to be converted to LaTeX:</p>
+<ul>
+<li>
+<p>The footnote content must be a single paragraph.</p>
+</li>
+<li>
+<p>Only numbers<sup class="footnote-ref"><a href="#fn-02-syntax-3" id="fnref-02-syntax-3" data-footnote-ref>6</a></sup> are supported as identifiers, and other types of
+identifiers are not recognized.</p>
+</li>
+</ul>
+<p>The two limitations do not apply to HTML output, e.g., you can write arbitrary
+elements in footnotes and not necessarily one paragraph.</p>
+<h3 id="sec-attributes"><span class="section-number">2.2.5</span> Attributes</h3>
+<p>Attributes on images, fenced code blocks, and section headings can be written in
+<code>{}</code>. For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will generate an
+<code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
+<pre><code class="language-html">&lt;img src=&quot;path&quot; alt=&quot;text&quot; id=&quot;bar&quot; class=&quot;foo&quot; width=&quot;50%&quot; /&gt;
+</code></pre>
+<p>and <code>## Heading {#baz}</code> will generate:</p>
+<pre><code class="language-html">&lt;h2 id=&quot;baz&quot;&gt;Heading&lt;/h2&gt;
+</code></pre>
+<p>For fenced code blocks, a special rule is that the first class name will be
+treated as the language name for a block, and the <code>class</code> attribute of the
+result <code>&lt;code&gt;</code> tag will have a <code>language-</code> prefix. For example, the following
+code block</p>
+<pre><code class="language-markdown">```{.foo .bar #my-code style=&quot;color: red;&quot;}
+```
+</code></pre>
+<p>will generate the HTML output below:</p>
+<pre><code class="language-html">&lt;pre&gt;
+  &lt;code class=&quot;language-foo bar&quot; id=&quot;my-code&quot; style=&quot;color: red;&quot;&gt;
+  &lt;/code&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Most attributes in <code>{}</code> are ignored for LaTeX output except for:</p>
+<ul>
+<li>
+<p>The <code>width</code> attribute for images, e.g., <code>![text](path){width=&quot;50%&quot;}</code> will be
+converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
+</li>
+<li>
+<p>The <code>.unnumbered</code> attribute, which will make a heading unnumbered, e.g.,
+<code># Hello {.unnumbered}</code> will be converted to <code>\section*{Hello}</code>.</p>
+</li>
+<li>
+<p>The <code>.appendix</code> attribute on a heading, which will start the appendix, e.g.,
+<code># Appendix {.appendix}</code> will be converted to <code>\appendix</code>.</p>
+</li>
+</ul>
+<h3 id="sec-appendices"><span class="section-number">2.2.6</span> Appendices</h3>
+<p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
+will be treated as the appendix. If section numbering is enabled
+(<a class="cross-ref-sec" href="#sec-number-sections">3.1.6</a>), the appendix section headings will be numbered
+differently.</p>
+<h3 id="sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</h3>
+<p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
+have at least one attribute, such as the class name. For example:</p>
+<pre><code class="language-markdown">::: foo
+This is a fenced Div.
+:::
+
+::: {.foo}
+The syntax `::: foo` is equivalent to `::: {.foo}`.
+:::
+
+::: {.foo #bar style=&quot;color: red;&quot;}
+This div has more attributes.
+
+It will be red in HTML output.
+:::
+</code></pre>
+<p>A fenced <code>Div</code> will be converted to <code>&lt;div&gt;</code> with attributes in HTML output,
+e.g.,</p>
+<pre><code class="language-html">&lt;div class=&quot;foo&quot; id=&quot;bar&quot; style=&quot;color: red;&quot;&gt;
+&lt;/div&gt;
+</code></pre>
+<p>For LaTeX output, it can be converted to a LaTeX environment if both the class
+name and an attribute <code>data-latex</code> are present. For example,</p>
+<pre><code class="language-markdown">::: {.tiny data-latex=&quot;&quot;}
+This is _tiny_ text.
+:::
+</code></pre>
+<p>will be converted to:</p>
+<pre><code class="language-latex">\begin{tiny}
+This is \emph{tiny} text.
+\end{tiny}
+</code></pre>
+<p>The <code>data-latex</code> attribute can be used to specify arguments to the environment
+(which can be an empty string if the environment doesn’t need an argument). For
+example,</p>
+<pre><code class="language-markdown">::: {.minipage data-latex=&quot;{.5\linewidth}&quot;}
+</code></pre>
+<p>will be converted to:</p>
+<pre><code class="language-latex">\begin{minipage}{.5\linewidth}
+</code></pre>
+<p>If a fenced <code>Div</code> doesn’t have the <code>data-latex</code> attribute, the fence will be
+ignored, and its content will be written out normally without a surrounding
+environment. If a fenced <code>Div</code> has multiple class names (e.g., <code>{.a .b .c}</code>),
+only the first class name will be used as the LaTeX environment name. However,
+all class names will be used if the output format is HTML (e.g.,
+<code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
+<h3 id="sec-cross-references"><span class="section-number">2.2.8</span> Cross-references</h3>
+<p>To cross-reference an element, it must be numberd first. For section headings,
+the numbers are automatically generated if the <code>number_sections</code> option is true.
+For other elements, they must contain empty anchors of the form <code>[](#@ID)</code>,
+where <code>ID</code> is the ID of the element to be referenced. For figures, these anchors
+are automatically generated if the chunk options <code>fig.cap</code> (figure caption) and
+<code>fig.env</code> are not empty, e.g.,</p>
+<pre><code class="language-md">```{r}
+#| nice-plot, fig.cap=&quot;A nice caption&quot;, fig.env=&quot;.figure&quot;
+
+plot(cars)
+```
+</code></pre>
+<p>To refer to an element in the text, use the syntax <code>@ID</code>, e.g.,</p>
+<pre><code class="language-md">Please see @fig-nice-plot for an overview of the `cars` data.
+</code></pre>
+<h3 id="sec-smart-html-entities"><span class="section-number">2.2.9</span> Smart HTML entities</h3>
+<p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
+write fractions in the form <code>n/m</code>. Below are some example entities:</p>
+<table>
+<thead>
+<tr>
+<th><code>1/2</code></th>
+<th><code>1/3</code></th>
+<th><code>2/3</code></th>
+<th><code>7/8</code></th>
+<th><code>1/7</code></th>
+<th><code>1/9</code></th>
+<th><code>1/10</code></th>
+<th><code>(c)</code></th>
+<th><code>(r)</code></th>
+<th><code>(tm)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>½</td>
+<td>⅓</td>
+<td>⅔</td>
+<td>⅞</td>
+<td>⅐</td>
+<td>⅑</td>
+<td>⅒</td>
+<td>©</td>
+<td>®</td>
+<td>™</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sec-comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</h2>
+<p>As mentioned earlier, a lot of features in Pandoc’s Markdown are not supported
+in the <strong>litedown</strong> package. Any feature that you find missing in previous
+sections is likely to be unavailable. In addition, a lot of R Markdown and
+Quarto (both are based on Pandoc) features are not supported, either. Some HTML
+features have been implemented via JavaScript and CSS.</p>
+<p>Pandoc can convert Markdown to many output formats, such as Word, PowerPoint,
+LaTeX beamer, and EPUB. The <strong>litedown</strong> package is unlikely to support output
+formats beyond HTML and LaTeX.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/03-mark.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/03-mark.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</h1>
+<p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
+<p>You can either call <code>litedown::mark()</code> to render a Markdown document
+programmatically, or click the <code>Knit</code> button in RStudio to render a (Markdown or
+R Markdown) document interactively. The latter requires you to specify the
+output format in the <code>output</code> field in YAML metadata (<a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a>), e.g.,</p>
+<pre><code class="language-yaml">---
+output:
+  litedown::html_format:
+    options:
+      js_math:
+        package: &quot;katex&quot;
+        version: &quot;0.16.4&quot;
+      number_sections: true
+      embed_resources: [&quot;local&quot;, &quot;https&quot;]
+    meta:
+      css: &quot;custom.css&quot;
+---
+</code></pre>
+<h2 id="sec-markdown-options"><span class="section-number">3.1</span> Markdown options</h2>
+<p>The <code>options</code> argument of <code>mark()</code> can be used to enable/disable/set options to
+control Markdown rendering. This argument can take either a list, e.g.,
+<code>list(toc = TRUE, smart = FALSE)</code>, or a character vector, e.g.,
+<code>c(&quot;+toc&quot;, &quot;-smart&quot;)</code>, or equivalently, <code>+toc-smart</code>, where <code>+</code> means to enable
+an option, and <code>-</code> means to disable an option. The options can also be set in
+YAML metadata in <a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a> (recommended). Available options are listed
+below.</p>
+<h3 id="sec-auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></h3>
+<p>Add automatic IDs to headings, e.g.,</p>
+<pre><code class="language-markdown"># Hello world!
+</code></pre>
+<p>will be converted to</p>
+<pre><code class="language-html">&lt;h1 id=&quot;sec-hello-world&quot;&gt;Hello world!&lt;/h1&gt;
+</code></pre>
+<p>You can override the automatic ID by providing an ID manually via the ID
+attribute, e.g.,</p>
+<pre><code class="language-markdown"># Hello world! {#hello}
+</code></pre>
+<p>An automatic ID is generated by substituting non-alphanumeric characters in the
+heading text with hyphens. If the result is empty, the ID will be <code>section</code>. If
+any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
+<code>example_1</code> and <code>example_2</code>. A prefix <code>sec-</code> will be added to the automatic IDs.</p>
+<h3 id="sec-embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></h3>
+<p>Embed resources (images, CSS, and JS) in the HTML output using their
+base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
+<ul>
+<li>
+<p><code>null</code> or <code>false</code>: Do not embed any resources.</p>
+</li>
+<li>
+<p><code>&quot;local&quot;</code> or <code>true</code>: Embed local image/CSS/JS files.</p>
+</li>
+<li>
+<p><code>&quot;https&quot;</code>: Embed web resources (links that start with <code>https://</code>).</p>
+</li>
+<li>
+<p><code>&quot;all&quot;</code>: An alias to the union of <code>&quot;local&quot;</code> and <code>&quot;https&quot;</code>.</p>
+</li>
+</ul>
+<p>The default is <code>&quot;local&quot;</code>, i.e., local resources are embedded, whereas <code>https</code>
+resources are not. This means the output document may not work offline. If you
+have to view the output offline, you need to use the option value <code>&quot;https&quot;</code> (or
+<code>&quot;all&quot;</code>) and render the document at least once before you go offline.</p>
+<h3 id="sec-js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></h3>
+<p>Specify the JavaScript library to syntax highlight code blocks. Possible values
+are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
+(<a href="https://prismjs.com">Prism.js</a>). The default is <code>prism</code>. This option can also
+take a list of the form <code>list(package, version, style, languages)</code>, which
+specifies the package name (<code>highlight</code> or <code>prism</code>), version, CSS style/theme
+name, and names of languages to be highlighted.</p>
+<ul>
+<li>
+<p>You can find information about Prism.js from its CDN at
+<a href="https://cdn.jsdelivr.net/npm/prismjs/">https://cdn.jsdelivr.net/npm/prismjs/</a>. Available styles are under the
+<code>themes/</code> directory (e.g., <code>prism-dark</code>), and languages are under the
+<code>components/</code> directory (e.g., <code>prism-c</code>). You can omit the prefix <code>prism-</code>,
+e.g.,</p>
+<pre><code class="language-yaml">js_highlight:
+  package: prism
+  style: dark
+  languages: [r, latex, yaml]
+</code></pre>
+</li>
+<li>
+<p>The CDN of highlight.js is at
+<a href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/">https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/</a>. Themes are
+under the <code>styles/</code> directory (e.g., <code>github</code>), and you can find demos of
+themes at <a href="https://highlightjs.org/static/demo/">https://highlightjs.org/static/demo/</a>. Supported language are
+under the <code>languages/</code> directory (e.g., <code>latex</code>).</p>
+</li>
+</ul>
+<p>By default, languages are automatically detected and the required JS files are
+automatically loaded. Normally you need to specify the <code>languages</code> array only if
+the automatic detection fails.</p>
+<p>Technically this option is a shorthand for setting the metadata variables <code>css</code>
+and <code>js</code> in <a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a>. If you want full control, you may disable this
+option (set it to <code>false</code> or <code>null</code>) and use metadata variables directly, which
+requires more familiarity with the JS libraries and the jsdelivr CDN.</p>
+<h3 id="sec-js-math"><span class="section-number">3.1.4</span> <code>js_math</code></h3>
+<p>Specify the JavaScript library for rendering math expressions in HTML output.
+Possible values are <code>&quot;mathjax&quot;</code> and <code>&quot;katex&quot;</code> (the default). Like the
+<code>js_highlight</code> option, this option is also essentially a shorthand for setting
+the metadata variables <code>css</code> and <code>js</code>.</p>
+<ul>
+<li>
+<p>For <a href="https://www.mathjax.org/#gettingstarted">MathJax</a>, the <code>js</code> variable is
+set to <code>tex-mml-chtml.js</code>.</p>
+</li>
+<li>
+<p>For <a href="https://katex.org/docs/browser.html">KaTeX</a>, the <code>js</code> variable is set
+to <code>katex.min.js</code> and the <code>css</code> variable is set to <code>katex.min.css</code>. KaTeX’s
+<code>auto-render</code> extension (<code>auto-render.min.js</code>) is also enabled by default,
+so math expressions can be immediately rendered when the page is loaded.</p>
+</li>
+</ul>
+<p>If you want finer control, you can provide a list of the form
+<code>list(package, version, css, js)</code>. This will allow you to specify the package
+name, version, and css/js files. For example, if you want to use MathJax’s
+<code>tex-chtml.js</code> instead, you may set:</p>
+<pre><code class="language-yaml">js_math:
+  package: mathjax
+  version: 3
+  js: es5/tex-chtml.js
+</code></pre>
+<p>By default, MathJax version 3 is used. If you want to use the older v2, you may
+set:</p>
+<pre><code class="language-yaml">js_math:
+  package: mathjax
+  version: 2
+  js: MathJax.js?config=TeX-AMS-MML_CHTML
+</code></pre>
+<p>Please visit <a href="https://cdn.jsdelivr.net/npm/mathjax/">the MathJax CDN</a> to know
+which versions and JS files are available.</p>
+<p>For KaTeX, the version is not specified by default, which means the latest
+version from <a href="https://cdn.jsdelivr.net/npm/katex/">the CDN</a>. Below is an example
+of specifying the version 0.16.4 and using the <code>mhchem</code> extension:</p>
+<pre><code class="language-yaml">js_math:
+  package: katex
+  version: 0.16.4
+  js: [dist/katex.min.js, dist/contrib/mhchem.min.js]
+</code></pre>
+<p>Note that if you want the HTML output to be self-contained via the
+<code>embed_resources</code> option, KaTeX can be embedded and used offline, but MathJax
+cannot be fully embedded due to its complexity. MathJax v3 can be partially
+embedded and used offline, but currently only its fonts can be embedded, and
+extensions cannot. If you must view HTML output offline, we recommend using
+KaTeX, but please also note that KaTeX and MathJax do not fully cover each
+other’s features.</p>
+<h3 id="sec-latex-math_2"><span class="section-number">3.1.5</span> <code>latex_math</code></h3>
+<p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
+dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
+rendered by MathJax (HTML output) or LaTeX.</p>
+<h3 id="sec-number-sections"><span class="section-number">3.1.6</span> <code>number_sections</code></h3>
+<p>Whether to number section headings. To skip numbering a specific heading, add an
+attribute <code>{.unnumbered}</code> to it.</p>
+<h3 id="sec-smartypants"><span class="section-number">3.1.7</span> <code>smartypants</code></h3>
+<p>Whether to translate certain ASCII strings into smart typographic characters
+(see <code>?litedown::smartypants</code>).</p>
+<h3 id="sec-superscript"><span class="section-number">3.1.8</span> <code>superscript</code></h3>
+<p>Whether to translate strings between two carets into superscripts, e.g.,
+<code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>.</p>
+<h3 id="sec-subscript"><span class="section-number">3.1.9</span> <code>subscript</code></h3>
+<p>Whether to translate strings between two tildes into subscripts, e.g.,
+<code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>.</p>
+<h3 id="sec-toc"><span class="section-number">3.1.10</span> <code>toc</code></h3>
+<p>Whether to generate a table of contents (TOC) from section headings. If a
+heading has an <code>id</code> attribute, the corresponding TOC item will be a link to this
+heading. You can also set a sub-option:</p>
+<ul>
+<li>
+<p><code>depth</code>: The number of section levels to include in the TOC (<code>3</code> by
+default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
+<pre><code class="language-yaml">toc:
+  depth: 3
+</code></pre>
+</li>
+</ul>
+<h3 id="sec-top-level"><span class="section-number">3.1.11</span> <code>top_level</code></h3>
+<p>The desired type of the top-level headings in LaTeX output. Possible values are
+<code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
+will be rendered to <code>\chapter{heading}</code> instead of the default
+<code>\section{heading}</code>.</p>
+<p>Options not described above can be found on the help pages of <strong>commonmark</strong>,
+e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argument of
+<code>commonmark::markdown_*()</code> functions, and the <code>table</code> option is for the <code>table</code>
+extension in <strong>commonmark</strong>’s extensions.</p>
+<pre><code class="language-r">litedown::markdown_options()
+</code></pre>
+<pre><code>#&gt;  [1] &quot;-hardbreaks&quot;       &quot;-number_sections&quot;  &quot;-smartypants&quot;     
+#&gt;  [4] &quot;-tagfilter&quot;        &quot;-toc&quot;              &quot;+auto_identifiers&quot;
+#&gt;  [7] &quot;+autolink&quot;         &quot;+cross_refs&quot;       &quot;+embed_resources&quot; 
+#&gt; [10] &quot;+js_highlight&quot;     &quot;+js_math&quot;          &quot;+latex_math&quot;      
+#&gt; [13] &quot;+smart&quot;            &quot;+strikethrough&quot;    &quot;+subscript&quot;       
+#&gt; [16] &quot;+superscript&quot;      &quot;+table&quot;            &quot;+tasklist&quot;        
+</code></pre>
+<pre><code class="language-r"># commonmark's arguments
+opts = formals(commonmark::markdown_html)
+opts = opts[setdiff(names(opts), c('text', 'extensions'))]
+unlist(opts)
+</code></pre>
+<pre><code>#&gt; hardbreaks      smart  normalize  sourcepos  footnotes 
+#&gt;      FALSE      FALSE      FALSE      FALSE      FALSE 
+</code></pre>
+<pre><code class="language-r"># commonmark's extensions
+commonmark::list_extensions()
+</code></pre>
+<pre><code>#&gt; [1] &quot;table&quot;         &quot;strikethrough&quot; &quot;autolink&quot;      &quot;tagfilter&quot;    
+#&gt; [5] &quot;tasklist&quot;     
+</code></pre>
+<h2 id="sec-templates"><span class="section-number">3.2</span> Templates</h2>
+<p>By default, <code>mark()</code> generates a document fragment (i.e., the body) if the input
+does not contain YAML metadata at the beginning. To generate a full document,
+you need to specify YAML metadata. A full document is generated with a template.
+Below is a simple HTML template example:</p>
+<pre><code class="language-html">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;$title$&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+  $body$
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>It contains two variables, <code>$title$</code> and <code>$body$</code>. All variables will be
+substituted by metadata values, except for <code>$body$</code>, which is from the body of
+the input document (after conversion to a target output format).</p>
+<p>The <strong>litedown</strong> has provided default templates for
+<a href="https://github.com/yihui/litedown/blob/main/inst/resources/litedown.html">HTML</a>
+and
+<a href="https://github.com/yihui/litedown/blob/main/inst/resources/litedown.latex">LaTeX</a>
+output. To pass metadata to templates, use the <code>meta</code> argument, e.g.,</p>
+<pre><code class="language-r">litedown::mark(..., meta = list(title = &quot;My Title&quot;))
+</code></pre>
+<p>If you want to use a custom template file, you can either set the path in the
+global option <code>litedown.FORMAT.template</code> (where <code>FORMAT</code> is the output format
+name (<code>html</code> or <code>latex</code>), e.g., in <code>.Rprofile</code>:</p>
+<pre><code class="language-r">options(litedown.html.template = 'path/to/my/template.html')
+</code></pre>
+<p>The global option will be applied to all documents to be converted by <code>mark()</code>.
+Alternatively, you can pass a template path to the <code>template</code> argument of the
+output format <code>litedown::html_format</code> or <code>litedown::latex_format</code> in an
+individual document, e.g.,</p>
+<pre><code class="language-yaml">---
+output:
+  litedown::html_format:
+    template: &quot;path/to/my/template.html&quot;
+---
+</code></pre>
+<p>The template path can also take a logical value: <code>TRUE</code> means to use the default
+template, and <code>FALSE</code> means to generate only a fragment document without using
+any template.</p>
+<h2 id="sec-yaml-metadata"><span class="section-number">3.3</span> YAML metadata</h2>
+<p>Alternatively, the <code>meta</code> argument can read YAML metadata in the Markdown
+document. The following variables can be set in the top-level fields in YAML:</p>
+<ul>
+<li>
+<p><code>author</code>: The document author(s).</p>
+</li>
+<li>
+<p><code>date</code>: The date.</p>
+</li>
+<li>
+<p><code>title</code>: The document title.</p>
+</li>
+</ul>
+<p>For example:</p>
+<pre><code class="language-yaml">---
+title: &quot;My Title&quot;
+author: &quot;[Frida Gomam](https://example.com)&quot;
+date: &quot;2023-01-09&quot;
+---
+</code></pre>
+<p>Note that you can use Markdown syntax in them.</p>
+<p>Other variables need to be specified under
+<code>output -&gt; litedown::*_format -&gt; meta</code>, where <code>*</code> can be <code>html</code> or <code>latex</code>,
+e.g.,</p>
+<pre><code class="language-yaml">---
+title: &quot;My Title&quot;
+output:
+  litedown::html_format:
+    meta:
+      css: &quot;style.css&quot;
+      js: &quot;script.js&quot;
+  litedown::latex_format:
+    meta:
+      documentclass: &quot;book&quot;
+      header_includes: &quot;\\usepackage{microtype}&quot;
+---
+</code></pre>
+<p>The following metadata variables are supported for both HTML and LaTeX
+templates:</p>
+<ul>
+<li><code>header-includes</code>, <code>include-before</code>, <code>include-after</code>: Either a vector of
+(HTML/LaTeX) code or a code file to be included in the header, before the
+body, or after the body of the output.</li>
+</ul>
+<p>Variables specific to the HTML template:</p>
+<ul>
+<li>
+<p><code>css</code>: A vector of CSS files to be included in the output. The default value
+is <code>litedown:::pkg_file('resources', 'default.css')</code>.</p>
+<p>If you want to use built-in CSS files in this package, you can only specify
+the base name, e.g., <code>default</code> means <code>default.css</code> in this package.</p>
+<p>You can also use web resources, e.g., <code>https://example.org/style.css</code>. One
+special case is <a href="https://www.jsdelivr.com">jsdelivr</a> resources: if a <code>css</code>
+value starts with <code>@</code>, it will be recognized as a jsdelivr.com resource. if
+you are not familiar with jsdelivr, you may read its documentation to
+understand the following example URLs. The shorthand syntax is as follows
+(<code>CDN</code> stands for <code>https://cdn.jsdelivr.net</code>):</p>
+<ul>
+<li>
+<p><code>@foo</code> (without a filename extension) will be converted to
+<code>CDN/npm/@xiee/utils/css/foo.min.css</code>, e.g., <code>@default</code> means
+<code>CDN/npm/@xiee/utils/css/default.min.css</code>. If you prefer the <code>.css</code>
+extension over <code>.min.css</code>, you can use <code>@default.css</code>.</p>
+</li>
+<li>
+<p><code>@foo@version</code> (a filename followed by a version number) will be
+converted to <code>CDN/npm/@xiee/utils@version/css/foo.min.css</code>, e.g.,
+<code>@article@1.12.0</code> means
+<code>CDN/npm/@xiee/utils@1.12.0/css/article.min.css</code>.</p>
+</li>
+<li>
+<p><code>@path/to/file</code> (i.e., a value that contains slashes) will be converted
+to <code>CDN/path/to/file</code>, e.g., <code>@npm/@xiee/utils/js/center-img.js</code> will be
+converted to <code>CDN/npm/@xiee/utils/js/center-img.min.js</code>.</p>
+</li>
+<li>
+<p><code>@path/to/file-1,file-2</code> (comma-separated values and later values do not
+contain slashes) will be converted to
+<code>CDN/combine/path/to/file-1,path/to/file-2</code> (this can be useful to
+<a href="https://www.jsdelivr.com/documentation#id-combine-multiple-files">combine</a>
+multiple resources and load all at once).</p>
+</li>
+<li>
+<p><code>@path-1/to/file-1,path-2/to/file-2</code> (comma-separated values and later
+values contain slashes) will be converted to
+<code>CDN/combine/path-1/to/file-1,path-2/to/file-2</code>.</p>
+</li>
+</ul>
+<p>This provides a way to reduce the output HTML file size by loading CSS from
+the web instead of embedding inside HTML, at the cost of requiring Internet
+connection when viewing the HTML file. If you need the external web
+resources to work after you go offline, you can enable <code>&quot;https&quot;</code> in the
+Markdown option <code>embed_resources</code> in advance to embed the resources.</p>
+</li>
+<li>
+<p><code>js</code>: A vector of JavaScript files to be included in the output. The syntax
+is the same as the <code>css</code> variable, e.g., <code>snap</code> means <code>snap.js</code> in this
+package, and <code>@snap</code> means a “jsdelivr” resource.</p>
+</li>
+<li>
+<p><code>body-class</code>: A class name for the main body (the default value is <code>body</code>).</p>
+</li>
+</ul>
+<p>Variables specific to the LaTeX template:</p>
+<ul>
+<li>
+<p><code>classoption</code>: A string containing options for the document class.</p>
+</li>
+<li>
+<p><code>documentclass</code>: The document class (by default, <code>article</code>).</p>
+</li>
+</ul>
+<p>Note that you can use either underscores or hyphens in the variable names.
+Underscores will be normalized to hyphens internally, e.g., <code>header_includes</code>
+will be converted to <code>header-includes</code>. This means if you use a custom template,
+you must use hyphens instead of underscores as separators in variable names in
+the template.</p>
+<p>The above are variables supported in the default templates. If you use a custom
+template, you can use arbitrary variable names consisting of alphanumeric
+characters and hyphens, except for <code>$body$</code> (which is a reserved name), and your
+metadata values will be passed to these variables in your template.</p>
+<p>Besides metadata variables, the aforementioned Markdown options can also be set
+in YAML under <code>output -&gt; litedown::*_format -&gt; options</code>, e.g.,</p>
+<pre><code class="language-yaml">output:
+  litedown::html_format:
+    options:
+      toc: true
+      js_highlight:
+        package: highlight
+        theme: github
+        languages: [diff, latex]
+</code></pre>
+<p>See the help page <code>?litedown::html_format</code> for possible fields in addiction to
+<code>meta</code> and <code>options</code> that can be specified under the format name, e.g.,</p>
+<pre><code class="language-yaml">output:
+  litedown::latex_format:
+    latex_engine: xelatex
+    keep_md: true
+    template: custom-template.tex
+</code></pre>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/04-assets.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/04-assets.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="chp-assets"><span class="section-number main-number">4</span> CSS/JS assets</h1>
+<p>The <strong>litedown</strong> package aims at lightweight with a minimal number of features
+at its core, but you can add more features by yourself. In this chapter, we
+introduce some CSS/JS assets from the GitHub repository
+<a href="https://github.com/yihui/misc.js">https://github.com/yihui/misc.js</a>. You can load arbitrary external JS and CSS
+files via the <code>js</code> and <code>css</code> meta variables. There are numerous JS libraries and
+CSS frameworks on the web that you can use, and you do not have to use the ones
+mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
+HTML applications.</p>
+<p>Remember that the CSS and JS are introduced under the output format
+<code>litedown::html_format</code> in YAML metadata, e.g.,</p>
+<pre><code class="language-yaml">---
+output:
+  litedown::html_format:
+    meta:
+      css: [&quot;one.css&quot;, &quot;two.css&quot;]
+      js: [&quot;three.js&quot;, &quot;four.js&quot;]
+---
+</code></pre>
+<p>For the sake of brevity, we will omit the full YAML fields in examples
+throughout this chapter but only use the <code>css</code> and <code>js</code> fields. A file name
+<code>foo.js</code> denotes the file under the <code>js/</code> directory of the aforementioned
+<code>yihui/misc.js</code> repository. Similarly, <code>foo.css</code> is under the <code>css/</code> directory.</p>
+<p>All these CSS/JS resources can be used offline, and there are two ways to do it.
+One way is to clone the GitHub repo to your working directory, and use the files
+you need, e.g.,</p>
+<pre><code class="language-yaml">js: [&quot;repo/path/js/callout.js&quot;]
+</code></pre>
+<p>Another way is to enable embedding resources:</p>
+<pre><code class="language-yaml">output:
+  litedown::html_format:
+    meta:
+      js: [&quot;@callout&quot;]
+    options:
+      embed_resources: [&quot;https&quot;]
+</code></pre>
+<p>After you have embedded CSS/JS resources once when you have Internet access,
+these resources will be cached locally and will not require an Internet
+connection again. This solution works for any online resources, not limited to
+the <code>yihui/misc.js</code> repository.</p>
+<h2 id="sec-html-slides"><span class="section-number">4.1</span> HTML slides</h2>
+<p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
+js: [&quot;@snap&quot;]
+</code></pre>
+<p>You can learn more in <code>vignette('slides', package = 'litedown')</code>.</p>
+<h2 id="sec-html-articles"><span class="section-number">4.2</span> HTML articles</h2>
+<p>We can style an HTML page in an article format via the following CSS and JS:</p>
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;]
+js: [&quot;@sidenotes&quot;, &quot;@appendix&quot;]
+</code></pre>
+<p>The <code>article.css</code> is mainly for styling the article frontmatter, body, and side
+content.</p>
+<ul>
+<li>
+<p>The <code>sidenotes.js</code> is required only if you want to place certain elements on
+the left or right side, such as the table of contents (TOC), footnotes, and
+sidenotes.</p>
+</li>
+<li>
+<p>The <code>appendix.js</code> is required only if you have an appendix in the article.</p>
+</li>
+</ul>
+<p>The web version of this book is also based on the article format, so you know
+what an article format looks like when you read the HTML version of the book.</p>
+<h3 id="sec-the-overall-style"><span class="section-number">4.2.1</span> The overall style</h3>
+<p>The maximum width of the article body is 800px. For larger screens, this means
+there will be extra space in the left/right margin, where we can place auxiliary
+information, such as the TOC and footnotes. On smaller screens, the side content
+will be collapsed into the body.</p>
+<p>The article frontmatter, body, and optionally the appendix are placed in
+separate boxes.</p>
+<p>The default typeface is sans-serif, and you can customize it by supplying an
+external CSS file (via the <code>css</code> meta variable) or just embedding CSS in the
+document body, e.g.,</p>
+<pre><code class="language-md">```{css, echo=FALSE}
+body {
+  font-family: Palatino, &quot;Book Antiqua&quot;, Georgia, serif;
+  font-size: 1em;
+}
+```
+</code></pre>
+<h3 id="sec-side-elements"><span class="section-number">4.2.2</span> Side elements</h3>
+<p>The TOC and footnotes are automatically placed in the margin if space permits.
+You can also write arbitrary content in the margin via a fenced <code>Div</code>.</p>
+<h4 id="sec-the-toc"><span class="section-number">4.2.2.1</span> The TOC</h4>
+<p>The TOC is sticky on the left side as you scroll down the article. If you do not
+like this behavior, you may cancel it via CSS:</p>
+<pre><code class="language-css">#TOC {
+  top: unset;
+}
+</code></pre>
+<h4 id="sec-footnotes_2"><span class="section-number">4.2.2.2</span> Footnotes</h4>
+<p>Footnotes are moved to the right side. When you move your cursor over a footnote
+number in the body, the footnote will be moved next to your cursor. This can be
+convenient when you have multiple footnotes on a line, since you do not need to
+look for a specific footnote in the margin.</p>
+<h4 id="sec-arbitrary-sidenotes"><span class="section-number">4.2.2.3</span> Arbitrary sidenotes</h4>
+<p>You can write anything in the margin by using a fenced <code>Div</code> with the classes
+<code>.side</code> and <code>.side-left</code> or <code>.side-right</code>.</p>
+<div class="side side-left">
+<p><strong>Notice</strong></p>
+<p>Here is a note on the left side. Anything permitted by law is permitted here.
+Math? No problem!</p>
+<p>$$e^{i\theta}=\sin{\theta}+i\cos{\theta}$$</p>
+<p>When you have this sidenote “hammer”, I’m sure you will hit a lot of nails into
+the margin, even if you do not have to.</p>
+</div>
+<div class="side side-right">
+<p>And here is a note on the right side. Seriously, we should let
+<a href="https://commonmark.org">commonmark</a>’s authors know that fenced <code>Div</code>s really
+deserve first-class support! They can make Markdown infinitely customizable.</p>
+</div>
+<pre><code class="language-markdown">::: {.side .side-left}
+**Anything** on the left.
+:::
+</code></pre>
+<pre><code class="language-markdown">::: {.side .side-right}
+_Anything_ on the right.
+:::
+</code></pre>
+<h3 id="sec-body-elements"><span class="section-number">4.2.3</span> Body elements</h3>
+<p>Inside the article body, you can write a few special elements.</p>
+<h4 id="sec-full-width-elements"><span class="section-number">4.2.3.1</span> Full-width elements</h4>
+<p>When an element is wider than the article body, you can show it in its full
+width by enclosing the element in a fenced <code>Div</code> with the class <code>.fullwidth</code>,
+e.g.,</p>
+<pre><code class="language-markdown">::: {.fullwidth}
+![text](path/to/image)
+:::
+</code></pre>
+<div class="fullwidth">
+<p><img src="https://prose.yihui.org/post/2020/11/10/r-markdown-demo/index_files/figure-html/sunspots-1.svg" alt="Sunspots" /></p>
+</div>
+<p>If you use R Markdown, you can generate a wide plot or table from an R code
+chunk, e.g.,</p>
+<pre><code class="language-markdown">::: {.fullwidth}
+```{r}
+#| sunspots, echo=FALSE, fig.dim=c(14, 4),
+#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red', panel.first = grid())
+```
+:::
+</code></pre>
+<p>If you want to show code (<code>echo = TRUE</code>) but do not want the code to be in the
+full-width container, you can apply the <code>.fullwidth</code> class to the plot only,
+e.g.,</p>
+<pre><code class="language-md">```{r}
+#| sunspots, fig.dim=c(14, 4), fig.env='.fullwidth .figure .box',
+#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red', panel.first = grid())
+```
+</code></pre>
+<h4 id="sec-left-right-quotes"><span class="section-number">4.2.3.2</span> Left/right quotes</h4>
+<div class="quote-right">
+<blockquote>
+<p>Whenever you find that you are on the side of the majority, it is time to
+pause and reflect.</p>
+<p>—<a href="http://www.quotationspage.com/quotes/Mark_Twain/81">Mark Twain</a></p>
+</blockquote>
+</div>
+<p>Sometimes you may want to add a quote but do not want it to take the full width
+in the body. You may use a fenced <code>Div</code> with the class <code>.quote-left</code> or
+<code>.quote-right</code>.</p>
+<p>Despite the class names, the content does not have to be a quote. If you do want
+a quote, just use the blockquote syntax <code>&gt;</code>, e.g.,</p>
+<pre><code class="language-markdown">::: {.quote-right}
+&gt; This is a boring quote.
+&gt;
+&gt; ---Someone
+:::
+</code></pre>
+<h4 id="sec-margin-embedding"><span class="section-number">4.2.3.3</span> Margin embedding</h4>
+<div class="embed-right">
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+<th align="right">am</th>
+<th align="right">gear</th>
+<th align="right">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td>Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td>Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>You can embed elements on the left or right margin using a fenced <code>Div</code> with the
+class <code>.embed-left</code> or <code>.embed-right</code>. These elements will float to the left or
+right and exceed the margin by about 200px, which can save some space in the
+article body. You can use the extra space to explain the embedded element with
+text.</p>
+<p>We have embedded a table of the first 4 rows of the <code>mtcars</code> data on the right
+margin, which you can see if the browser window is wide enough.</p>
+<h2 id="sec-tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</h2>
+<p>You can load the script <code>tabsets.js</code> and CSS <code>tabsets.css</code> to create tabsets
+from sections (see <a href="https://yihui.org/en/2023/10/section-tabsets/">documentation
+here</a>).</p>
+<pre><code class="language-yaml">css: [&quot;@tabsets&quot;]
+js: [&quot;@tabsets&quot;]
+</code></pre>
+<h2 id="sec-code-folding"><span class="section-number">4.4</span> Code folding</h2>
+<p>Code folding is supported by <code>fold-details.js</code> (see <a href="https://yihui.org/en/2023/09/code-folding/">documentation
+here</a>).</p>
+<pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
+</code></pre>
+<h2 id="sec-callout-blocks"><span class="section-number">4.5</span> Callout blocks</h2>
+<p>A callout block is a fenced Div with the class name <code>callout-*</code>. Callouts
+require <code>callout.css</code> and <code>callout.js</code>:</p>
+<pre><code class="language-yaml">css: [&quot;@callout&quot;]
+js: [&quot;@callout&quot;]
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-md">::: callout-tip
+This is a tip.
+
+&gt; You can write arbitrary content, such as a blockquote.
+
+::: callout-caution
+Even another callout!
+:::
+
+Is that cool?
+:::
+</code></pre>
+<p>Output:</p>
+<div class="callout-tip">
+<p>This is a tip.</p>
+<blockquote>
+<p>You can write arbitrary content, such as a blockquote.</p>
+</blockquote>
+<div class="callout-caution">
+<p>Even another callout!</p>
+</div>
+<p>Is that cool?</p>
+</div>
+<p>The stylesheet <code>callout.css</code> supports styling three types of callouts: <code>tip</code>,
+<code>caution</code>, and <code>important</code>. For example:</p>
+<div class="callout-caution">
+<p>Be careful when testing for strict equality of floating point numbers.</p>
+<pre><code class="language-r">seq(0, 1, .2) == c(0, .2, .4, .6, .8, 1)
+</code></pre>
+<pre><code>#&gt; [1]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE
+</code></pre>
+</div>
+<div class="callout-important">
+<p>For the sake of reproducibility, please remember to render an R Markdown
+document in a <em>new R session</em> before publishing or submitting the output
+document.</p>
+</div>
+<p>You do not have to use <code>callout.css</code> but can define your own CSS rules, e.g.,</p>
+<pre><code class="language-css">.callout-important {
+  background-color: red;
+  color: yellow;
+}
+</code></pre>
+<p>Under the hood, <code>callout.js</code> turns the fenced Div into a <code>&lt;fieldset&gt;</code> for the
+form:</p>
+<pre><code class="language-html">&lt;fieldset class=&quot;callout-*&quot;&gt;
+  &lt;legend&gt;Title&lt;/legend&gt;
+
+  Content.
+&lt;/fieldset&gt;
+</code></pre>
+<p>The content comes from the original fenced Div. The title comes from the class
+name (converted to uppercase) by default. You can provide a custom title via the
+<code>data-legend</code> attribute of the Div, e.g.,</p>
+<pre><code class="language-md">::: {.callout-tip data-legend=&quot;Information&quot;}
+:::
+</code></pre>
+<p>The icons before the callout titles can be defined via CSS, e.g., you can add
+two exclamation marks before the title of <code>important</code> callouts:</p>
+<pre><code class="language-css">.callout-important legend::before {
+  content: &quot;!! &quot;;
+}
+</code></pre>
+<p>The default icons defined in <code>callout.css</code> are essentially <a href="https://www.w3schools.com/charsets/ref_utf_symbols.asp">UTF-8
+characters</a>. In theory,
+there are hundreds of thousands of characters that you can choose from. Each
+character is 1 to 4 bytes. For example, you can define a <code>music</code> callout with
+the music note symbol ♫ in the CSS:</p>
+<pre><code class="language-css">.callout-music {
+  background-color: springgreen;
+}
+.callout-music legend::before {
+  content: &quot;♫ &quot;;
+}
+</code></pre>
+<p>Then you can insert a <code>music</code> callout in your document:</p>
+<pre><code class="language-md">::: callout-music
+Please listen to this lovely song.
+:::
+</code></pre>
+<h2 id="sec-right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</h2>
+<p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
+starts with an em-dash (<code>---</code>).</p>
+<pre><code class="language-yaml">js: [&quot;@right-quote&quot;]
+</code></pre>
+<h2 id="sec-add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</h2>
+<p>The CSS is necessary only if you want to hide the anchors by default and reveal
+them on hover.</p>
+<pre><code class="language-yaml">css: [&quot;@heading-anchor&quot;]
+js: [&quot;@heading-anchor&quot;]
+</code></pre>
+<h2 id="sec-style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</h2>
+<p>The script <code>key-button.js</code> identifies keys and the CSS styles them, which can be
+useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
+shortcuts</a>.</p>
+<pre><code class="language-yaml">css: [&quot;@key-buttons&quot;]
+js: [&quot;@key-buttons&quot;]
+</code></pre>
+<p>Of course, you can combine any number of JS scripts and CSS files if you want
+multiple features.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/05-editor.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/05-editor.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-authoring"><span class="section-number main-number">5</span> Authoring</h1>
+<h2 id="sec-the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</h2>
+<p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
+<strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
+<code>litedown::latex_format</code>). Please also remember to add a top-level setting
+<code>knit: litedown:::knit</code> in YAML, otherwise RStudio will use <code>knitr::knit()</code>
+instead of <code>litedown::fuse()</code> to compile R Markdown.</p>
+<pre><code class="language-yaml">---
+output:
+  litedown::html_format: null
+  litedown::latex_format: null
+knit: litedown:::knit
+---
+</code></pre>
+<h2 id="sec-live-preview"><span class="section-number">5.2</span> Live preview</h2>
+<p>Unless it has become your muscle memory to click on the <code>Knit</code> button in
+RStudio, you may try to switch to <code>litedown::roam()</code> to preview your HTML
+output. It also allows you to render a document or project in a new R session by
+clicking on the ↯ button at the top, which is similar to what the <code>Knit</code> button
+does.</p>
+<p>By default, the preview will automatically refresh the content after you edit
+and save a file. If you prefer building the document only when you want to, you
+can turn off the live preview via <code>litedown::roam(live = FALSE)</code>. In this case,
+the document will be rebuilt only when you refresh the page by yourself.</p>
+<p>In the preview mode, you can click on the ✎ button to open a plain-text file in
+your editor. Code blocks in the preview mode will have line numbers
+automatically added to their left. If you click on a line number, it will bring
+you to the that line in the source document.</p>
+<h2 id="sec-visual-editor"><span class="section-number">5.3</span> Visual editor</h2>
+<p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
+Markdown, you can use RStudio’s visual Markdown editor to author documents.
+Please bear in mind that most common, but not all, Markdown features are
+supported.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/06-site.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/06-site.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-books-and-websites"><span class="section-number main-number">6</span> Books and Websites</h1>
+<p>Books and websites are usually based on multiple input files under a directory.
+For a directory to be recognized as a book or website project, it needs to
+contain a configuration file named <code>_litedown.yml</code>.</p>
+<p>If you want to customize the output formats <code>html_format</code> or <code>latex_format</code> for
+books or websites, you should do it in <code>_litedown.yml</code>, e.g.,</p>
+<pre><code class="language-yaml">output:
+  litedown::html_format:
+    options:
+      toc:
+        depth: 4
+  litedown::latex_format:
+    meta:
+      documentclass: &quot;book&quot;
+</code></pre>
+<h2 id="sec-books"><span class="section-number">6.1</span> Books</h2>
+<p>The <code>_litedown.yml</code> file should contain a top-level field named <code>book</code>, which
+currently supports these options:</p>
+<pre><code class="language-yaml">book:
+  new_session: false
+  subdir: false
+  pattern: &quot;[.]R?md$&quot;
+  chapter_before: &quot;Information before a chapter.&quot;
+  chapter_after: &quot;This chapter was generated from `$input$`.&quot;
+</code></pre>
+<p>You can choose whether to render each input file in a new R session, whether to
+search subdirectories for input files, the types of input files (e.g., you can
+use <code>.md</code> or <code>.R</code> files if you want), and additional information to be included
+before/after each chapter, in which you can use some variables such as
+<code>$input$</code>, which is the path of each input file.</p>
+<h2 id="sec-websites"><span class="section-number">6.2</span> Websites</h2>
+<p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
+are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
+<code>include_after</code> for the <code>html_format</code>, e.g.,</p>
+<pre><code class="language-yaml">site:
+  rebuild: &quot;outdated&quot;
+  pattern: &quot;[.]R?md$&quot;
+
+output:
+  litedown::html_format:
+    meta:
+      css: [&quot;@default&quot;]
+      include_before: &quot;[Home](/) [About](/about.html)&quot;
+      include_after: &quot;&amp;copy; 2024 | [Edit]($input$)&quot;
+</code></pre>
+<p>Basically, <code>include_before</code> can take a file or text input that will be used as
+the header of each web page, and <code>include_after</code> will be the footer.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/A-rmarkdown.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/A-rmarkdown.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-appendix" class="appendix">Appendix</h1>
+<h1 id="sec-for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
+<p>The <strong>litedown</strong> package has also provided two <em>internal</em> output formats for
+compatibility with <strong>rmarkdown</strong>: <code>litedown:::html_document</code> and
+<code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>7</a></sup> The purpose is to make it a little
+easier to switch from <strong>rmarkdown</strong> to <strong>litedown</strong> by mapping some
+<strong>rmarkdown</strong> output format options to <strong>litedown</strong>.</p>
+<p>For example, for an R Markdown document with the following output format:</p>
+<pre><code class="language-yaml">output:
+  html_document:
+    toc: true
+    number_sections: true
+    anchor_sections: true
+    self_contained: false
+</code></pre>
+<p>You can switch to <strong>litedown</strong> simply by changing the output format name from
+<code>html_document</code> to <code>litedown:::html_document</code>. Internally, the above output
+format is transformed to:</p>
+<pre><code class="language-yaml">output:
+  litedown::html_format:
+    options:
+      toc: true
+      number_sections: true
+      embed_resources: false
+    meta:
+      css: [&quot;default&quot;, &quot;@heading-anchor&quot;]
+      js: [&quot;@heading-anchor&quot;]
+</code></pre>
+<p>Note that not all <strong>rmarkdown</strong> options are supported, and not even all
+supported options have exactly the same effects in <strong>litedown</strong>. The supported
+options include:
+<code>toc</code>, <code>toc_depth</code>, <code>number_sections</code>, <code>anchor_sections</code>, <code>code_folding</code>, <code>self_contained</code>, <code>math_method</code>, <code>css</code>, and <code>includes</code>.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/B-vignettes.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/B-vignettes.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-package-vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
+<p>To build package vignettes with <strong>litedown</strong>, first add this to the package
+<code>DESCRIPTION</code> file:</p>
+<pre><code class="language-yaml">VignetteBuilder: litedown
+</code></pre>
+<p>Then use the vignette engine <code>litedown::vignette</code> in the YAML metadata of a
+<code>.Rmd</code> or <code>.md</code> vignette file:</p>
+<pre><code class="language-yaml">vignette: &gt;
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Your vignette title}
+  %\VignetteEncoding{UTF-8}
+</code></pre>
+<p>The output format of a vignette can be specified in the <code>output</code> field of the
+YAML metadata, e.g., <code>litedown::html_format</code> (for HTML vignettes) or
+<code>litedown::latex_format</code> (for PDF vignettes). If no output format is specified,
+the default is HTML.</p>
+<p>The vignette file can be either <code>.Rmd</code> or <code>.md</code>. The former is processed by
+<code>litedown::fuse()</code>, and the latter is converted by <code>litedown::mark()</code>. Please
+avoid using the same base filename for two <code>.Rmd</code> and <code>.md</code> files, otherwise
+their output files will overwrite each other.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/C-notes.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/C-notes.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="sec-technical-notes"><span class="section-number main-number">C</span> Technical Notes</h1>
+<h2 id="sec-embedding-resources"><span class="section-number">C.1</span> Embedding resources</h2>
+<p>When <code>https</code> resources needs to be embedded (via the <code>embed_resources</code> option),
+only these elements are considered:</p>
+<pre><code class="language-html">&lt;img src=&quot;...&quot; /&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot;&gt;
+&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>Background images set in the attribute <code>style=&quot;background-image: url(...)&quot;</code> are
+also considered. If an external CSS file contains <code>url()</code> resources, these
+resources will also be downloaded and embedded.</p>
+<h2 id="sec-css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</h2>
+<p>It’s quite simple to move an element into the margin using CSS. For example, the
+<code>.side-right</code> class in this article is roughly defined as:</p>
+<pre><code class="language-css">.side-right {
+  width: 200px;
+  float: right;
+  margin-right: -200px
+}
+</code></pre>
+<p>That basically means the width of the element is 200px and it floats to the
+right. Now its right side will touch the right margin of its parent element (the
+article body). What we need to do next is move it further to the right by 200px
+(i.e., its width), which is done by the <code>-200px</code> right margin. Remember, a
+positive right margin in CSS moves an element to the left, and a negative right
+margin moves it to the right.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-1">
+<p>At one night, as I was thinking about Pandoc Lua filters, an obvious fact
+suddenly came to my mind: suppose all I care about is HTML output, then the
+good old JavaScript can actually play a perfect role of Lua filters, because
+you can manipulate the DOM arbitrarily with JavaScript. <a href="#fnref-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
+</li>
+<li id="fn-2">
+<p>The <strong>commonmark</strong> dependency might be removed in the (far) future. <a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="2" aria-label="Back to reference 2">↩</a></p>
+</li>
+<li id="fn-3">
+<p>In fact, <code>xml,</code> <code>man</code>, <code>text</code>, and <code>commonmark</code> output formats are
+supported (thanks to the <strong>commonmark</strong> package), but perhaps they are not
+very useful to average users. <a href="#fnref-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="3" aria-label="Back to reference 3">↩</a></p>
+</li>
+<li id="fn-02-syntax-1">
+<p>Please note that for links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not
+contain spaces</a>. If
+they do, the URLs must be enclosed in <code>&lt;&gt;</code>, e.g.,
+<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-02-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="4" aria-label="Back to reference 4">↩</a></p>
+</li>
+<li id="fn-02-syntax-2">
+<p>If you know C, I’ll truly appreciate it if you could help with
+the LaTeX implementation in GFM:
+<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-02-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
+</li>
+<li id="fn-02-syntax-3">
+<p>The specific number doesn’t matter, as long as it’s a unique
+footnote number in the document. For example, the first footnote can be
+<code>[^100]</code> and the second can be <code>[^64]</code>. Eventually they will appear as <code>[1]</code>
+and <code>[2]</code>. If you use the RStudio visual editor to edit Markdown documents,
+the footnote numbers will be automatically generated and updated when new
+footnotes are inserted before existing footnotes. <a href="#fnref-02-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
+</li>
+<li id="fn-a-rmarkdown-1">
+<p>The triple-colon <code>:::</code> means these functions are not exported,
+which is to avoid name conflicts between the two packages. <a href="#fnref-a-rmarkdown-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
+</li>
+</ol>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex/dist/katex.min.js,npm/katex/dist/contrib/auto-render.min.js,npm/@xiee/utils/js/render-katex.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/callout.min.js" defer></script>
+</body>
+</html>
