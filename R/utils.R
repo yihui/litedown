@@ -504,7 +504,7 @@ move_attrs = function(x, format = 'html') {
 }
 
 convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
-  r2 = '(?<=^| )[.#]([[:alnum:]-]+)(?= |$)'
+  r2 = '(?<=^| )[.#]([-[:alnum:]]+)(?= |$)'
   match_replace(x, r, function(y) {
     if (format == 'html') {
       z = gsub('[\U201c\U201d]', '"', y)
