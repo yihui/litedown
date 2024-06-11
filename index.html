@@ -1048,9 +1048,9 @@ and
 output. To pass metadata to templates, use the <code>meta</code> argument, e.g.,</p>
 <pre><code class="language-r">litedown::mark(..., meta = list(title = &quot;My Title&quot;))
 </code></pre>
-<p>If you want to use a custom template file, you can either set the path in the
-global option <code>litedown.FORMAT.template</code> (where <code>FORMAT</code> is the output format
-name (<code>html</code> or <code>latex</code>), e.g., in <code>.Rprofile</code>:</p>
+<p>If you want to use a custom template file, you can set the path in the global
+option <code>litedown.FORMAT.template</code> (where <code>FORMAT</code> is the output format name
+(<code>html</code> or <code>latex</code>), e.g., in <code>.Rprofile</code>:</p>
 <pre><code class="language-r">options(litedown.html.template = 'path/to/my/template.html')
 </code></pre>
 <p>The global option will be applied to all documents to be converted by <code>mark()</code>.
