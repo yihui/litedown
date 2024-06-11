@@ -87,7 +87,7 @@
       const li = fn.querySelector('li' + a.getAttribute('href'));
       if (!li) return;
       let f = s.querySelector('section.footnotes');
-      if (!f) {
+      if (!f || f.contains(li)) {
         f = newEl('section', 'footnotes'); footer.before(f);
       }
       f.append(li);
