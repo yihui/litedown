@@ -269,9 +269,9 @@ output. To pass metadata to templates, use the `meta` argument, e.g.,
 litedown::mark(..., meta = list(title = "My Title"))
 ```
 
-If you want to use a custom template file, you can either set the path in the
-global option `litedown.FORMAT.template` (where `FORMAT` is the output format
-name (`html` or `latex`), e.g., in `.Rprofile`:
+If you want to use a custom template file, you can set the path in the global
+option `litedown.FORMAT.template` (where `FORMAT` is the output format name
+(`html` or `latex`), e.g., in `.Rprofile`:
 
 ``` r
 options(litedown.html.template = 'path/to/my/template.html')
