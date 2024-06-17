@@ -301,7 +301,7 @@ lang_files = function(package, path, langs) {
   warn = function(l1, l2, url) warning(
     "Unable to recognize code blocks with language(s): ", comma_list(l2),
     ". They will not be syntax highlighted by ", package, ".js. If you can find ",
-    "the right language files at ", url, ", you may mangually specify their names ",
+    "the right language files at ", url, ", you may mannually specify their names ",
     "in the 'languages' field of the 'js_highlight' option.",
     if (length(l1)) c(" Also remember to add ", comma_list(l1))
   )
