@@ -87,10 +87,12 @@ crack = function(input, text = NULL) {
   n_start = unlist(lapply(res, function(x) x$lines[1]))  # starting line numbers
   j = findInterval(m[3, ], n_start)  # find which block each inline code belongs to
   for (i in seq_len(ncol(m))) {
-    pos = as.integer(m[3:6, i]); i1 = pos[1]; i2 = pos[3]
     b = res[[j[i]]]; l = b$lines
-    # calculate new position of code after we concatenate all lines of this block by \n
+    # column position is based on bytes instead of chars; needs to be adjusted to the latter
+    pos = char_pos(text, as.integer(m[3:6, i]))
+    i1 = pos[1]; i2 = pos[3]
     s = nchar(b$source)
+    # calculate new position of code after we concatenate all lines of this block by \n
     b$col = c(b$col, c(
       sum(s[seq_len(i1 - l[1])] + 1) + pos[2],
       sum(s[seq_len(i2 - l[1])] + 1) + pos[4]
@@ -192,6 +194,20 @@ set_error_handler = function(input) {
   oenv = as.list(.env)
   xfun::exit_call(function() { options(opts); reset_env(oenv, .env) })
   .env$input = input  # store the input name for get_loc()
+}
+
+# convert byte position to character position
+char_pos = function(x, p) {
+  x2 = x[p[c(1, 3)]]
+  # no need to convert if no multibyte chars
+  if (all(nchar(x2) == nchar(x2, 'bytes'))) return(p)
+  p2 = p[c(2, 4)]
+  Encoding(x2) = 'bytes'
+  x2 = substr(x2, 1, p2 - 1)  # go back one char in case current column is multibyte
+  Encoding(x2) = 'UTF-8'
+  p[c(2, 4)] = nchar(x2) + 1L  # go forward by one char
+  if (p2[2] == 0) p[4] = 0L  # boundary case: \n before the closing backtick
+  p
 }
 
 #' @details For R scripts, text blocks are extracted by removing the leading
