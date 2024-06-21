@@ -38,7 +38,7 @@
   });
 
   function newSlide(s) {
-    return (s?.innerText === '') ? s : newEl('div', 'slide');
+    return (s?.innerHTML === '') ? s : newEl('div', 'slide');
   }
   function isSep(el) {
     return el.tagName === 'HR' && el.attributes.length === 0;
