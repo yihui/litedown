@@ -676,7 +676,7 @@ number_refs = function(x, r) {
     id = sub(r2, '\\1-\\2', z)
     ids = split(id, type)
     db2 <<- unlist(unname(lapply(ids, function(id) set_names(seq_along(id), id))))
-    sprintf('<span class="ref-number-%s">%d</span>', rep(names(ids), lengths(ids)), db2[id])
+    sprintf('<span class="ref-number-%s">%d</span>', type, db2[id])
   })
   db = unlist(c(db, db2))
   ids = names(db)
