@@ -8,6 +8,7 @@ body {
 }
 body, .footnotes, code { font-size: .9em; }
 li li { font-size: .95em; }
+ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, *:before, *:after { box-sizing: inherit; }
 a { color: steelblue; }
 pre, img { max-width: 100%; }
@@ -35,10 +36,12 @@ pre[class*=language-].line-numbers { padding: 1em 0; margin-left: 3.5em; }
 .box > :first-child, .box > :first-child > p:first-child { margin-top: 0; }
 .box > :last-child, .box > :last-child > p:last-child { margin-bottom: 0; }
 .figure > p { text-align: center; }
-table { margin: auto; border-top: 1px solid #666; }
-table thead th { border-bottom: 1px solid #ddd; }
-th, td { padding: 5px; }
-thead, tfoot, tr:nth-child(even) { background: #eee; }
+table {
+  margin: auto; border-top: 1px solid #666; 
+  thead th { border-bottom: 1px solid #ddd; }
+  th, td { padding: 5px; }
+  thead, tfoot, tr:nth-child(even) { background: #eee; }
+}
 blockquote {
   color: #666;
   margin: 0;
@@ -47,9 +50,11 @@ blockquote {
 }
 hr, .footnotes::before { border: 1px dashed #ddd; }
 .frontmatter { text-align: center; }
-#TOC .numbered li { list-style: none; }
-#TOC .numbered { padding-left: 0; }
-#TOC .numbered ul { padding-left: 1em; }
+#TOC .numbered {
+  padding-left: 0;
+  li { list-style: none; }
+  ul { padding-left: 1em; }
+}
 table, .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
@@ -58,10 +63,14 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .cross-ref-sec::before { content: "Section "; }
 .cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
 .cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
-.footnote-ref a::before { content: "["; }
-.footnote-ref a::after { content: "]"; }
-section.footnotes { margin-top: 2em; }
-section.footnotes::before { content: ""; display: block; max-width: 20em; }
+.footnote-ref a {
+  &::before { content: "["; }  
+  &::after { content: "]"; }
+}
+section.footnotes {
+  margin-top: 2em;
+  &::before { content: ""; display: block; max-width: 20em; }
+}
 
 @media print {
   body { font-size: 12pt; max-width: 100%; }
