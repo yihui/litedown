@@ -153,7 +153,7 @@ file_page = function(x, raw) {
   if (is.null(p <- res$payload)) return(res)
   # inject navigation links to the top of the page
   nav = commonmark::markdown_html(dir_title(x))
-  nav = sub('<p>', '<p style="font-size: .8em;">', nav, fixed = TRUE)
+  nav = sub('<p>', '<p class="nav-path">', nav, fixed = TRUE)
   res$payload = sub('<body>', paste0('<body>\n', nav), p, fixed = TRUE)
   res
 }
