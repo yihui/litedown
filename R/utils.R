@@ -678,7 +678,7 @@ number_refs = function(x, r) {
     db2 <<- unlist(unname(lapply(ids, function(id) set_names(seq_along(id), id))))
     sprintf('<span class="ref-number-%s">%d</span>', type, db2[id])
   })
-  db = unlist(c(db, db2))
+  db = unlist(if (is.character(b)) merge_list(db, as.list(db2)) else c(db, db2))
   ids = names(db)
   if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ', '))
 
