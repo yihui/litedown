@@ -684,8 +684,9 @@ fuse_code = function(x, blocks) {
   pn = length(unlist(p2))
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
-  # if figure env is provided, merge all plots in one env
-  if (pn && !is.null(env)) res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
+  # if figure env or cap is provided, merge all plots in one env
+  if (use_env <- pn && length(c(env, cap)))
+    res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
   i = 0  # plot counter
 
   l1 = x$code_start  # starting line number of the whole code chunk
@@ -710,7 +711,7 @@ fuse_code = function(x, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      if (is.null(env)) img else fenced_div(c(
+      if (!use_env) img else fenced_div(c(
         img, if (length(cap)) c('', fenced_div(add_ref(lab, 'fig', cap), '.fig-caption'))
       ), c(sub('^[.]?', '.', env), sprintf('#fig-%s', lab)))
     } else {
