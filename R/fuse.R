@@ -905,7 +905,8 @@ eng_r = function(x, inline = FALSE, ...) {
   )
   args$cache = list(
     path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
-    hash = opts$cache.hash, keep = opts$cache.keep, id = opts$label, rw = opts$cache.rw
+    hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
+    id = opts$label, rw = opts$cache.rw
   )
   # support eval = 0, 1, 2 (pass to the 'verbose' argument of record())
   if (is.numeric(opts$eval)) args$verbose = opts$eval
