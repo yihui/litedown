@@ -684,8 +684,8 @@ fuse_code = function(x, blocks) {
   pn = length(unlist(p2))
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
-  # if figure env or cap is provided, merge all plots in one env
-  if (use_env <- pn && length(c(env, cap)))
+  # if figure caption is provided, merge all plots in one env
+  if (pn && length(cap))
     res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
   i = 0  # plot counter
 
@@ -711,10 +711,7 @@ fuse_code = function(x, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      if (use_env) fenced_div(
-        add_cap(img, cap, lab, opts$cap.pos %||% 'bottom'),
-        c(sub('^[.]?', '.', env), sprintf('#fig-%s', lab))
-      ) else img
+      add_cap(img, cap, lab, opts$cap.pos %||% 'bottom', env)
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
@@ -741,10 +738,11 @@ fuse_code = function(x, blocks) {
   out
 }
 
-add_cap = function(x, cap, lab, pos, type = 'fig') {
-  if (length(cap))
-    cap = fenced_div(add_ref(lab, type, cap), sprintf('.%s-caption', type))
-  if (pos == 'top') c(cap, '', x) else c(x, '', cap)
+add_cap = function(x, cap, lab, pos, env, type = 'fig') {
+  if (length(cap) == 0) return(x)
+  cap = fenced_div(add_ref(lab, type, cap), sprintf('.%s-caption', type))
+  x = if (pos == 'top') c(cap, '', x) else c(x, '', cap)
+  fenced_div(x, c(sub('^[.]?', '.', env), sprintf('#%s-%s', type, lab)))
 }
 
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
@@ -878,8 +876,8 @@ reactor(
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
   cache = FALSE, cache.path = NULL,
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
-  fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = NULL,
-  tab.cap = NULL, tab.env = NULL, cap.pos = NULL,
+  fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = '.figure',
+  tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
   wd = NULL
