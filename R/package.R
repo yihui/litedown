@@ -31,8 +31,7 @@ record_print.data.frame = function(x, ...) {
   tab = xfun::md_table(x, ...)
   opt = reactor()
   if (length(cap <- opt$tab.cap)) {
-    cap = fenced_div(add_ref(opt$label, 'tab', cap), '.tab-caption')
-    tab = if (opt$tab.pos == 'top') c(cap, '', tab) else c(tab, '', cap)
+    tab = add_cap(tab, cap, opt$label, opt$cap.pos %||% 'top', 'tab')
     tab = fenced_div(tab, c(opt$tab.env %||% '.table', sprintf('#tab-%s', opt$label)))
   }
   new_record(c(tab, ''), 'asis')
