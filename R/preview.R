@@ -31,7 +31,9 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       file.info(list.files(path, full.names = TRUE))[, 'mtime', drop = FALSE]
     } else file.mtime(path)
     t = t1[[path]]; t1[[path]] <<- t2
-    !is.null(t) && !identical(t2, t)
+    res = !is.null(t) && !identical(t2, t)
+    if (res) print(list(path = path, old = t, new = t2))
+    res
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
