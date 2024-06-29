@@ -13,7 +13,8 @@ ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 a { color: steelblue; }
 pre, img { max-width: 100%; }
 pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
-pre code { display: block; overflow-x: auto; }
+pre code { display: block; }
+pre:not(.line-numbers) code { overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre) > code, code[class], .line-numbers, .box > div { background-color: #f8f8f8; }
 pre > code:not([class]), pre > .language-plain, .box { background-color: inherit; border: 1px solid #eee; }
@@ -25,17 +26,18 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
   opacity: .4;
   border: 1px dashed #666;
   border-left: 2px solid;
+  &:hover { opacity: inherit; }
 }
-.code-fence:hover { opacity: inherit; }
-.line-numbers code { display: table; padding: 0 0 0 1em; }
-pre[class*=language-].line-numbers { padding: 1em 0; margin-left: 3.5em; }
-.line-numbers .line-numbers-rows { left: -3.5em; }
-.line-numbers-rows > span:before { padding-right: .5em; }
+pre[class*=language-].line-numbers {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  code { padding: initial; }
+}
 .box { margin: 1em 0; }
 .box > :first-child > p:first-child, .box > :last-child > p:last-child { padding: 1em; }
 .box > :first-child, .box > :first-child > p:first-child { margin-top: 0; }
 .box > :last-child, .box > :last-child > p:last-child { margin-bottom: 0; }
-.figure > p { text-align: center; }
+.figure > p:has(img) { text-align: center; }
 table {
   margin: auto; border-top: 1px solid #666; 
   thead th { border-bottom: 1px solid #ddd; }
@@ -77,5 +79,5 @@ section.footnotes {
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
-  pre { white-space: pre; }
+  pre:not(.line-numbers) { white-space: pre; }
 }
