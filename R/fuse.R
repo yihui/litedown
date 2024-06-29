@@ -654,7 +654,8 @@ fuse_code = function(x, blocks) {
   lab = opts$label
   lang = opts$engine
   res = if (isFALSE(opts$eval)) {
-    list(new_source(x$source))
+    len_src = length(x$source)
+    list(structure(new_source(x$source), lines = if (len_src) c(1L, len_src) else c(0L, 0L)))
   } else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
