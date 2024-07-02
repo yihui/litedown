@@ -274,7 +274,9 @@ set_highlight = function(meta, options, html) {
   autoloader = 'plugins/autoloader/prism-autoloader.min.js'
   o$js = c(o$js, if (!is.null(l <- o$languages)) get_lang(l) else {
     # detect <code> languages in html and load necessary language components
-    lang = unique(unlist(regmatches(html, gregexpr(r, html))))
+    lang = unlist(regmatches(html, gregexpr(r, html)))
+    lang = gsub(' .*', '', lang)  # only use the first class name
+    lang = setdiff(lang, 'plain')  # exclude known non-existent names
     f = switch(p, highlight = js_libs[[c(p, 'js')]], prism = autoloader)
     if (!embed && p == 'prism') f else {
       get_lang(lang_files(p, get_path(f), lang))
