@@ -13,7 +13,7 @@ ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 a { color: steelblue; }
 pre, img { max-width: 100%; }
 pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
-pre code { display: block; overflow-x: auto; }
+pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre) > code, code[class], .box > div { background-color: #f8f8f8; }
 pre > code:not([class]), pre > .language-plain, .box { background-color: inherit; border: 1px solid #eee; }
