@@ -14,10 +14,7 @@ li .pencil {
 td .pencil {
   font-size: inherit;
 }
-.line-numbers .line-numbers-rows {
-  pointer-events: initial;
-}
-.line-numbers-rows>span:before {
+span[data-line-number] {
   cursor: pointer;
 }
 .waiting {

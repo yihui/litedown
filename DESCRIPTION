@@ -31,6 +31,6 @@ License: MIT + file LICENSE
 URL: https://github.com/yihui/litedown
 BugReports: https://github.com/yihui/litedown/issues
 VignetteBuilder: litedown
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

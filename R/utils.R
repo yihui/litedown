@@ -256,7 +256,6 @@ set_highlight = function(meta, options, html) {
   # js files to embed (this is quite tricky and may not be robust)
   embed = 'https' %in% options[['embed_resources']]
 
-  line_num = p == 'prism' && any(grepl('<pre class="line-numbers', html, fixed = TRUE))
   # style -> css
   css = c(if (is.null(s <- o$style)) {
     if (p == 'prism') '@prism-xcode'  # use prism-xcode.css in the misc.js repo
@@ -264,9 +263,7 @@ set_highlight = function(meta, options, html) {
     p,
     highlight = sprintf('build/styles/%s.min.css', s),
     prism = sprintf('themes/%s.min.css', normalize_prism(s))
-  ))), if (line_num) {
-    js_combine(get_path('plugins/line-numbers/prism-line-numbers.min.css'))
-  })
+  ))))
 
   # languages -> js
   get_lang = function(x) switch(
@@ -282,7 +279,7 @@ set_highlight = function(meta, options, html) {
     if (!embed && p == 'prism') f else {
       get_lang(lang_files(p, get_path(f), lang))
     }
-  }, if (line_num) 'plugins/line-numbers/prism-line-numbers.min.js')
+  })
   js = get_path(o$js)
   if (p == 'highlight') js = c(js, 'npm/@xiee/utils/js/load-highlight.js')
   # do not combine js when they are automatically detected (this will make
