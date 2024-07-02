@@ -71,7 +71,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
     get_option('meta', format),
-    yaml[intersect(names(yaml), c('title', 'author', 'date'))],
+    yaml[intersect(names(yaml), c('title', 'subtitle', 'author', 'date'))],
     yaml_field(yaml, format),
     list(generator = I(paste('litedown', packageVersion('litedown')))),
     meta
@@ -298,7 +298,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
-  for (i in c('title', 'author', 'date')) meta[[i]] = render(meta[[i]], clean = TRUE)
+  for (i in c('title', 'subtitle', 'author', 'date'))
+    meta[[i]] = render(meta[[i]], clean = TRUE)
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
     # add HTML dependencies to `include-headers` if found
