@@ -71,7 +71,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
     get_option('meta', format),
-    yaml[intersect(names(yaml), c('title', 'subtitle', 'author', 'date'))],
+    yaml[intersect(names(yaml), top_meta)],
     yaml_field(yaml, format),
     list(generator = I(paste('litedown', packageVersion('litedown')))),
     meta
@@ -298,8 +298,20 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
-  for (i in c('title', 'subtitle', 'author', 'date'))
-    meta[[i]] = render(meta[[i]], clean = TRUE)
+  for (i in top_meta) if (length(meta[[i]])) {
+    meta[[i]] = render(meta[[i]], clean = i != 'abstract')
+    # also provide *_ version of top-level meta variables, containing tags/commands
+    meta[[paste0(i, '_')]] = if (format == 'html') {
+      tag = tag_meta[i]
+      sprintf(
+        '<div class="%s">%s</div>', i, if (tag == '') meta[[i]] else sprintf(
+          '<%s>%s</%s>', tag, meta[[i]], tag
+        )
+      )
+    } else if (format == 'latex') {
+      sprintf(cmd_meta[i], meta[[i]])
+    }
+  }
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
     # add HTML dependencies to `include-headers` if found
@@ -314,9 +326,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     )
     ret = clean_html(ret)
   } else if (format == 'latex') {
-    # remove \title and \maketitle if title is empty
-    if (grepl('\n\\title{}\n', ret, fixed = TRUE))
-      ret = gsub('\n(\\\\title\\{}|\\\\maketitle)\n', '\n', ret)
+    # remove \maketitle if \title is absent
+    if (!grepl('\n\\title{', ret, fixed = TRUE))
+      ret = gsub('\n\\maketitle\n', '\n', ret, fixed = TRUE)
   }
 
   ret = sub('\n$', '', ret)
@@ -375,6 +387,12 @@ sub_vars = function(tpl, meta) {
   }
   tpl
 }
+
+top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
+tag_meta = c('h1', 'h2', 'h2', 'h3', '')
+names(tag_meta) = top_meta
+cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}%s\\end{abstract}')
+names(cmd_meta) = top_meta
 
 #' Markdown rendering options
 #'

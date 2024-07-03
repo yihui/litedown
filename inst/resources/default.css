@@ -6,7 +6,7 @@ body {
   line-height: 1.5;
   box-sizing: border-box;
 }
-body, .footnotes, code { font-size: .9em; }
+body, .footnotes, .abstract, code { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, *:before, *:after { box-sizing: inherit; }
@@ -59,6 +59,7 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .cross-ref-sec::before { content: "Section "; }
 .cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
 .cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
+.abstract::before { content: "Abstract"; display: block; margin: 1em auto; text-align: center; font-weight: bold; }
 .footnote-ref a {
   &::before { content: "["; }
   &::after { content: "]"; }
