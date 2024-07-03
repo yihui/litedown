@@ -367,9 +367,9 @@ build_output = function(format, options, template, meta) {
     meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)
     # if the class .line-numbers is present, add js/css for line numbers
-    if (any(grepl('<code class="[^"]*line-numbers', b))) meta = add_meta(
-      meta, list(css = '@code-line-numbers', js = '@code-line-numbers')
-    )
+    if (any(grepl('<code class="[^"]*line-numbers', b))) for (i in c('css', 'js')) {
+      meta[[i]] = c(meta[[i]], '@code-line-numbers')
+    }
     # special handling for css/js "files" that have no extensions
     for (i in c('css', 'js')) meta[[i]] = resolve_files(meta[[i]], i)
   }
