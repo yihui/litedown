@@ -1,6 +1,6 @@
 \documentclass[$classoption$]{$documentclass$}
 \usepackage[T1]{fontenc}
-\usepackage{graphicx}
+\usepackage{graphicx,hyperref}
 $header-includes$
 \title{$title$}
 \author{$author$}
