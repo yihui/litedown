@@ -909,8 +909,8 @@ eng_r = function(x, inline = FALSE, ...) {
     hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
     id = opts$label, rw = opts$cache.rw
   )
-  # support eval = 0, 1, 2 (pass to the 'verbose' argument of record())
-  if (is.numeric(opts$eval)) args$verbose = opts$eval
+  # support eval = 1, 2, 3 (pass to the 'verbose' argument of record())
+  if (is.numeric(opts$eval)) args$verbose = opts$eval - 1
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 
