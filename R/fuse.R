@@ -358,11 +358,11 @@ link_pos = function() {
 # values indicate higher priority)
 block_order = function(res) {
   check = function(b) {
-    if (is.null(o <- b$options[['order']]) || length(o) == 1) o else stop(
-      "The chunk option 'order' must be either NULL or of length 1. ",
-      sprintf("Check lines %d-%d", b$lines[1], b$lines[2]),
-      sprintf(" (%s)", .env$input), "."
-    )
+    if (is.null(o <- b$options[['order']])) return(o)
+    if (is_lang(o)) o = eval(o, fuse_env())
+    if (length(o) == 1) return(o)
+    save_pos(b$pos %||% b$lines)
+    stop("The chunk option 'order' must be either NULL or of length 1.", call. = FALSE)
   }
   x = lapply(res, function(b) {
     if (b$type == 'code_chunk') return(check(b) %||% 0)
