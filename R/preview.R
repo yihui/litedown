@@ -31,9 +31,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       file.info(list.files(path, full.names = TRUE))[, 'mtime', drop = FALSE]
     } else file.mtime(path)
     t = t1[[path]]; t1[[path]] <<- t2
-    res = !is.null(t) && !identical(t2, t)
-    if (res) print(list(path = path, old = t, new = t2))
-    res
+    !is.null(t) && !identical(t2, t)
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
@@ -94,6 +92,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       }
       return(list(payload = resp))
     }
+    print(list(type = type))
     res = lite_handler(path, query, post, headers)
     # inject js to communicate with the R server via POST for live preview
     p = res$payload
