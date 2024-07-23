@@ -138,9 +138,9 @@ elements in footnotes and not necessarily one paragraph.
 
 ### Attributes
 
-Attributes on images, fenced code blocks, and section headings can be written in
-`{}`. For example, `![text](path){.foo #bar width="50%"}` will generate an
-`<img>` tag with attributes in HTML output:
+Attributes on images, links, fenced code blocks, and section headings can be
+written in `{}`. For example, `![text](path){.foo #bar width="50%"}` will
+generate an `<img>` tag with attributes in HTML output:
 
 ``` html
 <img src="path" alt="text" id="bar" class="foo" width="50%" />

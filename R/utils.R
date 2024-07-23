@@ -449,6 +449,12 @@ move_attrs = function(x, format = 'html') {
       z24 = sub(r, '\\2\\4', z)
       paste0(z1, z3, z24)
     })
+    # links
+    x = convert_attrs(x, '(<a[^>]+)(>.+?</a>)\\{([^}]+)\\}', '\\3', function(r, z, z3) {
+      z1 = sub(r, '\\1 ', z)
+      z2 = sub(r, '\\2', z)
+      paste0(z1, z3, z2)
+    })
     # fenced Div's
     x = convert_attrs(x, '<p>:::+ \\{(.+?)\\}</p>', '\\1', function(r, z, z1) {
       # add attributes to the div but remove the data-latex attribute
