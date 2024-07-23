@@ -65,7 +65,7 @@
             d.querySelectorAll('script[src]').forEach(update_script);
           } else {
             // the current page source file has changed; refresh page
-            location.reload();
+            res === '1' && location.reload();
           }
         }
         el.dataset.wait = '';
