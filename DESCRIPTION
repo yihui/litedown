@@ -1,7 +1,7 @@
 Package: litedown
 Type: Package
 Title: A Lightweight Version of R Markdown
-Version: 0.0.25
+Version: 0.0.28
 Authors@R: c(
    person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666")),
    person()
@@ -31,6 +31,6 @@ License: MIT + file LICENSE
 URL: https://github.com/yihui/litedown
 BugReports: https://github.com/yihui/litedown/issues
 VignetteBuilder: litedown
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

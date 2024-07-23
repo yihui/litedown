@@ -26,8 +26,8 @@
     }
   }
   p.classList.add('slide-container');
-  // add 'slide' class to the frontmatter div and toc
-  ['.frontmatter', '#TOC'].forEach(sel => {
+  // add 'slide' class to the frontmatter/abstract divs and toc
+  ['.frontmatter', '.abstract', '#TOC'].forEach(sel => {
     const el = d.body.querySelector(sel);
     if (!el) return;
     if (sel === '.frontmatter') {

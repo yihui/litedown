@@ -71,7 +71,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
     get_option('meta', format),
-    yaml[intersect(names(yaml), c('title', 'author', 'date'))],
+    yaml[intersect(names(yaml), top_meta)],
     yaml_field(yaml, format),
     list(generator = I(paste('litedown', packageVersion('litedown')))),
     meta
@@ -246,16 +246,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     }, 'html', function(z2) gsub(id4, ' ', restore_html(z2)))
     # some code blocks with "attributes" are verbatim ones
     ret = match_replace(ret, '```+\\{.+}', function(x) gsub(id4, ' ', x, fixed = TRUE))
-    # <pre><code class="line-numbers" data-start="N"> -> <pre class="line-numbers" data-start="N"><code>
-    ret = gsub(
-      '(<pre)(><code [^>]*?class="[^"]+?) (line-numbers)([^"]*"[^>]*?)( data-start="[0-9]+")',
-      '\\1 class="\\3"\\5\\2\\4', ret, perl = TRUE
-    )
-    # data-start is optional
-    ret = gsub(
-      '(<pre)(><code [^>]*?class="[^"]+?) (line-numbers)([^"]*")',
-      '\\1 class="\\3"\\2\\4', ret, perl = TRUE
-    )
     # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
     ret = gsub(
       '(<table>)(?s)(.+?</table>)\n<p>(Table)?: (?s)(.+?)</p>',
@@ -308,7 +298,20 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
-  for (i in c('title', 'author', 'date')) meta[[i]] = render(meta[[i]], clean = TRUE)
+  for (i in top_meta) if (length(meta[[i]])) {
+    meta[[i]] = render(meta[[i]], clean = i != 'abstract')
+    # also provide *_ version of top-level meta variables, containing tags/commands
+    meta[[paste0(i, '_')]] = if (format == 'html') {
+      tag = tag_meta[i]
+      sprintf(
+        '<div class="%s">%s</div>', i, if (tag == '') meta[[i]] else sprintf(
+          '<%s>%s</%s>', tag, meta[[i]], tag
+        )
+      )
+    } else if (format == 'latex') {
+      sprintf(cmd_meta[i], meta[[i]])
+    }
+  }
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
     # add HTML dependencies to `include-headers` if found
@@ -323,9 +326,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     )
     ret = clean_html(ret)
   } else if (format == 'latex') {
-    # remove \title and \maketitle if title is empty
-    if (grepl('\n\\title{}\n', ret, fixed = TRUE))
-      ret = gsub('\n(\\\\title\\{}|\\\\maketitle)\n', '\n', ret)
+    # remove \maketitle if \title is absent
+    if (!grepl('\n\\title{', ret, fixed = TRUE))
+      ret = gsub('\n\\maketitle\n', '\n', ret, fixed = TRUE)
   }
 
   ret = sub('\n$', '', ret)
@@ -363,6 +366,10 @@ build_output = function(format, options, template, meta) {
     set_meta('css', 'default')
     meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)
+    # if the class .line-numbers is present, add js/css for line numbers
+    if (any(grepl('<code class="[^"]*line-numbers', b))) for (i in c('css', 'js')) {
+      meta[[i]] = c(meta[[i]], '@code-line-numbers')
+    }
     # special handling for css/js "files" that have no extensions
     for (i in c('css', 'js')) meta[[i]] = resolve_files(meta[[i]], i)
   }
@@ -380,6 +387,12 @@ sub_vars = function(tpl, meta) {
   }
   tpl
 }
+
+top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
+tag_meta = c('h1', 'h2', 'h2', 'h3', '')
+names(tag_meta) = top_meta
+cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}%s\\end{abstract}')
+names(cmd_meta) = top_meta
 
 #' Markdown rendering options
 #'
