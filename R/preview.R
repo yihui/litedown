@@ -82,6 +82,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       })
     }
     # TODO: should we implement Hugo's --navigateToChanged?
+    print(list(type = type))
     if (live && type != '') {
       resp = ''
       if (type %in% c('asset', 'page')) {
@@ -92,7 +93,6 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       }
       return(list(payload = resp))
     }
-    print(list(type = type))
     res = lite_handler(path, query, post, headers)
     # inject js to communicate with the R server via POST for live preview
     p = res$payload
