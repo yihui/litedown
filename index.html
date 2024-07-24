@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.0.28">
+<meta name="generator" content="litedown 0.0.29">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
@@ -19,7 +19,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-07-23</h3></div>
+<div class="date"><h3>2024-07-24</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -661,9 +661,9 @@ identifiers are not recognized.</p>
 <p>The two limitations do not apply to HTML output, e.g., you can write arbitrary
 elements in footnotes and not necessarily one paragraph.</p>
 <h3 id="sec-attributes"><span class="section-number">2.2.5</span> Attributes</h3>
-<p>Attributes on images, fenced code blocks, and section headings can be written in
-<code>{}</code>. For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will generate an
-<code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
+<p>Attributes on images, links, fenced code blocks, and section headings can be
+written in <code>{}</code>. For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will
+generate an <code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
 <pre><code class="language-html">&lt;img src=&quot;path&quot; alt=&quot;text&quot; id=&quot;bar&quot; class=&quot;foo&quot; width=&quot;50%&quot; /&gt;
 </code></pre>
 <p>and <code>## Heading {#baz}</code> will generate:</p>
