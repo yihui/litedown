@@ -456,10 +456,10 @@ move_attrs = function(x, format = 'html') {
       paste0(z1, z3, z2)
     })
     # fenced Div's
-    x = convert_attrs(x, '<p>:::+ \\{(.+?)\\}</p>', '\\1', function(r, z, z1) {
+    x = convert_attrs(x, '<p>:::+ \\{(.*?)\\}</p>', '\\1', function(r, z, z1) {
       # add attributes to the div but remove the data-latex attribute
       z1 = str_trim(gsub('(^| )data-latex="[^"]*"( |$)', ' ', z1))
-      sprintf('<div %s>', z1)
+      sprintf('<div%s%s>', ifelse(z1 == '', '', ' '), z1)
     })
     x = gsub('<p>:::+</p>', '</div>', x)
   } else if (format == 'latex') {

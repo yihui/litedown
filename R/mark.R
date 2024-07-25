@@ -171,7 +171,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # paragraphs or code blocks
   text[p] = sub('^([ >]*:::+ )([^ {]+)$', '\\1{.\\2}', text[p]) # ::: foo -> ::: {.foo}
   text[p] = sub(
-    '^([ >]*)((:::+)( \\{.+\\})?)$',
+    '^([ >]*)((:::+)( \\{.*\\})?)$',
     if (format == 'latex') '\\1\n\\1```\n\\1\\2 \\3\n\\1```\n\\1' else '\\1\n\\1\\2\n\\1',
     text[p]
   )
