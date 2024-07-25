@@ -438,8 +438,13 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     if (is.null(p <- opts[[name]])) p = paste0(
       output_base %||% 'litedown', c(fig.path = '__files/', cache.path = '__cache/')[name]
     )
+    slash = endsWith(p, '/')
     # make sure path is absolute so it will be immune to setwd() (in code chunks)
-    if (xfun::is_rel_path(p)) p = file.path(getwd(), p)
+    if (xfun::is_rel_path(p)) {
+      p = file.path(getwd(), p)
+      # preserve trailing slash because file.path() removes it on Windows
+      if (slash) p = sub('/*$', '/', p)
+    }
     opts[[name]] = p
   }
   set_path('fig.path'); set_path('cache.path')
