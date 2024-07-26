@@ -409,7 +409,8 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
-  output_base = sans_ext(output_path(input, output))
+  if (!is.null(output_base <- output_path(input, output)))
+    output_base = sans_ext(output_base)
 
   # restore and clean up some objects on exit
   opts = reactor(); opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
