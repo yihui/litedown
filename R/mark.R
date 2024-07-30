@@ -67,6 +67,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
+  out_dir = dirname(output_path(input, output) %||% '.')
 
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
@@ -320,10 +321,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   if (format == 'html') {
-    ret = in_dir(
-      dirname(output_path(input, output) %||% '.'),
-      embed_resources(ret, options[['embed_resources']])
-    )
+    ret = in_dir(out_dir, embed_resources(ret, options[['embed_resources']]))
     ret = clean_html(ret)
   } else if (format == 'latex') {
     # remove \maketitle if \title is absent
