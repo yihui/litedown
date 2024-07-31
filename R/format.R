@@ -65,6 +65,8 @@ output_format = function(to, options, meta, template, keep_md, ...) {
 #' @param keep_md,keep_tex Whether to keep the intermediate \file{.md} and
 #'   \file{.tex} files generated from \file{.Rmd}.
 #' @param latex_engine The LaTeX engine to compile \file{.tex} to \file{.pdf}.
+#' @param citation_package The LaTeX package for processing citations. Possible
+#'   values are `none`, `natbib`, and `biblatex`.
 #' @return An R Markdown output format.
 #' @export
 html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
@@ -75,7 +77,7 @@ html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = F
 #' @export
 latex_format = function(
   options = NULL, meta = NULL, template = NULL, keep_md = FALSE,
-  keep_tex = FALSE, latex_engine = 'xelatex'
+  keep_tex = FALSE, latex_engine = 'xelatex', citation_package = 'natbib'
 ) {
   output_format(
     'latex', options, meta, template, keep_md,

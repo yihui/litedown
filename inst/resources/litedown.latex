@@ -1,6 +1,7 @@
 \documentclass[$classoption$]{$documentclass$}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx,hyperref}
+$bib-preamble$
 $header-includes$
 $title_$
 $author_$
@@ -12,5 +13,6 @@ $include-before$
 $abstract_$
 
 $body$
+$bib-end$
 $include-after$
 \end{document}

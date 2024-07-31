@@ -204,8 +204,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     })
   }
 
-  # TODO: support [@citation]
-
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
 
@@ -297,6 +295,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['toc']])) ret = paste0('\\tableofcontents\n', ret)
   }
 
+  pkg_cite = yaml_field(yaml, format, 'citation_package')
+  if (length(pkg_cite) != 1) pkg_cite = 'natbib'
+  bib = yaml[['bibliography']]
+  if (length(bib) == 1 && grepl(',', bib)) bib = strsplit(bib, ',\\s*')[[1]]
+  # add [@citation] (.bib files are assumed to be under output dir)
+  if (length(bib)) {
+    ret = in_dir(out_dir, add_citation(ret, bib, format))
+    if (format == 'latex') meta = bib_meta(meta, bib, pkg_cite)
+  }
+
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
   for (i in top_meta) if (length(meta[[i]])) {
@@ -341,7 +349,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
           on.exit(file.remove(tex), add = TRUE)
         write_utf8(ret, tex)
-        output = tinytex::latexmk(tex, latex_engine %||% 'xelatex')
+        output = tinytex::latexmk(
+          tex, latex_engine %||% 'xelatex',
+          if (pkg_cite == 'biblatex') 'biber' else 'bibtex'
+        )
       }
     }
     # for RStudio to capture the output path when previewing the output (don't

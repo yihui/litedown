@@ -392,6 +392,91 @@ one_string = function(x, by = '\n', test = FALSE) {
   paste(x, collapse = by)
 }
 
+# find @citation and resolve references
+add_citation = function(x, bib, format = 'html') {
+  if (!format %in% c('html', 'latex')) return(x)
+  bib = do.call(c, lapply(bib, rbibutils::readBib, texChars = 'convert'))
+  if (length(bib) == 0) return(x)
+  cited = NULL
+  is_html = format == 'html'
+  r = if (is_html) '(?<!<code>)(\\[@[-;@ [:alnum:]]+\\]|@[-[:alnum:]]+)' else
+    '(?<!\\{)(\\{\\[\\}@[-;@ [:alnum:]]+\\{\\]\\}|@[-[:alnum:]]+)'
+  # [@key] for citep, and @key for citet
+  x = match_replace(x, r, function(z) {
+    z2 = unlist(lapply(strsplit(z, '[;@ {}]+'), function(keys) {
+      bracket = any(grepl('^\\[', keys))
+      if (bracket) keys = gsub('^\\[|\\]$', '', keys)
+      keys = keys[keys != '']
+      if (length(keys) == 0 || !all(keys %in% names(bib))) return(NA)
+      if (is_html) {
+        cited <<- c(cited, keys)
+        cite_html(keys, bib, !bracket)
+      } else {
+        sprintf('\\cite%s{%s}', if (bracket) 'p' else 't', one_string(keys, ','))
+      }
+    }))
+    ifelse(is.na(z2), z, z2)
+  })
+  if (is_html) x = one_string(c(x, '<div id="refs">', bib_html(bib, cited), '</div>'))
+  x
+}
+
+# fall back to given name if family name is empty
+author_name = function(x) paste(x$family %|% x$given, collapse = ' ')
+
+# mimic natbib's author-year citation style for HTML output
+cite_html = function(keys, bib, textual = FALSE) {
+  x = NULL
+  for (key in keys) {
+    b = bib[[key]]; a = b$author; n = length(a)
+    z = paste0(c(
+      author_name(a[[1]]),
+      if (n == 2) c('<span class="ref-and"></span>', author_name(a[[2]])),
+      if (n > 2) '<span class="ref-et-al"></span>', ' ',
+      if (textual) citep(cite_link(key, b$year)) else b$year
+    ), collapse = '')
+    if (!textual) z = cite_link(key, z)
+    x = c(x, z)
+  }
+  x = paste0(
+    '<span class="citation">', x, '</span>', collapse = '<span class="ref-semicolon"></span>'
+  )
+  if (textual) x else citep(x)
+}
+
+cite_link = function(key, text) {
+  sprintf('<a href="#ref-%s">%s</a>', key, text)
+}
+
+citep = function(x) {
+  paste0('<span class="ref-paren-open"></span>', x, '<span class="ref-paren-close"></span>')
+}
+
+# html bibliography
+bib_html = function(bib, keys) {
+  bib = sort(bib[unique(keys)])
+  keys = unlist(lapply(bib, function(x) attr(unclass(x)[[1]], 'key')))
+  res = format(bib, 'html')
+  paste0('<p id="ref-', keys, '"', sub('^<p', '', res))
+}
+
+# add meta variables bib-preamble and bib-end for LaTeX output
+bib_meta = function(meta, bib, package) {
+  bib = one_string(bib, ',')
+  if (is.null(meta[['bib-preamble']])) meta[['bib-preamble']] = switch(
+    package,
+    none = '\\bibliographystyle{apalike}\\let\\citep\\cite\\let\\citet\\cite',
+    natbib = '\\usepackage{natbib}\\bibliographystyle{abbrvnat}',
+    biblatex = paste0(
+      '\\usepackage[style=authoryear]{biblatex}\\addbibresource{', bib,
+      '}\\let\\citep\\parencite\\let\\citet\\cite'
+    )
+  )
+  if (is.null(meta[['bib-end']])) meta[['bib-end']] = if (package == 'biblatex')
+    '\\printbibliography' else paste0('\\bibliography{', bib, '}')
+  meta
+}
+
 # find headings and build a table of contents as an unordered list
 build_toc = function(html, n = 3) {
   if (n <= 0) return()
