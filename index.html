@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.0.31">
+<meta name="generator" content="litedown 0.0.32">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.23/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.23/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.23/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.30/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.30/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.12.30/css/book.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/copy-button.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/heading-anchor.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/key-buttons.min.css">
@@ -19,7 +19,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-07-26</h3></div>
+<div class="date"><h3>2024-07-31</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -71,7 +71,8 @@
 <li><a href="#sec-appendices"><span class="section-number">2.2.6</span> Appendices</a></li>
 <li><a href="#sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</a></li>
 <li><a href="#sec-cross-references"><span class="section-number">2.2.8</span> Cross-references</a></li>
-<li><a href="#sec-smart-html-entities"><span class="section-number">2.2.9</span> Smart HTML entities</a></li>
+<li><a href="#sec-citations"><span class="section-number">2.2.9</span> Citations</a></li>
+<li><a href="#sec-smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</a></li>
 </ul>
 </li>
 <li><a href="#sec-comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</a></li>
@@ -765,7 +766,73 @@ plot(cars)
 <p>To refer to an element in the text, use the syntax <code>@ID</code>, e.g.,</p>
 <pre><code class="language-md">Please see @fig-nice-plot for an overview of the `cars` data.
 </code></pre>
-<h3 id="sec-smart-html-entities"><span class="section-number">2.2.9</span> Smart HTML entities</h3>
+<h3 id="sec-citations"><span class="section-number">2.2.9</span> Citations</h3>
+<p>This feature requires the R package <strong>rbibutils</strong>. Please make sure it is
+installed before using citations.</p>
+<pre><code class="language-r">xfun::pkg_load2(&quot;rbibutils&quot;)
+</code></pre>
+<p>To insert citations, you have to first declare one or multiple bibliography
+databases in the YAML metadata, e.g.,</p>
+<pre><code class="language-yaml">bibliography: [&quot;papers.bib&quot;, &quot;books.bib&quot;]
+</code></pre>
+<p>Each <code>.bib</code> file contains entries that start with keywords. For example,
+<code>R-base</code> is the keyword for the following entry:</p>
+<pre><code class="language-plain">@Manual{R-base,
+  title = {R: A Language and Environment for Statistical Computing},
+  author = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address = {Vienna, Austria},
+  year = {2024},
+  url = {https://www.R-project.org/},
+}
+</code></pre>
+<p>Then you can use <code>[@R-base]</code> or <code>@R-base</code> to cite this item. The keywords must
+consist of only alphanumeric characters (<code>a-z</code>, <code>A-Z</code>, <code>0-9</code>) and <code>-</code>. You can
+include multiple keywords in <code>[ ]</code> separated by semicolons.</p>
+<p>For HTML output, the citation uses the author-year style. The syntax
+<code>[@keyword]</code> generates the citation in parentheses (e.g., <code>(Author, 2024)</code>), and
+<code>@keyword</code> only puts the year in parentheses (e.g., <code>Author (2024)</code>).</p>
+<p>For LaTeX output, the citation style depends on the LaTeX package, which you can
+set via the <code>citation_package</code> option of the output format in YAML metadata,
+e.g.,</p>
+<pre><code class="language-yaml">output:
+  litedown::latex_format:
+    citation_package: biblatex
+</code></pre>
+<p>The default is <code>natbib</code>. The table below shows the LaTeX commands corresponding
+to the Markdown citation syntax:</p>
+<table>
+<thead>
+<tr>
+<th>citation package</th>
+<th><code>[@key-1; [@key-2](#key-2)]</code></th>
+<th><code>@key</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td><code>\cite{key-1, key-2}</code></td>
+<td><code>\cite{key}</code></td>
+</tr>
+<tr>
+<td>natbib</td>
+<td><code>\citep{key-1, key-2}</code></td>
+<td><code>\citet{key}</code></td>
+</tr>
+<tr>
+<td>biblatex</td>
+<td><code>\parencite{key-1, key-2}</code></td>
+<td><code>\cite{key}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that <strong>litedown</strong> actually generates <code>\citep</code> and <code>\citet</code> regardless of
+the citation package, but will redefine them to <code>\cite</code> or <code>\parencite</code>
+according to the citation package. For example, it will insert
+<code>\let\citep\parencite</code> in the LaTeX preamble when <code>citation_package</code> is
+<code>biblatex</code>.</p>
+<h3 id="sec-smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</h3>
 <p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
 write fractions in the form <code>n/m</code>. Below are some example entities:</p>
 <table>
