@@ -1,10 +1,10 @@
 #' A lightweight version of R Markdown
 #'
-#' \pkg{Markdown} is a plain-text formatting syntax that can be converted to
-#' HTML and other formats. This package can render R Markdown to Markdown, and
-#' then to an output document format. The main differences between this package
-#' and \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e.,
-#' fewer dependencies), and it also has fewer Markdown features.
+#' Markdown is a plain-text format that can be converted to HTML and other
+#' formats. This package can render R Markdown to Markdown, and then to an
+#' output document format. The main differences between this package and
+#' \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e., fewer
+#' dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun base64_uri csv_options download_cache fenced_block
 #'   fenced_div file_exists file_ext grep_sub in_dir loadable new_record
 #'   normalize_path prose_index raw_string read_all read_utf8 record_print
