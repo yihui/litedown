@@ -22,7 +22,10 @@ jobs:
           - {os: ubuntu-latest,   r: '3.5'}
           - {os: ubuntu-latest,   r: '3.4'}
           - {os: ubuntu-latest,   r: '3.3'}
+          - {os: ubuntu-latest,   r: '3.2'}
+          - {os: ubuntu-latest,   r: '3.1'}
           - {os: ubuntu-latest,   r: '3.0'}
+          - {os: ubuntu-latest,   r: '2.15'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
