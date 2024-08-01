@@ -43,10 +43,13 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      - name: Install dependencies
+        run: |
+          Rscript .github/workflows/deps.R
+
       - name: R CMD check
         shell: bash
         run: |
-          Rscript .github/workflows/deps.R
           R CMD INSTALL .
           cd ..
           R CMD build litedown
