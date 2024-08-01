@@ -41,7 +41,7 @@ jobs:
 
       - name: R CMD check
         run: |
-          Rscript -e 'install.packages("litedown", repos = c("https://yihui.r-universe.dev", "https://cloud.r-project.org"), dependencies = TRUE)'
+          Rscript -e 'install.packages(c("xfun", "commonmark", "rbindutils"))'
           cd ..
           R CMD build litedown
           R CMD check --as-cran litedown_*.tar.gz
