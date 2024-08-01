@@ -412,8 +412,14 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (!is.null(output_base <- output_path(input, output)))
     output_base = sans_ext(output_base)
 
+  opts = reactor()
+  # clean up the figure folder on exit if it's empty
+  on.exit(xfun::del_empty_dir({
+    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
+  }), add = TRUE)
+
   # restore and clean up some objects on exit
-  opts = reactor(); opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
+  opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
 
   # set working directory if unset
@@ -449,10 +455,6 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     opts[[name]] = p
   }
   set_path('fig.path'); set_path('cache.path')
-  # clean up the figure folder on exit if it's empty
-  on.exit(xfun::del_empty_dir({
-    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
-  }), add = TRUE, after = FALSE)
 
   .env$input = input
   res = .fuse(blocks, input, quiet)
