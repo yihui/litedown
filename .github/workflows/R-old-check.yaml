@@ -44,6 +44,7 @@ jobs:
           use-public-rspm: true
 
       - name: R CMD check
+        shell: bash
         run: |
           Rscript -e 'install.packages(c("xfun", "commonmark", "rbibutils"))'
           Rscript -e 'install.packages("xfun", repos = "https://yihui.r-universe.dev")'
