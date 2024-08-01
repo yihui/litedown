@@ -20,15 +20,10 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: '4.3'}
-          - {os: ubuntu-latest,   r: '4.2'}
-          - {os: ubuntu-latest,   r: '4.1'}
-          - {os: ubuntu-latest,   r: '4.0'}
-          - {os: ubuntu-latest,   r: '3.6'}
-          - {os: ubuntu-latest,   r: '3.5'}
-          - {os: ubuntu-latest,   r: '3.4'}
-          - {os: ubuntu-latest,   r: '3.3'}
-          - {os: ubuntu-latest,   r: '3.0'}
+          - {os: ubuntu-latest,   r: 'old-1'}
+          - {os: ubuntu-latest,   r: 'old-2'}
+          - {os: ubuntu-latest,   r: 'old-3'}
+          - {os: ubuntu-latest,   r: 'old-4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

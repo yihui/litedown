@@ -1,0 +1,46 @@
+# check the package against older versions of R
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest,   r: '3.6'}
+          - {os: ubuntu-latest,   r: '3.5'}
+          - {os: ubuntu-latest,   r: '3.4'}
+          - {os: ubuntu-latest,   r: '3.3'}
+          - {os: ubuntu-latest,   r: '3.0'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      - name: R CMD check
+        run: |
+          Rscript -e 'install.packages("litedown", repos = c("https://yihui.r-universe.dev", "https://cloud.r-project.org"), dependencies = TRUE)'
+          cd ..
+          R CMD build litedown
+          R CMD check --as-cran litedown_*.tar.gz
