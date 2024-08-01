@@ -1102,3 +1102,7 @@ clean_html = function(x) {
   # can also merge <style>/<script> tags (<style type="text/css">).+?</style>\\s*\\1
   x
 }
+
+if (!exists('isFALSE', baseenv(), inherits = TRUE)) isFALSE = function(x) {
+  is.logical(x) && length(x) == 1 && !is.na(x) && !x
+}
