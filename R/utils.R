@@ -89,13 +89,30 @@ id_string = function(text, lens = c(5:10, 20), times = 20) {
 }
 
 # a shorthand for gregexpr() and regmatches()
-match_replace = function(x, pattern, replace = identity, ...) {
-  m = gregexpr(pattern, x, ...)
+match_replace = function(x, r, replace = identity, ...) {
+  m = gregexpr(r, x, ...)
   regmatches(x, m) = lapply(regmatches(x, m), function(z) {
     if (length(z)) replace(z) else z
   })
   x
 }
+
+# gregexec() + regmatches() to greedy-match all substrings in regex groups
+match_all = function(x, r, ...) {
+  regmatches(x, base::gregexec(r, x, ...))
+}
+# for R < 4.1.0
+if (!exists('gregexec', baseenv(), inherits = TRUE)) match_all = function(x, r, ...) {
+  lapply(match_full(x, r, ...), function(z) {
+    if (length(z)) do.call(cbind, match_one(z, r, ...)) else z
+  })
+}
+
+# regexec() + regmatches() to match the regex once and capture substrings
+match_one = function(x, r, ...) regmatches(x, regexec(r, x, ...))
+
+# gregexpr() + regmatches() to match full strings but not substrings in regex groups
+match_full = function(x, r, ...) regmatches(x, gregexpr(r, x, ...))
 
 # if `text` is NULL and `input` is a file, read it; otherwise use the `text`
 # argument as input
@@ -274,7 +291,7 @@ set_highlight = function(meta, options, html) {
   autoloader = 'plugins/autoloader/prism-autoloader.min.js'
   o$js = c(o$js, if (!is.null(l <- o$languages)) get_lang(l) else {
     # detect <code> languages in html and load necessary language components
-    lang = unlist(regmatches(html, gregexpr(r, html)))
+    lang = unlist(match_full(html, r))
     lang = gsub(' .*', '', lang)  # only use the first class name
     lang = setdiff(lang, 'plain')  # exclude known non-existent names
     f = switch(p, highlight = js_libs[[c(p, 'js')]], prism = autoloader)
@@ -312,8 +329,7 @@ lang_files = function(package, path, langs) {
     x = grep(r, x, value = TRUE)
     l = gsub(r, '\\1', x)
     # then find their aliases
-    m = gregexpr('(?<=aliases:\\[)[^]]+(?=\\])', x)
-    a = lapply(regmatches(x, m), function(z) {
+    a = lapply(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), function(z) {
       z = unlist(strsplit(z, '[",]'))
       z[!xfun::is_blank(z)]
     })
@@ -330,8 +346,7 @@ lang_files = function(package, path, langs) {
     l1
   } else {
     # dependencies and aliases (the arrays should be more than 1000 characters)
-    m = gregexpr('(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})', x)
-    x = unlist(regmatches(x, m))
+    x = unlist(match_full(x, '(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})'))
     if (length(x) < 2) {
       warning(
         "Unable to process Prism's autoloader plugin (", u, ") to figure out ",
@@ -341,8 +356,7 @@ lang_files = function(package, path, langs) {
       return()
     }
     x = x[1:2]
-    m = gregexpr('([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")', x)
-    x = lapply(regmatches(x, m), function(z) {
+    x = lapply(match_full(x, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'), function(z) {
       z = gsub('[]["]', '', z)
       unlist(lapply(strsplit(z, '[:,]'), function(y) {
         set_names(list(y[-1]), y[1])
@@ -482,7 +496,7 @@ build_toc = function(html, n = 3) {
   if (n <= 0) return()
   if (n > 6) n = 6
   r = sprintf('<(h[1-%d])( id="[^"]+")?[^>]*>(.+?)</\\1>', n)
-  items = unlist(regmatches(html, gregexpr(r, html)))
+  items = unlist(match_full(html, r))
   if (length(items) == 0) return()
   x = gsub(r, '<toc\\2>\\3</toc>', items)  # use a tag <toc> to protect heading text
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
@@ -680,8 +694,7 @@ unique_id = function(x, empty) {
 
 # number sections in HTML output
 number_sections = function(x) {
-  m = gregexpr('</h[1-6]>', x)
-  h = sub('</h([1-6])>', '\\1', unlist(regmatches(x, m)))
+  h = sub('</h([1-6])>', '\\1', unlist(match_full(x, '</h[1-6]>')))
   if (length(h) == 0) return(x)  # no headings
   h = min(as.integer(h))  # highest level of headings
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
@@ -749,7 +762,7 @@ number_refs = function(x, r) {
 
   # first, find numbered section headings
   r2 = '<h[1-6][^>]*? id="((sec|chp)-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
-  m = regmatches(x, gregexec(r2, x))[[1]]
+  m = match_all(x, r2)[[1]]
   if (length(m)) {
     ids = m[2, ]
     db = as.list(set_names(m[4, ], ids))

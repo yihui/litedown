@@ -48,7 +48,7 @@ crack = function(input, text = NULL) {
     '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
     rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
   )
-  m = regmatches(xml, gregexec(r, xml, perl = TRUE))[[1]] %|% matrix(character(), 9)
+  m = match_all(xml, r, perl = TRUE)[[1]] %|% matrix(character(), 9)
   # code blocks must have non-empty info strings
   m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
 
@@ -127,7 +127,7 @@ crack = function(input, text = NULL) {
       }
       # possible comma-separated chunk options in header
       rx_opts = paste0('^(`{3,}|~{3,})\\s*([{]+)', rx_engine, '(.*?)\\s*[}]+\\s*$')
-      o = regmatches(code[1], regexec(rx_opts, code[1]))[[1]]
+      o = match_one(code[1], rx_opts)[[1]]
       if (length(o)) {
         # if two or more `{` is used, we will write chunk fences to output
         if (nchar(o[3]) > 1) b$fences = c(
@@ -169,7 +169,7 @@ crack = function(input, text = NULL) {
       x = lapply(seq_along(x), function(i) {
         z = x[i]
         if (i %% 2 == 1) return(z)
-        z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
+        z = match_one(z, rx_inline)[[1]][-1]
         p2 = pos[, i / 2]; save_pos(p2)
         list(
           source = z[2], pos = p2,
@@ -796,7 +796,7 @@ sci_num = function(x) {
   r = '^(-)?([0-9.]+)e([-+])0*([0-9]+)$'
   x = format(signif(x, s), scientific = x != 0 && abs(log10(abs(x))) >= p)
   if (!grepl(r, x)) return(x)
-  n = regmatches(x, regexec(r, x))[[1]]
+  n = match_one(x, r)[[1]]
   sprintf(
     '%s%s10^{%s%s}', n[2], if (n[3] == '1') '' else paste(n[3], '\\times '),
     if (n[4] == '+') '' else n[4], n[5]
