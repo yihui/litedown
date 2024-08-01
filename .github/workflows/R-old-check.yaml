@@ -41,7 +41,7 @@ jobs:
 
       - name: R CMD check
         run: |
-          Rscript -e 'install.packages(c("xfun", "commonmark", "rbindutils"))'
+          Rscript -e 'install.packages(c("xfun", "commonmark", "rbibutils"))'
           cd ..
           R CMD build litedown
           R CMD check --as-cran litedown_*.tar.gz
