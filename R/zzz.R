@@ -1,7 +1,7 @@
 # for R versions < 4.0
 
 # ignore the perl argument for regexec() if it's not supported (in R < 3.3); we
-# use perl = TRUE only for speed in this package
+# use perl = TRUE only for speed in crack()
 if (!'perl' %in% names(formals(regexec)))
   regexec = function(..., perl) base::regexec(...)
 
