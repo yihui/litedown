@@ -18,14 +18,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest,   r: '3.6'}
-          - {os: ubuntu-latest,   r: '3.5'}
-          - {os: ubuntu-latest,   r: '3.4'}
-          - {os: ubuntu-latest,   r: '3.3'}
-          - {os: ubuntu-latest,   r: '3.2'}
-          - {os: ubuntu-latest,   r: '3.1'}
-          - {os: ubuntu-latest,   r: '3.0'}
-          - {os: ubuntu-latest,   r: '3.0.0'}
+          - {os: ubuntu-latest,   r: '3.2.0'}
+          - {os: ubuntu-latest,   r: '3.2.1'}
+          - {os: ubuntu-latest,   r: '3.2.2'}
+          - {os: ubuntu-latest,   r: '3.2.3'}
+          - {os: ubuntu-latest,   r: '3.2.4'}
+          - {os: ubuntu-latest,   r: '3.2.5'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
