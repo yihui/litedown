@@ -57,10 +57,10 @@ record_print.knitr_kable = function(x, ...) {
 
 # register vignette engines
 .onLoad = function(lib, pkg) {
-  tools::vignetteEngine(
-    'vignette', vig_fun(TRUE), vig_fun(FALSE), '[.]R?md$',
-    aspell = list(filter = vig_filter)
-  )
+  func = tools::vignetteEngine
+  args = list('vignette', vig_fun(TRUE), vig_fun(FALSE), '[.]R?md$')
+  if ('aspell' %in% names(formals(func))) args$aspell = list(filter = vig_filter)
+  do.call(func, args)
 }
 
 # weave or tangle?
