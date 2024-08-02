@@ -19,6 +19,7 @@ This vignette shows how the output looks like in HTML from the other vignette `m
 ```{r}
 #| smartypants, results='asis', eval=isTRUE(l10n_info()[['UTF-8']])
 
+library(litedown)
 # smartypants example
 cat(mark("1/2 (c)"))
 cat(mark("1/2 (c)", options = "+smartypants"))
