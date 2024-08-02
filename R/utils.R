@@ -111,11 +111,6 @@ if (!exists('gregexec', baseenv(), inherits = TRUE)) match_all = function(x, r, 
 # regexec() + regmatches() to match the regex once and capture substrings
 match_one = function(x, r, ...) regmatches(x, regexec(r, x, ...))
 
-# ignore the perl argument for regexec() if it's not supported (in R < 3.3); we
-# use perl = TRUE only for speed in this package
-if (!'perl' %in% names(formals(regexec)))
-  regexec = function(..., perl) base::regexec(...)
-
 # gregexpr() + regmatches() to match full strings but not substrings in regex groups
 match_full = function(x, r, ...) regmatches(x, gregexpr(r, x, ...))
 
@@ -1105,16 +1100,4 @@ clean_html = function(x) {
   x = gsub('\n+(\n<[a-z1-6]+[^>]*>|\n</(body|div|head|html)>)', '\\1', x)
   # can also merge <style>/<script> tags (<style type="text/css">).+?</style>\\s*\\1
   x
-}
-
-# for lower versions of R
-if (!exists('isFALSE', baseenv(), inherits = TRUE)) isFALSE = function(x) {
-  is.logical(x) && length(x) == 1 && !is.na(x) && !x
-}
-if (!exists('startsWith', baseenv(), inherits = TRUE)) startsWith = function(x, s) {
-  substring(x, 1, nchar(s)) == s
-}
-if (!exists('endsWith', baseenv(), inherits = TRUE)) endsWith = function(x, s) {
-  n = nchar(x)
-  substring(x, n - nchar(s) + 1, n) == s
 }
