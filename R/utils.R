@@ -424,7 +424,7 @@ add_citation = function(x, bib, format = 'html') {
       if (length(keys) == 0 || !all(keys %in% names(bib))) return(NA)
       if (is_html) {
         cited <<- c(cited, keys)
-        cite_html(keys, bib, !bracket)
+        cite_html(keys, bib, bracket)
       } else {
         sprintf('\\cite%s{%s}', if (bracket) 'p' else 't', one_string(keys, ','))
       }
@@ -439,31 +439,29 @@ add_citation = function(x, bib, format = 'html') {
 author_name = function(x) paste(x$family %|% x$given, collapse = ' ')
 
 # mimic natbib's author-year citation style for HTML output
-cite_html = function(keys, bib, textual = FALSE) {
-  x = NULL
-  for (key in keys) {
-    b = bib[[key]]; a = b$author; n = length(a)
+cite_html = function(keys, bib, bracket = TRUE) {
+  x = NULL; N = length(keys)
+  for (i in seq_len(N)) {
+    key = keys[i]; b = bib[[key]]; a = b$author; n = length(a)
     z = paste0(c(
       author_name(a[[1]]),
       if (n == 2) c('<span class="ref-and"></span>', author_name(a[[2]])),
       if (n > 2) '<span class="ref-et-al"></span>', ' ',
-      if (textual) citep(cite_link(key, b$year)) else b$year
+      if (bracket) b$year else
+        c('<span class="ref-paren-open ref-paren-close">', b$year, '</span>')
     ), collapse = '')
-    if (!textual) z = cite_link(key, z)
+    cls = if (bracket) c(
+      if (i == 1) 'ref-paren-open', if (i == N) 'ref-paren-close',
+      if (i < N) 'ref-semicolon'
+    )
+    z = cite_link(key, z, one_string(c('', cls), ' '))
     x = c(x, z)
   }
-  x = paste0(
-    '<span class="citation">', x, '</span>', collapse = '<span class="ref-semicolon"></span>'
-  )
-  if (textual) x else citep(x)
+  one_string(x, '')
 }
 
-cite_link = function(key, text) {
-  sprintf('<a href="#ref-%s">%s</a>', key, text)
-}
-
-citep = function(x) {
-  paste0('<span class="ref-paren-open"></span>', x, '<span class="ref-paren-close"></span>')
+cite_link = function(key, text, class = '') {
+  sprintf('<a href="#ref-%s" class="citation%s">%s</a>', key, class, text)
 }
 
 # html bibliography
