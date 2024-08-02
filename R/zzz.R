@@ -12,6 +12,4 @@ if (!has_fun('isFALSE')) isFALSE = function(x) {
 }
 if (!has_fun('startsWith')) startsWith = function(...) xfun:::startsWith(...)
 if (!has_fun('endsWith')) endsWith = function(...) xfun:::endsWith(...)
-if (!has_fun('anyNA')) anyNA = function(x) any(is.na(x))
-if (!has_fun('dir.exists')) dir.exists = function(x) xfun::dir_exists(x)
 if (!has_fun('strrep')) strrep = function(...) xfun:::strrep(...)
