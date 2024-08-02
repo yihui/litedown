@@ -1107,6 +1107,10 @@ clean_html = function(x) {
   x
 }
 
+# for lower versions of R
 if (!exists('isFALSE', baseenv(), inherits = TRUE)) isFALSE = function(x) {
   is.logical(x) && length(x) == 1 && !is.na(x) && !x
+}
+if (!exists('startsWith', baseenv(), inherits = TRUE)) startsWith = function(x, s) {
+  substring(x, 1, nchar(s)) == s
 }
