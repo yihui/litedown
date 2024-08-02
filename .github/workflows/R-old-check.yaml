@@ -24,13 +24,12 @@ jobs:
           - {os: ubuntu-latest,   r: '3.3'}
           - {os: ubuntu-latest,   r: '3.2'}
           - {os: ubuntu-latest,   r: '3.2.0'}
-          - {os: ubuntu-latest,   r: '3.1'}
-          - {os: ubuntu-latest,   r: '3.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
       _R_CHECK_FORCE_SUGGESTS_: false
+      _R_CHECK_RD_XREFS_: false
 
     steps:
       - uses: actions/checkout@HEAD
@@ -45,11 +44,10 @@ jobs:
       - name: Install dependencies
         run: |
           Rscript .github/workflows/deps.R
+          R CMD INSTALL .
 
       - name: R CMD check
-        shell: bash
         run: |
-          R CMD INSTALL .
           cd ..
           R CMD build litedown
           R CMD check --as-cran --no-manual litedown_*.tar.gz

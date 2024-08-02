@@ -17,6 +17,7 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     'knitr'. It does not aim at rich Markdown features or a large variety of
     output formats (the primary formats are HTML and 'LaTeX'). Book and website
     projects of multiple input documents are also supported.
+Depends: R (>= 3.2.0)
 Imports:
     utils,
     commonmark (>= 1.9.1),
