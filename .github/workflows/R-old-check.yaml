@@ -18,12 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          - {os: ubuntu-latest,   r: '3.6'}
+          - {os: ubuntu-latest,   r: '3.5'}
+          - {os: ubuntu-latest,   r: '3.4'}
+          - {os: ubuntu-latest,   r: '3.3'}
+          - {os: ubuntu-latest,   r: '3.2'}
           - {os: ubuntu-latest,   r: '3.2.0'}
-          - {os: ubuntu-latest,   r: '3.2.1'}
-          - {os: ubuntu-latest,   r: '3.2.2'}
-          - {os: ubuntu-latest,   r: '3.2.3'}
-          - {os: ubuntu-latest,   r: '3.2.4'}
-          - {os: ubuntu-latest,   r: '3.2.5'}
+          - {os: ubuntu-latest,   r: '3.1'}
+          - {os: ubuntu-latest,   r: '3.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -44,14 +46,10 @@ jobs:
         run: |
           Rscript .github/workflows/deps.R
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@HEAD
-        if: matrix.config.r == '3.0.0'
-
       - name: R CMD check
         shell: bash
         run: |
           R CMD INSTALL .
           cd ..
           R CMD build litedown
-          R CMD check --as-cran litedown_*.tar.gz
+          R CMD check --as-cran --no-manual litedown_*.tar.gz
