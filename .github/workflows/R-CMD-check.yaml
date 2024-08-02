@@ -65,15 +65,11 @@ jobs:
         with:
           upload-snapshots: true
 
-      - name: Install dependencies
+      - name: Check against R < 4.0
         if: matrix.config.r < '4.0'
         run: |
           Rscript .github/workflows/deps.R
           R CMD INSTALL .
-
-      - name: R CMD check
-        if: matrix.config.r < '4.0'
-        run: |
           cd ..
           R CMD build litedown
           R CMD check --as-cran --no-manual litedown_*.tar.gz
