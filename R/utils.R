@@ -111,6 +111,11 @@ if (!exists('gregexec', baseenv(), inherits = TRUE)) match_all = function(x, r, 
 # regexec() + regmatches() to match the regex once and capture substrings
 match_one = function(x, r, ...) regmatches(x, regexec(r, x, ...))
 
+# ignore the perl argument for regexec() if it's not supported (in R < 3.3); we
+# use perl = TRUE only for speed in this package
+if (!'perl' %in% names(formals(regexec)))
+  regexec = function(..., perl) base::regexec(...)
+
 # gregexpr() + regmatches() to match full strings but not substrings in regex groups
 match_full = function(x, r, ...) regmatches(x, gregexpr(r, x, ...))
 
