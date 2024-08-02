@@ -43,6 +43,10 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@HEAD
+        if: matrix.config.r == '3.1'
+
       - name: Install dependencies
         run: |
           Rscript .github/workflows/deps.R
