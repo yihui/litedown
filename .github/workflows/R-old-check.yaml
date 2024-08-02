@@ -26,7 +26,6 @@ jobs:
           - {os: ubuntu-latest,   r: '3.1'}
           - {os: ubuntu-latest,   r: '3.0'}
           - {os: ubuntu-latest,   r: '3.0.0'}
-          - {os: windows-latest,   r: '2.15'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +48,7 @@ jobs:
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@HEAD
-        if: runner.os == 'windows'
+        if: matrix.config.r == '3.0.0'
 
       - name: R CMD check
         shell: bash
