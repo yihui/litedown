@@ -807,7 +807,6 @@ add_ref = function(id, type, x = NULL) {
   c(sprintf('[](#@%s-%s)', type, id), x)
 }
 
-#' @importFrom utils URLdecode
 embed_resources = function(x, embed = 'local') {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% embed

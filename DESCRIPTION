@@ -1,7 +1,7 @@
 Package: litedown
 Type: Package
 Title: A Lightweight Version of R Markdown
-Version: 0.0.33
+Version: 0.0.34
 Authors@R: c(
    person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666")),
    person()
@@ -17,6 +17,7 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     'knitr'. It does not aim at rich Markdown features or a large variety of
     output formats (the primary formats are HTML and 'LaTeX'). Book and website
     projects of multiple input documents are also supported.
+Depends: R (>= 3.2.0)
 Imports:
     utils,
     commonmark (>= 1.9.1),

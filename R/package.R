@@ -66,11 +66,14 @@ record_print.knitr_kable = function(x, ...) {
 # weave or tangle?
 vig_fun = function(weave = TRUE) {
   function(file, quiet = FALSE, ...) {
+    empty_file = function() write_utf8(character(), with_ext(file, '.R'))
     # fuse() .Rmd and mark() .md
     if (grepl('[.]Rmd$', file)) {
-      if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
-    } else if (weave) mark(file) else {
-      write_utf8(character(), with_ext(file, '.R'))
+      if (weave) fuse(file, quiet = quiet, envir = globalenv()) else {
+        if (getRversion() <= '3.2.5') empty_file() else fiss(file)
+      }
+    } else {
+      if (weave) mark(file) else empty_file()
     }
   }
 }
