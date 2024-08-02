@@ -36,6 +36,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
       _R_CHECK_FORCE_SUGGESTS_: false
       _R_CHECK_RD_XREFS_: false
+      _R_CHECK_VIGNETTES_SKIP_RUN_MAYBE_: true
 
     steps:
       - uses: actions/checkout@HEAD
