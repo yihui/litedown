@@ -48,7 +48,7 @@ crack = function(input, text = NULL) {
     '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
     rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
   )
-  m = regmatches(xml, gregexec(r, xml, perl = TRUE))[[1]] %|% matrix(character(), 9)
+  m = match_all(xml, r, perl = TRUE)[[1]] %|% matrix(character(), 9)
   # code blocks must have non-empty info strings
   m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
 
@@ -127,7 +127,7 @@ crack = function(input, text = NULL) {
       }
       # possible comma-separated chunk options in header
       rx_opts = paste0('^(`{3,}|~{3,})\\s*([{]+)', rx_engine, '(.*?)\\s*[}]+\\s*$')
-      o = regmatches(code[1], regexec(rx_opts, code[1]))[[1]]
+      o = match_one(code[1], rx_opts)[[1]]
       if (length(o)) {
         # if two or more `{` is used, we will write chunk fences to output
         if (nchar(o[3]) > 1) b$fences = c(
@@ -169,7 +169,7 @@ crack = function(input, text = NULL) {
       x = lapply(seq_along(x), function(i) {
         z = x[i]
         if (i %% 2 == 1) return(z)
-        z = regmatches(z, regexec(rx_inline, z))[[1]][-1]
+        z = match_one(z, rx_inline)[[1]][-1]
         p2 = pos[, i / 2]; save_pos(p2)
         list(
           source = z[2], pos = p2,
@@ -409,10 +409,17 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
-  output_base = sans_ext(output_path(input, output))
+  if (!is.null(output_base <- output_path(input, output)))
+    output_base = sans_ext(output_base)
+
+  opts = reactor()
+  # clean up the figure folder on exit if it's empty
+  on.exit(xfun::del_empty_dir({
+    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
+  }), add = TRUE)
 
   # restore and clean up some objects on exit
-  opts = reactor(); opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
+  opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
 
   # set working directory if unset
@@ -438,15 +445,16 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     if (is.null(p <- opts[[name]])) p = paste0(
       output_base %||% 'litedown', c(fig.path = '__files/', cache.path = '__cache/')[name]
     )
+    slash = endsWith(p, '/')
     # make sure path is absolute so it will be immune to setwd() (in code chunks)
-    if (xfun::is_rel_path(p)) p = file.path(getwd(), p)
+    if (xfun::is_rel_path(p)) {
+      p = file.path(getwd(), p)
+      # preserve trailing slash because file.path() removes it on Windows
+      if (slash) p = sub('/*$', '/', p)
+    }
     opts[[name]] = p
   }
   set_path('fig.path'); set_path('cache.path')
-  # clean up the figure folder on exit if it's empty
-  on.exit(xfun::del_empty_dir({
-    if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
-  }), add = TRUE, after = FALSE)
 
   .env$input = input
   res = .fuse(blocks, input, quiet)
@@ -790,7 +798,7 @@ sci_num = function(x) {
   r = '^(-)?([0-9.]+)e([-+])0*([0-9]+)$'
   x = format(signif(x, s), scientific = x != 0 && abs(log10(abs(x))) >= p)
   if (!grepl(r, x)) return(x)
-  n = regmatches(x, regexec(r, x))[[1]]
+  n = match_one(x, r)[[1]]
   sprintf(
     '%s%s10^{%s%s}', n[2], if (n[3] == '1') '' else paste(n[3], '\\times '),
     if (n[4] == '+') '' else n[4], n[5]

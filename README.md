@@ -24,6 +24,17 @@ or the system package Pandoc.
 Please consider this package experimental for now. The documentation is also
 very incomplete and still under development.
 
+## Usage
+
+### Installation
+
+At the moment, you are recommended to install the development version from
+r-universe:
+
+``` r
+install.packages('litedown', repos = c('https://yihui.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
 ### Markdown rendering
 
 The function `litedown::mark()` is based on the R package

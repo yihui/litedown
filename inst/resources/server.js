@@ -66,7 +66,7 @@
           } else {
             console.log(res);
             // the current page source file has changed; refresh page
-            location.reload();
+            res === '1' && location.reload();
           }
         }
         el.dataset.wait = '';

@@ -13,7 +13,8 @@ latex_format(
   template = NULL,
   keep_md = FALSE,
   keep_tex = FALSE,
-  latex_engine = "xelatex"
+  latex_engine = "xelatex",
+  citation_package = "natbib"
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ latex_format(
 \file{.tex} files generated from \file{.Rmd}.}
 
 \item{latex_engine}{The LaTeX engine to compile \file{.tex} to \file{.pdf}.}
+
+\item{citation_package}{The LaTeX package for processing citations. Possible
+values are \code{none}, \code{natbib}, and \code{biblatex}.}
 }
 \value{
 An R Markdown output format.

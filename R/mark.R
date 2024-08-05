@@ -67,6 +67,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   full = is_output_full(output)
   format = detect_format(output, yaml)
   output = auto_output(input, output, format)
+  out_dir = dirname(output_path(input, output) %||% '.')
 
   # title/author/date can be provided as top-level YAML options
   meta = merge_list(
@@ -171,7 +172,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # paragraphs or code blocks
   text[p] = sub('^([ >]*:::+ )([^ {]+)$', '\\1{.\\2}', text[p]) # ::: foo -> ::: {.foo}
   text[p] = sub(
-    '^([ >]*)((:::+)( \\{.+\\})?)$',
+    '^([ >]*)((:::+)( \\{.*\\})?)$',
     if (format == 'latex') '\\1\n\\1```\n\\1\\2 \\3\n\\1```\n\\1' else '\\1\n\\1\\2\n\\1',
     text[p]
   )
@@ -202,8 +203,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       sprintf('[%s](%s)', x, sub('^@', '#', x))
     })
   }
-
-  # TODO: support [@citation]
 
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
@@ -296,6 +295,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['toc']])) ret = paste0('\\tableofcontents\n', ret)
   }
 
+  pkg_cite = yaml_field(yaml, format, 'citation_package')
+  if (length(pkg_cite) != 1) pkg_cite = 'natbib'
+  bib = yaml[['bibliography']]
+  if (length(bib) == 1 && grepl(',', bib)) bib = strsplit(bib, ',\\s*')[[1]]
+  # add [@citation] (.bib files are assumed to be under output dir)
+  if (length(bib)) {
+    ret = in_dir(out_dir, add_citation(ret, bib, format))
+    if (format == 'latex') meta = bib_meta(meta, bib, pkg_cite)
+  }
+
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
   for (i in top_meta) if (length(meta[[i]])) {
@@ -320,10 +329,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   if (format == 'html') {
-    ret = in_dir(
-      dirname(output_path(input, output) %||% '.'),
-      embed_resources(ret, options[['embed_resources']])
-    )
+    ret = in_dir(out_dir, embed_resources(ret, options[['embed_resources']]))
     ret = clean_html(ret)
   } else if (format == 'latex') {
     # remove \maketitle if \title is absent
@@ -343,7 +349,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
           on.exit(file.remove(tex), add = TRUE)
         write_utf8(ret, tex)
-        output = tinytex::latexmk(tex, latex_engine %||% 'xelatex')
+        output = tinytex::latexmk(
+          tex, latex_engine %||% 'xelatex',
+          if (pkg_cite == 'biblatex') 'biber' else 'bibtex'
+        )
       }
     }
     # for RStudio to capture the output path when previewing the output (don't
@@ -379,7 +388,7 @@ build_output = function(format, options, template, meta) {
 # substitute all variables in template with their values
 sub_vars = function(tpl, meta) {
   # find all variables in the template
-  vars = unlist(regmatches(tpl, gregexpr('[$][-_[:alnum:]]+[$]', tpl)))
+  vars = unlist(match_full(tpl, '[$][-_[:alnum:]]+[$]'))
   # insert $body$ at last in case the body contain any $variables$ accidentally
   if (!is.na(i <- match('$body$', vars))) vars = c(vars[-i], vars[i])
   for (v in vars) {

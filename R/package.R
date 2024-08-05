@@ -1,10 +1,10 @@
 #' A lightweight version of R Markdown
 #'
-#' \pkg{Markdown} is a plain-text formatting syntax that can be converted to
-#' HTML and other formats. This package can render R Markdown to Markdown, and
-#' then to an output document format. The main differences between this package
-#' and \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e.,
-#' fewer dependencies), and it also has fewer Markdown features.
+#' Markdown is a plain-text format that can be converted to HTML and other
+#' formats. This package can render R Markdown to Markdown, and then to an
+#' output document format. The main differences between this package and
+#' \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e., fewer
+#' dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun base64_uri csv_options download_cache fenced_block
 #'   fenced_div file_exists file_ext grep_sub in_dir loadable new_record
 #'   normalize_path prose_index raw_string read_all read_utf8 record_print
@@ -66,11 +66,14 @@ record_print.knitr_kable = function(x, ...) {
 # weave or tangle?
 vig_fun = function(weave = TRUE) {
   function(file, quiet = FALSE, ...) {
+    empty_file = function() write_utf8(character(), with_ext(file, '.R'))
     # fuse() .Rmd and mark() .md
     if (grepl('[.]Rmd$', file)) {
-      if (weave) fuse(file, quiet = quiet, envir = globalenv()) else fiss(file)
-    } else if (weave) mark(file) else {
-      write_utf8(character(), with_ext(file, '.R'))
+      if (weave) fuse(file, quiet = quiet, envir = globalenv()) else {
+        if (getRversion() <= '3.2.5') empty_file() else fiss(file)
+      }
+    } else {
+      if (weave) mark(file) else empty_file()
     }
   }
 }

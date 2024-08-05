@@ -89,13 +89,30 @@ id_string = function(text, lens = c(5:10, 20), times = 20) {
 }
 
 # a shorthand for gregexpr() and regmatches()
-match_replace = function(x, pattern, replace = identity, ...) {
-  m = gregexpr(pattern, x, ...)
+match_replace = function(x, r, replace = identity, ...) {
+  m = gregexpr(r, x, ...)
   regmatches(x, m) = lapply(regmatches(x, m), function(z) {
     if (length(z)) replace(z) else z
   })
   x
 }
+
+# gregexec() + regmatches() to greedy-match all substrings in regex groups
+match_all = function(x, r, ...) {
+  regmatches(x, base::gregexec(r, x, ...))
+}
+# for R < 4.1.0
+if (!exists('gregexec', baseenv(), inherits = TRUE)) match_all = function(x, r, ...) {
+  lapply(match_full(x, r, ...), function(z) {
+    if (length(z)) do.call(cbind, match_one(z, r, ...)) else z
+  })
+}
+
+# regexec() + regmatches() to match the regex once and capture substrings
+match_one = function(x, r, ...) regmatches(x, regexec(r, x, ...))
+
+# gregexpr() + regmatches() to match full strings but not substrings in regex groups
+match_full = function(x, r, ...) regmatches(x, gregexpr(r, x, ...))
 
 # if `text` is NULL and `input` is a file, read it; otherwise use the `text`
 # argument as input
@@ -274,7 +291,7 @@ set_highlight = function(meta, options, html) {
   autoloader = 'plugins/autoloader/prism-autoloader.min.js'
   o$js = c(o$js, if (!is.null(l <- o$languages)) get_lang(l) else {
     # detect <code> languages in html and load necessary language components
-    lang = unlist(regmatches(html, gregexpr(r, html)))
+    lang = unlist(match_full(html, r))
     lang = gsub(' .*', '', lang)  # only use the first class name
     lang = setdiff(lang, 'plain')  # exclude known non-existent names
     f = switch(p, highlight = js_libs[[c(p, 'js')]], prism = autoloader)
@@ -312,8 +329,7 @@ lang_files = function(package, path, langs) {
     x = grep(r, x, value = TRUE)
     l = gsub(r, '\\1', x)
     # then find their aliases
-    m = gregexpr('(?<=aliases:\\[)[^]]+(?=\\])', x)
-    a = lapply(regmatches(x, m), function(z) {
+    a = lapply(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), function(z) {
       z = unlist(strsplit(z, '[",]'))
       z[!xfun::is_blank(z)]
     })
@@ -330,8 +346,7 @@ lang_files = function(package, path, langs) {
     l1
   } else {
     # dependencies and aliases (the arrays should be more than 1000 characters)
-    m = gregexpr('(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})', x)
-    x = unlist(regmatches(x, m))
+    x = unlist(match_full(x, '(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})'))
     if (length(x) < 2) {
       warning(
         "Unable to process Prism's autoloader plugin (", u, ") to figure out ",
@@ -341,8 +356,7 @@ lang_files = function(package, path, langs) {
       return()
     }
     x = x[1:2]
-    m = gregexpr('([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")', x)
-    x = lapply(regmatches(x, m), function(z) {
+    x = lapply(match_full(x, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'), function(z) {
       z = gsub('[]["]', '', z)
       unlist(lapply(strsplit(z, '[:,]'), function(y) {
         set_names(list(y[-1]), y[1])
@@ -392,12 +406,95 @@ one_string = function(x, by = '\n', test = FALSE) {
   paste(x, collapse = by)
 }
 
+# find @citation and resolve references
+add_citation = function(x, bib, format = 'html') {
+  if (!format %in% c('html', 'latex')) return(x)
+  bib = do.call(c, lapply(bib, rbibutils::readBib, texChars = 'convert'))
+  if (length(bib) == 0) return(x)
+  cited = NULL
+  is_html = format == 'html'
+  r = if (is_html) '(?<!<code>)(\\[@[-;@ [:alnum:]]+\\]|@[-[:alnum:]]+)' else
+    '(?<!\\{)(\\{\\[\\}@[-;@ [:alnum:]]+\\{\\]\\}|@[-[:alnum:]]+)'
+  # [@key] for citep, and @key for citet
+  x = match_replace(x, r, function(z) {
+    z2 = unlist(lapply(strsplit(z, '[;@ {}]+'), function(keys) {
+      bracket = any(grepl('^\\[', keys))
+      if (bracket) keys = gsub('^\\[|\\]$', '', keys)
+      keys = keys[keys != '']
+      if (length(keys) == 0 || !all(keys %in% names(bib))) return(NA)
+      if (is_html) {
+        cited <<- c(cited, keys)
+        cite_html(keys, bib, bracket)
+      } else {
+        sprintf('\\cite%s{%s}', if (bracket) 'p' else 't', one_string(keys, ','))
+      }
+    }))
+    ifelse(is.na(z2), z, z2)
+  })
+  if (is_html) x = one_string(c(x, '<div id="refs">', bib_html(bib, cited), '</div>'))
+  x
+}
+
+# fall back to given name if family name is empty
+author_name = function(x) paste(x$family %|% x$given, collapse = ' ')
+
+# mimic natbib's author-year citation style for HTML output
+cite_html = function(keys, bib, bracket = TRUE) {
+  x = NULL; N = length(keys)
+  for (i in seq_len(N)) {
+    key = keys[i]; b = bib[[key]]; a = b$author; n = length(a)
+    z = paste0(c(
+      author_name(a[[1]]),
+      if (n == 2) c('<span class="ref-and"></span>', author_name(a[[2]])),
+      if (n > 2) '<span class="ref-et-al"></span>', ' ',
+      if (bracket) b$year else
+        c('<span class="ref-paren-open ref-paren-close">', b$year, '</span>')
+    ), collapse = '')
+    cls = if (bracket) c(
+      if (i == 1) 'ref-paren-open', if (i == N) 'ref-paren-close',
+      if (i < N) 'ref-semicolon'
+    )
+    z = cite_link(key, z, one_string(c('', cls), ' '))
+    x = c(x, z)
+  }
+  one_string(x, '')
+}
+
+cite_link = function(key, text, class = '') {
+  sprintf('<a href="#ref-%s" class="citation%s">%s</a>', key, class, text)
+}
+
+# html bibliography
+bib_html = function(bib, keys) {
+  bib = sort(bib[unique(keys)])
+  keys = unlist(lapply(bib, function(x) attr(unclass(x)[[1]], 'key')))
+  res = format(bib, 'html')
+  paste0('<p id="ref-', keys, '"', sub('^<p', '', res))
+}
+
+# add meta variables bib-preamble and bib-end for LaTeX output
+bib_meta = function(meta, bib, package) {
+  bib = one_string(bib, ',')
+  if (is.null(meta[['bib-preamble']])) meta[['bib-preamble']] = switch(
+    package,
+    none = '\\bibliographystyle{apalike}\\let\\citep\\cite\\let\\citet\\cite',
+    natbib = '\\usepackage{natbib}\\bibliographystyle{abbrvnat}',
+    biblatex = paste0(
+      '\\usepackage[style=authoryear]{biblatex}\\addbibresource{', bib,
+      '}\\let\\citep\\parencite\\let\\citet\\cite'
+    )
+  )
+  if (is.null(meta[['bib-end']])) meta[['bib-end']] = if (package == 'biblatex')
+    '\\printbibliography' else paste0('\\bibliography{', bib, '}')
+  meta
+}
+
 # find headings and build a table of contents as an unordered list
 build_toc = function(html, n = 3) {
   if (n <= 0) return()
   if (n > 6) n = 6
   r = sprintf('<(h[1-%d])( id="[^"]+")?[^>]*>(.+?)</\\1>', n)
-  items = unlist(regmatches(html, gregexpr(r, html)))
+  items = unlist(match_full(html, r))
   if (length(items) == 0) return()
   x = gsub(r, '<toc\\2>\\3</toc>', items)  # use a tag <toc> to protect heading text
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
@@ -449,11 +546,17 @@ move_attrs = function(x, format = 'html') {
       z24 = sub(r, '\\2\\4', z)
       paste0(z1, z3, z24)
     })
+    # links
+    x = convert_attrs(x, '(<a[^>]+)(>.+?</a>)\\{([^}]+)\\}', '\\3', function(r, z, z3) {
+      z1 = sub(r, '\\1 ', z)
+      z2 = sub(r, '\\2', z)
+      paste0(z1, z3, z2)
+    })
     # fenced Div's
-    x = convert_attrs(x, '<p>:::+ \\{(.+?)\\}</p>', '\\1', function(r, z, z1) {
+    x = convert_attrs(x, '<p>:::+ \\{(.*?)\\}</p>', '\\1', function(r, z, z1) {
       # add attributes to the div but remove the data-latex attribute
       z1 = str_trim(gsub('(^| )data-latex="[^"]*"( |$)', ' ', z1))
-      sprintf('<div %s>', z1)
+      sprintf('<div%s%s>', ifelse(z1 == '', '', ' '), z1)
     })
     x = gsub('<p>:::+</p>', '</div>', x)
   } else if (format == 'latex') {
@@ -589,8 +692,7 @@ unique_id = function(x, empty) {
 
 # number sections in HTML output
 number_sections = function(x) {
-  m = gregexpr('</h[1-6]>', x)
-  h = sub('</h([1-6])>', '\\1', unlist(regmatches(x, m)))
+  h = sub('</h([1-6])>', '\\1', unlist(match_full(x, '</h[1-6]>')))
   if (length(h) == 0) return(x)  # no headings
   h = min(as.integer(h))  # highest level of headings
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
@@ -658,7 +760,7 @@ number_refs = function(x, r) {
 
   # first, find numbered section headings
   r2 = '<h[1-6][^>]*? id="((sec|chp)-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
-  m = regmatches(x, gregexec(r2, x))[[1]]
+  m = match_all(x, r2)[[1]]
   if (length(m)) {
     ids = m[2, ]
     db = as.list(set_names(m[4, ], ids))
@@ -703,7 +805,6 @@ add_ref = function(id, type, x = NULL) {
   c(sprintf('[](#@%s-%s)', type, id), x)
 }
 
-#' @importFrom utils URLdecode
 embed_resources = function(x, embed = 'local') {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% embed

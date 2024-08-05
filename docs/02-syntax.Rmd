@@ -138,9 +138,9 @@ elements in footnotes and not necessarily one paragraph.
 
 ### Attributes
 
-Attributes on images, fenced code blocks, and section headings can be written in
-`{}`. For example, `![text](path){.foo #bar width="50%"}` will generate an
-`<img>` tag with attributes in HTML output:
+Attributes on images, links, fenced code blocks, and section headings can be
+written in `{}`. For example, `![text](path){.foo #bar width="50%"}` will
+generate an `<img>` tag with attributes in HTML output:
 
 ``` html
 <img src="path" alt="text" id="bar" class="foo" width="50%" />
@@ -278,6 +278,69 @@ To refer to an element in the text, use the syntax `@ID`, e.g.,
 ``` md
 Please see @fig-nice-plot for an overview of the `cars` data.
 ```
+
+### Citations
+
+This feature requires the R package **rbibutils**. Please make sure it is
+installed before using citations.
+
+``` r
+xfun::pkg_load2("rbibutils")
+```
+
+To insert citations, you have to first declare one or multiple bibliography
+databases in the YAML metadata, e.g.,
+
+``` yaml
+bibliography: ["papers.bib", "books.bib"]
+```
+
+Each `.bib` file contains entries that start with keywords. For example,
+`R-base` is the keyword for the following entry:
+
+``` plain
+@Manual{R-base,
+  title = {R: A Language and Environment for Statistical Computing},
+  author = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address = {Vienna, Austria},
+  year = {2024},
+  url = {https://www.R-project.org/},
+}
+```
+
+Then you can use `[@R-base]` or `@R-base` to cite this item. The keywords must
+consist of only alphanumeric characters (`a-z`, `A-Z`, `0-9`) and `-`. You can
+include multiple keywords in `[ ]` separated by semicolons.
+
+For HTML output, the citation uses the author-year style. The syntax
+`[@keyword]` generates the citation in parentheses (e.g., `(Author, 2024)`), and
+`@keyword` only puts the year in parentheses (e.g., `Author (2024)`).
+
+For LaTeX output, the citation style depends on the LaTeX package, which you can
+set via the `citation_package` option of the output format in YAML metadata,
+e.g.,
+
+``` yaml
+output:
+  litedown::latex_format:
+    citation_package: biblatex
+```
+
+The default is `natbib`. The table below shows the LaTeX commands corresponding
+to the Markdown citation syntax:
+
+| citation package | `[@key-1; @key-2]`          | `@key`        |
+|------------------|-----------------------------|---------------|
+| none             | `\cite{key-1, key-2}`       | `\cite{key}`  |
+| natbib           | `\citep{key-1, key-2}`      | `\citet{key}` |
+| biblatex         | `\parencite{key-1, key-2}`  | `\cite{key}`  |
+
+Note that **litedown** actually generates `\citep` and `\citet` regardless of
+the citation package, but will redefine them to `\cite` or `\parencite`
+according to the citation package. For example, it will insert
+`\let\citep\parencite` in the LaTeX preamble when `citation_package` is
+`biblatex`.
 
 ### Smart HTML entities
 
