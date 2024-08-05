@@ -35,6 +35,12 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
+    if (length(headers)) {
+      headers = xfun::split_lines(rawToChar(headers))
+      h = grep('^litedown', headers, value = TRUE)
+      if (length(h)) cat('headers: ', h)
+    }
+    if (length(post)) cat('POST:\n', rawToChar(post))
     # set up proper default options for mark()
     opt = options(
       litedown.html.meta = list(
