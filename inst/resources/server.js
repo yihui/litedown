@@ -4,6 +4,7 @@
     req.open('POST', url);
     // let R know the type of the request
     req.setRequestHeader('litedown-data', data);
+    req.send();
     req.onload = callback;
   }
   // remove empty frontmatter
