@@ -2,9 +2,8 @@
   function new_req(url, data, callback) {
     const req = new XMLHttpRequest();
     req.open('POST', url);
-    url === location.href && req.setRequestHeader('litedown-request', 'true');
     // let R know the type of the request
-    req.send(data);
+    req.setRequestHeader('litedown-data', data);
     req.onload = callback;
   }
   // remove empty frontmatter

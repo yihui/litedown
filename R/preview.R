@@ -35,12 +35,6 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
-    if (length(headers)) {
-      headers = xfun::split_lines(rawToChar(headers))
-      h = grep('^litedown', headers, value = TRUE)
-      if (length(h)) cat('headers: ', h)
-    }
-    if (length(post)) cat('POST:\n', rawToChar(post))
     # set up proper default options for mark()
     opt = options(
       litedown.html.meta = list(
@@ -57,7 +51,10 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     query = as.list(query)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
-    type = if (length(post)) rawToChar(post) else ''
+    type = if (length(headers)) xfun::grep_sub(
+      '.*\nlitedown-data: ([:[:alnum:]]+).*', '\\1', rawToChar(headers)
+    )
+    if (length(type) != 1) type = ''
     # we may need to check rawToChar(headers) to decide what to do for the
     # request; for now, we simply ignore request headers, and treat the POST
     # body as the type of request
