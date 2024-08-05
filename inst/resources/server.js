@@ -65,7 +65,6 @@
             // also reload js
             d.querySelectorAll('script[src]').forEach(update_script);
           } else {
-            console.log(res);
             // the current page source file has changed; refresh page
             res === '1' && location.reload();
           }
