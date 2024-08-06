@@ -1051,7 +1051,7 @@ base64_url = function(url, code, ext) {
   }
   # find `attr: url(resource)` and embed url resources in CSS
   if (ext == 'css') {
-    r = '(: ?url\\("?)([^)]+)("?\\))'
+    r = '(: ?url\\(["\']?)([^"\')]+)(["\']?\\))'
     code = match_replace(code, r, function(z) {
       z1 = gsub(r, '\\1', z)
       z2 = gsub(r, '\\2', z)
