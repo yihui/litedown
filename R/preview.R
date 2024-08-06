@@ -52,7 +52,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
     type = if (length(headers)) xfun::grep_sub(
-      '.*\nlitedown-data: ([:[:alnum:]]+).*', '\\1', rawToChar(headers)
+      '.*\nlitedown-data: ([^[:space:]]+).*', '\\1', rawToChar(headers)
     )
     if (length(type) != 1) type = ''
     # we may need to check rawToChar(headers) to decide what to do for the
