@@ -16,8 +16,9 @@
       el.querySelector('button').onclick = e => el.close();
       d.body.append(el);
     }
-    const p = el.firstElementChild;
-    p.innerText = resp.responseText; if (resp.status !== 200) p.className = 'error';
+    const p = el.firstElementChild, t = resp.responseText;
+    p.innerText = t.toLowerCase() === 'connection refused' ? (t + '; please re-run litedown::roam()') : t;
+    if (resp.status !== 200) p.className = 'error';
     el.showModal();
   }
   // remove empty frontmatter
