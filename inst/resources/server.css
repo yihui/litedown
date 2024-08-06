@@ -17,7 +17,7 @@ td .pencil {
 span[data-line-number] {
   cursor: pointer;
 }
-.waiting {
+::backdrop {
   cursor: wait;
   opacity: .5;
 }

@@ -7,6 +7,19 @@
     req.send();
     req.onload = callback;
   }
+  function show_dialog(resp) {
+    let el = d.querySelector('dialog.litedown-dialog');
+    if (!el) {
+      el = d.createElement('dialog');
+      el.className = 'litedown-dialog';
+      el.innerHTML = '<p></p><button>OK</button>';
+      el.querySelector('button').onclick = e => el.close();
+      d.body.append(el);
+    }
+    const p = el.firstElementChild;
+    p.innerText = resp.responseText; if (resp.status !== 200) p.className = 'error';
+    el.showModal();
+  }
   // remove empty frontmatter
   const fm = d.querySelector('.frontmatter');
   if (fm && !fm.innerText) fm.remove();
@@ -36,7 +49,7 @@
       if (cls.contains('waiting')) return;
       cls.add('waiting');
       new_req(a.href, 'save', e => {
-        alert(e.target.responseText);
+        show_dialog(e.target);
         cls.remove('waiting');
       });
     };
@@ -52,10 +65,8 @@
       new_req(u, q ? (a ? 'asset' : `book:${el.dataset[s]}`) : 'page', e => {
         const res = e.target.responseText;
         if (e.target.status !== 200) {
-          el.innerHTML = `<pre><code class="error">${res}</code></pre>`;
-          return;
-        }
-        if (res !== '') {
+          if (res.toLowerCase() != 'connection reset by peer') show_dialog(e.target);
+        } else if (res !== '') {
           if (a) {
             el[a] = `${u.replace(/[?].*/, '')}?timestamp=${+new Date()}`;
             el.tagName ==='SCRIPT' && update_script(el);
