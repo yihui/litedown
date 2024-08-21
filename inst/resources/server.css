@@ -1,5 +1,7 @@
 .nav-path {
   font-size: .8em;
+  width: 100%;
+  order: -1;
 }
 .pencil, .save {
   text-decoration: none;
