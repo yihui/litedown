@@ -313,4 +313,4 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
 }
 
 # use a specific version of jsdelivr assets
-jsd_version = function(x, v = '@1.12.30') paste0(x, v)
+jsd_version = function(x, v = '@1.13.0') paste0(x, v)

@@ -4,12 +4,11 @@ body {
   margin: auto;
   padding: 1em;
   line-height: 1.5;
-  box-sizing: border-box;
 }
 body, .abstract, code, .footnotes, #refs { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
-*, *:before, *:after { box-sizing: inherit; }
+*, :before, :after { box-sizing: border-box; }
 a { color: steelblue; }
 pre, img { max-width: 100%; }
 pre, pre:hover { white-space: pre-wrap; word-break: break-all; }
@@ -79,7 +78,7 @@ section.footnotes {
 }
 
 @media print {
-  body { font-size: 12pt; max-width: 100%; }
+  body { max-width: 100%; }
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
