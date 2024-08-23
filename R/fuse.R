@@ -726,7 +726,9 @@ fuse_code = function(x, blocks) {
       if (type == 'source') {
         a = c(paste0('.', lang), a)  # use engine name as class name
         # add line numbers
-        if (is_roaming()) a = c(a, sprintf('.line-numbers data-start="%d"', l1 + l2 - 1))
+        if (is_roaming()) a = c(
+          a, sprintf('.line-numbers .auto-numbers data-start="%d"', l1 + l2 - 1)
+        )
       } else {
         if (type == 'message') x = sub('\n$', '', x)
         x = split_lines(x)

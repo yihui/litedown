@@ -138,7 +138,7 @@
       chapters.forEach(el => open_line(el, el.dataset.source));
   }
   function open_line(container, path) {
-    container.querySelectorAll('span[data-line-number]').forEach(el => {
+    container.querySelectorAll('.auto-numbers span[data-line-number]').forEach(el => {
       const n = +el.dataset.lineNumber;
       if (n) el.onclick = e => {
         const u = `${location.href.replace(/[?#].*/, '')}?line=${n}`;

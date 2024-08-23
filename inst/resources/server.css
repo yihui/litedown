@@ -16,7 +16,7 @@ li .pencil {
 td .pencil {
   font-size: inherit;
 }
-span[data-line-number] {
+.auto-numbers span[data-line-number] {
   cursor: pointer;
 }
 ::backdrop {
@@ -24,7 +24,7 @@ span[data-line-number] {
   opacity: .5;
 }
 @media print {
-  .nav-path {
+  .nav-path, .auto-numbers span[data-line-number] {
     display: none;
   }
 }
