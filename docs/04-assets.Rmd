@@ -146,12 +146,6 @@ When you have this sidenote "hammer", I'm sure you will hit a lot of nails into
 the margin, even if you do not have to.
 :::
 
-::: {.side .side-right}
-And here is a note on the right side. Seriously, we should let
-[commonmark](https://commonmark.org)'s authors know that fenced `Div`s really
-deserve first-class support! They can make Markdown infinitely customizable.
-:::
-
 ``` markdown
 ::: {.side .side-left}
 **Anything** on the left.
@@ -239,7 +233,7 @@ a quote, just use the blockquote syntax `>`, e.g.,
 
 ::: embed-right
 ```{r, echo=FALSE}
-head(mtcars, 4)
+mtcars[1:4, 1:8]
 ```
 :::
 
