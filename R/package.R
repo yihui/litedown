@@ -31,6 +31,7 @@ record_print.data.frame = function(x, ...) {
     on.exit(options(opts), add = TRUE)
   }
   if (asis) class(x) = setdiff(class(x), 'AsIs')
+  if (inherits(x, 'tbl_df')) x = as.data.frame(x)
   tab = xfun::md_table(x, ...)
   opt = reactor()
   tab = add_cap(tab, opt$tab.cap, opt$label, opt$cap.pos %||% 'top', opt$tab.env, 'tab')
@@ -41,15 +42,7 @@ record_print.data.frame = function(x, ...) {
 record_print.matrix = record_print.data.frame
 
 #' @export
-record_print.tbl_df = function(x, ...) {
-  x = as.data.frame(x)
-  if ('limit' %in% names(list(...))) {
-    record_print.data.frame(x, ...)
-  } else {
-    limit = getOption('xfun.md_table.limit', getOption('pillar.print_min', 10))
-    record_print.data.frame(x, ..., limit = limit)
-  }
-}
+record_print.tbl_df = record_print.data.frame
 
 #' @export
 record_print.knitr_kable = function(x, ...) {
