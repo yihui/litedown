@@ -25,9 +25,12 @@ fuse_env = function() .env$global %||% globalenv()
 
 #' @export
 record_print.data.frame = function(x, ...) {
+  asis = inherits(x, 'AsIs')
   if (is.null(getOption('xfun.md_table.limit'))) {
-    opts = options(xfun.md_table.limit = 10); on.exit(options(opts), add = TRUE)
+    opts = options(xfun.md_table.limit = if (!asis) 10)
+    on.exit(options(opts), add = TRUE)
   }
+  if (asis) class(x) = setdiff(class(x), 'AsIs')
   tab = xfun::md_table(x, ...)
   opt = reactor()
   tab = add_cap(tab, opt$tab.cap, opt$label, opt$cap.pos %||% 'top', opt$tab.env, 'tab')
