@@ -914,6 +914,34 @@ jsdelivr = function(file, dir = 'npm/@xiee/utils/') {
   ifelse(is_https(file), file, sprintf('https://cdn.jsdelivr.net/%s%s', dir, file))
 }
 
+# get the latest version of jsdelivr assets
+jsd_version = local({
+  vers = list()  # cache versions in current session
+  function(pkg) {
+    if (is.character(v <- vers[[pkg]])) return(v)
+    x = tryCatch(
+      xfun::read_utf8(paste0('https://data.jsdelivr.com/v1/package/', pkg)),
+      error = function(e) ''
+    )
+    v = grep_sub('.*"latest":\\s*"([0-9.]+)".*', '@\\1', x)
+    vers[[pkg]] <<- if (length(v)) v[1] else ''
+  }
+})
+
+jsd_versions = function(pkgs) unlist(lapply(pkgs, jsd_version))
+
+# resolve the implicit latest version to current latest version
+jsd_resolve = function(x) {
+  rs = paste0(c(
+    '((?<=https://cdn.jsdelivr.net/combine/)|(?<=,))',
+    '(?<=https://cdn.jsdelivr.net/)(?!combine/)'
+  ), '([^/]+/(@[^/]+/)?[^/@]+)(?=/)')
+  for (r in rs) x = match_replace(x, r, function(z) {
+    paste0(z, jsd_versions(z))
+  })
+  x
+}
+
 # if both @foo and foo are present, remove foo
 resolve_dups = function(x) {
   x = unique(x)
@@ -968,6 +996,7 @@ resolve_files = function(x, ext = 'css') {
     paste0('combine/', paste(z, collapse = ','))
   })
   x[i] = jsdelivr(x[i], '')
+  x[i0] = jsd_resolve(x[i0])
 
   # built-in resources in this package
   i = dirname(x) == '.' & file_ext(x) == '' & !file_exists(x)

@@ -51,8 +51,8 @@ fuse_site = function(input = '.') {
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
-    css = jsd_version(c("@default", "@article", '@site')),
-    js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight")),
+    css = c("@default", "@article", '@site'),
+    js = c("@sidenotes", "@appendix", "@toc-highlight"),
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
@@ -256,8 +256,8 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '', css = jsd_version(c("@default", "@article", "@book")),
-    js = jsd_version(c("@sidenotes", "@appendix", "@toc-highlight"))
+    body_class = '', css = c("@default", "@article", "@book"),
+    js = c("@sidenotes", "@appendix", "@toc-highlight")
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }
@@ -311,6 +311,3 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
   opts = options(defaults)
   xfun::exit_call(function() options(opts))
 }
-
-# use a specific version of jsdelivr assets
-jsd_version = function(x, v = '@1.13.19') paste0(x, v)
