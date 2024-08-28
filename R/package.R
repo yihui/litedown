@@ -80,9 +80,9 @@ vig_filter = function(ifile, encoding) {
   res = lapply(res, function(x) {
     if (x$type == 'code_chunk') return(rep('', length(x$source)))
     if (is.character(x$source)) x$source else {
-      one_string(unlist(lapply(x$source, function(s) {
+      one_string(uapply(x$source, function(s) {
         if (is.character(s)) s else ''
-      })), '')
+      }), '')
     }
   })
   structure(split_lines(unlist(res)), control = '-H -t')

@@ -27,6 +27,8 @@ dropNULL = function(x) x[!vapply(x, is.null, logical(1))]
 
 is_lang = function(x) is.symbol(x) || is.language(x)
 
+uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)
+
 #' Convert some ASCII strings to HTML entities
 #'
 #' Transform ASCII strings `(c)` (copyright), `(r)` (registered trademark),
@@ -338,9 +340,9 @@ lang_files = function(package, path, langs) {
     if (length(l) == 0) return()
     # check if language files exist on CDN
     d = paste0(dirname(u), '/languages/')
-    l1 = unlist(lapply(l, function(z) {
+    l1 = uapply(l, function(z) {
       if (downloadable(sprintf('%s%s.min.js', d, z))) z
-    }))
+    })
     l2 = setdiff(l, l1)
     if (length(l2)) warn(l1, l2, d)
     l1
@@ -358,9 +360,9 @@ lang_files = function(package, path, langs) {
     x = x[1:2]
     x = lapply(match_full(x, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'), function(z) {
       z = gsub('[]["]', '', z)
-      unlist(lapply(strsplit(z, '[:,]'), function(y) {
+      uapply(strsplit(z, '[:,]'), function(y) {
         set_names(list(y[-1]), y[1])
-      }), recursive = FALSE)
+      }, recursive = FALSE)
     })
     # x1 is dependencies; x2 is aliases
     x1 = x[[1]]; x2 = unlist(x[[2]])
@@ -373,14 +375,14 @@ lang_files = function(package, path, langs) {
       c(lapply(deps, resolve_deps), lang)
     }
     # all languages required for this page
-    l1 = unique(unlist(lapply(langs, resolve_deps)))
+    l1 = unique(uapply(langs, resolve_deps))
     # languages that are officially supported
     l2 = c(names(x1), unlist(x1), x2)
     # for unknown languages, check if they exist on CDN
     d = sub('/plugins/.+', '/components/', u)
-    l3 = unlist(lapply(setdiff(l1, l2), function(z) {
+    l3 = uapply(setdiff(l1, l2), function(z) {
       if (!downloadable(sprintf('%sprism-%s.min.js', d, z))) z
-    }))
+    })
     l4 = setdiff(l1, l3)
     if (length(l3)) warn(l4, l3, d)
     l4
@@ -417,7 +419,7 @@ add_citation = function(x, bib, format = 'html') {
     '(?<!\\{)(\\{\\[\\}@[-;@ [:alnum:]]+\\{\\]\\}|@[-[:alnum:]]+)'
   # [@key] for citep, and @key for citet
   x = match_replace(x, r, function(z) {
-    z2 = unlist(lapply(strsplit(z, '[;@ {}]+'), function(keys) {
+    z2 = uapply(strsplit(z, '[;@ {}]+'), function(keys) {
       bracket = any(grepl('^\\[', keys))
       if (bracket) keys = gsub('^\\[|\\]$', '', keys)
       keys = keys[keys != '']
@@ -428,7 +430,7 @@ add_citation = function(x, bib, format = 'html') {
       } else {
         sprintf('\\cite%s{%s}', if (bracket) 'p' else 't', one_string(keys, ','))
       }
-    }))
+    })
     ifelse(is.na(z2), z, z2)
   })
   if (is_html) x = one_string(c(x, '<div id="refs">', bib_html(bib, cited), '</div>'))
@@ -467,7 +469,7 @@ cite_link = function(key, text, class = '') {
 # html bibliography
 bib_html = function(bib, keys) {
   bib = sort(bib[unique(keys)])
-  keys = unlist(lapply(bib, function(x) attr(unclass(x)[[1]], 'key')))
+  keys = uapply(bib, function(x) attr(unclass(x)[[1]], 'key'))
   res = format(bib, 'html')
   paste0('<p id="ref-', keys, '"', sub('^<p', '', res))
 }
@@ -928,7 +930,7 @@ jsd_version = local({
   }
 })
 
-jsd_versions = function(pkgs) unlist(lapply(pkgs, jsd_version))
+jsd_versions = function(pkgs) uapply(pkgs, jsd_version)
 
 # resolve the implicit latest version to current latest version
 jsd_resolve = function(x) {
@@ -1071,7 +1073,7 @@ base64_url = function(url, code, ext) {
     if (length(p) == 1) code = match_replace(
       code, '(?<=src:\'url\\(")(%%URL%%/[^"]+)(?="\\))', function(u) {
         u = sub('%%URL%%', paste(d, p, sep = '/'), u, fixed = TRUE)
-        unlist(lapply(u, function(x) download_cache$get(x, 'base64')))
+        uapply(u, function(x) download_cache$get(x, 'base64'))
       }
     ) else warning(
       'Unable to determine the font path in MathJax. Please report an issue to ',
@@ -1087,9 +1089,9 @@ base64_url = function(url, code, ext) {
       z3 = gsub(r, '\\3', z)
       i = !is_https(z2)
       z2[i] = paste(d, z2[i], sep = '/')
-      z2 = unlist(lapply(z2, function(x) {
+      z2 = uapply(z2, function(x) {
         if (is_https(x)) download_cache$get(x, 'base64') else base64_uri(x)
-      }))
+      })
       paste0(z1, z2, z3)
     })
   }

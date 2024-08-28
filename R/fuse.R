@@ -84,7 +84,7 @@ crack = function(input, text = NULL) {
     j = grepl(rx_inline, m[9, ])
   }
   m = m[, j, drop = FALSE]
-  n_start = unlist(lapply(res, function(x) x$lines[1]))  # starting line numbers
+  n_start = uapply(res, function(x) x$lines[1])  # starting line numbers
   j = findInterval(m[3, ], n_start)  # find which block each inline code belongs to
   for (i in seq_len(ncol(m))) {
     b = res[[j[i]]]; l = b$lines
@@ -488,10 +488,10 @@ fiss = function(input, output = '.R', text = NULL) {
   output = auto_output(input, output, NULL)
   blocks = crack(input, text)
   # TODO: what should we do for non-R code? also consider eval=FALSE and error=TRUE
-  res = unlist(lapply(blocks, function(b) {
+  res = uapply(blocks, function(b) {
     if (b$type == 'code_chunk' && !isFALSE(b$options$purl) && b$options$engine == 'r')
       c(b$source, '')
-  }))
+  })
   if (is_output_file(output)) write_utf8(res, output) else raw_string(res)
 }
 
@@ -637,10 +637,10 @@ fuse_code = function(x, blocks) {
   }
 
   # fuse child documents (empty the `child` option to avoid infinite recursion)
-  if (length(opts$child)) return(unlist(lapply(reactor(child = NULL)$child, function(.) {
+  if (length(opts$child)) return(uapply(reactor(child = NULL)$child, function(.) {
     child = .env$child; .env$child = TRUE; on.exit(.env$child <- child)
     fuse(., output = 'markdown', envir = fuse_env(), quiet = TRUE)
-  })))
+  }))
 
   # the source code could be from these chunk options: file, code, or ref.label
   test_source = function(name) {
@@ -656,7 +656,7 @@ fuse_code = function(x, blocks) {
   } else if (test_source('code')) {
     x$source = opts$code
   } else if (test_source('ref.label')) {
-    x$source = unlist(lapply(blocks[opts$ref.label], `[[`, 'source'))
+    x$source = uapply(blocks[opts$ref.label], `[[`, 'source')
   }
 
   lab = opts$label
