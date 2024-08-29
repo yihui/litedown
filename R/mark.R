@@ -373,6 +373,7 @@ build_output = function(format, options, template, meta) {
       if (!name %in% names(meta)) meta[[name]] <<- value
     }
     set_meta('css', 'default')
+    set_meta('plain-title', str_trim(commonmark::markdown_text(meta[['title']])))
     meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)
     # if the class .line-numbers is present, add js/css for line numbers
