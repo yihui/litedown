@@ -209,7 +209,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   if (format == 'html') {
     # don't disable check boxes
-    ret = gsub('(<li><input type="checkbox" )disabled="" (/>)', '\\1\\2', ret)
+    ret = gsub('(<li><input type="checkbox" [^>]*?)disabled="" (/>)', '\\1\\2', ret)
     if (has_math) {
       ret = gsub(sprintf('<code>%s(.{5,}?)%s</code>', id, id), '\\1', ret)
       # `\(math\)` may fail to render to <code>\(math\)</code> when backticks
