@@ -679,7 +679,6 @@ fuse_code = function(x, blocks) {
   env = opts$fig.env; alt = opts$fig.alt; cap = opts$fig.cap
   att = if (is.null(att <- opts$attr.plot)) '' else paste0('{', att, '}')
   if (is.null(alt)) alt = cap
-  if (is.null(alt)) alt = ''
   p1 = Filter(function(x) !is_plot(x), res)
   p2 = Filter(is_plot, res)
   # get the relative path of the plot directory
@@ -690,6 +689,13 @@ fuse_code = function(x, blocks) {
 
   # recycle alt and attributes for all plots
   pn = length(unlist(p2))
+  if (pn && is.null(alt)) {
+    # reminder about missing alt text if this option is set to TRUE
+    if (getOption('litedown.fig.alt', FALSE)) message(
+      "\nPlease provide a 'fig.alt' option to the code chunk at ", get_loc(lab)
+    )
+    alt = ''
+  }
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
   # if figure caption is provided, merge all plots in one env
