@@ -342,7 +342,7 @@ get_loc = function(label) {
   l = .env$source_pos; n = length(l)
   if (n == 4) l = sprintf('#%d:%d-%d:%d', l[1], l[2], l[3], l[4])  # row1:col1-row2:col2
   if (n == 2) l = sprintf('#%d-%d', l[1], l[2])  # row1-row2
-  paste0(.env$input, l, if (label == '') ' ', label)
+  paste0(.env$input, l, if (label != '') paste0(' [', label, ']'))
 }
 
 # save line numbers in .env to be used in error messages
@@ -500,13 +500,12 @@ fiss = function(input, output = '.R', text = NULL) {
   nms = vapply(blocks, function(x) x$options[['label']] %||% '', character(1))
   names(blocks) = nms
 
-  # a simple progress indicator
-  p_lab = ifelse(nms == '', '', sprintf(' [%s] ', nms))  # labels to display
-  # we need to know how many spaces we need to wipe out previous progress text
-  # of the form: X% | input_file#line1-line2 [label]
-  p_len = if (length(input)) nchar(input) else 0  # length of input path
-  p_len = p_len + max(c(0, nchar(p_lab))) + 4  # 4 == nchar('100%')
-  p_len = p_len + sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1 + 3  # 1 = '#'; 3 = ' | '
+  # a simple progress indicator: we need to know how many spaces we need to wipe
+  # out previous progress text of the form:
+  # xxx% | input_file#line1-line2 [label]
+  # ...4..3          1     1     .2     1
+  p_len = 4 + 3 + sum(nchar(input)) + 1 +
+    (sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1) + 2 + max(nchar(nms)) + 1
   p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
   p_out = getOption('litedown.progress.output', stderr())
   p_yes = FALSE; t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
@@ -527,7 +526,7 @@ fiss = function(input, output = '.R', text = NULL) {
       "\033]8;%s;file://%s\a%s\033]8;;\a", link_pos(),
       normalize_path(input), input
     )
-    message('Quitting from ', get_loc(p_lab[k]))
+    message('Quitting from ', get_loc(nms[k]))
   }
   # suppress tidyverse progress bars
   opt = options(rstudio.notebook.executing = TRUE)
@@ -538,7 +537,7 @@ fiss = function(input, output = '.R', text = NULL) {
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
-    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(p_lab[k])))
+    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(nms[k])))
     # record timing if requested
     if (!isFALSE(time <- timing_path())) t1 = Sys.time()
     res[k] = if (b$type == 'code_chunk') {
@@ -546,7 +545,7 @@ fiss = function(input, output = '.R', text = NULL) {
     } else {
       one_string(fuse_text(b), '')
     }
-    if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, p_lab[k])
+    if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, nms[k])
     p_bar(p_clr)
   }
   k = n
