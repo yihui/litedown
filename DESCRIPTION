@@ -8,10 +8,10 @@ Authors@R: c(
    )
 Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     to lightweight HTML/LaTeX documents with the 'commonmark' package (instead
-    of Pandoc). Some missing Markdown features in 'commonmark' are also
+    of 'Pandoc'). Some missing Markdown features in 'commonmark' are also
     supported, such as raw HTML/LaTeX blocks, LaTeX math, superscripts,
-    subscripts, footnotes, element attributes, appendices, and fenced Divs,
-    but not all Pandoc's Markdown features are (or will be) supported. With
+    subscripts, footnotes, element attributes, and appendices,
+    but not all 'Pandoc' Markdown features are (or will be) supported. With
     additional JavaScript and CSS, you can also create HTML slides and articles.
     This package can be viewed as a trimmed-down version of R Markdown and
     'knitr'. It does not aim at rich Markdown features or a large variety of
