@@ -107,8 +107,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   render = function(x, clean = FALSE) {
     if (length(x) == 0) return(x)
     res = do.call(render_fun, c(list(text = x), render_args))
-    if (clean) res = I(gsub('^<p[^>]*>|(</p>)?\n$', '', res))
-    res
+    if (clean) res = gsub('^<p[^>]*>|(</p>)?\n$', '', res)
+    I(res)
   }
 
   if (isTRUE(options[['smartypants']])) text = smartypants(text)
@@ -312,7 +312,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   for (i in top_meta) if (length(meta[[i]])) {
     meta[[i]] = render(meta[[i]], clean = i != 'abstract')
     # also provide *_ version of top-level meta variables, containing tags/commands
-    meta[[paste0(i, '_')]] = if (format == 'html') {
+    meta[[paste0(i, '_')]] = I(if (format == 'html') {
       tag = tag_meta[i]
       sprintf(
         '<div class="%s">%s</div>', i, if (tag == '') meta[[i]] else sprintf(
@@ -321,7 +321,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       )
     } else if (format == 'latex') {
       sprintf(cmd_meta[i], meta[[i]])
-    }
+    })
   }
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
@@ -375,7 +375,7 @@ build_output = function(format, options, template, meta) {
       if (!name %in% names(meta)) meta[[name]] <<- value
     }
     set_meta('css', 'default')
-    set_meta('plain-title', str_trim(commonmark::markdown_text(meta[['title']])))
+    set_meta('plain-title', I(str_trim(commonmark::markdown_text(meta[['title']]))))
     meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)
     # if the class .line-numbers is present, add js/css for line numbers
