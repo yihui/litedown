@@ -29,8 +29,27 @@
   chapters.forEach(el => {
     const u = el.dataset.source;
     u && !el.querySelector('.pencil') &&
-      el.insertAdjacentHTML('afterbegin', `<a href="?path=${u}" title="Open ${u}">✎</a>`);
+      el.insertAdjacentHTML('afterbegin', `<span class="buttons"><a href="?path=${u}" title="Open ${u}">✎</a></span>`);
   });
+  const nav = d.querySelector('.nav-path, .title h1');
+  const btn = d.createElement('span'); btn.className = 'buttons';
+  ['back', 'forward', 'refresh', 'print'].forEach((action, i) => {
+    if (btn.querySelector(`.${action}`)) return;
+    const a = d.createElement('a');
+    a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1); a.className = action;
+    a.innerText = ['←', '→', '⟳', '⧉'][i];
+    a.onclick = e => {
+      e.preventDefault();
+      action === 'print' ? window.print() : (
+        action === 'refresh' ? location.reload() : history[action]()
+      );
+    };
+    btn.append(a);
+  });
+  if (nav) {
+    nav.querySelectorAll('a[href="#"]').forEach(a => btn.append(a));
+    nav.append(btn);
+  }
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {
     if (a.innerText !== '✎' || a.classList.contains('pencil')) return;

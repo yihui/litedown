@@ -3,15 +3,14 @@
   width: 100%;
   order: -1;
 }
-.pencil, .save {
-  text-decoration: none;
-  font-size: 1.5em;
-  font-style: normal;
+.buttons {
   float: right;
-  margin-left: .5em;
-}
-li .pencil {
-  float: none;
+  a {
+    text-decoration: none;
+    font-size: 1.2em;
+    font-style: normal;
+    margin-left: .5em;
+  }
 }
 td .pencil {
   font-size: inherit;

@@ -1,5 +1,6 @@
 # CHANGES IN litedown VERSION 0.3
 
+- Added back/forward/refresh/print buttons to the toolbar in the `litedown::roam()` preview interface.
 
 # CHANGES IN litedown VERSION 0.2
 
