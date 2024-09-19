@@ -37,7 +37,7 @@
     if (btn.querySelector(`.${action}`)) return;
     const a = d.createElement('a');
     a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1); a.className = action;
-    a.innerText = ['←', '→', '⟳', '⧉'][i];
+    a.innerText = ['←', '→', '⟳', '⎙'][i];
     a.onclick = e => {
       e.preventDefault();
       action === 'print' ? window.print() : (
@@ -62,7 +62,7 @@
   // add classes and events to save buttons
   d.querySelectorAll('a[href]').forEach(a => {
     if (a.innerText !== '↯' || a.classList.contains('save')) return;
-    a.classList.add('save'); a.title = 'Render and Save';
+    a.classList.add('save'); a.title = 'Render to disk';
     a.onclick = e => {
       e.preventDefault();
       const cls = d.body.classList;
