@@ -26,7 +26,7 @@ fuse_env = function() .env$global %||% globalenv()
 #' @export
 record_print.data.frame = function(x, ...) {
   asis = inherits(x, 'AsIs')
-  if (is.null(getOption('xfun.md_table.limit'))) {
+  if (is.null(getOption('xfun.md_table.limit')) && !'limit' %in% names(list(...))) {
     opts = options(xfun.md_table.limit = if (!asis) 10)
     on.exit(options(opts), add = TRUE)
   }
