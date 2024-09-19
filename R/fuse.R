@@ -528,8 +528,12 @@ fiss = function(input, output = '.R', text = NULL) {
     )
     message('Quitting from ', get_loc(nms[k]))
   }
-  # suppress tidyverse progress bars
-  opt = options(rstudio.notebook.executing = TRUE)
+  # suppress tidyverse progress bars and use cairo for bitmap devices (for
+  # smaller plot files and possible parallel execution)
+  opt = options(
+    rstudio.notebook.executing = TRUE,
+    bitmapType = if (capabilities('cairo')) 'cairo' else .Options$bitmapType
+  )
   on.exit({ options(opt); on_error() }, add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
