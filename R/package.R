@@ -53,16 +53,29 @@ record_print.knitr_kable = function(x, ...) {
 
 # register vignette engines
 .onLoad = function(lib, pkg) {
+  vig_add('vignette', vig_fun(TRUE), vig_fun(FALSE))
+  vig_add('book', vig_fun(TRUE), vig_fun(FALSE))
+}
+
+vig_add = function(name, weave, tangle) {
   tools::vignetteEngine(
-    'vignette', vig_fun(TRUE), vig_fun(FALSE), '[.]R?md$',
-    aspell = list(filter = vig_filter)
+    name, weave, tangle, '[.]R?md$', aspell = list(filter = vig_filter)
   )
 }
 
 # weave or tangle?
-vig_fun = function(weave = TRUE) {
+vig_fun = function(weave = TRUE, book = FALSE) {
   function(file, quiet = FALSE, ...) {
     empty_file = function() write_utf8(character(), with_ext(file, '.R'))
+
+    # call fuse_book() to build multiple input files into a book
+    if (book) return(if (weave) {
+      if (quiet) {
+        opt = options(litedown.progress.delay = Inf); on.exit(options(opt))
+      }
+      fuse_book(dirname(file), envir = globalenv())
+    } else empty_file())
+
     # fuse() .Rmd and mark() .md
     if (grepl('[.]Rmd$', file)) {
       if (weave) fuse(file, quiet = quiet, envir = globalenv()) else {

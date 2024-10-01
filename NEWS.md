@@ -4,6 +4,8 @@
 
 - Set `options(bitmapType = 'cairo')` in `fuse()` if `capabilities('cairo')` is TRUE, which will generate smaller bitmap plot files (e.g., `.png`) than using `quartz` or `Xlib`, and is also a safer option for `fuse()` to be executed in parallel (rstudio/rmarkdown#2561).
 
+- Added a new vignette engine `litedown::book` to make it possible to build multiple vignettes into a book. To use this engine, declare `\VignetteEngine{litedown::book}` only in the book index file (e.g., `index.Rmd`) but not in other book chapter files.
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.
