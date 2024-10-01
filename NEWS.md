@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.3
 
+- Added helper functions `pkg_desc()`, `pkg_news()`, `pkg_citation()`, and `pkg_manual()` to get various package information for building the full package documentation as a single-file book (thanks, @jangorecki @llrs #24, @TimTaylor #22).
+
 - Added back/forward/refresh/print buttons to the toolbar in the `litedown::roam()` preview interface.
 
 - Set `options(bitmapType = 'cairo')` in `fuse()` if `capabilities('cairo')` is TRUE, which will generate smaller bitmap plot files (e.g., `.png`) than using `quartz` or `Xlib`, and is also a safer option for `fuse()` to be executed in parallel (rstudio/rmarkdown#2561).
