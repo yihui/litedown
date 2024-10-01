@@ -157,7 +157,7 @@ pkg_desc = function(name = detect_pkg()) {
 #' @rdname pkg_desc
 #' @export
 pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, ...) {
-  if (path == '') {
+  if (length(path) != 1 || path == '') {
     db = news(package = name, ...)
     if (recent > 0) db = head(db, recent)
     res = NULL
