@@ -152,6 +152,7 @@ pkg_desc = function(name = detect_pkg()) {
 #' @param recent The number of recent versions to show. By default, only the
 #'   latest version's news entries are retrieved. To show the full news, set
 #'   `recent = 0`.
+#' @param ... Other arguments to be passed to [news()].
 #' @return `pkg_news()` returns the news entries.
 #' @rdname pkg_desc
 #' @export

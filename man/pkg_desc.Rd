@@ -26,6 +26,8 @@ retrieve the news entries.}
 \item{recent}{The number of recent versions to show. By default, only the
 latest version's news entries are retrieved. To show the full news, set
 \code{recent = 0}.}
+
+\item{...}{Other arguments to be passed to \code{\link[=news]{news()}}.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
