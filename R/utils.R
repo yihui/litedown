@@ -25,6 +25,12 @@ set_names = function(x, nm) {
 
 dropNULL = function(x) x[!vapply(x, is.null, logical(1))]
 
+# remove the <p> tag from HTML
+sans_p = function(x) gsub('^<p[^>]*>|(</p>)?\n$', '', x)
+
+# remove ugly single quotes, e.g., 'LaTeX' -> LaTeX
+sans_sq = function(x) gsub("(^|\\W)'([^']+)'(\\W|$)", '\\1\\2\\3', x)
+
 is_lang = function(x) is.symbol(x) || is.language(x)
 
 uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)
