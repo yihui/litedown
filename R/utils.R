@@ -503,6 +503,8 @@ build_toc = function(html, n = 3) {
   if (n > 6) n = 6
   r = sprintf('<(h[1-%d])( id="[^"]+")?[^>]*>(.+?)</\\1>', n)
   items = unlist(match_full(html, r))
+  # ignore headings with class="unlisted"
+  items = items[!has_class(items, 'unlisted')]
   if (length(items) == 0) return()
   x = gsub(r, '<toc\\2>\\3</toc>', items)  # use a tag <toc> to protect heading text
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
@@ -698,6 +700,11 @@ unique_id = function(x, empty) {
   x
 }
 
+# test if a class name exists in attributes
+has_class = function(x, class) {
+  grepl(sprintf(' class="([^"]+ )?%s( [^"]+)?"', class), x)
+}
+
 # number sections in HTML output
 number_sections = function(x) {
   h = sub('</h([1-6])>', '\\1', unlist(match_full(x, '</h[1-6]>')))
@@ -706,10 +713,6 @@ number_sections = function(x) {
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
   n = rep(0, 6)  # counters for all levels of headings
   k0 = 6  # level of last unnumbered heading
-  # test if a class name exists in attributes
-  has_class = function(x, class) {
-    grepl(sprintf(' class="([^"]+ )?%s( [^"]+)?"', class), x)
-  }
   match_replace(x, r, function(z) {
     z1 = as.integer(sub(r, '\\1', z, perl = TRUE))
     z2 = sub(r, '\\2', z, perl = TRUE)
