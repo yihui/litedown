@@ -260,13 +260,10 @@ pkg_manual = function(name = detect_pkg()) {
 }
 
 detect_pkg = function() {
-  # when running R CMD check, DESCRIPTION won't be under working directory
-  root = if (!is.na(name <- xfun::check_package_name())) {
-    root = file.path('00_pkg_src', name)
-    if (dir.exists(root)) root
+  # when running R CMD check, DESCRIPTION won't be under working directory but 00_pkg_src
+  for (d in c(head(list.files('00_pkg_src', full.names = TRUE), 1), './')) {
+    if (!is.null(root <- xfun::proj_root(d, head(xfun::root_rules, 1)))) break
   }
-  # if not found in R CMD check, locate DESCRIPTION via xfun::proj_root()
-  if (is.null(root)) root = xfun::proj_root(rules = head(xfun::root_rules, 1))
   if (is.null(root)) stop(
     "Cannot automatically detect the package root directory from '", getwd(), "'. ",
     "You must provide the package name explicitly."
