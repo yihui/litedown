@@ -5,7 +5,7 @@
 #' output document format. The main differences between this package and
 #' \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e., fewer
 #' dependencies), and it also has fewer Markdown features.
-#' @importFrom xfun base64_uri csv_options download_cache fenced_block
+#' @importFrom xfun alnum_id base64_uri csv_options download_cache fenced_block
 #'   fenced_div file_exists file_ext grep_sub in_dir loadable new_record
 #'   normalize_path prose_index raw_string read_all read_utf8 record_print
 #'   Rscript_call sans_ext split_lines with_ext write_utf8
@@ -207,66 +207,55 @@ tweak_citation = function(x) {
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(name = detect_pkg()) {
-  # all help pages on one HTML page
-  res = ''
-  con = textConnection('res', 'w', local = TRUE, encoding = 'UTF-8')
-  tools::pkg2HTML(name, hooks = list(pkg_href = function(pkg) {
-    path = if (pkg %in% xfun::base_pkgs()) 'r/%s/' else 'cran/%s/man/'
-    sprintf(paste0('https://rdrr.io/', path), pkg)
-  }), out = con, include_description = FALSE)
-  close(con)
-  res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
+  links = tools::findHTMLlinks()
+  # resolve internal links (will assign IDs of the form sec-man-ID to all h2)
+  r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
+  i = grep(r, links)
+  links[i] = paste0('#sec-man-', alnum_id(sub(r, '\\2', links[i])))
+  # resolve external links to specific man pages on https://rdrr.io
+  r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
+  links = sub(r, 'https://rdrr.io/r/\\1/', links)
+  r = '^[.][.]/[.][.]/([^/]+)/html/'
+  links = sub(r, 'https://rdrr.io/cran/\\1/man/', links)
 
-  # extract topic names and put them in the beginning (like a TOC)
+  db = tools::Rd_db(name)  # all Rd pages
+  al = lapply(db, Rd_aliases)
+
+  # show the page name-package first
+  idx = vapply(al, is.element, el = paste0(name, '-package'), FALSE)
+  res = uapply(names(db)[order(!idx)], function(i) {
+    txt = ''
+    con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
+    tools::Rd2HTML(db[[i]], Links = links, out = con)
+    close(con)
+    txt = gsub('.*?(<h2[ |>].*)</main>.*', '\\1', one_string(txt))  # extract body
+    sub('<h2>', sprintf('<h2 id="sec-man-%s">', alnum_id(al[[i]][1])), txt, fixed = TRUE)
+  })
+
+  # extract all aliases and put them in the beginning (like a TOC)
   env = asNamespace(name)
-  r1 = '^(<h2 [^>]+>)(.*?</h2>)'
-  r2 = '(?<=<span id="topic[+])([^"]+)(?="></span>)'
-  i = grepl(r1, res) & grepl(r2, res, perl = TRUE)
-  toc = uapply(match_full(res[i], r2), function(topics) {
+  toc = uapply(al, function(topics) {
     fn = uapply(topics, function(x) {
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
-    a = paste0(name, '-package')
-    if (!a %in% topics) a = topics[1]
-    sprintf('<a href="#%s"><code>%s</code></a>', a, fn)
+    sprintf('<a href="#sec-man-%s"><code>%s</code></a>', alnum_id(fn[1]), fn)
   })
-  fn = sub('.*<code>(.+)</code>.*', '\\1', toc)
-  toc = toc[order(fn)]; fn = fn[order(fn)]
-  g = toupper(substr(fn, 1, 1))
+
+  g = toupper(substr(unlist(al), 1, 1))
   g[!g %in% LETTERS] = 'misc'
   toc = split(toc, g)  # group by first character
   toc = unlist(mapply(function(x, g) {
     c('<p>', sprintf('<b>-- <kbd>%s</kbd> --</b>', g), x, '</p>')
   }, toc, names(toc)))
 
-  res = one_string(res)
-  res = gsub('<nav .*</nav>|\n+?<hr>\n+?', '', res)  # remove topic nav and hr
-  res = gsub('.*?(<h2 .*)</main>.*', '\\1', res)  # extract reference sections
-  res = gsub('<h3>', '<h3 class="unnumbered">', res, fixed = TRUE)
-  res = gsub('<code style="white-space: pre;">', '<code>', res, fixed = TRUE)
+  res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
+  res = gsub('<h3>', '<h3 class="unnumbered unlisted">', res, fixed = TRUE)
+  res = gsub('<code id="[^"]+">', '<code>', res)
   res = gsub('(<code[^>]*>)\\s+', '\\1', res)
   res = gsub('\\s+(</code>)', '\\1', res)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
 
-  # resolve links to specific man pages on https://rdrr.io
-  r = '/([^/]+)/(man/)?#topic[+]([^"]+)"'
-  al = character()  # cache aliases
-  res = match_replace(res, r, function(x) {
-    x1 = gsub(r, '\\1', x)
-    x2 = gsub(r, '\\2', x)
-    x3 = gsub(r, '\\1::\\3', x)
-    if (any(i <- is.na(al[x3]))) lapply(unique(x1), function(pkg) {
-      path = system.file('help', 'aliases.rds', package = pkg)
-      if (!file_exists(path)) return()
-      db = readRDS(path)
-      names(db) = sprintf('%s::%s', pkg, names(db))
-      al[names(db)] <<- db
-    })
-    # for a topic, look up its html page name from the alias db
-    x4 = al[x3]
-    sprintf('/%s/%s%s"', x1, x2, ifelse(is.na(x4), '', paste0(x4, '.html')))
-  })
   new_asis(c(toc, res))
 }
 
@@ -283,4 +272,9 @@ detect_pkg = function() {
 detect_news = function(name) {
   if (isTRUE(file_exists(path <- file.path(attr(name, 'path'), 'NEWS.md'))))
     path else system.file('NEWS.md', package = name)
+}
+
+# get \alias{} names in an Rd object
+Rd_aliases = function(x) {
+  uapply(x, function(x) if (attr(x, 'Rd_tag') == '\\alias') as.character(x))
 }
