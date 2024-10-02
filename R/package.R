@@ -207,7 +207,7 @@ tweak_citation = function(x) {
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(name = detect_pkg()) {
-  links = tools::findHTMLlinks()
+  links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec-man-ID to all h2)
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
   i = grep(r, links)
