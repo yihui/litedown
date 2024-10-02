@@ -188,16 +188,15 @@ pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, .
 pkg_citation = function(name = detect_pkg()) {
   res = uapply(citation(name), function(x) {
     x = tweak_citation(x)
-    unname(c(format(x, bibtex = FALSE), fenced_block(toBibtex(x), 'latex')))
+    unname(c(format(x, style = 'text'), fenced_block(toBibtex(x), 'latex')))
   })
   new_asis(res)
 }
 
-# dirty hack to add year if missing, and remove header
+# dirty hack to add year if missing
 tweak_citation = function(x) {
   cls = class(x)
   x = unclass(x)
-  attr(x[[1]], 'header') = attr(x, 'package') = NULL
   if (is.null(x[[1]]$year)) x[[1]]$year = format(Sys.Date(), '%Y')
   class(x) = cls
   x
