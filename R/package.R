@@ -260,15 +260,15 @@ pkg_manual = function(name = detect_pkg()) {
   new_asis(c(toc, res))
 }
 
-detect_pkg = function() {
+detect_pkg = function(error = TRUE) {
   # when running R CMD check, DESCRIPTION won't be under working directory but 00_pkg_src
   for (d in c(head(list.files('00_pkg_src', full.names = TRUE), 1), './')) {
     if (!is.null(root <- xfun::proj_root(d, head(xfun::root_rules, 1)))) break
   }
-  if (is.null(root)) stop(
+  if (is.null(root)) if (error) stop(
     "Cannot automatically detect the package root directory from '", getwd(), "'. ",
     "You must provide the package name explicitly."
-  )
+  ) else return()
   desc = read_utf8(file.path(root, 'DESCRIPTION'))
   name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
   structure(name, path = root)
