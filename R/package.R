@@ -229,7 +229,8 @@ pkg_manual = function(name = detect_pkg()) {
     close(con)
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
-    sub('<h2>', sprintf('<h2 id="sec-man-%s">', alnum_id(al[[i]][1])), txt, fixed = TRUE)
+    txt = gsub('<h2 id="[^"]+"', '<h2', txt)  # remove existing ID
+    sub('<h2', sprintf('<h2 id="sec-man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
   })
 
   # extract all aliases and put them in the beginning (like a TOC)
