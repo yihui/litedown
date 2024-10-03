@@ -244,6 +244,7 @@ pkg_manual = function(name = detect_pkg()) {
 
   g = toupper(substr(unlist(al), 1, 1))
   g[!g %in% LETTERS] = 'misc'
+  g = factor(g, c(LETTERS, 'misc'))
   toc = split(toc, g)  # group by first character
   toc = unlist(mapply(function(x, g) {
     c('<p>', sprintf('<b>-- <kbd>%s</kbd> --</b>', g), x, '</p>')
