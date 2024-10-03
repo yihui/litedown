@@ -135,7 +135,7 @@ pkg_desc = function(name = detect_pkg()) {
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
     if (i %in% c('URL', 'BugReports')) {
       sans_p(commonmark::markdown_html(d[[i]], extensions = 'autolink'))
-    } else xfun:::escape_html(d[[i]])
+    } else xfun::html_escape(d[[i]])
   }
   d = unlist(d)
   res = paste0(

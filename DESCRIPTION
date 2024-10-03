@@ -21,7 +21,7 @@ Depends: R (>= 3.2.0)
 Imports:
     utils,
     commonmark (>= 1.9.1),
-    xfun (>= 0.47)
+    xfun (>= 0.48)
 Suggests:
     knitr,
     rbibutils,
