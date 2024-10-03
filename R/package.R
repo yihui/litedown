@@ -227,7 +227,8 @@ pkg_manual = function(name = detect_pkg()) {
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
     tools::Rd2HTML(db[[i]], Links = links, out = con)
     close(con)
-    txt = gsub('.*?(<h2[ |>].*)</main>.*', '\\1', one_string(txt))  # extract body
+    # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
+    txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
     sub('<h2>', sprintf('<h2 id="sec-man-%s">', alnum_id(al[[i]][1])), txt, fixed = TRUE)
   })
 
