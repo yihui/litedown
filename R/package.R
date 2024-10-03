@@ -54,7 +54,7 @@ record_print.knitr_kable = function(x, ...) {
 # register vignette engines
 .onLoad = function(lib, pkg) {
   vig_add('vignette', vig_fun(TRUE), vig_fun(FALSE))
-  vig_add('book', vig_fun(TRUE), vig_fun(FALSE))
+  vig_add('book', vig_fun(TRUE, TRUE), vig_fun(FALSE, TRUE))
 }
 
 vig_add = function(name, weave, tangle) {
