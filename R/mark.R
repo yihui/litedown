@@ -309,18 +309,22 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   meta$body = ret
   # convert some meta variables in case they use Markdown syntax
-  for (i in top_meta) if (length(meta[[i]])) {
-    meta[[i]] = render(meta[[i]], clean = i != 'abstract')
+  for (i in top_meta) if (meta_len <- length(meta[[i]])) {
+    # if author is of length > 1, render them individually
+    m_author = i == 'author' && meta_len > 1
+    meta[[i]] = if (m_author) uapply(meta[[i]], render) else {
+      render(meta[[i]], clean = i != 'abstract')
+    }
     # also provide *_ version of top-level meta variables, containing tags/commands
     meta[[paste0(i, '_')]] = I(if (format == 'html') {
       tag = tag_meta[i]
       sprintf(
-        '<div class="%s">%s</div>', i, if (tag == '') meta[[i]] else sprintf(
-          '<%s>%s</%s>', tag, meta[[i]], tag
-        )
+        '<div class="%s">%s</div>', i, if (tag == '') meta[[i]] else {
+          one_string(sprintf('<%s>%s</%s>', tag, meta[[i]], tag))
+        }
       )
     } else if (format == 'latex') {
-      sprintf(cmd_meta[i], meta[[i]])
+      sprintf(cmd_meta[i], if (m_author) one_string(meta[[i]], ' \\and ') else meta[[i]])
     })
   }
   # use the template (if provided) to create a standalone document
