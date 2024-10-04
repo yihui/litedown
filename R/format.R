@@ -4,7 +4,8 @@ output_format = function(to, options, meta, template, keep_md, ...) {
   if (is_rmd_preview()) xfun::do_once(message(
     "It appears that you clicked the 'Knit' button in RStudio to render the document, ",
     "but perhaps should add a top-level field 'knit: litedown:::knit' to the YAML metadata, ",
-    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render().\n"
+    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render().",
+    "Alternatively, use litedown::roam() to preview or render documents.\n"
   ), 'litedown.rmarkdown.reminder')
   opts = rmarkdown::pandoc_options(to = to, ...)
   opts$convert_fun = function(input, output, ...) {
