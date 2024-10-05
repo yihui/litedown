@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.8">
+<meta name="generator" content="litedown 0.2.9">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-04</h3></div>
+<div class="date"><h3>2024-10-05</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -608,9 +608,53 @@ exception is raw LaTeX blocks that are LaTeX math environments, which also work
 for HTML output (see the next section).</p>
 <h3 id="sec-latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</h3>
 <p>You can write both <code>$inline$</code> and <code>$$display$$</code> LaTeX math, e.g.,
-\(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\)</p>
+\(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\).</p>
 <p>$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$</p>
-<p>$$|x| = \begin{cases} x &amp;\text{if } x \geq 0 \\ -x &amp;\text{if } x &lt; 0 \end{cases}$$</p>
+<p>$$|x| = \begin{cases}
+x &amp;\text{if } x \geq 0 \\
+-x &amp;\text{if } x &lt; 0
+\end{cases}$$</p>
+<p>For expressions in pairs of single or double dollar signs to be recognized as
+LaTeX math, there must be no spaces after the opening dollar sign, or before the
+closing dollar sign. There should be at least one space before the opening
+dollar sign, unless the math expression starts from the very beginning of a
+line.</p>
+<ul>
+<li>
+<p>For a pair of single dollar signs, they must be on the same line in the
+text, and the closing dollar sign should not be followed by a number (to
+avoid detecting math mistakenly from text like “a $5 bill and a $10
+bill”).</p>
+</li>
+<li>
+<p>For <code>$$ $$</code> expressions, they can span over multiple lines, in which case
+the closing <code>$$</code> must have at least one non-space character before it, and
+no spaces after it.</p>
+</li>
+</ul>
+<p>Valid examples:</p>
+<pre><code class="language-md">$x + y$
+  $x + y$
+text $x + y$ text
+
+$$x + y$$
+  $$x + y$$
+text $$x + y$$ text
+$$x +
+  y$$
+</code></pre>
+<p>Invalid examples:</p>
+<pre><code class="language-md">$ x + y$  (space after the opening `$`)
+text$x + y$  (lack of space before the opening `$`)
+text $x + y$10 text  (number after closing `$`)
+$x +
+y$  (`$ $` expressions cannot be written on multiple lines)
+
+$$x +
+  y
+$$
+(lack of non-space character before closing `$$`)
+</code></pre>
 <p>LaTeX math environments are also supported, e.g., below are an <code>align</code>
 environment and an <code>equation</code> environment:</p>
 <p>
