@@ -12,6 +12,8 @@
 
 - Added support for an array of multiple authors in the YAML metadata (thanks, @AlbertLei, #28). If the `author` field in YAML is an array of length > 1, each author will be written to a separate `<h2>` in HTML output, or concatenated by `\and` in LaTeX output. Note that you can also write multiple authors in a single string (e.g., `author: "Jane X and John Y"`) instead of using an array (`author: ["Jane X", "John Y"]`), in which case the string will be treated as a single author (they will be put inside a single `<h2>` in HTML output).
 
+- Fixed the bug that the leading `-`, `+`, or `*` in a LaTeX math expression was recognized as the bullet list marker, which would invalidate the math expression (thanks, @hturner, #33).
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

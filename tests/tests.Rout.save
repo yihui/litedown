@@ -63,7 +63,10 @@ bar</p>
 <p><code>$x$</code> is inline math \(x\)!</p>
 <p>Display style:</p>
 <p>$$x + y$$</p>
-<p>\begin{align} a^{2}+b^{2} &amp; = c^{2}\\ \sin^{2}(x)+\cos^{2}(x) &amp; = 1 \end{align}</p>
+<p>\begin{align}
+a^{2}+b^{2} &amp; = c^{2}\\
+\sin^{2}(x)+\cos^{2}(x) &amp; = 1
+\end{align}</p>
 
 > mark(mkd, options = "-latex_math")
 <p><code>$x$</code> is inline math $x$!</p>

@@ -123,17 +123,17 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   if (has_math <- test_feature('latex_math', '[$]')) {
     id = id_string(text); maths = NULL
     text = xfun::protect_math(text, id)
-    # temporarily replace math expressions with tokens and restore them later;
-    # no need to do this for html output because we need special HTML characters
-    # like &<> in math expressions to be converted to entities, but shouldn't
-    # convert them for latex output
-    if (format == 'latex') {
+    if (has_math <- any(grepl(paste0('`', id), text, fixed = TRUE))) {
+      # temporarily replace math expressions with tokens so render() won't seem
+      # them (to avoid issues like #33) and restore them later
       text = one_string(text)
-      text = match_replace(text, sprintf('`%s.{3,}?%s`', id, id), function(x) {
+      text = match_replace(text, sprintf('`%s(?s).{3,}?%s`', id, id), function(x) {
+        n0 = length(maths)
         maths <<- c(maths, gsub(sprintf('`%s|%s`', id, id), '', x))
         # replace math with !id-n-id! where n is the index of the math
-        sprintf('!%s-%d-%s!', id, length(maths) + seq_along(x), id)
+        sprintf('!%s-%d-%s!', id, n0 + seq_along(x), id)
       })
+      if (format == 'html') maths = xfun::html_escape(maths)
       text = split_lines(text)
     }
   }
@@ -207,15 +207,17 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
 
+  if (has_math) ret = match_replace(ret, sprintf('!%s-\\d+-%s!', id, id), function(x) {
+    if (length(maths) != length(x)) warning(
+      'LaTeX math expressions cannot be restored correctly (expected ',
+      length(maths), ' expression(s) but found ', length(x), ' in the output).'
+    )
+    maths
+  })
+
   if (format == 'html') {
     # don't disable check boxes
     ret = gsub('(<li><input type="checkbox" [^>]*?)disabled="" (/>)', '\\1\\2', ret)
-    if (has_math) {
-      ret = gsub(sprintf('<code>%s(.{5,}?)%s</code>', id, id), '\\1', ret)
-      # `\(math\)` may fail to render to <code>\(math\)</code> when backticks
-      # are inside HTML tags, e.g., commonmark::markdown_html('<p>`a`</p>')
-      ret = gsub(sprintf('`%s\\\\\\((.+?)\\\\\\)%s`', id, id), '$\\1$', ret)
-    }
     if (has_sup)
       ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '<sup>\\1</sup>', ret)
     if (has_sub)
@@ -262,16 +264,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     ret = number_refs(ret, r_ref)
   } else if (format == 'latex') {
     ret = render_footnotes(ret)  # render [^n] footnotes
-    if (has_math) {
-      m = gregexpr(sprintf('!%s-(\\d+)-%s!', id, id), ret)
-      regmatches(ret, m) = lapply(regmatches(ret, m), function(x) {
-        if (length(maths) != length(x)) warning(
-          'LaTeX math expressions cannot be restored correctly (expected ',
-          length(maths), ' expressions but found ', length(x), ' in the output).'
-        )
-        maths
-      })
-    }
     if (has_sup)
       ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '\\\\textsuperscript{\\1}', ret)
     if (has_sub)

@@ -52,7 +52,7 @@ for HTML output (see the next section).
 ### LaTeX math
 
 You can write both `$inline$` and `$$display$$` LaTeX math, e.g.,
-$\sin^{2}(\theta)+\cos^{2}(\theta) = 1$
+$\sin^{2}(\theta)+\cos^{2}(\theta) = 1$.
 
 $$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$
 
@@ -60,6 +60,50 @@ $$|x| = \begin{cases}
 x &\text{if } x \geq 0 \\
 -x &\text{if } x < 0
 \end{cases}$$
+
+For expressions in pairs of single or double dollar signs to be recognized as
+LaTeX math, there must be no spaces after the opening dollar sign, or before the
+closing dollar sign. There should be at least one space before the opening
+dollar sign, unless the math expression starts from the very beginning of a
+line.
+
+-   For a pair of single dollar signs, they must be on the same line in the
+    text, and the closing dollar sign should not be followed by a number (to
+    avoid detecting math mistakenly from text like "a \$5 bill and a \$10
+    bill").
+
+-   For `$$ $$` expressions, they can span over multiple lines, in which case
+    the closing `$$` must have at least one non-space character before it, and
+    no spaces after it.
+
+Valid examples:
+
+``` md
+$x + y$
+  $x + y$
+text $x + y$ text
+
+$$x + y$$
+  $$x + y$$
+text $$x + y$$ text
+$$x +
+  y$$
+```
+
+Invalid examples:
+
+``` md
+$ x + y$  (space after the opening `$`)
+text$x + y$  (lack of space before the opening `$`)
+text $x + y$10 text  (number after closing `$`)
+$x +
+y$  (`$ $` expressions cannot be written on multiple lines)
+
+$$x +
+  y
+$$
+(lack of non-space character before closing `$$`)
+```
 
 LaTeX math environments are also supported, e.g., below are an `align`
 environment and an `equation` environment:
