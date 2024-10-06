@@ -172,6 +172,15 @@ extensions cannot. If you must view HTML output offline, we recommend using
 KaTeX, but please also note that KaTeX and MathJax do not fully cover each
 other's features.
 
+### `keep_yaml`
+
+Whether to keep the YAML metadata in the output. When `TRUE`, the original YAML
+in the Markdown input (if exists) will be written to the output. Note that when
+this option is enabled, templates (@sec-templates) will be disabled and `mark()`
+will only generate a document fragment. This option was introduced mainly for
+Hugo websites to use **litedown** instead of Hugo's Markdown engines to render
+pages.
+
 ### `latex_math`
 
 Whether to identify LaTeX math expressions in pairs of single (`$ $`) or double

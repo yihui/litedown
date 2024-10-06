@@ -374,11 +374,11 @@ output:
 The default is `natbib`. The table below shows the LaTeX commands corresponding
 to the Markdown citation syntax:
 
-| citation package | `[@key-1; @key-2]`          | `@key`        |
-|------------------|-----------------------------|---------------|
-| none             | `\cite{key-1, key-2}`       | `\cite{key}`  |
-| natbib           | `\citep{key-1, key-2}`      | `\citet{key}` |
-| biblatex         | `\parencite{key-1, key-2}`  | `\cite{key}`  |
+| citation package | `[@key-1; @key-2]`         | `@key`        |
+|------------------|----------------------------|---------------|
+| none             | `\cite{key-1, key-2}`      | `\cite{key}`  |
+| natbib           | `\citep{key-1, key-2}`     | `\citet{key}` |
+| biblatex         | `\parencite{key-1, key-2}` | `\cite{key}`  |
 
 Note that **litedown** actually generates `\citep` and `\citet` regardless of
 the citation package, but will redefine them to `\cite` or `\parencite`

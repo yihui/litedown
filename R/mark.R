@@ -62,7 +62,9 @@
 #' mark('Hello _**`World`**_!', 'text')
 mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()) {
   text = read_input(input, text); input = attr(text, 'input')
-  part = yaml_body(text); yaml = part$yaml; text = part$body
+  part = yaml_body(text)
+  yaml = part$yaml; yaml2 = yaml_text(part, text)  # unparsed YAML
+  text = part$body
 
   full = is_output_full(output)
   format = detect_format(output, yaml)
@@ -92,9 +94,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     names(Filter(isTRUE, options)), commonmark::list_extensions()
   )
 
-  # determine the template: first check the `template` value in the output
-  # format litedown::(html|latex)_format in YAML
-  template = yaml_field(yaml, format, 'template')
+  # whether to write YAML metadata to output
+  keep_yaml = isTRUE(options[['keep_yaml']])
+
+  # if keep_yaml, generate a fragment only, otherwise check the `template` value
+  # in the output format litedown::(html|latex)_format in YAML
+  template = if (keep_yaml) FALSE else yaml_field(yaml, format, 'template')
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
   if (is.null(template))
@@ -335,6 +340,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       ret = gsub('\n\\maketitle\n', '\n', ret, fixed = TRUE)
   }
 
+  if (keep_yaml) ret = one_string(c(yaml2, '', ret))
+
   ret = sub('\n$', '', ret)
   if (is_output_file(output)) {
     # build PDF for LaTeX output when the output file is .pdf
@@ -401,6 +408,8 @@ tag_meta = c('h1', 'h2', 'h2', 'h3', '')
 names(tag_meta) = top_meta
 cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}%s\\end{abstract}')
 names(cmd_meta) = top_meta
+
+yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2]]
 
 #' Markdown rendering options
 #'
