@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.9">
+<meta name="generator" content="litedown 0.2.10">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-05</h3></div>
+<div class="date"><h3>2024-10-06</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -87,13 +87,14 @@
 <li><a href="#sec-embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></a></li>
 <li><a href="#sec-js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></a></li>
 <li><a href="#sec-js-math"><span class="section-number">3.1.4</span> <code>js_math</code></a></li>
-<li><a href="#sec-latex-math_2"><span class="section-number">3.1.5</span> <code>latex_math</code></a></li>
-<li><a href="#sec-number-sections"><span class="section-number">3.1.6</span> <code>number_sections</code></a></li>
-<li><a href="#sec-smartypants"><span class="section-number">3.1.7</span> <code>smartypants</code></a></li>
-<li><a href="#sec-superscript"><span class="section-number">3.1.8</span> <code>superscript</code></a></li>
-<li><a href="#sec-subscript"><span class="section-number">3.1.9</span> <code>subscript</code></a></li>
-<li><a href="#sec-toc"><span class="section-number">3.1.10</span> <code>toc</code></a></li>
-<li><a href="#sec-top-level"><span class="section-number">3.1.11</span> <code>top_level</code></a></li>
+<li><a href="#sec-keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></a></li>
+<li><a href="#sec-latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></a></li>
+<li><a href="#sec-number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></a></li>
+<li><a href="#sec-smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></a></li>
+<li><a href="#sec-superscript"><span class="section-number">3.1.9</span> <code>superscript</code></a></li>
+<li><a href="#sec-subscript"><span class="section-number">3.1.10</span> <code>subscript</code></a></li>
+<li><a href="#sec-toc"><span class="section-number">3.1.11</span> <code>toc</code></a></li>
+<li><a href="#sec-top-level"><span class="section-number">3.1.12</span> <code>top_level</code></a></li>
 </ul>
 </li>
 <li><a href="#sec-templates"><span class="section-number">3.2</span> Templates</a></li>
@@ -750,7 +751,7 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <h3 id="sec-appendices"><span class="section-number">2.2.6</span> Appendices</h3>
 <p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
 will be treated as the appendix. If section numbering is enabled
-(<a class="cross-ref-sec" href="#sec-number-sections">3.1.6</a>), the appendix section headings will be numbered
+(<a class="cross-ref-sec" href="#sec-number-sections">3.1.7</a>), the appendix section headings will be numbered
 differently.</p>
 <h3 id="sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
@@ -1078,23 +1079,30 @@ embedded and used offline, but currently only its fonts can be embedded, and
 extensions cannot. If you must view HTML output offline, we recommend using
 KaTeX, but please also note that KaTeX and MathJax do not fully cover each
 other’s features.</p>
-<h3 id="sec-latex-math_2"><span class="section-number">3.1.5</span> <code>latex_math</code></h3>
+<h3 id="sec-keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></h3>
+<p>Whether to keep the YAML metadata in the output. When <code>TRUE</code>, the original YAML
+in the Markdown input (if exists) will be written to the output. Note that when
+this option is enabled, templates (<a class="cross-ref-sec" href="#sec-templates">3.2</a>) will be disabled and <code>mark()</code>
+will only generate a document fragment. This option was introduced mainly for
+Hugo websites to use <strong>litedown</strong> instead of Hugo’s Markdown engines to render
+pages.</p>
+<h3 id="sec-latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></h3>
 <p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
 dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
 rendered by MathJax (HTML output) or LaTeX.</p>
-<h3 id="sec-number-sections"><span class="section-number">3.1.6</span> <code>number_sections</code></h3>
+<h3 id="sec-number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></h3>
 <p>Whether to number section headings. To skip numbering a specific heading, add an
 attribute <code>{.unnumbered}</code> to it.</p>
-<h3 id="sec-smartypants"><span class="section-number">3.1.7</span> <code>smartypants</code></h3>
+<h3 id="sec-smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>).</p>
-<h3 id="sec-superscript"><span class="section-number">3.1.8</span> <code>superscript</code></h3>
+<h3 id="sec-superscript"><span class="section-number">3.1.9</span> <code>superscript</code></h3>
 <p>Whether to translate strings between two carets into superscripts, e.g.,
 <code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>.</p>
-<h3 id="sec-subscript"><span class="section-number">3.1.9</span> <code>subscript</code></h3>
+<h3 id="sec-subscript"><span class="section-number">3.1.10</span> <code>subscript</code></h3>
 <p>Whether to translate strings between two tildes into subscripts, e.g.,
 <code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>.</p>
-<h3 id="sec-toc"><span class="section-number">3.1.10</span> <code>toc</code></h3>
+<h3 id="sec-toc"><span class="section-number">3.1.11</span> <code>toc</code></h3>
 <p>Whether to generate a table of contents (TOC) from section headings. If a
 heading has an <code>id</code> attribute, the corresponding TOC item will be a link to this
 heading. You can also set a sub-option:</p>
@@ -1107,7 +1115,7 @@ default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
 </code></pre>
 </li>
 </ul>
-<h3 id="sec-top-level"><span class="section-number">3.1.11</span> <code>top_level</code></h3>
+<h3 id="sec-top-level"><span class="section-number">3.1.12</span> <code>top_level</code></h3>
 <p>The desired type of the top-level headings in LaTeX output. Possible values are
 <code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
 will be rendered to <code>\chapter{heading}</code> instead of the default
