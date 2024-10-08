@@ -215,10 +215,8 @@ set_math = function(meta, options, html) {
   if (is.null(o)) return(meta)
   if (is_katex <- o$package == 'katex')
     o$js = c(o$js, 'dist/contrib/auto-render.min.js')
-  js = js_combine(
-    sprintf('npm/%s%s/%s', o$package, o$version, o$js),
-    if (is_katex) 'npm/@xiee/utils/js/render-katex.js'
-  )
+  js = js_combine(sprintf('npm/%s%s/%s', o$package, o$version, o$js))
+  js = if (is_katex) c(js, '@render-katex') else c('@mathjax-config', js)
   css = sprintf('@npm/%s%s/%s', o$package, o$version, o$css)
   add_meta(meta, list(js = js, css = css))
 }
