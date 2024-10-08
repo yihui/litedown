@@ -120,7 +120,7 @@
     });
     // update cross-references
     w.querySelectorAll('a[class^="cross-ref-"][href^="#"]').forEach(el => {
-      const n = d.querySelector(el.getAttribute('href'))
+      const n = d.getElementById(el.getAttribute('href').replace(/^#/, ''))
         ?.querySelector('.section-number,[class^="ref-number-"]')
         ?.innerText;
       if (n) el.innerText = n;

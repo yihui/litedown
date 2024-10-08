@@ -46,7 +46,7 @@ information about the package, such as the package description (`pkg_desc()`),
 news (`pkg_news()`), citation (`pkg_citation()`), and all manual pages
 (`pkg_manual()`). You can call these functions in code chunks to print out the
 desired information. For example, you may put them in the appendix
-(@sec-appendices):
+(@sec:appendices):
 
 ```` md
 # Appendix {.appendix}

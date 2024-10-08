@@ -28,24 +28,24 @@ Type 'q()' to quit R.
 > mkd <- c("# Header 1", "p1", "## Header 2", "p2")
 
 > mark(mkd, options = "+number_sections")
-<h1 id="sec-header-1"><span class="section-number main-number">1</span> Header 1</h1>
+<h1 id="sec:header-1"><span class="section-number main-number">1</span> Header 1</h1>
 <p>p1</p>
-<h2 id="sec-header-2"><span class="section-number">1.1</span> Header 2</h2>
+<h2 id="sec:header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
 > mark(mkd, options = "+number_sections+toc")
 <div id="TOC">
 <ul class="numbered">
-<li><a href="#sec-header-1"><span class="section-number main-number">1</span> Header 1</a>
+<li><a href="#sec:header-1"><span class="section-number main-number">1</span> Header 1</a>
 <ul>
-<li><a href="#sec-header-2"><span class="section-number">1.1</span> Header 2</a></li>
+<li><a href="#sec:header-2"><span class="section-number">1.1</span> Header 2</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<h1 id="sec-header-1"><span class="section-number main-number">1</span> Header 1</h1>
+<h1 id="sec:header-1"><span class="section-number main-number">1</span> Header 1</h1>
 <p>p1</p>
-<h2 id="sec-header-2"><span class="section-number">1.1</span> Header 2</h2>
+<h2 id="sec:header-2"><span class="section-number">1.1</span> Header 2</h2>
 <p>p2</p>
 
 > mark("foo\nbar\n")

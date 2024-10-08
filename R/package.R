@@ -207,10 +207,10 @@ tweak_citation = function(x) {
 #' @export
 pkg_manual = function(name = detect_pkg()) {
   links = tools::findHTMLlinks('')
-  # resolve internal links (will assign IDs of the form sec-man-ID to all h2)
+  # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
   i = grep(r, links)
-  links[i] = paste0('#sec-man-', alnum_id(sub(r, '\\2', links[i])))
+  links[i] = paste0('#sec:man-', alnum_id(sub(r, '\\2', links[i])))
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
   links = sub(r, 'https://rdrr.io/r/\\1/', links)
@@ -230,7 +230,7 @@ pkg_manual = function(name = detect_pkg()) {
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
     txt = gsub('<h2 id="[^"]+"', '<h2', txt)  # remove existing ID
-    sub('<h2', sprintf('<h2 id="sec-man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
+    sub('<h2', sprintf('<h2 id="sec:man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
   })
 
   # extract all aliases and put them in the beginning (like a TOC)
@@ -239,7 +239,7 @@ pkg_manual = function(name = detect_pkg()) {
     fn = uapply(topics, function(x) {
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
-    sprintf('<a href="#sec-man-%s"><code>%s</code></a>', alnum_id(fn[1]), fn)
+    sprintf('<a href="#sec:man-%s"><code>%s</code></a>', alnum_id(fn[1]), fn)
   })
 
   g = toupper(substr(unlist(al), 1, 1))

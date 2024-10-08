@@ -681,7 +681,7 @@ auto_identifier = function(x) {
     z2 = sub(r, '\\2', z)  # attrs
     z3 = sub(r, '\\3', z)  # content
     i = !grepl(' id="[^"]*"', z2)  # skip headings that already have IDs
-    id = unique_id(sprintf('sec-%s', alnum_id(z3[i])), 'section')
+    id = unique_id(paste0('sec:', alnum_id(z3[i])), 'section')
     z[i] = sprintf('<%s id="%s"%s>%s</%s>', z1[i], id, z2[i], z3[i], z1[i])
     z
   })
@@ -768,11 +768,11 @@ number_refs = function(x, r) {
   db = list()  # element numbers
 
   # first, find numbered section headings
-  r2 = '<h[1-6][^>]*? id="((sec|chp)-[^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
+  r2 = '<h[1-6][^>]*? id="([^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
   m = match_all(x, r2)[[1]]
   if (length(m)) {
     ids = m[2, ]
-    db = as.list(set_names(m[4, ], ids))
+    db = as.list(set_names(m[3, ], ids))
   }
 
   # retrieve refs from all chapters for fuse_book()
@@ -782,8 +782,8 @@ number_refs = function(x, r) {
   r2 = sprintf('<a href="#@%s"> ?</a>', r)
   db2 = list()
   x = match_replace(x, r2, function(z) {
-    type = sub(r2, '\\1', z)
-    id = sub(r2, '\\1-\\2', z)
+    type = sub(r2, '\\2', z)
+    id = sub(r2, '\\1', z)
     ids = split(id, type)
     db2 <<- unlist(unname(lapply(ids, function(id) set_names(seq_along(id), id))))
     sprintf('<span class="ref-number-%s">%d</span>', type, db2[id])
@@ -798,9 +798,15 @@ number_refs = function(x, r) {
   # finally, resolve cross-references
   r2 = sprintf('<a href="#(%s)">@\\1</a>', r)
   match_replace(x, r2, function(z) {
-    type = sub(r2, '\\2', z)
-    id = sub(r2, '\\2-\\3', z)
+    type = sub(r2, '\\3', z)
+    id = sub(r2, '\\2', z)
     i = id %in% ids
+    # for backward compatibility, if fig-id is not found, also look for fig:id
+    if (any(!i)) {
+      id2 = sub('-', ':', id)
+      j = !i & (id2 %in% ids)
+      id[j] = id2[j]; i[j] = TRUE
+    }
     if (any(i)) z[i] = sprintf(
       '<a class="cross-ref-%s" href="#%s">%s</a>', type[i], id[i], db[id[i]]
     )
@@ -811,7 +817,7 @@ number_refs = function(x, r) {
 
 # add a special anchor [](#@id) to text, to be used to resolved cross-references
 add_ref = function(id, type, x = NULL) {
-  c(sprintf('[](#@%s-%s)', type, id), x)
+  c(sprintf('[](#@%s:%s)', type, id), x)
 }
 
 embed_resources = function(x, embed = 'local') {

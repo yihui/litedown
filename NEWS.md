@@ -16,6 +16,8 @@
 
 - Fixed the bug that the leading `-`, `+`, or `*` in a LaTeX math expression was recognized as the bullet list marker, which would invalidate the math expression (thanks, @hturner, #33).
 
+- Changed the first `-` to `:` in automatically generated element IDs, including section, figure, and table IDs, e.g., the ID `sec-intro-methods` is changed to `sec:intro-methods`, and `fig-nice-plot` is changed to `fig:nice-plot`. You can still use `-` when manually assigning IDs to elements, e.g., `# Intro Methods {#sec-intro-methods}`. For backward compatibility, cross-references using `-` will be resolved if the `:` version of the ID can be found, e.g., `@sec-intro-methods` will be resolved to `@sec:intro-methods` if the former cannot be found but the latter can.
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

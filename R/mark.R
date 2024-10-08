@@ -201,7 +201,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   # turn @ref into [@ref](#ref) and resolve cross-references later in JS; for
   # latex output, turn @ref to \ref{}
-  r_ref = '([a-z]+)-([-_[:alnum:]]+)'  # must start with letters followed by -
+  r_ref = '(([a-z]+)[-:][-_[:alnum:]]+)'  # must start with letters followed by - or :
   r5 = paste0('(^|(?<=\\s|\\())@', r_ref, '(?!\\])')
   if (test_feature('cross_refs', r5)) {
     text[p] = match_replace(text[p], r5, function(x) {

@@ -230,7 +230,7 @@ Most attributes in `{}` are ignored for LaTeX output except for:
 
 When a top-level heading has the attribute `.appendix`, the rest of the document
 will be treated as the appendix. If section numbering is enabled
-(@sec-number-sections), the appendix section headings will be numbered
+(@sec:number-sections), the appendix section headings will be numbered
 differently.
 
 ### Fenced `Div`s
