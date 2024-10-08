@@ -32,7 +32,8 @@
       el.insertAdjacentHTML('afterbegin', `<span class="buttons"><a href="?path=${u}" title="Open ${u}">✎</a></span>`);
   });
   const nav = d.querySelector('.nav-path, .title h1');
-  const btn = d.createElement('span'); btn.className = 'buttons';
+  const btn = nav.querySelector('.buttons') || d.createElement('span');
+  btn.className = 'buttons';
   ['back', 'forward', 'refresh', 'print'].forEach((action, i) => {
     if (btn.querySelector(`.${action}`)) return;
     const a = d.createElement('a');
