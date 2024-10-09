@@ -17,6 +17,8 @@
 
 - Section headings containing the class name "unlisted" will be excluded in the table of contents.
 
+- Provided a way to write `<span>` with attributes based on empty links, i.e., `[text](){.class #id ...}`. The empty URL here tells `mark()` to treat the link as a `<span>` instead of `<a>`.
+
 - Added back/forward/refresh/print buttons to the toolbar in the `litedown::roam()` preview interface.
 
 - Added the JS asset [`@mathjax-config`](https://github.com/yihui/misc.js/blob/main/js/mathjax-config.js) to enable equation numbering by default when the JS math library is set to MathJax (thanks, @hturner, #32).

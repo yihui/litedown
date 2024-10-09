@@ -223,6 +223,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   if (format == 'html') {
     # don't disable check boxes
     ret = gsub('(<li><input type="checkbox" [^>]*?)disabled="" (/>)', '\\1\\2', ret)
+    # replace <a> with <span> if href is empty but other attrs exist, so we have
+    # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
+    # class="foo"></span>
+    ret = gsub('<a href="" ([^>]+>[^<]*</)a>', '<span \\1span>', ret)
     if (has_sup)
       ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '<sup>\\1</sup>', ret)
     if (has_sub)

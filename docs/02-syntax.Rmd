@@ -191,6 +191,23 @@ and `## Heading {#baz}` will generate:
 <h2 id="baz">Heading</h2>
 ```
 
+Links of the form `[text](url){...}` will generate:
+
+``` html
+<a href="url" ...></a>
+```
+
+When the `url` is empty, `<a>` will be converted to `<span>`, e.g.,
+`[text](){.foo .bar}` will generate:
+
+``` html
+<span class="foo bar">text</span>
+```
+
+This provides a way to create `<span>` elements, which is similar to [bracketed
+`Span`s](https://pandoc.org/MANUAL.html#extension-bracketed_spans) (i.e.,
+`[text]{...}`) in Pandoc's Markdown.
+
 For fenced code blocks, a special rule is that the first class name will be
 treated as the language name for a block, and the `class` attribute of the
 result `<code>` tag will have a `language-` prefix. For example, the following
