@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.11">
+<meta name="generator" content="litedown 0.2.12">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -728,6 +728,16 @@ generate an <code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
 <p>and <code>## Heading {#baz}</code> will generate:</p>
 <pre><code class="language-html">&lt;h2 id=&quot;baz&quot;&gt;Heading&lt;/h2&gt;
 </code></pre>
+<p>Links of the form <code>[text](url){...}</code> will generate:</p>
+<pre><code class="language-html">&lt;a href=&quot;url&quot; ...&gt;&lt;/a&gt;
+</code></pre>
+<p>When the <code>url</code> is empty, <code>&lt;a&gt;</code> will be converted to <code>&lt;span&gt;</code>, e.g.,
+<code>[text](){.foo .bar}</code> will generate:</p>
+<pre><code class="language-html">&lt;span class=&quot;foo bar&quot;&gt;text&lt;/span&gt;
+</code></pre>
+<p>This provides a way to create <code>&lt;span&gt;</code> elements, which is similar to <a href="https://pandoc.org/MANUAL.html#extension-bracketed_spans">bracketed
+<code>Span</code>s</a> (i.e.,
+<code>[text]{...}</code>) in Pandoc’s Markdown.</p>
 <p>For fenced code blocks, a special rule is that the first class name will be
 treated as the language name for a block, and the <code>class</code> attribute of the
 result <code>&lt;code&gt;</code> tag will have a <code>language-</code> prefix. For example, the following
