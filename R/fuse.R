@@ -939,6 +939,16 @@ eng_r = function(x, inline = FALSE, ...) {
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 
+# the Markdown engine: echo Markdown source verbatim, and also output it as-is
+eng_md = function(x, inline = FALSE, ...) {
+  s = x$source
+  if (inline) {
+    f = unlist(match_all(s, '`+'))  # how many backticks to quote the text?
+    f = if (length(f)) paste0('`', max(f)) else '`'
+    one_string(c(f, s, f, s), ' ')
+  } else list(new_source(s), new_asis(s))
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -962,7 +972,7 @@ eng_r = function(x, inline = FALSE, ...) {
 #' litedown::engines()  # built-in engines
 engines = new_opts()
 engines(
-  r = eng_r,
+  r = eng_r, md = eng_md,
   css = function(x, ...) eng_html(x, '<style type="text/css">', '</style>', ...),
   js = function(x, ...) eng_html(x, '<script>', '</script>', ...)
 )

@@ -6,7 +6,7 @@ date: "`{r} Sys.Date()`"
 
 # Preface {.unnumbered}
 
-::: callout-caution
+::: callout-important
 The **litedown** package is still new and experimental. The documentation is
 very incomplete. Besides, **litedown** was designed for minimalists with a
 limited scope. Average users should perhaps consider using **rmarkdown** or

@@ -1,5 +1,16 @@
 # CHANGES IN litedown VERSION 0.3
 
+- Added a new engine `md` to output Markdown text both verbatim and as-is, which can be useful for showing Markdown examples, e.g.,
+
+  ````md
+  ```{md}
+  You can see both the _source_ and _output_ of
+  this `md` chunk.
+  ```
+  
+  You can also use `{md} the engine **inline**`.
+  ````
+
 - Added helper functions `pkg_desc()`, `pkg_news()`, `pkg_citation()`, and `pkg_manual()` to get various package information for building the full package documentation as a single-file book (thanks, @jangorecki @llrs #24, @TimTaylor #22).
 
 - LaTeX math environments such as equations can be numbered and cross-referenced now (thanks, @hturner, #32).

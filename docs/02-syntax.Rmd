@@ -78,7 +78,7 @@ line.
 
 Valid examples:
 
-``` md
+``` tex
 $x + y$
   $x + y$
 text $x + y$ text
@@ -108,11 +108,14 @@ $$
 LaTeX math environments are also supported, e.g., below are an `align`
 environment and an `equation` environment:
 
-```{=latex}
+```{md, attr.source='.tex', attr.asis='.callout-example'}
 \begin{align}
 a^{2}+b^{2} & =  c^{2}\\
-\sin^{2}(\theta)+\cos^{2}(\theta) & =  1\label{eq:pyth-identity}
-\end{align} \begin{equation}
+\sin^{2}(\theta)+\cos^{2}(\theta) & =  1
+\label{eq:pyth-identity}
+\end{align}
+
+\begin{equation}
   \begin{split}
   (a+b)^2 &=(a+b)(a+b)\\
     &=a^2+2ab+b^2
@@ -120,20 +123,13 @@ a^{2}+b^{2} & =  c^{2}\\
 \end{equation}
 ```
 
-These math environments can be written in raw LaTeX blocks, and they work for
-both LaTeX and HTML output, e.g.,
-
-```` markdown
-```{=latex}
-\begin{align}
-a^{2}+b^{2} & =  c^{2}\\
-\sin^{2}(\theta)+\cos^{2}(\theta) & =  1
-\end{align}
-```
-````
+These math environments can be written as either nake LaTeX code or raw LaTeX
+blocks (```` ```{=latex} ````), but we recommend that you use raw LaTeX blocks
+because they are more robust. LaTeX math environments work for both LaTeX and
+HTML output.
 
 For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
-math environment can be rendered.
+math environment can be rendered (@sec:js-math).
 
 ### Superscripts and subscripts
 
@@ -361,39 +357,44 @@ parentheses, you can use `@eq:` instead of `@eqn:`, e.g., `Eq. [@eq:*]` (using
 the label "Eq." and square brackets).
 
 In addition to equation numbers, you can also specify a tag for an equation via
-`\tag{}` and refer to the equations by its tag.
+`\tag{}` and refer to the equations by its tag, e.g.,
 
+```{md, attr.source='.tex', attr.asis='.callout-example'}
 For a right-angled triangle, we are all familiar with @eqn:pyth-theorem.
 
 \begin{equation}
 a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 \end{equation}
+```
 
 #### Arbitrary elements
 
 You can cross-reference any other type of elements by adding empty anchors of
 the form `[](#@ID)` into them, e.g.,
 
-::: callout-tip
-[ ](#@clt:example) This is a numbered tip callout.
+```{md, attr.asis='.callout-example'}
+::: {style="background: ghostwhite; padding: 1px 1em;"}
+[](#@blk:example) This is a numbered block.
 :::
 
-We can cross-reference @clt:example.
+We can cross-reference @blk:example.
+```
 
 For HTML output, we can style the numbers and references with CSS. Element
 numbers are wrapped in `<span class="ref-number-*"></span>`, and references are
 wrapped in `<span class="cross-ref-*"></span>`, where `*` is the ID prefix
-(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Tip" to the
-number and reference of the callout above:
+(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Block" to
+the number and reference of the block above:
 
 ```{css}
-.ref-number-clt::before, .cross-ref-clt::before {
-  content: "Tip ";
+.ref-number-blk::before, .cross-ref-blk::before {
+  content: "Block ";
 }
-.ref-number-clt {
+.ref-number-blk {
   font-weight: bold;
+  font-style: italic;
 }
-.ref-number-clt::after {
+.ref-number-blk::after {
   content: ". "
 }
 ```
