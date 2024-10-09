@@ -22,6 +22,8 @@
 
 - Fixed a bug that when LaTeX math environments are written in raw LaTeX blocks (i.e., ```` ```{=latex}````), `mark()` will not load the math JS library such as MathJax or KaTeX unless `$ $` or `$$ $$` expressions are present in the document.
 
+- As-is output accepts attributes via the chunk option `attr.asis` now. If provided, as-is output will be wrapped in a fenced Div with these attributes.
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

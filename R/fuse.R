@@ -717,10 +717,10 @@ fuse_code = function(x, blocks) {
       x = one_string(x)
       if (opts$strip.white) x = str_trim(x)
     }
-    if (type %in% c('output', 'asis')) {
+    asis = if (type %in% c('output', 'asis')) {
       if (opts$results == 'hide') return()
-      if (any(c(opts$results, type) == 'asis')) return(x)
-    }
+      any(c(opts$results, type) == 'asis')
+    } else FALSE
     if (type == 'warning' && !isTRUE(opts$warning)) return()
     if (type == 'message' && !isTRUE(opts$message)) return()
     if (type == 'plot') {
@@ -741,10 +741,14 @@ fuse_code = function(x, blocks) {
         )
       } else {
         if (type == 'message') x = sub('\n$', '', x)
-        x = split_lines(x)
-        x = paste0(opts$comment, x)  # comment out text output
+        if (!asis) {
+          x = split_lines(x)
+          x = paste0(opts$comment, x)  # comment out text output
+        }
       }
-      fenced_block(x, a, fence)
+      if (asis) {
+        if (is.null(a)) x else fenced_div(x, a)
+      } else fenced_block(x, a, fence)
     }
   })
   a = opts$attr.chunk
@@ -904,6 +908,7 @@ reactor(
   wd = NULL
 )
 
+# the R engine
 eng_r = function(x, inline = FALSE, ...) {
   opts = reactor()
   if (inline) {
