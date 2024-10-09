@@ -306,11 +306,19 @@ any template.
 ## YAML metadata {#sec:yaml-metadata}
 
 Alternatively, the `meta` argument can read YAML metadata in the Markdown
-document. The following variables can be set in the top-level fields in YAML:
+document.
+
+### Top-level variables
+
+The following variables can be set in the top-level fields in YAML:
+
+-   `abstract`: The abstract.
 
 -   `author`: The document author(s).
 
 -   `date`: The date.
+
+-   `subtitle`: The document subtitle.
 
 -   `title`: The document title.
 
@@ -324,7 +332,47 @@ date: "2023-01-09"
 ---
 ```
 
-Note that you can use Markdown syntax in them.
+The values are treated as Markdown text, and will be converted to the target
+output format before being passed to the template. For the above example, the
+variable `$author$` will be `<a href="https://example.com">Frida Gomam</a>` in
+the HTML template.
+
+For top-level variables, `mark()` will also create the "underscore" versions for
+templates, which contain HTML and LaTeX markups. For example, for the `$title$`
+variable, `$title_$` will also be available to the template. The following table
+shows the values of the underscore variables, assuming the original value of a
+variable is `TEXT`:
+
+| Variables | HTML | LaTeX |
+|----|----|----|
+| `$title_$` | `<div class="title"> <h1>TEXT</h1> </div>` | `\title{TEXT}` |
+| `$subtitle_$` | `<div class="subtitle"> <h2>TEXT</h2> </div>` | `\subtitle{TEXT}` |
+| `$author_$` | `<div class="author"> <h2>TEXT</h2> </div>` | `\author{TEXT}` |
+| `$date_$` | `<div class="date"> <h3>TEXT</h3> </div>` | `\date{TEXT}` |
+| `$abstract_$` | `<div class="abstract"> <p>TEXT</p> </div>` | `\begin{abstract} TEXT \end{abstract}` |
+
+If an original variable is empty or missing, its underscore version will also be
+empty.
+
+If you design your own template, you are free to use either version of these
+variables. For example, you could put the title in an `<h1>` without the `<div>`
+wrapper via `<h1>$title$</h1>` instead of using `$title_$`.
+
+When these top-level variables are also provided as `meta` variables for an
+output format, the latter will override the former, e.g.,
+
+``` yaml
+title: "Global Title"
+output:
+  litedown::html_format:
+    meta:
+      title: "Title for HTML output"
+  litedown::latex_format:
+    meta:
+      title: "Title for LaTeX output"
+```
+
+### Format-specific variables
 
 Other variables need to be specified under
 `output -> litedown::*_format -> meta`, where `*` can be `html` or `latex`,
@@ -352,76 +400,97 @@ templates:
     (HTML/LaTeX) code or a code file to be included in the header, before the
     body, or after the body of the output.
 
-Variables specific to the HTML template:
+--------------------------------------------------------------------------------
 
--   `css`: A vector of CSS files to be included in the output. The default value
-    is `litedown:::pkg_file('resources', 'default.css')`.
+The following variables are for HTML templates:
 
-    If you want to use built-in CSS files in this package, you can only specify
-    the base name, e.g., `default` means `default.css` in this package.
+#### **The `css`  variable**
 
-    You can also use web resources, e.g., `https://example.org/style.css`. One
-    special case is [jsdelivr](https://www.jsdelivr.com) resources: if a `css`
-    value starts with `@`, it will be recognized as a jsdelivr.com resource. if
-    you are not familiar with jsdelivr, you may read its documentation to
-    understand the following example URLs. The shorthand syntax is as follows
-    (`CDN` stands for `https://cdn.jsdelivr.net`):
+A vector of CSS files to be included in the output. The default value is
+`litedown:::pkg_file('resources', 'default.css')`.
 
-    -   `@foo` (without a filename extension) will be converted to
-        `CDN/npm/@xiee/utils/css/foo.min.css`, e.g., `@default` means
-        `CDN/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css`
-        extension over `.min.css`, you can use `@default.css`.
+If you want to use built-in CSS files in this package, you can only specify the
+base name, e.g., `default` means `default.css` in this package.
 
-    -   `@foo@version` (a filename followed by a version number) will be
-        converted to `CDN/npm/@xiee/utils@version/css/foo.min.css`, e.g.,
-        `@article@1.12.0` means
-        `CDN/npm/@xiee/utils@1.12.0/css/article.min.css`.
+You can also use web resources, e.g., `https://example.org/style.css`. One
+special case is [jsdelivr](https://www.jsdelivr.com) resources: if a `css` value
+starts with `@`, it will be recognized as a jsdelivr.com resource. if you are
+not familiar with jsdelivr, you may read its documentation to understand the
+following example URLs. The shorthand syntax is as follows (`CDN` stands for
+`https://cdn.jsdelivr.net`):
 
-    -   `@path/to/file` (i.e., a value that contains slashes) will be converted
-        to `CDN/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
-        converted to `CDN/npm/@xiee/utils/js/center-img.min.js`.
+-   `@foo` (without a filename extension) will be converted to
+    `CDN/npm/@xiee/utils/css/foo.min.css`, e.g., `@default` means
+    `CDN/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css`
+    extension over `.min.css`, you can use `@default.css`.
 
-    -   `@path/to/file-1,file-2` (comma-separated values and later values do not
-        contain slashes) will be converted to
-        `CDN/combine/path/to/file-1,path/to/file-2` (this can be useful to
-        [combine](https://www.jsdelivr.com/documentation#id-combine-multiple-files)
-        multiple resources and load all at once).
+-   `@foo@version` (a filename followed by a version number) will be converted
+    to `CDN/npm/@xiee/utils@version/css/foo.min.css`, e.g., `@article@1.12.0`
+    means `CDN/npm/@xiee/utils@1.12.0/css/article.min.css`.
 
-    -   `@path-1/to/file-1,path-2/to/file-2` (comma-separated values and later
-        values contain slashes) will be converted to
-        `CDN/combine/path-1/to/file-1,path-2/to/file-2`.
+-   `@path/to/file` (i.e., a value that contains slashes) will be converted to
+    `CDN/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
+    converted to `CDN/npm/@xiee/utils/js/center-img.min.js`.
 
-    This provides a way to reduce the output HTML file size by loading CSS from
-    the web instead of embedding inside HTML, at the cost of requiring Internet
-    connection when viewing the HTML file. If you need the external web
-    resources to work after you go offline, you can enable `"https"` in the
-    Markdown option `embed_resources` in advance to embed the resources.
+-   `@path/to/file-1,file-2` (comma-separated values and later values do not
+    contain slashes) will be converted to
+    `CDN/combine/path/to/file-1,path/to/file-2` (this can be useful to
+    [combine](https://www.jsdelivr.com/documentation#id-combine-multiple-files)
+    multiple resources and load all at once).
 
--   `js`: A vector of JavaScript files to be included in the output. The syntax
-    is the same as the `css` variable, e.g., `snap` means `snap.js` in this
-    package, and `@snap` means a "jsdelivr" resource.
+-   `@path-1/to/file-1,path-2/to/file-2` (comma-separated values and later
+    values contain slashes) will be converted to
+    `CDN/combine/path-1/to/file-1,path-2/to/file-2`.
 
--   `body-class`: A class name for the main body (the default value is `body`).
+This provides a way to reduce the output HTML file size by loading CSS from the
+web instead of embedding inside HTML, at the cost of requiring Internet
+connection when viewing the HTML file. If you need the external web resources to
+work after you go offline, you can enable `"https"` in the Markdown option
+`embed_resources` in advance to embed the resources.
 
-Variables specific to the LaTeX template:
+#### The `js` variable
 
--   `classoption`: A string containing options for the document class.
+A vector of JavaScript files to be included in the output. The syntax is the
+same as the `css` variable, e.g., `snap` means `snap.js` in this package, and
+`@snap` means a "jsdelivr" resource.
 
--   `documentclass`: The document class (by default, `article`).
+#### The `body-class` variable
 
-Note that you can use either underscores or hyphens in the variable names.
-Underscores will be normalized to hyphens internally, e.g., `header_includes`
+A class name for the main body (the default value is `body`).
+
+--------------------------------------------------------------------------------
+
+The following variables are for LaTeX templates:
+
+#### The `classoption` variable
+
+A string containing options for the document class.
+
+#### The `documentclass` variable
+
+The document class (by default, `article`).
+
+### Naming convention of variables
+
+A variable name must consist of alphanumeric characters and hyphens only. You
+could use underscores in variable names in the metadata, but please note that
+underscores will be normalized to hyphens internally, e.g., `header_includes`
 will be converted to `header-includes`. This means if you use a custom template,
 you must use hyphens instead of underscores as separators in variable names in
 the template.
 
-The above are variables supported in the default templates. If you use a custom
-template, you can use arbitrary variable names consisting of alphanumeric
-characters and hyphens, except for `$body$` (which is a reserved name), and your
-metadata values will be passed to these variables in your template.
+### Using custom variables
 
-Besides metadata variables, the aforementioned Markdown options can also be set
-in YAML under `output -> litedown::*_format -> options`, e.g.,
+The above are variables supported in the default templates. If you use a custom
+template, you can use arbitrary variable names following the naming convention
+(except for `body`, which is a reserved name and cannot be used in metadata),
+and the values of variables in the metadata will be passed to your template.
+
+### Setting options in YAML
+
+Besides metadata variables, the aforementioned Markdown options
+(@sec:markdown-options) can also be set in YAML under
+`output -> litedown::*_format -> options`, e.g.,
 
 ``` yaml
 output:
@@ -433,6 +502,8 @@ output:
         theme: github
         languages: [diff, latex]
 ```
+
+### Other fields in YAML
 
 See the help page `?litedown::html_format` for possible fields in addiction to
 `meta` and `options` that can be specified under the format name, e.g.,

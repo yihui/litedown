@@ -342,7 +342,7 @@ of the element to be referenced, which typically consists of a prefix (e.g.,
 Please see @fig:nice-plot for an overview of the `cars` data.
 ```
 
-Dashes (`-`) are also allowed in place of colons in the ID prefix, e.g.,
+Hyphens (`-`) are also allowed in place of colons in the ID prefix, e.g.,
 `@fig-nice-plot`.
 
 #### LaTeX equations

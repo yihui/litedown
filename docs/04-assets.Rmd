@@ -25,7 +25,8 @@ output:
 For the sake of brevity, we will omit the full YAML fields in examples
 throughout this chapter but only use the `css` and `js` fields. A file name
 `foo.js` denotes the file under the `js/` directory of the aforementioned
-`yihui/misc.js` repository. Similarly, `foo.css` is under the `css/` directory.
+[`yihui/misc.js` repository](https://github.com/yihui/misc.js). Similarly,
+`foo.css` is under the `css/` directory.
 
 All these CSS/JS resources can be used offline, and there are two ways to do it.
 One way is to clone the GitHub repo to your working directory, and use the files
@@ -64,7 +65,7 @@ You can learn more in `vignette('slides', package = 'litedown')`.
 
 ## HTML articles
 
-We can style an HTML page in an article format via the following CSS and JS:
+You can style an HTML page in an article format via the following CSS and JS:
 
 ``` yaml
 css: ["@default", "@article"]
@@ -231,17 +232,17 @@ a quote, just use the blockquote syntax `>`, e.g.,
 
 #### Margin embedding
 
-::: embed-right
-```{r, echo=FALSE}
-mtcars[1:4, 1:8]
-```
-:::
-
 You can embed elements on the left or right margin using a fenced `Div` with the
 class `.embed-left` or `.embed-right`. These elements will float to the left or
 right and exceed the margin by about 200px, which can save some space in the
 article body. You can use the extra space to explain the embedded element with
 text.
+
+::: embed-right
+```{r, echo=FALSE}
+mtcars[1:4, 1:8]
+```
+:::
 
 We have embedded a table of the first 4 rows of the `mtcars` data on the right
 margin, which you can see if the browser window is wide enough.
