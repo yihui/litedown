@@ -62,6 +62,7 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .cross-ref-sec::before { content: "Section "; }
 .cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
 .cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
+.cross-ref-eqn::before, .MathJax_ref:has(mjx-mtext > mjx-c + mjx-c)::before { content: "Equation "; }
 .abstract, #refs {
   &::before { display: block; margin: 1em auto; font-weight: bold; }
 }

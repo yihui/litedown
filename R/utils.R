@@ -203,18 +203,9 @@ restore_html = function(x) {
   x
 }
 
-.requireMathJS = function(x) {
-  regs = c('\\\\\\(.+?\\\\\\)', '[$]{2}.+?[$]{2}', '\\\\\\[.+?\\\\\\]')
-  for (i in regs) if (any(grepl(i, x, perl = TRUE))) return(TRUE)
-  FALSE
-}
-
 # set js/css variables according to the js_math option
-set_math = function(meta, options, html) {
-  o = js_options(options[['js_math']], 'katex', .requireMathJS(html))
-  if (is.null(o)) return(meta)
-  if (is_katex <- o$package == 'katex')
-    o$js = c(o$js, 'dist/contrib/auto-render.min.js')
+set_math = function(meta, o, is_katex) {
+  if (is_katex) o$js = c(o$js, 'dist/contrib/auto-render.min.js')
   js = js_combine(sprintf('npm/%s%s/%s', o$package, o$version, o$js))
   js = if (is_katex) c(js, '@render-katex') else c('@mathjax-config', js)
   css = sprintf('@npm/%s%s/%s', o$package, o$version, o$css)
@@ -226,10 +217,10 @@ js_combine = function(...) {
   if (length(x <- c(...))) paste0('@', paste(x, collapse = ','))
 }
 
-js_options = function(x, default, test) {
+js_options = function(x, default) {
   d = js_default(x, default)
   x = if (is.list(x)) merge_list(d, x) else d
-  if (is.null(x) || !test) return()
+  if (length(x) == 0) return()
   if (x$version != '') x$version = sub('^@?', '@', x$version)
   x
 }
@@ -259,8 +250,8 @@ add_meta = function(x, v) {
 # set js/css variables according to the js_highlight option
 set_highlight = function(meta, options, html) {
   r = '(?<=<code class="language-)([^"]+)(?=")'
-  o = js_options(options[['js_highlight']], 'prism', any(grepl(r, html, perl = TRUE)))
-  if (is.null(o)) return(meta)
+  if (!any(grepl(r, html, perl = TRUE))) return(meta)
+  if (!length(o <- js_options(options[['js_highlight']], 'prism'))) return(meta)
 
   p = o$package
   # return jsdelivr subpaths
@@ -763,7 +754,7 @@ number_sections = function(x) {
 }
 
 # number elements such as headings and figures, etc and resolve cross-references
-number_refs = function(x, r) {
+number_refs = function(x, r, katex = TRUE) {
   if (length(x) == 0) return(x)
   db = list()  # element numbers
 
@@ -800,17 +791,25 @@ number_refs = function(x, r) {
   match_replace(x, r2, function(z) {
     type = sub(r2, '\\3', z)
     id = sub(r2, '\\2', z)
+    # equation numbers will be resolved in JS later
+    i1 = grepl('^eq[-:]', id)
+    z[i1] = sprintf('\\ref{%s}', id[i1])
+    i2 = grepl('^eqn[-:]', id)
+    z[i2] = sprintf('\\eqref{%s}', sub('eqn', 'eq', id[i2]))
+    i3 = i1 | i2
+    # KaTeX requires references to be in math, e.g., \(\ref{ID}\)
+    if (katex) z[i3] = paste0('\\(', z[i3], '\\)')
     i = id %in% ids
     # for backward compatibility, if fig-id is not found, also look for fig:id
-    if (any(!i)) {
+    if (any(i4 <- !i & !i3)) {
       id2 = sub('-', ':', id)
-      j = !i & (id2 %in% ids)
-      id[j] = id2[j]; i[j] = TRUE
+      j = i4 & (id2 %in% ids)
+      id[j] = id2[j]; i[j] = TRUE; i4[j] = FALSE
     }
     if (any(i)) z[i] = sprintf(
       '<a class="cross-ref-%s" href="#%s">%s</a>', type[i], id[i], db[id[i]]
     )
-    if (any(!i)) warning('Reference key(s) not found: ', one_string(id[!i], ', '))
+    if (any(i4)) warning('Reference key(s) not found: ', one_string(id[i4], ', '))
     z
   })
 }

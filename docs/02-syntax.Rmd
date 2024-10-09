@@ -111,16 +111,15 @@ environment and an `equation` environment:
 ```{=latex}
 \begin{align}
 a^{2}+b^{2} & =  c^{2}\\
-\sin^{2}(\theta)+\cos^{2}(\theta) & =  1
-\end{align}
-
-\begin{equation}
-\begin{split}
-(a+b)^2 &=(a+b)(a+b)\\
-  &=a^2+2ab+b^2
-\end{split}
+\sin^{2}(\theta)+\cos^{2}(\theta) & =  1\label{eq:pyth-identity}
+\end{align} \begin{equation}
+  \begin{split}
+  (a+b)^2 &=(a+b)(a+b)\\
+    &=a^2+2ab+b^2
+  \end{split}
 \end{equation}
 ```
+
 These math environments can be written in raw LaTeX blocks, and they work for
 both LaTeX and HTML output, e.g.,
 
@@ -302,25 +301,101 @@ all class names will be used if the output format is HTML (e.g.,
 
 ### Cross-references
 
-To cross-reference an element, it must be numberd first. For section headings,
-the numbers are automatically generated if the `number_sections` option is true.
-For other elements, they must contain empty anchors of the form `[](#@ID)`,
-where `ID` is the ID of the element to be referenced. For figures, these anchors
-are automatically generated if the chunk options `fig.cap` (figure caption) and
-`fig.env` are not empty, e.g.,
+To cross-reference an element, it must be numbered first. Then we can refer to
+it by its ID.
+
+#### Sections, figures, and tables
+
+Section heading IDs can be either manually assigned or automatically generated
+(@sec:auto-identifiers). Section numbers are automatically generated if the
+`number_sections` option is true (@sec:number-sections).
+
+Figures and tables are automatically numbered if their captions are provided
+(via the chunk options `fig.cap` / `tab.cap`), e.g.,
 
 ```` md
 ```{r}
-#| nice-plot, fig.cap="A nice caption", fig.env=".figure"
+#| nice-plot, fig.cap="A nice caption"
 
 plot(cars)
 ```
 ````
 
-To refer to an element in the text, use the syntax `@ID`, e.g.,
+To refer to an element in the text, use the syntax `@ID`, where `ID` is the ID
+of the element to be referenced, which typically consists of a prefix (e.g.,
+`sec:`, `fig:`, `tab:`, or `eq:`) and a label. For example:
 
 ``` md
-Please see @fig-nice-plot for an overview of the `cars` data.
+Please see @fig:nice-plot for an overview of the `cars` data.
+```
+
+Dashes (`-`) are also allowed in place of colons in the ID prefix, e.g.,
+`@fig-nice-plot`.
+
+#### LaTeX equations
+
+LaTeX math environments such as `align` and `equation` are numbered by default.
+To refer to an expression (e.g., an equation) in a math environment, a label
+needs to be assigned to the expression first via `\label{}`, and it must start
+with the prefix `eq:` or `eq-`, e.g.,
+
+```` md
+```{=latex}
+\begin{equation}
+\sin^2(x) + \cos^2(x) = 1 \label{eq:pyth-identity}
+\end{equation}
+```
+````
+
+Then we can use either `@eq:*` or `@eqn:*` to cross-reference the equation,
+e.g., `@eqn:pyth-identity`. Under the hood, the prefix `@eq` will be resolved to
+`\ref{}`, and `@eqn` will be resolved to `\eqref{}`. If you are not familiar
+with LaTeX commands `\ref{}` and `\eqref{}`, the main difference is that
+`\eqref{}` will render the equation number in parentheses, e.g.,
+@eqn:pyth-identity, whereas `\ref{}` will only generate the equation number,
+e.g., @eq:pyth-identity.
+
+In HTML output, `\eqref{}` will also add a label "Equation" before the number by
+default. If you prefer writing the label manually and having control over the
+parentheses, you can use `@eq:` instead of `@eqn:`, e.g., `Eq. [@eq:*]` (using
+the label "Eq." and square brackets).
+
+In addition to equation numbers, you can also specify a tag for an equation via
+`\tag{}` and refer to the equations by its tag.
+
+For a right-angled triangle, we are all familiar with @eqn:pyth-theorem.
+
+\begin{equation}
+a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
+\end{equation}
+
+#### Arbitrary elements
+
+You can cross-reference any other type of elements by adding empty anchors of
+the form `[](#@ID)` into them, e.g.,
+
+::: callout-tip
+[ ](#@clt:example) This is a numbered tip callout.
+:::
+
+We can cross-reference @clt:example.
+
+For HTML output, we can style the numbers and references with CSS. Element
+numbers are wrapped in `<span class="ref-number-*"></span>`, and references are
+wrapped in `<span class="cross-ref-*"></span>`, where `*` is the ID prefix
+(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Tip" to the
+number and reference of the callout above:
+
+```{css}
+.ref-number-clt::before, .cross-ref-clt::before {
+  content: "Tip ";
+}
+.ref-number-clt {
+  font-weight: bold;
+}
+.ref-number-clt::after {
+  content: ". "
+}
 ```
 
 ### Citations

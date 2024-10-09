@@ -265,8 +265,14 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
     ret = add_toc(ret, options)
+    # add js/css for math
+    is_katex = TRUE
+    if (has_math && length(js_math <- js_options(options[['js_math']], 'katex'))) {
+      is_katex = js_math$package == 'katex'
+      meta = set_math(meta, js_math, is_katex)
+    }
     # number figures and tables, etc.
-    ret = number_refs(ret, r_ref)
+    ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
     ret = render_footnotes(ret)  # render [^n] footnotes
     if (has_sup)
@@ -379,7 +385,6 @@ build_output = function(format, options, template, meta) {
     }
     set_meta('css', 'default')
     set_meta('plain-title', I(str_trim(commonmark::markdown_text(meta[['title']]))))
-    meta = set_math(meta, options, b)
     meta = set_highlight(meta, options, b)
     # if the class .line-numbers is present, add js/css for line numbers
     if (any(grepl('<code class="[^"]*line-numbers', b))) for (i in c('css', 'js')) {
