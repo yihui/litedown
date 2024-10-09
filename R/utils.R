@@ -931,13 +931,13 @@ jsdelivr = function(file, dir = 'npm/@xiee/utils/') {
 # get the latest version of jsdelivr assets
 jsd_version = local({
   vers = list()  # cache versions in current session
-  function(pkg) {
-    if (is.character(v <- vers[[pkg]])) return(v)
+  function(pkg, force = FALSE) {
+    if (!force && is.character(v <- vers[[pkg]])) return(v)
     x = tryCatch(
-      xfun::read_utf8(paste0('https://data.jsdelivr.com/v1/package/', pkg)),
+      xfun::read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved')),
       error = function(e) ''
     )
-    v = grep_sub('.*"latest":\\s*"([0-9.]+)".*', '@\\1', x)
+    v = grep_sub('.*"version":\\s*"([0-9.]+)".*', '@\\1', x)
     vers[[pkg]] <<- if (length(v)) v[1] else ''
   }
 })
