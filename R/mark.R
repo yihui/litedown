@@ -237,7 +237,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       # possible math environments
       i2 = (lang %in% c('tex', 'latex')) &
         grepl('^\\\\begin\\{[a-zA-Z*]+\\}.+\\\\end\\{[a-zA-Z*]+\\}\n$', code)
-      x[i2] = sprintf('<p>\n%s</p>\n', code[i2])
+      if (any(i2)) {
+        x[i2] = sprintf('<p>\n%s</p>\n', code[i2])
+        has_math <<- TRUE
+      }
       # discard other types of raw content blocks
       x[!(i1 | i2)] = ''
       x
