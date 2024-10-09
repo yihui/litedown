@@ -733,7 +733,8 @@ fuse_code = function(x, blocks) {
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
-        a = c(paste0('.', lang), a)  # use engine name as class name
+        # use engine name as class name; when `a` contains class names, prefix language-
+        if (!any(grepl('(^| )[.]', a))) a = c(paste0('.',  lang), a)
         # add line numbers
         if (is_roaming()) a = c(
           a, sprintf('.line-numbers .auto-numbers data-start="%d"', l1 + l2 - 1)
