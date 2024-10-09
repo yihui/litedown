@@ -304,7 +304,8 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
     ),
     merge_list(
       .Options[[nms[2]]], options,
-      list(toc = toc, number_sections = TRUE, embed_resources = FALSE)
+      list(toc = toc, number_sections = TRUE, embed_resources = FALSE),
+      yaml_field(yaml, format, 'options')
     )
   )
   names(defaults) = nms
