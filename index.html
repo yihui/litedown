@@ -3,146 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.10">
+<meta name="generator" content="litedown 0.2.11">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/css/pages.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-06</h3></div>
+<div class="date"><h3>2024-10-09</h3></div>
 </div>
 <div class="">
 <div id="TOC">
 <ul class="numbered">
-<li><a href="#sec-preface">Preface</a>
+<li><a href="#sec:preface">Preface</a>
 <ul>
-<li><a href="#sec-the-past-journey">The past journey</a></li>
-<li><a href="#sec-a-question">A question</a></li>
-<li><a href="#sec-overview">Overview</a></li>
-<li><a href="#sec-highlights">Highlights</a>
+<li><a href="#sec:the-past-journey">The past journey</a></li>
+<li><a href="#sec:a-question">A question</a></li>
+<li><a href="#sec:overview">Overview</a></li>
+<li><a href="#sec:highlights">Highlights</a>
 <ul>
-<li><a href="#sec-small-footprint">Small footprint</a></li>
-<li><a href="#sec-live-preview-everything">Live preview everything</a></li>
-<li><a href="#sec-precise-parser">Precise parser</a></li>
-<li><a href="#sec-versioned-css-js-assets">Versioned CSS/JS assets</a></li>
-<li><a href="#sec-chunk-options-management">Chunk options management</a></li>
-<li><a href="#sec-non-linear-order-of-execution">Non-linear order of execution</a></li>
-<li><a href="#sec-time-code-chunks">Time code chunks</a></li>
-<li><a href="#sec-table-output-for-data-frames-by-default">Table output for data frames by default</a></li>
-<li><a href="#sec-relieved-pain-of-paths">Relieved pain of paths</a></li>
-<li><a href="#sec-output-in-memory-or-to-disk">Output in memory or to disk</a></li>
-<li><a href="#sec-a-new-cache-system">A new cache system</a></li>
-<li><a href="#sec-a-book-is-a-single-html-file">A book is a single HTML file</a></li>
-<li><a href="#sec-r-scripts-as-first-class-citizens">R scripts as first-class citizens</a></li>
-<li><a href="#sec-clean-html-output">Clean HTML output</a></li>
-<li><a href="#sec-features-out-of-scope">Features out of scope</a></li>
+<li><a href="#sec:small-footprint">Small footprint</a></li>
+<li><a href="#sec:live-preview-everything">Live preview everything</a></li>
+<li><a href="#sec:precise-parser">Precise parser</a></li>
+<li><a href="#sec:versioned-css-js-assets">Versioned CSS/JS assets</a></li>
+<li><a href="#sec:chunk-options-management">Chunk options management</a></li>
+<li><a href="#sec:non-linear-order-of-execution">Non-linear order of execution</a></li>
+<li><a href="#sec:time-code-chunks">Time code chunks</a></li>
+<li><a href="#sec:table-output-for-data-frames-by-default">Table output for data frames by default</a></li>
+<li><a href="#sec:relieved-pain-of-paths">Relieved pain of paths</a></li>
+<li><a href="#sec:output-in-memory-or-to-disk">Output in memory or to disk</a></li>
+<li><a href="#sec:a-new-cache-system">A new cache system</a></li>
+<li><a href="#sec:a-book-is-a-single-html-file">A book is a single HTML file</a></li>
+<li><a href="#sec:r-scripts-as-first-class-citizens">R scripts as first-class citizens</a></li>
+<li><a href="#sec:clean-html-output">Clean HTML output</a></li>
+<li><a href="#sec:features-out-of-scope">Features out of scope</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</a>
+<li><a href="#sec:knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</a>
 <ul>
-<li><a href="#sec-code-chunks"><span class="section-number">1.1</span> Code chunks</a></li>
-<li><a href="#sec-inline-code"><span class="section-number">1.2</span> Inline code</a></li>
-<li><a href="#sec-r-scripts"><span class="section-number">1.3</span> R scripts</a></li>
-<li><a href="#sec-comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></a></li>
+<li><a href="#sec:code-chunks"><span class="section-number">1.1</span> Code chunks</a></li>
+<li><a href="#sec:inline-code"><span class="section-number">1.2</span> Inline code</a></li>
+<li><a href="#sec:r-scripts"><span class="section-number">1.3</span> R scripts</a></li>
+<li><a href="#sec:comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></a></li>
 </ul>
 </li>
-<li><a href="#sec-markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</a>
+<li><a href="#sec:markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</a>
 <ul>
-<li><a href="#sec-basic-syntax"><span class="section-number">2.1</span> Basic syntax</a></li>
-<li><a href="#sec-add-on-features"><span class="section-number">2.2</span> Add-on features</a>
+<li><a href="#sec:basic-syntax"><span class="section-number">2.1</span> Basic syntax</a></li>
+<li><a href="#sec:add-on-features"><span class="section-number">2.2</span> Add-on features</a>
 <ul>
-<li><a href="#sec-raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</a></li>
-<li><a href="#sec-latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</a></li>
-<li><a href="#sec-superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</a></li>
-<li><a href="#sec-footnotes_1"><span class="section-number">2.2.4</span> Footnotes</a></li>
-<li><a href="#sec-attributes"><span class="section-number">2.2.5</span> Attributes</a></li>
-<li><a href="#sec-appendices"><span class="section-number">2.2.6</span> Appendices</a></li>
-<li><a href="#sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</a></li>
-<li><a href="#sec-cross-references"><span class="section-number">2.2.8</span> Cross-references</a></li>
-<li><a href="#sec-citations"><span class="section-number">2.2.9</span> Citations</a></li>
-<li><a href="#sec-smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</a></li>
+<li><a href="#sec:raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</a></li>
+<li><a href="#sec:latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</a></li>
+<li><a href="#sec:superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</a></li>
+<li><a href="#sec:footnotes_1"><span class="section-number">2.2.4</span> Footnotes</a></li>
+<li><a href="#sec:attributes"><span class="section-number">2.2.5</span> Attributes</a></li>
+<li><a href="#sec:appendices"><span class="section-number">2.2.6</span> Appendices</a></li>
+<li><a href="#sec:fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</a></li>
+<li><a href="#sec:cross-references"><span class="section-number">2.2.8</span> Cross-references</a></li>
+<li><a href="#sec:citations"><span class="section-number">2.2.9</span> Citations</a></li>
+<li><a href="#sec:smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</a></li>
 </ul>
 </li>
-<li><a href="#sec-comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</a></li>
+<li><a href="#sec:comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</a></li>
 </ul>
 </li>
-<li><a href="#sec-markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</a>
+<li><a href="#sec:markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</a>
 <ul>
-<li><a href="#sec-markdown-options"><span class="section-number">3.1</span> Markdown options</a>
+<li><a href="#sec:markdown-options"><span class="section-number">3.1</span> Markdown options</a>
 <ul>
-<li><a href="#sec-auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></a></li>
-<li><a href="#sec-embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></a></li>
-<li><a href="#sec-js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></a></li>
-<li><a href="#sec-js-math"><span class="section-number">3.1.4</span> <code>js_math</code></a></li>
-<li><a href="#sec-keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></a></li>
-<li><a href="#sec-latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></a></li>
-<li><a href="#sec-number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></a></li>
-<li><a href="#sec-smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></a></li>
-<li><a href="#sec-superscript"><span class="section-number">3.1.9</span> <code>superscript</code></a></li>
-<li><a href="#sec-subscript"><span class="section-number">3.1.10</span> <code>subscript</code></a></li>
-<li><a href="#sec-toc"><span class="section-number">3.1.11</span> <code>toc</code></a></li>
-<li><a href="#sec-top-level"><span class="section-number">3.1.12</span> <code>top_level</code></a></li>
+<li><a href="#sec:auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></a></li>
+<li><a href="#sec:embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></a></li>
+<li><a href="#sec:js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></a></li>
+<li><a href="#sec:js-math"><span class="section-number">3.1.4</span> <code>js_math</code></a></li>
+<li><a href="#sec:keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></a></li>
+<li><a href="#sec:latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></a></li>
+<li><a href="#sec:number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></a></li>
+<li><a href="#sec:smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></a></li>
+<li><a href="#sec:superscript"><span class="section-number">3.1.9</span> <code>superscript</code></a></li>
+<li><a href="#sec:subscript"><span class="section-number">3.1.10</span> <code>subscript</code></a></li>
+<li><a href="#sec:toc"><span class="section-number">3.1.11</span> <code>toc</code></a></li>
+<li><a href="#sec:top-level"><span class="section-number">3.1.12</span> <code>top_level</code></a></li>
 </ul>
 </li>
-<li><a href="#sec-templates"><span class="section-number">3.2</span> Templates</a></li>
-<li><a href="#sec-yaml-metadata"><span class="section-number">3.3</span> YAML metadata</a></li>
+<li><a href="#sec:templates"><span class="section-number">3.2</span> Templates</a></li>
+<li><a href="#sec:yaml-metadata"><span class="section-number">3.3</span> YAML metadata</a></li>
 </ul>
 </li>
 <li><a href="#chp-assets"><span class="section-number main-number">4</span> CSS/JS assets</a>
 <ul>
-<li><a href="#sec-html-slides"><span class="section-number">4.1</span> HTML slides</a></li>
-<li><a href="#sec-html-articles"><span class="section-number">4.2</span> HTML articles</a>
+<li><a href="#sec:html-slides"><span class="section-number">4.1</span> HTML slides</a></li>
+<li><a href="#sec:html-articles"><span class="section-number">4.2</span> HTML articles</a>
 <ul>
-<li><a href="#sec-the-overall-style"><span class="section-number">4.2.1</span> The overall style</a></li>
-<li><a href="#sec-side-elements"><span class="section-number">4.2.2</span> Side elements</a></li>
-<li><a href="#sec-body-elements"><span class="section-number">4.2.3</span> Body elements</a></li>
+<li><a href="#sec:the-overall-style"><span class="section-number">4.2.1</span> The overall style</a></li>
+<li><a href="#sec:side-elements"><span class="section-number">4.2.2</span> Side elements</a></li>
+<li><a href="#sec:body-elements"><span class="section-number">4.2.3</span> Body elements</a></li>
 </ul>
 </li>
-<li><a href="#sec-tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</a></li>
-<li><a href="#sec-code-folding"><span class="section-number">4.4</span> Code folding</a></li>
-<li><a href="#sec-callout-blocks"><span class="section-number">4.5</span> Callout blocks</a></li>
-<li><a href="#sec-right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</a></li>
-<li><a href="#sec-add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</a></li>
-<li><a href="#sec-style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</a></li>
+<li><a href="#sec:tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</a></li>
+<li><a href="#sec:code-folding"><span class="section-number">4.4</span> Code folding</a></li>
+<li><a href="#sec:callout-blocks"><span class="section-number">4.5</span> Callout blocks</a></li>
+<li><a href="#sec:right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</a></li>
+<li><a href="#sec:add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</a></li>
+<li><a href="#sec:style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</a></li>
 </ul>
 </li>
-<li><a href="#sec-authoring"><span class="section-number main-number">5</span> Authoring</a>
+<li><a href="#sec:authoring"><span class="section-number main-number">5</span> Authoring</a>
 <ul>
-<li><a href="#sec-the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</a></li>
-<li><a href="#sec-live-preview"><span class="section-number">5.2</span> Live preview</a></li>
-<li><a href="#sec-visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
+<li><a href="#sec:the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</a></li>
+<li><a href="#sec:live-preview"><span class="section-number">5.2</span> Live preview</a></li>
+<li><a href="#sec:visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
 </ul>
 </li>
-<li><a href="#sec-books-and-websites"><span class="section-number main-number">6</span> Books and Websites</a>
+<li><a href="#sec:books-and-websites"><span class="section-number main-number">6</span> Books and Websites</a>
 <ul>
-<li><a href="#sec-books"><span class="section-number">6.1</span> Books</a>
+<li><a href="#sec:books"><span class="section-number">6.1</span> Books</a>
 <ul>
-<li><a href="#sec-r-package-documentation"><span class="section-number">6.1.1</span> R package documentation</a></li>
+<li><a href="#sec:r-package-documentation"><span class="section-number">6.1.1</span> R package documentation</a></li>
 </ul>
 </li>
-<li><a href="#sec-websites"><span class="section-number">6.2</span> Websites</a></li>
+<li><a href="#sec:websites"><span class="section-number">6.2</span> Websites</a></li>
 </ul>
 </li>
-<li><a href="#sec-appendix">Appendix</a></li>
-<li><a href="#sec-for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
-<li><a href="#sec-package-vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
-<li><a href="#sec-technical-notes"><span class="section-number main-number">C</span> Technical Notes</a>
+<li><a href="#sec:appendix">Appendix</a></li>
+<li><a href="#sec:for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
+<li><a href="#sec:package-vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
+<li><a href="#sec:technical-notes"><span class="section-number main-number">C</span> Technical Notes</a>
 <ul>
-<li><a href="#sec-embedding-resources"><span class="section-number">C.1</span> Embedding resources</a></li>
-<li><a href="#sec-css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</a></li>
+<li><a href="#sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</a></li>
+<li><a href="#sec:css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</a></li>
 </ul>
 </li>
 </ul>
@@ -151,8 +151,8 @@
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/index.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-preface" class="unnumbered">Preface</h1>
-<div class="callout-caution">
+<h1 id="sec:preface" class="unnumbered">Preface</h1>
+<div class="callout-important">
 <p>The <strong>litedown</strong> package is still new and experimental. The documentation is
 very incomplete. Besides, <strong>litedown</strong> was designed for minimalists with a
 limited scope. Average users should perhaps consider using <strong>rmarkdown</strong> or
@@ -169,7 +169,7 @@ And the world will live as one</p>
 HTML.</p>
 <p>I do not mean PDF and Word are bad. I only lament the time that human beings
 spend on various document formats, given how much a static web page can do.</p>
-<h2 id="sec-the-past-journey">The past journey</h2>
+<h2 id="sec:the-past-journey">The past journey</h2>
 <p>Having worked on the development of R Markdown for nearly 12 years, I have to
 confess that I have become a little perplexed about my work, although I clearly
 remember the exciting moments. For example:</p>
@@ -208,7 +208,7 @@ Hugo. And distill.pub. And <strong>htmlwidgets</strong>, <strong>reticulate</str
 </ul>
 <p>I think the work was largely meaningful. The only problem is I do not see an
 end. The list of exciting things to do goes on and on.</p>
-<h2 id="sec-a-question">A question</h2>
+<h2 id="sec:a-question">A question</h2>
 <p>“At forty, I had no more doubts.” Confucius said. Apparently, I’m not Confucius.
 On the contrary, as I’m turning forty, I’m having more doubts. I have been
 reflecting on the things that have kept me busy.</p>
@@ -232,7 +232,7 @@ all. It is just that I feel HTML has the greatest potential, and I hope to take
 full advantage of its power.<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" data-footnote-ref>1</a></sup></p>
 <p>In other words, I do not expect that “the (software) world will live as one”. I
 just want to make the HTML world a little bit better.</p>
-<h2 id="sec-overview">Overview</h2>
+<h2 id="sec:overview">Overview</h2>
 <p>The <strong>litedown</strong> package is an attempt to reimagine R Markdown with one primary
 goal—do HTML, and do it well, with the minimalism principle. Before LaTeX fans
 walk away in disappointment, let me quickly clarify that LaTeX output is also
@@ -254,8 +254,8 @@ largely due to the limited scope of the package. From the user’s perspective,
 some features are definitely not that simple. However, the point is that the
 core is simple and small, and you can enable or disable most features. What’s
 more, you can implement features by yourself if you know CSS/JS.</p>
-<h2 id="sec-highlights">Highlights</h2>
-<h3 id="sec-small-footprint">Small footprint</h3>
+<h2 id="sec:highlights">Highlights</h2>
+<h3 id="sec:small-footprint">Small footprint</h3>
 <p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
 lightweight. Currently, it has two dependencies, <strong>commonmark</strong> and
 <strong>xfun</strong>.<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>2</a></sup> It does not depend on <strong>knitr</strong> or Pandoc.</p>
@@ -268,7 +268,7 @@ based on <strong>knitr</strong> and Pandoc, such as <strong>rmarkdown</strong> a
 sure if you should choose <strong>litedown</strong> or <strong>rmarkdown</strong>/Quarto, you may want to
 choose the latter (especially Quarto). Some <strong>litedown</strong> features may be ported
 into <strong>knitr</strong> in the future.</p>
-<h3 id="sec-live-preview-everything">Live preview everything</h3>
+<h3 id="sec:live-preview-everything">Live preview everything</h3>
 <p>To get started, run <code>litedown::roam()</code> and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as <code>.md</code>, <code>.Rmd</code>, and
 <code>.R</code> files. The rendering takes place in memory, which means it will not render
@@ -279,7 +279,7 @@ file whenever you want.</p>
 <p>You can open any file in your editor or the default system application by
 clicking a button in the browser. You can also render a file or a project in a
 new R session by clicking a button in the browser.</p>
-<h3 id="sec-precise-parser">Precise parser</h3>
+<h3 id="sec:precise-parser">Precise parser</h3>
 <p>The R Markdown parser stores the precise line and column numbers of code
 elements. The location information is used in various places. For example, when
 an error occurs, you will get a message that tells you the precise location in
@@ -313,7 +313,7 @@ Feel free to comment out anything, such as a code chunk:
 ```
 --&gt;
 </code></pre>
-<h3 id="sec-versioned-css-js-assets">Versioned CSS/JS assets</h3>
+<h3 id="sec:versioned-css-js-assets">Versioned CSS/JS assets</h3>
 <p>By default, <strong>litedown</strong> produces bare minimal HTML output, but many features
 can be enabled by adding CSS/JS assets (see <a class="cross-ref-chp" href="#chp-assets">4</a>). You can freely choose
 whatever versions that work for you to avoid potential future breakage when the
@@ -324,14 +324,14 @@ such as Bootstrap or jQuery. They are simply vanilla code written from scratch.
 No generator was used (such as SCSS). The code is often relatively short, so you
 could just fork the code, modify it, publish your own version, and use it if you
 are not satisfied with the original version.</p>
-<h3 id="sec-chunk-options-management">Chunk options management</h3>
+<h3 id="sec:chunk-options-management">Chunk options management</h3>
 <p>Chunk options are managed by an environment, i.e., <code>litedown::reactor()</code>. Using
 an environment (as compared to a list like <strong>knitr</strong>’s <code>opts_chunk</code>) means you
 can access the up-to-date chunk options anywhere, because environments in R are
 mutable. I cannot explain how awkward <strong>knitr</strong>’s <code>opts_current</code> has been. It is
 basically a lie—chunk options that you get from <code>opts_current</code> are not
 necessarily “current”.</p>
-<h3 id="sec-non-linear-order-of-execution">Non-linear order of execution</h3>
+<h3 id="sec:non-linear-order-of-execution">Non-linear order of execution</h3>
 <p>A document does not have to be compiled in the linear order. With the chunk
 option <code>order</code>, you can specify code chunks and inline code expressions to be
 executed in an arbitrary order. For example, if you have an abstract in the
@@ -346,28 +346,28 @@ you can specify a <em>fixed</em> order to execute code in the document. The orde
 not have to be from beginning to end, but it is <em>deterministic</em>. In other words,
 it does not mean you run code chunks in an arbitrary or random order that can
 detriment reproducibility.</p>
-<h3 id="sec-time-code-chunks">Time code chunks</h3>
+<h3 id="sec:time-code-chunks">Time code chunks</h3>
 <p>If you want to figure out which code chunks are time-consuming, simply set the
 chunk option <code>litedown::reactor(time = TRUE)</code> in the beginning, and put
 <code>litedown::timing_data()</code> in the last code chunk. It will tell you detailed
 information. In the <code>roam()</code> preview, the data will also contain links to
 specific lines of code chunks, so you click to jump to a specific code chunk.</p>
-<h3 id="sec-table-output-for-data-frames-by-default">Table output for data frames by default</h3>
+<h3 id="sec:table-output-for-data-frames-by-default">Table output for data frames by default</h3>
 <p>Rectangular objects such as data frames (including tibbles) and matrices are
 printed as tables by default, and the number of rows is limited to 10 by default
 to avoid generating huge tables by accident.</p>
-<h3 id="sec-relieved-pain-of-paths">Relieved pain of paths</h3>
+<h3 id="sec:relieved-pain-of-paths">Relieved pain of paths</h3>
 <p>File paths (such as image paths) have been a mess in <strong>knitr</strong>. My deepest
 apologies for that. I have worked much harder in <strong>litedown</strong> in this regard.</p>
-<h3 id="sec-output-in-memory-or-to-disk">Output in memory or to disk</h3>
+<h3 id="sec:output-in-memory-or-to-disk">Output in memory or to disk</h3>
 <p>Functions such as <code>mark()</code>, <code>fuse()</code>, and <code>fuse_book()</code> can operate in memory
 without writing to disk. By default, if you pass a file input, you get a file
 output; if you pass text input, you get text output.</p>
-<h3 id="sec-a-new-cache-system">A new cache system</h3>
+<h3 id="sec:a-new-cache-system">A new cache system</h3>
 <p>You can feel more confident with using the chunk option <code>cache = TRUE</code> in
 <strong>litedown</strong> than in <strong>knitr</strong>. The new cache system is more robust and
 intelligent.</p>
-<h3 id="sec-a-book-is-a-single-html-file">A book is a single HTML file</h3>
+<h3 id="sec:a-book-is-a-single-html-file">A book is a single HTML file</h3>
 <p>Unlike <strong>bookdown</strong> and Quarto, <code>litedown::fuse_book()</code> renders multiple input
 files to a single output file. Yes, your whole precious book is in a single
 (HTML or PDF) file. Grab and go.</p>
@@ -381,7 +381,7 @@ HTML version of the book to PDF, just press <code>Ctrl + P</code> or <code>Comma
 browser? The answer is: you should be fine if you do not have too many images.
 If you do, do not base64 encode them (which is the default), and you can also
 lazy-load images to make the book load faster.</p>
-<h3 id="sec-r-scripts-as-first-class-citizens">R scripts as first-class citizens</h3>
+<h3 id="sec:r-scripts-as-first-class-citizens">R scripts as first-class citizens</h3>
 <p>An R script has the same status as an R Markdown document. You can write
 Markdown in <code>#'</code> comments, and chunk options in <code>#|</code> comments (both are
 optional). These are the only two rules to remember. Compared to
@@ -390,7 +390,7 @@ carefully parsed into “code chunks”, so their line numbers work as well as R
 Markdown’s line numbers.</p>
 <p>Any application that you can create with R Markdown can be created with R
 scripts, such as books and websites.</p>
-<h3 id="sec-clean-html-output">Clean HTML output</h3>
+<h3 id="sec:clean-html-output">Clean HTML output</h3>
 <p>The HTML output generated from <strong>litedown</strong> is very clean. For example, code
 blocks in HTML output contain plain code, instead of full of <code>&lt;span&gt;</code> tags with
 random attributes. Clean HTML output means the output file size is smaller, and
@@ -398,7 +398,7 @@ more importantly, it is easier to inspect the differences between two versions
 of output (e.g., in Git). Every time when you update the source document, you
 can know more clearly what has changed in the output, which can help you avoid
 unexpected changes before publishing the output.</p>
-<h3 id="sec-features-out-of-scope">Features out of scope</h3>
+<h3 id="sec:features-out-of-scope">Features out of scope</h3>
 <p>Output formats besides HTML and LaTeX are unlikely to be supported.<sup class="footnote-ref"><a href="#fn-3" id="fnref-3" data-footnote-ref>3</a></sup> If other
 output formats are desired, you may use Pandoc to do the conversion.</p>
 <p>For tables, only pipe tables are supported. Other table formats are not
@@ -415,14 +415,14 @@ some minimal support.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/01-fuse.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</h1>
+<h1 id="sec:knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</h1>
 <p>R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function <code>litedown::fuse()</code> plays a role similar to
 <code>knitr::knit()</code>. It “fuses” program code with narratives, i.e., it executes all
 code in the source document and interweaves results with narratives in the
 output document. Similar to <strong>knitr</strong>, <strong>litedown</strong> supports code chunks and
 inline code.</p>
-<h2 id="sec-code-chunks"><span class="section-number">1.1</span> Code chunks</h2>
+<h2 id="sec:code-chunks"><span class="section-number">1.1</span> Code chunks</h2>
 <p>A code chunk consists of the language name, chunk options (in the chunk header
 or pipe comments), and the code:</p>
 <pre><code class="language-md">```{lang}
@@ -471,7 +471,7 @@ which can be useful for telling readers the full source of a chunk, e.g.,</p>
 1 + 1
 ```
 </code></pre>
-<h2 id="sec-inline-code"><span class="section-number">1.2</span> Inline code</h2>
+<h2 id="sec:inline-code"><span class="section-number">1.2</span> Inline code</h2>
 <p>The syntax for inline code expressions is <code>`{lang} code`</code>, where <code>lang</code> is
 the language name, e.g., <code>r</code>. Spaces are allowed after the opening backtick and
 before the closing backtick. If the <code>code</code> happens to contain <code>N</code> backticks, you
@@ -487,7 +487,7 @@ temporary workaround, you may set <code>options(litedown.enable.knitr_inline = T
 in your <code>.Rprofile</code> to make <strong>litedown</strong> recognize <code>`r code`</code>, but we
 recommend that you convert the document via <code>litedown:::convert_knitr()</code> instead
 if you decide to stay with <strong>litedown</strong> in the long run.</p>
-<h2 id="sec-r-scripts"><span class="section-number">1.3</span> R scripts</h2>
+<h2 id="sec:r-scripts"><span class="section-number">1.3</span> R scripts</h2>
 <p>Besides R Markdown, you can also pass an R script to <code>fuse()</code>. You can write
 Markdown content in <code>#'</code> comments, and group lines of code into chunks by <code>#|</code>
 comments, e.g.,</p>
@@ -507,7 +507,7 @@ comments, e.g.,</p>
 plot(cars)
 </code></pre>
 <p>Both <code>#'</code> and <code>#|</code> comments are optional.</p>
-<h2 id="sec-comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></h2>
+<h2 id="sec:comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></h2>
 <p>Major differences between <strong>knitr</strong> and <strong>litedown</strong> include:</p>
 <table>
 <thead>
@@ -563,8 +563,8 @@ re-implemented, especially when the implementation is not simple enough.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/02-syntax.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</h1>
-<h2 id="sec-basic-syntax"><span class="section-number">2.1</span> Basic syntax</h2>
+<h1 id="sec:markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</h1>
+<h2 id="sec:basic-syntax"><span class="section-number">2.1</span> Basic syntax</h2>
 <p>For the full list of supported document elements, please read the GFM spec.
 Below is a quick summary:</p>
 <ul>
@@ -593,10 +593,10 @@ table, which can be generated by <code>knitr::kable(x, &quot;pipe&quot;)</code> 
 <code>xfun::md_table()</code>).</p>
 </li>
 </ul>
-<h2 id="sec-add-on-features"><span class="section-number">2.2</span> Add-on features</h2>
+<h2 id="sec:add-on-features"><span class="section-number">2.2</span> Add-on features</h2>
 <p>In addition to GFM features, the <strong>litedown</strong> package also supports the
 following features.</p>
-<h3 id="sec-raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</h3>
+<h3 id="sec:raw-latex-html-blocks"><span class="section-number">2.2.1</span> Raw LaTeX/HTML blocks</h3>
 <p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
 names <code>=latex</code> (or <code>=tex</code>) and <code>=html</code>, e.g.,</p>
 <pre><code class="language-markdown">```{=tex}
@@ -607,7 +607,7 @@ This only appears in \LaTeX{} output.
 output formats. Similarly, raw HTML blocks will only appear in HTML output. One
 exception is raw LaTeX blocks that are LaTeX math environments, which also work
 for HTML output (see the next section).</p>
-<h3 id="sec-latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</h3>
+<h3 id="sec:latex-math_1"><span class="section-number">2.2.2</span> LaTeX math</h3>
 <p>You can write both <code>$inline$</code> and <code>$$display$$</code> LaTeX math, e.g.,
 \(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\).</p>
 <p>$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$</p>
@@ -634,7 +634,7 @@ no spaces after it.</p>
 </li>
 </ul>
 <p>Valid examples:</p>
-<pre><code class="language-md">$x + y$
+<pre><code class="language-tex">$x + y$
   $x + y$
 text $x + y$ text
 
@@ -658,31 +658,39 @@ $$
 </code></pre>
 <p>LaTeX math environments are also supported, e.g., below are an <code>align</code>
 environment and an <code>equation</code> environment:</p>
-<p>
-\begin{align}
+<pre><code class="language-tex">\begin{align}
 a^{2}+b^{2} &amp; =  c^{2}\\
 \sin^{2}(\theta)+\cos^{2}(\theta) &amp; =  1
+\label{eq:pyth-identity}
 \end{align}
 
 \begin{equation}
-\begin{split}
-(a+b)^2 &amp;=(a+b)(a+b)\\
-  &amp;=a^2+2ab+b^2
-\end{split}
+  \begin{split}
+  (a+b)^2 &amp;=(a+b)(a+b)\\
+    &amp;=a^2+2ab+b^2
+  \end{split}
 \end{equation}
-</p>
-<p>These math environments can be written in raw LaTeX blocks, and they work for
-both LaTeX and HTML output, e.g.,</p>
-<pre><code class="language-markdown">```{=latex}
-\begin{align}
+</code></pre>
+<div class="callout-example">
+<p>\begin{align}
 a^{2}+b^{2} &amp; =  c^{2}\\
 \sin^{2}(\theta)+\cos^{2}(\theta) &amp; =  1
-\end{align}
-```
-</code></pre>
+\label{eq:pyth-identity}
+\end{align}</p>
+<p>\begin{equation}
+  \begin{split}
+  (a+b)^2 &amp;=(a+b)(a+b)\\
+    &amp;=a^2+2ab+b^2
+  \end{split}
+\end{equation}</p>
+</div>
+<p>These math environments can be written as either nake LaTeX code or raw LaTeX
+blocks (<code>```{=latex}</code>), but we recommend that you use raw LaTeX blocks
+because they are more robust. LaTeX math environments work for both LaTeX and
+HTML output.</p>
 <p>For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
-math environment can be rendered.</p>
-<h3 id="sec-superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</h3>
+math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">3.1.4</a>).</p>
+<h3 id="sec:superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</h3>
 <p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
 Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
 characters, <code>*</code>, <code>(</code>, and <code>)</code> are allowed in the scripts. For example, <code>a^b c^</code>
@@ -690,7 +698,7 @@ will not be recognized as a superscript (because the space is not allowed). Note
 that GFM supports striking out text via <code>~text~</code>, but this feature has been
 disabled and replaced by the feature of subscripts in <strong>litedown</strong>. To strike
 out text, you must use a pair of <em>double</em> tildes.</p>
-<h3 id="sec-footnotes_1"><span class="section-number">2.2.4</span> Footnotes</h3>
+<h3 id="sec:footnotes_1"><span class="section-number">2.2.4</span> Footnotes</h3>
 <p>Insert footnotes via <code>[^n]</code>, where <code>n</code> is a footnote number (a unique
 identifier). The footnote content should be defined in a separate block starting
 with <code>[^n]:</code>. For example:</p>
@@ -711,7 +719,7 @@ identifiers are not recognized.</p>
 </ul>
 <p>The two limitations do not apply to HTML output, e.g., you can write arbitrary
 elements in footnotes and not necessarily one paragraph.</p>
-<h3 id="sec-attributes"><span class="section-number">2.2.5</span> Attributes</h3>
+<h3 id="sec:attributes"><span class="section-number">2.2.5</span> Attributes</h3>
 <p>Attributes on images, links, fenced code blocks, and section headings can be
 written in <code>{}</code>. For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will
 generate an <code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
@@ -748,12 +756,12 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <code># Appendix {.appendix}</code> will be converted to <code>\appendix</code>.</p>
 </li>
 </ul>
-<h3 id="sec-appendices"><span class="section-number">2.2.6</span> Appendices</h3>
+<h3 id="sec:appendices"><span class="section-number">2.2.6</span> Appendices</h3>
 <p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
 will be treated as the appendix. If section numbering is enabled
-(<a class="cross-ref-sec" href="#sec-number-sections">3.1.7</a>), the appendix section headings will be numbered
+(<a class="cross-ref-sec" href="#sec:number-sections">3.1.7</a>), the appendix section headings will be numbered
 differently.</p>
-<h3 id="sec-fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</h3>
+<h3 id="sec:fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
 have at least one attribute, such as the class name. For example:</p>
 <pre><code class="language-markdown">::: foo
@@ -800,23 +808,108 @@ environment. If a fenced <code>Div</code> has multiple class names (e.g., <code>
 only the first class name will be used as the LaTeX environment name. However,
 all class names will be used if the output format is HTML (e.g.,
 <code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
-<h3 id="sec-cross-references"><span class="section-number">2.2.8</span> Cross-references</h3>
-<p>To cross-reference an element, it must be numberd first. For section headings,
-the numbers are automatically generated if the <code>number_sections</code> option is true.
-For other elements, they must contain empty anchors of the form <code>[](#@ID)</code>,
-where <code>ID</code> is the ID of the element to be referenced. For figures, these anchors
-are automatically generated if the chunk options <code>fig.cap</code> (figure caption) and
-<code>fig.env</code> are not empty, e.g.,</p>
+<h3 id="sec:cross-references"><span class="section-number">2.2.8</span> Cross-references</h3>
+<p>To cross-reference an element, it must be numbered first. Then we can refer to
+it by its ID.</p>
+<h4 id="sec:sections-figures-and-tables"><span class="section-number">2.2.8.1</span> Sections, figures, and tables</h4>
+<p>Section heading IDs can be either manually assigned or automatically generated
+(<a class="cross-ref-sec" href="#sec:auto-identifiers">3.1.1</a>). Section numbers are automatically generated if the
+<code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">3.1.7</a>).</p>
+<p>Figures and tables are automatically numbered if their captions are provided
+(via the chunk options <code>fig.cap</code> / <code>tab.cap</code>), e.g.,</p>
 <pre><code class="language-md">```{r}
-#| nice-plot, fig.cap=&quot;A nice caption&quot;, fig.env=&quot;.figure&quot;
+#| nice-plot, fig.cap=&quot;A nice caption&quot;
 
 plot(cars)
 ```
 </code></pre>
-<p>To refer to an element in the text, use the syntax <code>@ID</code>, e.g.,</p>
-<pre><code class="language-md">Please see @fig-nice-plot for an overview of the `cars` data.
+<p>To refer to an element in the text, use the syntax <code>@ID</code>, where <code>ID</code> is the ID
+of the element to be referenced, which typically consists of a prefix (e.g.,
+<code>sec:</code>, <code>fig:</code>, <code>tab:</code>, or <code>eq:</code>) and a label. For example:</p>
+<pre><code class="language-md">Please see @fig:nice-plot for an overview of the `cars` data.
 </code></pre>
-<h3 id="sec-citations"><span class="section-number">2.2.9</span> Citations</h3>
+<p>Dashes (<code>-</code>) are also allowed in place of colons in the ID prefix, e.g.,
+<code>@fig-nice-plot</code>.</p>
+<h4 id="sec:latex-equations"><span class="section-number">2.2.8.2</span> LaTeX equations</h4>
+<p>LaTeX math environments such as <code>align</code> and <code>equation</code> are numbered by default.
+To refer to an expression (e.g., an equation) in a math environment, a label
+needs to be assigned to the expression first via <code>\label{}</code>, and it must start
+with the prefix <code>eq:</code> or <code>eq-</code>, e.g.,</p>
+<pre><code class="language-md">```{=latex}
+\begin{equation}
+\sin^2(x) + \cos^2(x) = 1 \label{eq:pyth-identity}
+\end{equation}
+```
+</code></pre>
+<p>Then we can use either <code>@eq:*</code> or <code>@eqn:*</code> to cross-reference the equation,
+e.g., <code>@eqn:pyth-identity</code>. Under the hood, the prefix <code>@eq</code> will be resolved to
+<code>\ref{}</code>, and <code>@eqn</code> will be resolved to <code>\eqref{}</code>. If you are not familiar
+with LaTeX commands <code>\ref{}</code> and <code>\eqref{}</code>, the main difference is that
+<code>\eqref{}</code> will render the equation number in parentheses, e.g.,
+\(\eqref{eq:pyth-identity}\), whereas <code>\ref{}</code> will only generate the equation number,
+e.g., \(\ref{eq:pyth-identity}\).</p>
+<p>In HTML output, <code>\eqref{}</code> will also add a label “Equation” before the number by
+default. If you prefer writing the label manually and having control over the
+parentheses, you can use <code>@eq:</code> instead of <code>@eqn:</code>, e.g., <code>Eq. [@eq:*]</code> (using
+the label “Eq.” and square brackets).</p>
+<p>In addition to equation numbers, you can also specify a tag for an equation via
+<code>\tag{}</code> and refer to the equations by its tag, e.g.,</p>
+<pre><code class="language-tex">For a right-angled triangle, we are all familiar with @eqn:pyth-theorem.
+
+\begin{equation}
+a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
+\end{equation}
+</code></pre>
+<div class="callout-example">
+<p>For a right-angled triangle, we are all familiar with \(\eqref{eq:pyth-theorem}\).</p>
+<p>\begin{equation}
+a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
+\end{equation}</p>
+</div>
+<h4 id="sec:arbitrary-elements"><span class="section-number">2.2.8.3</span> Arbitrary elements</h4>
+<p>You can cross-reference any other type of elements by adding empty anchors of
+the form <code>[](#@ID)</code> into them, e.g.,</p>
+<pre><code class="language-md">::: {style=&quot;background: ghostwhite; padding: 1px 1em;&quot;}
+[](#@blk:example) This is a numbered block.
+:::
+
+We can cross-reference @blk:example.
+</code></pre>
+<div class="callout-example">
+<div style="background: ghostwhite; padding: 1px 1em;">
+<p><span class="ref-number-blk">1</span> This is a numbered block.</p>
+</div>
+<p>We can cross-reference <a class="cross-ref-blk" href="#blk:example">1</a>.</p>
+</div>
+<p>For HTML output, we can style the numbers and references with CSS. Element
+numbers are wrapped in <code>&lt;span class=&quot;ref-number-*&quot;&gt;&lt;/span&gt;</code>, and references are
+wrapped in <code>&lt;span class=&quot;cross-ref-*&quot;&gt;&lt;/span&gt;</code>, where <code>*</code> is the ID prefix
+(e.g., <code>fig</code>, <code>tab</code>, and <code>eqn</code>). For example, we can add the label “Block” to
+the number and reference of the block above:</p>
+<pre><code class="language-css">.ref-number-blk::before, .cross-ref-blk::before {
+  content: &quot;Block &quot;;
+}
+.ref-number-blk {
+  font-weight: bold;
+  font-style: italic;
+}
+.ref-number-blk::after {
+  content: &quot;. &quot;
+}
+</code></pre>
+<style type="text/css">
+.ref-number-blk::before, .cross-ref-blk::before {
+  content: "Block ";
+}
+.ref-number-blk {
+  font-weight: bold;
+  font-style: italic;
+}
+.ref-number-blk::after {
+  content: ". "
+}
+</style>
+<h3 id="sec:citations"><span class="section-number">2.2.9</span> Citations</h3>
 <p>This feature requires the R package <strong>rbibutils</strong>. Please make sure it is
 installed before using citations.</p>
 <pre><code class="language-r">xfun::pkg_load2(&quot;rbibutils&quot;)
@@ -882,7 +975,7 @@ the citation package, but will redefine them to <code>\cite</code> or <code>\par
 according to the citation package. For example, it will insert
 <code>\let\citep\parencite</code> in the LaTeX preamble when <code>citation_package</code> is
 <code>biblatex</code>.</p>
-<h3 id="sec-smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</h3>
+<h3 id="sec:smart-html-entities"><span class="section-number">2.2.10</span> Smart HTML entities</h3>
 <p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
 write fractions in the form <code>n/m</code>. Below are some example entities:</p>
 <table>
@@ -915,7 +1008,7 @@ write fractions in the form <code>n/m</code>. Below are some example entities:</
 </tr>
 </tbody>
 </table>
-<h2 id="sec-comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</h2>
+<h2 id="sec:comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</h2>
 <p>As mentioned earlier, a lot of features in Pandoc’s Markdown are not supported
 in the <strong>litedown</strong> package. Any feature that you find missing in previous
 sections is likely to be unavailable. In addition, a lot of R Markdown and
@@ -931,12 +1024,12 @@ formats beyond HTML and LaTeX.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/03-mark.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</h1>
+<h1 id="sec:markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</h1>
 <p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
 <p>You can either call <code>litedown::mark()</code> to render a Markdown document
 programmatically, or click the <code>Knit</code> button in RStudio to render a (Markdown or
 R Markdown) document interactively. The latter requires you to specify the
-output format in the <code>output</code> field in YAML metadata (<a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a>), e.g.,</p>
+output format in the <code>output</code> field in YAML metadata (<a class="cross-ref-sec" href="#sec:yaml-metadata">3.3</a>), e.g.,</p>
 <pre><code class="language-yaml">---
 output:
   litedown::html_format:
@@ -950,20 +1043,20 @@ output:
       css: &quot;custom.css&quot;
 ---
 </code></pre>
-<h2 id="sec-markdown-options"><span class="section-number">3.1</span> Markdown options</h2>
+<h2 id="sec:markdown-options"><span class="section-number">3.1</span> Markdown options</h2>
 <p>The <code>options</code> argument of <code>mark()</code> can be used to enable/disable/set options to
 control Markdown rendering. This argument can take either a list, e.g.,
 <code>list(toc = TRUE, smart = FALSE)</code>, or a character vector, e.g.,
 <code>c(&quot;+toc&quot;, &quot;-smart&quot;)</code>, or equivalently, <code>+toc-smart</code>, where <code>+</code> means to enable
 an option, and <code>-</code> means to disable an option. The options can also be set in
-YAML metadata in <a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a> (recommended). Available options are listed
+YAML metadata in <a class="cross-ref-sec" href="#sec:yaml-metadata">3.3</a> (recommended). Available options are listed
 below.</p>
-<h3 id="sec-auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></h3>
+<h3 id="sec:auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></h3>
 <p>Add automatic IDs to headings, e.g.,</p>
 <pre><code class="language-markdown"># Hello world!
 </code></pre>
 <p>will be converted to</p>
-<pre><code class="language-html">&lt;h1 id=&quot;sec-hello-world&quot;&gt;Hello world!&lt;/h1&gt;
+<pre><code class="language-html">&lt;h1 id=&quot;sec:hello-world&quot;&gt;Hello world!&lt;/h1&gt;
 </code></pre>
 <p>You can override the automatic ID by providing an ID manually via the ID
 attribute, e.g.,</p>
@@ -972,8 +1065,8 @@ attribute, e.g.,</p>
 <p>An automatic ID is generated by substituting non-alphanumeric characters in the
 heading text with hyphens. If the result is empty, the ID will be <code>section</code>. If
 any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
-<code>example_1</code> and <code>example_2</code>. A prefix <code>sec-</code> will be added to the automatic IDs.</p>
-<h3 id="sec-embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></h3>
+<code>example_1</code> and <code>example_2</code>. A prefix <code>sec:</code> will be added to the automatic IDs.</p>
+<h3 id="sec:embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></h3>
 <p>Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
 <ul>
@@ -994,7 +1087,7 @@ base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
 resources are not. This means the output document may not work offline. If you
 have to view the output offline, you need to use the option value <code>&quot;https&quot;</code> (or
 <code>&quot;all&quot;</code>) and render the document at least once before you go offline.</p>
-<h3 id="sec-js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></h3>
+<h3 id="sec:js-highlight"><span class="section-number">3.1.3</span> <code>js_highlight</code></h3>
 <p>Specify the JavaScript library to syntax highlight code blocks. Possible values
 are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
 (<a href="https://prismjs.com">Prism.js</a>). The default is <code>prism</code>. This option can also
@@ -1026,10 +1119,10 @@ under the <code>languages/</code> directory (e.g., <code>latex</code>).</p>
 automatically loaded. Normally you need to specify the <code>languages</code> array only if
 the automatic detection fails.</p>
 <p>Technically this option is a shorthand for setting the metadata variables <code>css</code>
-and <code>js</code> in <a class="cross-ref-sec" href="#sec-yaml-metadata">3.3</a>. If you want full control, you may disable this
+and <code>js</code> in <a class="cross-ref-sec" href="#sec:yaml-metadata">3.3</a>. If you want full control, you may disable this
 option (set it to <code>false</code> or <code>null</code>) and use metadata variables directly, which
 requires more familiarity with the JS libraries and the jsdelivr CDN.</p>
-<h3 id="sec-js-math"><span class="section-number">3.1.4</span> <code>js_math</code></h3>
+<h3 id="sec:js-math"><span class="section-number">3.1.4</span> <code>js_math</code></h3>
 <p>Specify the JavaScript library for rendering math expressions in HTML output.
 Possible values are <code>&quot;mathjax&quot;</code> and <code>&quot;katex&quot;</code> (the default). Like the
 <code>js_highlight</code> option, this option is also essentially a shorthand for setting
@@ -1079,30 +1172,30 @@ embedded and used offline, but currently only its fonts can be embedded, and
 extensions cannot. If you must view HTML output offline, we recommend using
 KaTeX, but please also note that KaTeX and MathJax do not fully cover each
 other’s features.</p>
-<h3 id="sec-keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></h3>
+<h3 id="sec:keep-yaml"><span class="section-number">3.1.5</span> <code>keep_yaml</code></h3>
 <p>Whether to keep the YAML metadata in the output. When <code>TRUE</code>, the original YAML
 in the Markdown input (if exists) will be written to the output. Note that when
-this option is enabled, templates (<a class="cross-ref-sec" href="#sec-templates">3.2</a>) will be disabled and <code>mark()</code>
+this option is enabled, templates (<a class="cross-ref-sec" href="#sec:templates">3.2</a>) will be disabled and <code>mark()</code>
 will only generate a document fragment. This option was introduced mainly for
 Hugo websites to use <strong>litedown</strong> instead of Hugo’s Markdown engines to render
 pages.</p>
-<h3 id="sec-latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></h3>
+<h3 id="sec:latex-math_2"><span class="section-number">3.1.6</span> <code>latex_math</code></h3>
 <p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
 dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
 rendered by MathJax (HTML output) or LaTeX.</p>
-<h3 id="sec-number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></h3>
+<h3 id="sec:number-sections"><span class="section-number">3.1.7</span> <code>number_sections</code></h3>
 <p>Whether to number section headings. To skip numbering a specific heading, add an
 attribute <code>{.unnumbered}</code> to it.</p>
-<h3 id="sec-smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></h3>
+<h3 id="sec:smartypants"><span class="section-number">3.1.8</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>).</p>
-<h3 id="sec-superscript"><span class="section-number">3.1.9</span> <code>superscript</code></h3>
+<h3 id="sec:superscript"><span class="section-number">3.1.9</span> <code>superscript</code></h3>
 <p>Whether to translate strings between two carets into superscripts, e.g.,
 <code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>.</p>
-<h3 id="sec-subscript"><span class="section-number">3.1.10</span> <code>subscript</code></h3>
+<h3 id="sec:subscript"><span class="section-number">3.1.10</span> <code>subscript</code></h3>
 <p>Whether to translate strings between two tildes into subscripts, e.g.,
 <code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>.</p>
-<h3 id="sec-toc"><span class="section-number">3.1.11</span> <code>toc</code></h3>
+<h3 id="sec:toc"><span class="section-number">3.1.11</span> <code>toc</code></h3>
 <p>Whether to generate a table of contents (TOC) from section headings. If a
 heading has an <code>id</code> attribute, the corresponding TOC item will be a link to this
 heading. You can also set a sub-option:</p>
@@ -1115,7 +1208,7 @@ default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
 </code></pre>
 </li>
 </ul>
-<h3 id="sec-top-level"><span class="section-number">3.1.12</span> <code>top_level</code></h3>
+<h3 id="sec:top-level"><span class="section-number">3.1.12</span> <code>top_level</code></h3>
 <p>The desired type of the top-level headings in LaTeX output. Possible values are
 <code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
 will be rendered to <code>\chapter{heading}</code> instead of the default
@@ -1147,7 +1240,7 @@ commonmark::list_extensions()
 <pre><code>#&gt; [1] &quot;table&quot;         &quot;strikethrough&quot; &quot;autolink&quot;      &quot;tagfilter&quot;    
 #&gt; [5] &quot;tasklist&quot;     
 </code></pre>
-<h2 id="sec-templates"><span class="section-number">3.2</span> Templates</h2>
+<h2 id="sec:templates"><span class="section-number">3.2</span> Templates</h2>
 <p>By default, <code>mark()</code> generates a document fragment (i.e., the body) if the input
 does not contain YAML metadata at the beginning. To generate a full document,
 you need to specify YAML metadata. A full document is generated with a template.
@@ -1190,7 +1283,7 @@ output:
 <p>The template path can also take a logical value: <code>TRUE</code> means to use the default
 template, and <code>FALSE</code> means to generate only a fragment document without using
 any template.</p>
-<h2 id="sec-yaml-metadata"><span class="section-number">3.3</span> YAML metadata</h2>
+<h2 id="sec:yaml-metadata" #sec:yaml-metadata><span class="section-number">3.3</span> YAML metadata</h2>
 <p>Alternatively, the <code>meta</code> argument can read YAML metadata in the Markdown
 document. The following variables can be set in the top-level fields in YAML:</p>
 <ul>
@@ -1378,13 +1471,13 @@ you need, e.g.,</p>
 these resources will be cached locally and will not require an Internet
 connection again. This solution works for any online resources, not limited to
 the <code>yihui/misc.js</code> repository.</p>
-<h2 id="sec-html-slides"><span class="section-number">4.1</span> HTML slides</h2>
+<h2 id="sec:html-slides"><span class="section-number">4.1</span> HTML slides</h2>
 <p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
 js: [&quot;@snap&quot;]
 </code></pre>
 <p>You can learn more in <code>vignette('slides', package = 'litedown')</code>.</p>
-<h2 id="sec-html-articles"><span class="section-number">4.2</span> HTML articles</h2>
+<h2 id="sec:html-articles"><span class="section-number">4.2</span> HTML articles</h2>
 <p>We can style an HTML page in an article format via the following CSS and JS:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;]
 js: [&quot;@sidenotes&quot;, &quot;@appendix&quot;]
@@ -1403,7 +1496,7 @@ sidenotes.</p>
 </ul>
 <p>The web version of this book is also based on the article format, so you know
 what an article format looks like when you read the HTML version of the book.</p>
-<h3 id="sec-the-overall-style"><span class="section-number">4.2.1</span> The overall style</h3>
+<h3 id="sec:the-overall-style"><span class="section-number">4.2.1</span> The overall style</h3>
 <p>The maximum width of the article body is 800px. For larger screens, this means
 there will be extra space in the left/right margin, where we can place auxiliary
 information, such as the TOC and footnotes. On smaller screens, the side content
@@ -1420,22 +1513,22 @@ body {
 }
 ```
 </code></pre>
-<h3 id="sec-side-elements"><span class="section-number">4.2.2</span> Side elements</h3>
+<h3 id="sec:side-elements"><span class="section-number">4.2.2</span> Side elements</h3>
 <p>The TOC and footnotes are automatically placed in the margin if space permits.
 You can also write arbitrary content in the margin via a fenced <code>Div</code>.</p>
-<h4 id="sec-the-toc"><span class="section-number">4.2.2.1</span> The TOC</h4>
+<h4 id="sec:the-toc"><span class="section-number">4.2.2.1</span> The TOC</h4>
 <p>The TOC is sticky on the left side as you scroll down the article. If you do not
 like this behavior, you may cancel it via CSS:</p>
 <pre><code class="language-css">#TOC {
   top: unset;
 }
 </code></pre>
-<h4 id="sec-footnotes_2"><span class="section-number">4.2.2.2</span> Footnotes</h4>
+<h4 id="sec:footnotes_2"><span class="section-number">4.2.2.2</span> Footnotes</h4>
 <p>Footnotes are moved to the right side. When you move your cursor over a footnote
 number in the body, the footnote will be moved next to your cursor. This can be
 convenient when you have multiple footnotes on a line, since you do not need to
 look for a specific footnote in the margin.</p>
-<h4 id="sec-arbitrary-sidenotes"><span class="section-number">4.2.2.3</span> Arbitrary sidenotes</h4>
+<h4 id="sec:arbitrary-sidenotes"><span class="section-number">4.2.2.3</span> Arbitrary sidenotes</h4>
 <p>You can write anything in the margin by using a fenced <code>Div</code> with the classes
 <code>.side</code> and <code>.side-left</code> or <code>.side-right</code>.</p>
 <div class="side side-left">
@@ -1454,9 +1547,9 @@ the margin, even if you do not have to.</p>
 _Anything_ on the right.
 :::
 </code></pre>
-<h3 id="sec-body-elements"><span class="section-number">4.2.3</span> Body elements</h3>
+<h3 id="sec:body-elements"><span class="section-number">4.2.3</span> Body elements</h3>
 <p>Inside the article body, you can write a few special elements.</p>
-<h4 id="sec-full-width-elements"><span class="section-number">4.2.3.1</span> Full-width elements</h4>
+<h4 id="sec:full-width-elements"><span class="section-number">4.2.3.1</span> Full-width elements</h4>
 <p>When an element is wider than the article body, you can show it in its full
 width by enclosing the element in a fenced <code>Div</code> with the class <code>.fullwidth</code>,
 e.g.,</p>
@@ -1488,7 +1581,7 @@ par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
 plot(sunspots, col = 'red', panel.first = grid())
 ```
 </code></pre>
-<h4 id="sec-left-right-quotes"><span class="section-number">4.2.3.2</span> Left/right quotes</h4>
+<h4 id="sec:left-right-quotes"><span class="section-number">4.2.3.2</span> Left/right quotes</h4>
 <div class="quote-right">
 <blockquote>
 <p>Whenever you find that you are on the side of the majority, it is time to
@@ -1507,7 +1600,7 @@ a quote, just use the blockquote syntax <code>&gt;</code>, e.g.,</p>
 &gt; ---Someone
 :::
 </code></pre>
-<h4 id="sec-margin-embedding"><span class="section-number">4.2.3.3</span> Margin embedding</h4>
+<h4 id="sec:margin-embedding"><span class="section-number">4.2.3.3</span> Margin embedding</h4>
 <div class="embed-right">
 <table>
 <thead>
@@ -1578,19 +1671,19 @@ article body. You can use the extra space to explain the embedded element with
 text.</p>
 <p>We have embedded a table of the first 4 rows of the <code>mtcars</code> data on the right
 margin, which you can see if the browser window is wide enough.</p>
-<h2 id="sec-tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</h2>
+<h2 id="sec:tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</h2>
 <p>You can load the script <code>tabsets.js</code> and CSS <code>tabsets.css</code> to create tabsets
 from sections (see <a href="https://yihui.org/en/2023/10/section-tabsets/">documentation
 here</a>).</p>
 <pre><code class="language-yaml">css: [&quot;@tabsets&quot;]
 js: [&quot;@tabsets&quot;]
 </code></pre>
-<h2 id="sec-code-folding"><span class="section-number">4.4</span> Code folding</h2>
+<h2 id="sec:code-folding"><span class="section-number">4.4</span> Code folding</h2>
 <p>Code folding is supported by <code>fold-details.js</code> (see <a href="https://yihui.org/en/2023/09/code-folding/">documentation
 here</a>).</p>
 <pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
 </code></pre>
-<h2 id="sec-callout-blocks"><span class="section-number">4.5</span> Callout blocks</h2>
+<h2 id="sec:callout-blocks"><span class="section-number">4.5</span> Callout blocks</h2>
 <p>A callout block is a fenced Div with the class name <code>callout-*</code>. Callouts
 require <code>callout.css</code> and <code>callout.js</code>:</p>
 <pre><code class="language-yaml">css: [&quot;@callout&quot;]
@@ -1620,14 +1713,20 @@ Is that cool?
 </div>
 <p>Is that cool?</p>
 </div>
-<p>The stylesheet <code>callout.css</code> supports styling three types of callouts: <code>tip</code>,
-<code>caution</code>, and <code>important</code>. For example:</p>
+<p>The stylesheet <code>callout.css</code> supports styling <code>tip</code>, <code>note</code>, <code>caution</code>,
+<code>warning</code>, and <code>important</code> callouts. For example:</p>
+<div class="callout-note">
+<p>Thank you for your notice! Your notice has been noted.</p>
+</div>
 <div class="callout-caution">
 <p>Be careful when testing for strict equality of floating point numbers.</p>
 <pre><code class="language-r">seq(0, 1, .2) == c(0, .2, .4, .6, .8, 1)
 </code></pre>
 <pre><code>#&gt; [1]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE
 </code></pre>
+</div>
+<div class="callout-warning">
+<p>Never try to out-stubborn a cat!</p>
 </div>
 <div class="callout-important">
 <p>For the sake of reproducibility, please remember to render an R Markdown
@@ -1677,18 +1776,18 @@ the music note symbol ♫ in the CSS:</p>
 Please listen to this lovely song.
 :::
 </code></pre>
-<h2 id="sec-right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</h2>
+<h2 id="sec:right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</h2>
 <p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
 starts with an em-dash (<code>---</code>).</p>
 <pre><code class="language-yaml">js: [&quot;@right-quote&quot;]
 </code></pre>
-<h2 id="sec-add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</h2>
+<h2 id="sec:add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</h2>
 <p>The CSS is necessary only if you want to hide the anchors by default and reveal
 them on hover.</p>
 <pre><code class="language-yaml">css: [&quot;@heading-anchor&quot;]
 js: [&quot;@heading-anchor&quot;]
 </code></pre>
-<h2 id="sec-style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</h2>
+<h2 id="sec:style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</h2>
 <p>The script <code>key-button.js</code> identifies keys and the CSS styles them, which can be
 useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
 shortcuts</a>.</p>
@@ -1704,8 +1803,8 @@ multiple features.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/05-editor.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-authoring"><span class="section-number main-number">5</span> Authoring</h1>
-<h2 id="sec-the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</h2>
+<h1 id="sec:authoring"><span class="section-number main-number">5</span> Authoring</h1>
+<h2 id="sec:the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</h2>
 <p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
 <strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
 <code>litedown::latex_format</code>). Please also remember to add a top-level setting
@@ -1718,7 +1817,7 @@ output:
 knit: litedown:::knit
 ---
 </code></pre>
-<h2 id="sec-live-preview"><span class="section-number">5.2</span> Live preview</h2>
+<h2 id="sec:live-preview"><span class="section-number">5.2</span> Live preview</h2>
 <p>Unless it has become your muscle memory to click on the <code>Knit</code> button in
 RStudio, you may try to switch to <code>litedown::roam()</code> to preview your HTML
 output. It also allows you to render a document or project in a new R session by
@@ -1732,7 +1831,7 @@ the document will be rebuilt only when you refresh the page by yourself.</p>
 your editor. Code blocks in the preview mode will have line numbers
 automatically added to their left. If you click on a line number, it will bring
 you to the that line in the source document.</p>
-<h2 id="sec-visual-editor"><span class="section-number">5.3</span> Visual editor</h2>
+<h2 id="sec:visual-editor"><span class="section-number">5.3</span> Visual editor</h2>
 <p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
 Markdown, you can use RStudio’s visual Markdown editor to author documents.
 Please bear in mind that most common, but not all, Markdown features are
@@ -1744,7 +1843,7 @@ supported.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/06-site.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-books-and-websites"><span class="section-number main-number">6</span> Books and Websites</h1>
+<h1 id="sec:books-and-websites"><span class="section-number main-number">6</span> Books and Websites</h1>
 <p>Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named <code>_litedown.yml</code>.</p>
@@ -1759,7 +1858,7 @@ books or websites, you should do it in <code>_litedown.yml</code>, e.g.,</p>
     meta:
       documentclass: &quot;book&quot;
 </code></pre>
-<h2 id="sec-books"><span class="section-number">6.1</span> Books</h2>
+<h2 id="sec:books"><span class="section-number">6.1</span> Books</h2>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>book</code>, which
 currently supports these options:</p>
 <pre><code class="language-yaml">book:
@@ -1774,14 +1873,14 @@ search subdirectories for input files, the types of input files (e.g., you can
 use <code>.md</code> or <code>.R</code> files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
-<h3 id="sec-r-package-documentation"><span class="section-number">6.1.1</span> R package documentation</h3>
+<h3 id="sec:r-package-documentation"><span class="section-number">6.1.1</span> R package documentation</h3>
 <p>R package developers can build the full package documentation as a book. A
 series of helper functions have been provided in <strong>litedown</strong> to get various
 information about the package, such as the package description (<code>pkg_desc()</code>),
 news (<code>pkg_news()</code>), citation (<code>pkg_citation()</code>), and all manual pages
 (<code>pkg_manual()</code>). You can call these functions in code chunks to print out the
 desired information. For example, you may put them in the appendix
-(<a class="cross-ref-sec" href="#sec-appendices">2.2.6</a>):</p>
+(<a class="cross-ref-sec" href="#sec:appendices">2.2.6</a>):</p>
 <pre><code class="language-md"># Appendix {.appendix}
 
 # Package Metadata
@@ -1808,7 +1907,7 @@ litedown::pkg_news(recent = 0)  # show full news
 litedown::pkg_manual()
 ```
 </code></pre>
-<h2 id="sec-websites"><span class="section-number">6.2</span> Websites</h2>
+<h2 id="sec:websites"><span class="section-number">6.2</span> Websites</h2>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
 are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
 <code>include_after</code> for the <code>html_format</code>, e.g.,</p>
@@ -1832,8 +1931,8 @@ the header of each web page, and <code>include_after</code> will be the footer.<
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/A-rmarkdown.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-appendix" class="appendix">Appendix</h1>
-<h1 id="sec-for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
+<h1 id="sec:appendix" class="appendix">Appendix</h1>
+<h1 id="sec:for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
 <p>The <strong>litedown</strong> package has also provided two <em>internal</em> output formats for
 compatibility with <strong>rmarkdown</strong>: <code>litedown:::html_document</code> and
 <code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>7</a></sup> The purpose is to make it a little
@@ -1871,7 +1970,7 @@ options include:
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/B-vignettes.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-package-vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
+<h1 id="sec:package-vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
 <p>To build package vignettes with <strong>litedown</strong>, first add this to the package
 <code>DESCRIPTION</code> file:</p>
 <pre><code class="language-yaml">VignetteBuilder: litedown
@@ -1898,8 +1997,8 @@ their output files will overwrite each other.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/C-notes.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec-technical-notes"><span class="section-number main-number">C</span> Technical Notes</h1>
-<h2 id="sec-embedding-resources"><span class="section-number">C.1</span> Embedding resources</h2>
+<h1 id="sec:technical-notes"><span class="section-number main-number">C</span> Technical Notes</h1>
+<h2 id="sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</h2>
 <p>When <code>https</code> resources needs to be embedded (via the <code>embed_resources</code> option),
 only these elements are considered:</p>
 <pre><code class="language-html">&lt;img src=&quot;...&quot; /&gt;
@@ -1909,7 +2008,7 @@ only these elements are considered:</p>
 <p>Background images set in the attribute <code>style=&quot;background-image: url(...)&quot;</code> are
 also considered. If an external CSS file contains <code>url()</code> resources, these
 resources will also be downloaded and embedded.</p>
-<h2 id="sec-css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</h2>
+<h2 id="sec:css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</h2>
 <p>It’s quite simple to move an element into the margin using CSS. For example, the
 <code>.side-right</code> class in this article is roughly defined as:</p>
 <pre><code class="language-css">.side-right {
@@ -1971,16 +2070,17 @@ which is to avoid name conflicts between the two packages. <a href="#fnref-a-rma
 </div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.11/dist/katex.min.js,npm/katex@0.16.11/dist/contrib/auto-render.min.js,npm/@xiee/utils@1.13.35/js/render-katex.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.35/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.11/dist/katex.min.js,npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.37/js/pages.min.js" defer></script>
 </body>
 </html>
