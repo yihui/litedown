@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.13">
+<meta name="generator" content="litedown 0.2.14">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.38/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-09</h3></div>
+<div class="date"><h3>2024-10-10</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -51,10 +51,16 @@
 </li>
 </ul>
 </li>
-<li><a href="#sec:knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</a>
+<li><a href="#chp:fuse"><span class="section-number main-number">1</span> Knitting, or Fusing</a>
 <ul>
 <li><a href="#sec:code-chunks"><span class="section-number">1.1</span> Code chunks</a></li>
-<li><a href="#sec:inline-code"><span class="section-number">1.2</span> Inline code</a></li>
+<li><a href="#sec:inline-code"><span class="section-number">1.2</span> Inline code</a>
+<ul>
+<li><a href="#sec:inline-syntax"><span class="section-number">1.2.1</span> The syntax</a></li>
+<li><a href="#sec:compatibility-with-knitr"><span class="section-number">1.2.2</span> Compatibility with knitr</a></li>
+<li><a href="#sec:numeric-output"><span class="section-number">1.2.3</span> Numeric output</a></li>
+</ul>
+</li>
 <li><a href="#sec:r-scripts"><span class="section-number">1.3</span> R scripts</a></li>
 <li><a href="#sec:comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></a></li>
 </ul>
@@ -79,7 +85,7 @@
 <li><a href="#sec:comparison-to-pandoc"><span class="section-number">2.3</span> Comparison to Pandoc</a></li>
 </ul>
 </li>
-<li><a href="#sec:markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</a>
+<li><a href="#chp:mark"><span class="section-number main-number">3</span> Markdown Rendering</a>
 <ul>
 <li><a href="#sec:markdown-options"><span class="section-number">3.1</span> Markdown options</a>
 <ul>
@@ -110,7 +116,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#chp-assets"><span class="section-number main-number">4</span> CSS/JS assets</a>
+<li><a href="#chp:assets"><span class="section-number main-number">4</span> CSS/JS assets</a>
 <ul>
 <li><a href="#sec:html-slides"><span class="section-number">4.1</span> HTML slides</a></li>
 <li><a href="#sec:html-articles"><span class="section-number">4.2</span> HTML articles</a>
@@ -122,7 +128,12 @@
 </li>
 <li><a href="#sec:tabbed-sections"><span class="section-number">4.3</span> Tabbed sections</a></li>
 <li><a href="#sec:code-folding"><span class="section-number">4.4</span> Code folding</a></li>
-<li><a href="#sec:callout-blocks"><span class="section-number">4.5</span> Callout blocks</a></li>
+<li><a href="#sec:callout-blocks"><span class="section-number">4.5</span> Callout blocks</a>
+<ul>
+<li><a href="#sec:built-in-callouts"><span class="section-number">4.5.1</span> Built-in callouts</a></li>
+<li><a href="#sec:customizing-callouts"><span class="section-number">4.5.2</span> Customizing callouts</a></li>
+</ul>
+</li>
 <li><a href="#sec:right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</a></li>
 <li><a href="#sec:add-anchor-links-to-headings"><span class="section-number">4.7</span> Add anchor links to headings</a></li>
 <li><a href="#sec:style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</a></li>
@@ -131,7 +142,13 @@
 <li><a href="#sec:authoring"><span class="section-number main-number">5</span> Authoring</a>
 <ul>
 <li><a href="#sec:the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</a></li>
-<li><a href="#sec:live-preview"><span class="section-number">5.2</span> Live preview</a></li>
+<li><a href="#sec:live-preview"><span class="section-number">5.2</span> Live preview</a>
+<ul>
+<li><a href="#sec:live-reload"><span class="section-number">5.2.1</span> Live reload</a></li>
+<li><a href="#sec:the-file-listing"><span class="section-number">5.2.2</span> The file listing</a></li>
+<li><a href="#sec:the-buttons"><span class="section-number">5.2.3</span> The buttons</a></li>
+</ul>
+</li>
 <li><a href="#sec:visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
 </ul>
 </li>
@@ -266,8 +283,8 @@ more, you can implement features by yourself if you know CSS/JS.</p>
 <h2 id="sec:highlights">Highlights</h2>
 <h3 id="sec:small-footprint">Small footprint</h3>
 <p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
-lightweight. Currently, it has two dependencies, <strong>commonmark</strong> and
-<strong>xfun</strong>.<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>2</a></sup> It does not depend on <strong>knitr</strong> or Pandoc.</p>
+lightweight. Currently, it has two dependencies, <strong>commonmark</strong> and <strong>xfun</strong>. It
+does not depend on <strong>knitr</strong> or Pandoc.</p>
 <p>It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions <code>mark()</code> and
 <code>fuse()</code> can be viewed as significantly trimmed-down versions of Pandoc and
@@ -280,11 +297,12 @@ into <strong>knitr</strong> in the future.</p>
 <h3 id="sec:live-preview-everything">Live preview everything</h3>
 <p>To get started, run <code>litedown::roam()</code> and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as <code>.md</code>, <code>.Rmd</code>, and
-<code>.R</code> files. The rendering takes place in memory, which means it will not render
-<code>.html</code> files on your disk, unless you request so. The page will be
-automatically updated as you edit and save a file. This update-on-save feature
-can be turned off, and then you can manually refresh the page to re-render the
-file whenever you want.</p>
+<code>.R</code> files.</p>
+<p>The rendering takes place in memory, which means it will not render <code>.html</code>
+files on your disk, unless you request so. The page will be automatically
+updated as you edit and save a file. This update-on-save feature can be turned
+off, and then you can manually refresh the page to re-render the file whenever
+you want.</p>
 <p>You can open any file in your editor or the default system application by
 clicking a button in the browser. You can also render a file or a project in a
 new R session by clicking a button in the browser.</p>
@@ -324,7 +342,7 @@ Feel free to comment out anything, such as a code chunk:
 </code></pre>
 <h3 id="sec:versioned-css-js-assets">Versioned CSS/JS assets</h3>
 <p>By default, <strong>litedown</strong> produces bare minimal HTML output, but many features
-can be enabled by adding CSS/JS assets (see <a class="cross-ref-chp" href="#chp-assets">4</a>). You can freely choose
+can be enabled by adding CSS/JS assets (see <a class="cross-ref-chp" href="#chp:assets">4</a>). You can freely choose
 whatever versions that work for you to avoid potential future breakage when the
 assets are upgraded. The assets are not bundled in the <strong>litedown</strong> package, but
 hosted on CDN, so updating <strong>litedown</strong> will not update your assets.</p>
@@ -408,7 +426,7 @@ of output (e.g., in Git). Every time when you update the source document, you
 can know more clearly what has changed in the output, which can help you avoid
 unexpected changes before publishing the output.</p>
 <h3 id="sec:features-out-of-scope">Features out of scope</h3>
-<p>Output formats besides HTML and LaTeX are unlikely to be supported.<sup class="footnote-ref"><a href="#fn-3" id="fnref-3" data-footnote-ref>3</a></sup> If other
+<p>Output formats besides HTML and LaTeX are unlikely to be supported.<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>2</a></sup> If other
 output formats are desired, you may use Pandoc to do the conversion.</p>
 <p>For tables, only pipe tables are supported. Other table formats are not
 recognized.</p>
@@ -424,7 +442,7 @@ some minimal support.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/01-fuse.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:knitting-or-fusing"><span class="section-number main-number">1</span> Knitting, or Fusing</h1>
+<h1 id="chp:fuse"><span class="section-number main-number">1</span> Knitting, or Fusing</h1>
 <p>R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function <code>litedown::fuse()</code> plays a role similar to
 <code>knitr::knit()</code>. It “fuses” program code with narratives, i.e., it executes all
@@ -481,6 +499,7 @@ which can be useful for telling readers the full source of a chunk, e.g.,</p>
 ```
 </code></pre>
 <h2 id="sec:inline-code"><span class="section-number">1.2</span> Inline code</h2>
+<h3 id="sec:inline-syntax"><span class="section-number">1.2.1</span> The syntax</h3>
 <p>The syntax for inline code expressions is <code>`{lang} code`</code>, where <code>lang</code> is
 the language name, e.g., <code>r</code>. Spaces are allowed after the opening backtick and
 before the closing backtick. If the <code>code</code> happens to contain <code>N</code> backticks, you
@@ -490,12 +509,35 @@ another piece of inline code is not parsed or evaluated, which provides a way to
 write verbatim inline code expressions, e.g., <code>`` `{lang} code` ``</code>.</p>
 <p>Comma-separated chunk options can also be provided to inline code expressions
 after the language name, e.g., <code>`{r, eval=FALSE} code`</code>.</p>
+<h3 id="sec:compatibility-with-knitr"><span class="section-number">1.2.2</span> Compatibility with knitr</h3>
 <p>For <strong>knitr</strong> users, please note that the syntax <code>`r code`</code> is not supported
 by default. You have to wrap the language name <code>r</code> in curly braces. As a
 temporary workaround, you may set <code>options(litedown.enable.knitr_inline = TRUE)</code>
 in your <code>.Rprofile</code> to make <strong>litedown</strong> recognize <code>`r code`</code>, but we
 recommend that you convert the document via <code>litedown:::convert_knitr()</code> instead
 if you decide to stay with <strong>litedown</strong> in the long run.</p>
+<h3 id="sec:numeric-output"><span class="section-number">1.2.3</span> Numeric output</h3>
+<p>If the inline expression returns a single number, the number will be formatted.
+To bypass the formatting, wrap the inline expression in <code>I()</code>. We denote the
+number by \(x\) for now.</p>
+<ul>
+<li>
+<p>First, \(x\) will be rounded to \(n\) significant digits, where \(n\) is
+controlled by the global R option <code>litedown.inline.signif</code> and its default
+value is <code>3</code>. To change the default, set
+<code>options(litedown.inline.signif = N)</code> anywhere before the inline code is
+executed, where <code>N</code> is the desired number of significant digits.</p>
+</li>
+<li>
+<p>Then \(x\) will be formatted using the scientific notation \(\pm m\times 10^n\)
+if \(|x| \geq 10^p\) or \(|x| \leq 10^{-p}\), where \(p\) is controlled by the
+global option <code>litedown.inline.power</code>, which defaults to <code>6</code>. If you want to
+avoid the scientific notation, you can set this option to <code>Inf</code>.</p>
+<p>When a number is formatted in the scientific notation, you need to wrap it
+in an inline LaTeX math expression. For example, <code>$`{r} 1234567`$</code> will
+be rendered to \(1.23 \times 10^{6}\).</p>
+</li>
+</ul>
 <h2 id="sec:r-scripts"><span class="section-number">1.3</span> R scripts</h2>
 <p>Besides R Markdown, you can also pass an R script to <code>fuse()</code>. You can write
 Markdown content in <code>#'</code> comments, and group lines of code into chunks by <code>#|</code>
@@ -582,7 +624,7 @@ Below is a quick summary:</p>
 </li>
 <li>
 <p>Inline elements: <code>**strong**</code>, <code>_emphasis_</code>, <code>~~strikethrough~~</code>,
-<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-02-syntax-1" id="fnref-02-syntax-1" data-footnote-ref>4</a></sup></p>
+<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-02-syntax-1" id="fnref-02-syntax-1" data-footnote-ref>3</a></sup></p>
 </li>
 <li>
 <p>Inline code is written in a pair of backticks, e.g., <code>`code`</code>. Code
@@ -626,15 +668,14 @@ x &amp;\text{if } x \geq 0 \\
 \end{cases}$$</p>
 <p>For expressions in pairs of single or double dollar signs to be recognized as
 LaTeX math, there must be no spaces after the opening dollar sign, or before the
-closing dollar sign. There should be at least one space before the opening
-dollar sign, unless the math expression starts from the very beginning of a
-line.</p>
+closing dollar sign. The math expression should either start from the very
+beginning of a line, or have a space or <code>(</code> before the opening dollar sign.</p>
 <ul>
 <li>
 <p>For a pair of single dollar signs, they must be on the same line in the
 text, and the closing dollar sign should not be followed by a number (to
 avoid detecting math mistakenly from text like “a $5 bill and a $10
-bill”).</p>
+bill”). The inner math expression should not be wrapped in backticks.</p>
 </li>
 <li>
 <p>For <code>$$ $$</code> expressions, they can span over multiple lines, in which case
@@ -644,6 +685,7 @@ no spaces after it.</p>
 </ul>
 <p>Valid examples:</p>
 <pre><code class="language-tex">$x + y$
+($x + y$)
   $x + y$
 text $x + y$ text
 
@@ -654,16 +696,17 @@ $$x +
   y$$
 </code></pre>
 <p>Invalid examples:</p>
-<pre><code class="language-md">$ x + y$  (space after the opening `$`)
-text$x + y$  (lack of space before the opening `$`)
-text $x + y$10 text  (number after closing `$`)
+<pre><code class="language-md">$ x + y$  &lt;- space after the opening `$`
+text$x + y$  &lt;- lack of space before the opening `$`
+text $x + y$10 text  &lt;- number after closing `$`
 $x +
-y$  (`$ $` expressions cannot be written on multiple lines)
+y$  &lt;- multi-line `$ $` expressions
+$`x + y`$  &lt;- expression wrapped in backticks
 
 $$x +
   y
 $$
-(lack of non-space character before closing `$$`)
+^- lack of non-space character before closing `$$`
 </code></pre>
 <p>LaTeX math environments are also supported, e.g., below are an <code>align</code>
 environment and an <code>equation</code> environment:</p>
@@ -680,7 +723,7 @@ a^{2}+b^{2} &amp; =  c^{2}\\
   \end{split}
 \end{equation}
 </code></pre>
-<div class="callout-example">
+<div class="callout-output">
 <p>\begin{align}
 a^{2}+b^{2} &amp; =  c^{2}\\
 \sin^{2}(\theta)+\cos^{2}(\theta) &amp; =  1
@@ -715,14 +758,14 @@ with <code>[^n]:</code>. For example:</p>
 
 [^1]: This is the footnote.
 </code></pre>
-<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-02-syntax-2" id="fnref-02-syntax-2" data-footnote-ref>5</a></sup> and there
+<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-02-syntax-2" id="fnref-02-syntax-2" data-footnote-ref>4</a></sup> and there
 are two caveats if the document is intended to be converted to LaTeX:</p>
 <ul>
 <li>
 <p>The footnote content must be a single paragraph.</p>
 </li>
 <li>
-<p>Only numbers<sup class="footnote-ref"><a href="#fn-02-syntax-3" id="fnref-02-syntax-3" data-footnote-ref>6</a></sup> are supported as identifiers, and other types of
+<p>Only numbers<sup class="footnote-ref"><a href="#fn-02-syntax-3" id="fnref-02-syntax-3" data-footnote-ref>5</a></sup> are supported as identifiers, and other types of
 identifiers are not recognized.</p>
 </li>
 </ul>
@@ -730,8 +773,20 @@ identifiers are not recognized.</p>
 elements in footnotes and not necessarily one paragraph.</p>
 <h3 id="sec:attributes"><span class="section-number">2.2.5</span> Attributes</h3>
 <p>Attributes on images, links, fenced code blocks, and section headings can be
-written in <code>{}</code>. For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will
-generate an <code>&lt;img&gt;</code> tag with attributes in HTML output:</p>
+written in <code>{}</code>. ID and class are two common attributes. An ID can be written
+after the <code>#</code> character, and a class can be written after <code>.</code> . Attributes are
+typically written in the form <code>name=&quot;value&quot;</code>, and separated by spaces (in fact,
+you can also write IDs and classes explicitly like other attributes, e.g.,
+<code>id=&quot;foo&quot; class=&quot;bar&quot;</code>). Certain attributes do not require values, and you can
+provide the attribute name only, e.g., <code>disabled</code> or <code>contenteditable</code>, although
+it is harmless to write <code>disabled=&quot;true&quot;</code>.</p>
+<div class="callout-note">
+<p>Only lowercase letters (a-z), digits (0-9), hyphens (<code>-</code>), and colons (<code>:</code>) are
+allowed in ID and class strings. For example, <code>sec:intro</code> and <code>fig-cars</code> are
+valid IDs, but <code>sec_intro</code> and <code>tab cars</code> are not.</p>
+</div>
+<p>For example, <code>![text](path){.foo #bar width=&quot;50%&quot;}</code> will generate an <code>&lt;img&gt;</code> tag
+with attributes in HTML output:</p>
 <pre><code class="language-html">&lt;img src=&quot;path&quot; alt=&quot;text&quot; id=&quot;bar&quot; class=&quot;foo&quot; width=&quot;50%&quot; /&gt;
 </code></pre>
 <p>and <code>## Heading {#baz}</code> will generate:</p>
@@ -879,7 +934,7 @@ the label “Eq.” and square brackets).</p>
 a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 \end{equation}
 </code></pre>
-<div class="callout-example">
+<div class="callout-output">
 <p>For a right-angled triangle, we are all familiar with \(\eqref{eq:pyth-theorem}\).</p>
 <p>\begin{equation}
 a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
@@ -894,7 +949,7 @@ the form <code>[](#@ID)</code> into them, e.g.,</p>
 
 We can cross-reference @blk:example.
 </code></pre>
-<div class="callout-example">
+<div class="callout-output">
 <div style="background: ghostwhite; padding: 1px 1em;">
 <p><span class="ref-number-blk">1</span> This is a numbered block.</p>
 </div>
@@ -1043,7 +1098,7 @@ formats beyond HTML and LaTeX.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/03-mark.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:markdown-rendering"><span class="section-number main-number">3</span> Markdown Rendering</h1>
+<h1 id="chp:mark"><span class="section-number main-number">3</span> Markdown Rendering</h1>
 <p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
 <p>You can either call <code>litedown::mark()</code> to render a Markdown document
 programmatically, or click the <code>Knit</code> button in RStudio to render a (Markdown or
@@ -1302,7 +1357,7 @@ output:
 <p>The template path can also take a logical value: <code>TRUE</code> means to use the default
 template, and <code>FALSE</code> means to generate only a fragment document without using
 any template.</p>
-<h2 id="sec:yaml-metadata" #sec:yaml-metadata><span class="section-number">3.3</span> YAML metadata</h2>
+<h2 id="sec:yaml-metadata"><span class="section-number">3.3</span> YAML metadata</h2>
 <p>Alternatively, the <code>meta</code> argument can read YAML metadata in the Markdown
 document.</p>
 <h3 id="sec:top-level-variables"><span class="section-number">3.3.1</span> Top-level variables</h3>
@@ -1377,10 +1432,25 @@ variable is <code>TEXT</code>:</p>
 </tbody>
 </table>
 <p>If an original variable is empty or missing, its underscore version will also be
-empty.</p>
-<p>If you design your own template, you are free to use either version of these
-variables. For example, you could put the title in an <code>&lt;h1&gt;</code> without the <code>&lt;div&gt;</code>
-wrapper via <code>&lt;h1&gt;$title$&lt;/h1&gt;</code> instead of using <code>$title_$</code>.</p>
+empty. For the <code>$author_$</code> variable, if the <code>$author$</code> variable contains
+multiple author names as an array, each name will be in a separate <code>&lt;h2&gt;</code> in
+HTML output, and all names will be concatenated by <code>\and</code> in LaTeX output, e.g.,
+for</p>
+<pre><code class="language-yaml">author: [&quot;Jane X&quot;, &quot;John Y&quot;]
+</code></pre>
+<p>in YAML, the HTML output will be:</p>
+<pre><code class="language-html">&lt;div class=&quot;author&quot;&gt;
+  &lt;h2&gt;Jane X&lt;/h2&gt;
+  &lt;h2&gt;John Y&lt;/h2&gt;
+&lt;/div&gt;
+</code></pre>
+<p>and the LaTeX output will be:</p>
+<pre><code class="language-tex">\author{Jane X \and John Y}
+</code></pre>
+<p>If you design your own template, you are free to use either the original or the
+underscore versions of these variables. For example, you could put the title in
+an <code>&lt;h1&gt;</code> without the <code>&lt;div&gt;</code> wrapper via <code>&lt;h1 class=&quot;title&quot;&gt;$title$&lt;/h1&gt;</code>
+instead of using <code>$title_$</code>.</p>
 <p>When these top-level variables are also provided as <code>meta</code> variables for an
 output format, the latter will override the former, e.g.,</p>
 <pre><code class="language-yaml">title: &quot;Global Title&quot;
@@ -1418,7 +1488,7 @@ body, or after the body of the output.</li>
 </ul>
 <hr />
 <p>The following variables are for HTML templates:</p>
-<h4 id="sec:the-css-variable"><span class="section-number">3.3.2.1</span> <strong>The <code>css</code>  variable</strong></h4>
+<h4 id="sec:the-css-variable"><span class="section-number">3.3.2.1</span> <strong>The <code>css</code> variable</strong></h4>
 <p>A vector of CSS files to be included in the output. The default value is
 <code>litedown:::pkg_file('resources', 'default.css')</code>.</p>
 <p>If you want to use built-in CSS files in this package, you can only specify the
@@ -1517,7 +1587,7 @@ and the values of variables in the metadata will be passed to your template.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/04-assets.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="chp-assets"><span class="section-number main-number">4</span> CSS/JS assets</h1>
+<h1 id="chp:assets"><span class="section-number main-number">4</span> CSS/JS assets</h1>
 <p>The <strong>litedown</strong> package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we
 introduce some CSS/JS assets from the GitHub repository
@@ -1782,26 +1852,24 @@ This is a tip.
 
 &gt; You can write arbitrary content, such as a blockquote.
 
-::: callout-caution
-Even another callout!
-:::
+You can even _nest another callout_ into this one!
 
 Is that cool?
 :::
 </code></pre>
-<p>Output:</p>
+<div class="callout-output">
 <div class="callout-tip">
 <p>This is a tip.</p>
 <blockquote>
 <p>You can write arbitrary content, such as a blockquote.</p>
 </blockquote>
-<div class="callout-caution">
-<p>Even another callout!</p>
-</div>
+<p>You can even <em>nest another callout</em> into this one!</p>
 <p>Is that cool?</p>
 </div>
+</div>
+<h3 id="sec:built-in-callouts"><span class="section-number">4.5.1</span> Built-in callouts</h3>
 <p>The stylesheet <code>callout.css</code> supports styling <code>tip</code>, <code>note</code>, <code>caution</code>,
-<code>warning</code>, and <code>important</code> callouts. For example:</p>
+<code>warning</code>, <code>important</code>, and <code>example</code> callouts. For example:</p>
 <div class="callout-note">
 <p>Thank you for your notice! Your notice has been noted.</p>
 </div>
@@ -1820,9 +1888,19 @@ Is that cool?
 document in a <em>new R session</em> before publishing or submitting the output
 document.</p>
 </div>
+<div class="callout-example">
+<pre><code class="language-md">::: {.callout-example data-legend=&quot;Demo&quot;}
+Change the title of this example to &quot;Demo&quot;.
+:::
+</code></pre>
+<div class="callout-example" data-legend="Demo">
+<p>Change the title of this example to “Demo”.</p>
+</div>
+</div>
+<h3 id="sec:customizing-callouts"><span class="section-number">4.5.2</span> Customizing callouts</h3>
 <p>You do not have to use <code>callout.css</code> but can define your own CSS rules, e.g.,</p>
 <pre><code class="language-css">.callout-important {
-  background-color: red;
+  background: red;
   color: yellow;
 }
 </code></pre>
@@ -1852,7 +1930,8 @@ there are hundreds of thousands of characters that you can choose from. Each
 character is 1 to 4 bytes. For example, you can define a <code>music</code> callout with
 the music note symbol ♫ in the CSS:</p>
 <pre><code class="language-css">.callout-music {
-  background-color: springgreen;
+  background: springgreen;
+  border-color: yellow;
 }
 .callout-music legend::before {
   content: &quot;♫ &quot;;
@@ -1862,6 +1941,14 @@ the music note symbol ♫ in the CSS:</p>
 <pre><code class="language-md">::: callout-music
 Please listen to this lovely song.
 :::
+</code></pre>
+<p>Alternatively, if you are using <code>callout.css</code>, you can also use CSS variables to
+define the border color, background, and icon of a callout, e.g.,</p>
+<pre><code class="language-css">.callout-music {
+  --callout-background: springgreen;
+  --callout-border: yellow;
+  --callout-icon: &quot;♫ &quot;;
+}
 </code></pre>
 <h2 id="sec:right-align-a-quote-footer"><span class="section-number">4.6</span> Right-align a quote footer</h2>
 <p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
@@ -1907,17 +1994,65 @@ knit: litedown:::knit
 <h2 id="sec:live-preview"><span class="section-number">5.2</span> Live preview</h2>
 <p>Unless it has become your muscle memory to click on the <code>Knit</code> button in
 RStudio, you may try to switch to <code>litedown::roam()</code> to preview your HTML
-output. It also allows you to render a document or project in a new R session by
-clicking on the ↯ button at the top, which is similar to what the <code>Knit</code> button
-does.</p>
+output. Note that the preview takes place <em>in memory only</em>. Although you see an
+HTML page rendered from a file in the preview, the page is not rendered to disk,
+unless you click on the render button (<a class="cross-ref-sec" href="#sec:the-buttons">5.2.3</a>), or call
+<code>litedown::fuse()</code> (<a class="cross-ref-chp" href="#chp:fuse">1</a>) or <code>mark()</code> (<a class="cross-ref-chp" href="#chp:mark">3</a>) on the file.</p>
+<h3 id="sec:live-reload"><span class="section-number">5.2.1</span> Live reload</h3>
 <p>By default, the preview will automatically refresh the content after you edit
 and save a file. If you prefer building the document only when you want to, you
 can turn off the live preview via <code>litedown::roam(live = FALSE)</code>. In this case,
 the document will be rebuilt only when you refresh the page by yourself.</p>
-<p>In the preview mode, you can click on the ✎ button to open a plain-text file in
-your editor. Code blocks in the preview mode will have line numbers
-automatically added to their left. If you click on a line number, it will bring
-you to the that line in the source document.</p>
+<h3 id="sec:the-file-listing"><span class="section-number">5.2.2</span> The file listing</h3>
+<p>After launching the preview via <code>litedown::roam()</code>, a file listing will be
+displayed, which shows the first few lines of <code>*.Rmd</code> and <code>*.md</code> files in boxes,
+and the names of other files at the bottom.</p>
+<p>By clicking on a filename, <code>.Rmd</code> and <code>.md</code> files will be rendered to HTML, so
+you can preview their HTML output. For other plain-text files, you will see
+their full content. For binary files, they may be opened in your browser; if
+they cannot be opened, the browser may prompt to download the file.</p>
+<p>Each file will have its size displayed after the filename, with a link attached
+to the file size. The link points to the raw file (the behavior of the link is
+up to the browser—the file may be opened or downloaded), and <strong>litedown</strong> will
+not process it at all.</p>
+<p>The full path of the file or directory being previewed is displayed at the top
+left.</p>
+<h3 id="sec:the-buttons"><span class="section-number">5.2.3</span> The buttons</h3>
+<style type="text/css">
+.larger { font-size: 1.5em; }
+</style>
+<p>There is a button group at the top right of the preview page.</p>
+<ul>
+<li>
+<p>The <code>render</code> button (with the lightning or voltage icon, <span class="larger">↯</span>): It
+renders a document or project in a new R session and save the output file(s)
+to disk, which is similar to what the <code>Knit</code> button does in RStudio.</p>
+</li>
+<li>
+<p>The <code>edit</code> buttons (with a pencil icon, <span class="larger">✎</span>): Clicking on this
+button will open a plain-text file in your default editor.</p>
+</li>
+<li>
+<p>The <code>back</code>/<code>forward</code> buttons (with arrow icons, <span class="larger">←</span> and
+<span class="larger">→</span>): They are similar to the back/forward buttons on web browser
+toolbars, and can be used to go back/forward through the browsing history.</p>
+<p>You can also use the keyboard shortcuts <code>Alt + Left</code> / <code>Alt + Right</code>.</p>
+</li>
+<li>
+<p>The <code>refresh</code> button (with the refresh icon, <span class="larger">⟳</span>): It can be used
+to refresh the page. If you are previewing an Rmd file, refreshing the page
+will rebuild it.</p>
+<p>You can also use the keyboard shortcut <code>Ctrl + R</code> (or <code>Command + R</code> on
+macOS).</p>
+</li>
+<li>
+<p>The <code>printer</code> button (with a printer icon, <span class="larger">⎙</span>): It brings up the
+printer dialog, e.g., you can print the page to PDF.</p>
+</li>
+</ul>
+<p>Code blocks in the preview mode will have line numbers automatically added to
+their left. If you click on a line number, it will bring you to that line in the
+source document.</p>
 <h2 id="sec:visual-editor"><span class="section-number">5.3</span> Visual editor</h2>
 <p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
 Markdown, you can use RStudio’s visual Markdown editor to author documents.
@@ -2022,7 +2157,7 @@ the header of each web page, and <code>include_after</code> will be the footer.<
 <h1 id="sec:for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
 <p>The <strong>litedown</strong> package has also provided two <em>internal</em> output formats for
 compatibility with <strong>rmarkdown</strong>: <code>litedown:::html_document</code> and
-<code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>7</a></sup> The purpose is to make it a little
+<code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>6</a></sup> The purpose is to make it a little
 easier to switch from <strong>rmarkdown</strong> to <strong>litedown</strong> by mapping some
 <strong>rmarkdown</strong> output format options to <strong>litedown</strong>.</p>
 <p>For example, for an R Markdown document with the following output format:</p>
@@ -2122,23 +2257,20 @@ good old JavaScript can actually play a perfect role of Lua filters, because
 you can manipulate the DOM arbitrarily with JavaScript. <a href="#fnref-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
 </li>
 <li id="fn-2">
-<p>The <strong>commonmark</strong> dependency might be removed in the (far) future. <a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="2" aria-label="Back to reference 2">↩</a></p>
-</li>
-<li id="fn-3">
 <p>In fact, <code>xml,</code> <code>man</code>, <code>text</code>, and <code>commonmark</code> output formats are
 supported (thanks to the <strong>commonmark</strong> package), but perhaps they are not
-very useful to average users. <a href="#fnref-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="3" aria-label="Back to reference 3">↩</a></p>
+very useful to average users. <a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="2" aria-label="Back to reference 2">↩</a></p>
 </li>
 <li id="fn-02-syntax-1">
 <p>Please note that for links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not
 contain spaces</a>. If
 they do, the URLs must be enclosed in <code>&lt;&gt;</code>, e.g.,
-<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-02-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="4" aria-label="Back to reference 4">↩</a></p>
+<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-02-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="3" aria-label="Back to reference 3">↩</a></p>
 </li>
 <li id="fn-02-syntax-2">
 <p>If you know C, I’ll truly appreciate it if you could help with
 the LaTeX implementation in GFM:
-<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-02-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
+<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-02-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="4" aria-label="Back to reference 4">↩</a></p>
 </li>
 <li id="fn-02-syntax-3">
 <p>The specific number doesn’t matter, as long as it’s a unique
@@ -2146,11 +2278,11 @@ footnote number in the document. For example, the first footnote can be
 <code>[^100]</code> and the second can be <code>[^64]</code>. Eventually they will appear as <code>[1]</code>
 and <code>[2]</code>. If you use the RStudio visual editor to edit Markdown documents,
 the footnote numbers will be automatically generated and updated when new
-footnotes are inserted before existing footnotes. <a href="#fnref-02-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
+footnotes are inserted before existing footnotes. <a href="#fnref-02-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
 </li>
 <li id="fn-a-rmarkdown-1">
 <p>The triple-colon <code>:::</code> means these functions are not exported,
-which is to avoid name conflicts between the two packages. <a href="#fnref-a-rmarkdown-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
+which is to avoid name conflicts between the two packages. <a href="#fnref-a-rmarkdown-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
 </li>
 </ol>
 </section>
