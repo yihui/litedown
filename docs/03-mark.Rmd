@@ -352,11 +352,34 @@ variable is `TEXT`:
 | `$abstract_$` | `<div class="abstract"> <p>TEXT</p> </div>` | `\begin{abstract} TEXT \end{abstract}` |
 
 If an original variable is empty or missing, its underscore version will also be
-empty.
+empty. For the `$author_$` variable, if the `$author$` variable contains
+multiple author names as an array, each name will be in a separate `<h2>` in
+HTML output, and all names will be concatenated by `\and` in LaTeX output, e.g.,
+for
 
-If you design your own template, you are free to use either version of these
-variables. For example, you could put the title in an `<h1>` without the `<div>`
-wrapper via `<h1>$title$</h1>` instead of using `$title_$`.
+``` yaml
+author: ["Jane X", "John Y"]
+```
+
+in YAML, the HTML output will be:
+
+``` html
+<div class="author">
+  <h2>Jane X</h2>
+  <h2>John Y</h2>
+</div>
+```
+
+and the LaTeX output will be:
+
+``` tex
+\author{Jane X \and John Y}
+```
+
+If you design your own template, you are free to use either the original or the
+underscore versions of these variables. For example, you could put the title in
+an `<h1>` without the `<div>` wrapper via `<h1 class="title">$title$</h1>`
+instead of using `$title_$`.
 
 When these top-level variables are also provided as `meta` variables for an
 output format, the latter will override the former, e.g.,
@@ -404,7 +427,7 @@ templates:
 
 The following variables are for HTML templates:
 
-#### **The `css`  variable**
+#### **The `css` variable**
 
 A vector of CSS files to be included in the output. The default value is
 `litedown:::pkg_file('resources', 'default.css')`.

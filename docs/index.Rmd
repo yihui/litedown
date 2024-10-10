@@ -4,6 +4,10 @@ author: "Yihui Xie"
 date: "`{r} Sys.Date()`"
 ---
 
+```{r, include=FALSE}
+options(width = 80)
+```
+
 # Preface {.unnumbered}
 
 ::: callout-important
