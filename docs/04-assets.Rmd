@@ -187,8 +187,9 @@ chunk, e.g.,
 ```{r}
 #| sunspots, echo=FALSE, fig.dim=c(14, 4),
 #| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red', panel.first = grid())
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
 ```
 :::
 ````
@@ -201,8 +202,9 @@ e.g.,
 ```{r}
 #| sunspots, fig.dim=c(14, 4), fig.env='.fullwidth .figure .box',
 #| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red', panel.first = grid())
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
 ```
 ````
 
