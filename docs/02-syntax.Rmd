@@ -179,8 +179,22 @@ elements in footnotes and not necessarily one paragraph.
 ### Attributes
 
 Attributes on images, links, fenced code blocks, and section headings can be
-written in `{}`. For example, `![text](path){.foo #bar width="50%"}` will
-generate an `<img>` tag with attributes in HTML output:
+written in `{}`. ID and class are two common attributes. An ID can be written
+after the `#` character, and a class can be written after `.` . Attributes are
+typically written in the form `name="value"`, and separated by spaces (in fact,
+you can also write IDs and classes explicitly like other attributes, e.g.,
+`id="foo" class="bar"`). Certain attributes do not require values, and you can
+provide the attribute name only, e.g., `disabled` or `contenteditable`, although
+it is harmless to write `disabled="true"`.
+
+::: callout-note
+Only lowercase letters (a-z), digits (0-9), hyphens (`-`), and colons (`:`) are
+allowed in ID and class strings. For example, `sec:intro` and `fig-cars` are
+valid IDs, but `sec_intro` and `tab cars` are not.
+:::
+
+For example, `![text](path){.foo #bar width="50%"}` will generate an `<img>` tag
+with attributes in HTML output:
 
 ``` html
 <img src="path" alt="text" id="bar" class="foo" width="50%" />

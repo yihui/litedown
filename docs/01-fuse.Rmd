@@ -146,16 +146,16 @@ Both `#'` and `#|` comments are optional.
 
 Major differences between **knitr** and **litedown** include:
 
-| knitr                                                                                                                                                                   | litedown                                                                                                                                                                               |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Supports multiple graphical devices for a chunk.                                                                                                                        | Only supports one device for a chunk (but there are multiple choices for this device).                                                                                                 |
-| Depending on certain chunk options, figure output could be both Markdown (`![]()`) and raw HTML (`<img>`) / LaTeX (`\includegraphics{}`).                               | Always use Markdown syntax for figures.                                                                                                                                                |
+| knitr | litedown |
+|----|----|
+| Supports multiple graphical devices for a chunk. | Only supports one device for a chunk (but there are multiple choices for this device). |
+| Depending on certain chunk options, figure output could be both Markdown (`![]()`) and raw HTML (`<img>`) / LaTeX (`\includegraphics{}`). | Always use Markdown syntax for figures. |
 | The document parser is based on regular expressions and not robust. Code chunks and inline expressions are not aware of their contexts (e.g., code blocks or comments). | The parser is based on **commonmark**, which is more robust and makes it straightforward to write verbatim code (in a parent code block) or comment out code (in `<!-- -->` comments). |
-| Supports a large number of chunk options and language engines.                                                                                                          | Supports a limited number of chunk options and engines.                                                                                                                                |
-| Inline code does not support options or languages other than R.                                                                                                         | Inline code supports options and other languages.                                                                                                                                      |
-| All code is executed in the linear order.                                                                                                                               | Code chunks and inline code can be executed in a custom non-linear order defined by the chunk option `order` (higher values indicate higher priority).                                 |
-| Supports chunk hooks and output hooks.                                                                                                                                  | No hooks at the moment.                                                                                                                                                                |
-| The package is more than 12 years old and quite mature.                                                                                                                 | The package is new and still experimental.                                                                                                                                             |
+| Supports a large number of chunk options and language engines. | Supports a limited number of chunk options and engines. |
+| Inline code does not support options or languages other than R. | Inline code supports options and other languages. |
+| All code is executed in the linear order. | Code chunks and inline code can be executed in a custom non-linear order defined by the chunk option `order` (higher values indicate higher priority). |
+| Supports chunk hooks and output hooks. | No hooks at the moment. |
+| The package is more than 12 years old and quite mature. | The package is new and still experimental. |
 
 If you feel any indispensable features are missing in **litedown**, please feel
 free to suggest them in [Github issues](https://github.com/yihui/litedown).
