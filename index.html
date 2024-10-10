@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.2.14">
+<meta name="generator" content="litedown 0.2.15">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.38/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -25,7 +25,7 @@
 <div class="">
 <div id="TOC">
 <ul class="numbered">
-<li><a href="#sec:preface">Preface</a>
+<li><a href="#chp:preface">Preface</a>
 <ul>
 <li><a href="#sec:the-past-journey">The past journey</a></li>
 <li><a href="#sec:a-question">A question</a></li>
@@ -65,7 +65,7 @@
 <li><a href="#sec:comparison-to-knitr"><span class="section-number">1.4</span> Comparison to <strong>knitr</strong></a></li>
 </ul>
 </li>
-<li><a href="#sec:markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</a>
+<li><a href="#chp:syntax"><span class="section-number main-number">2</span> Markdown Syntax</a>
 <ul>
 <li><a href="#sec:basic-syntax"><span class="section-number">2.1</span> Basic syntax</a></li>
 <li><a href="#sec:add-on-features"><span class="section-number">2.2</span> Add-on features</a>
@@ -139,7 +139,7 @@
 <li><a href="#sec:style-keyboard-shortcuts"><span class="section-number">4.8</span> Style keyboard shortcuts</a></li>
 </ul>
 </li>
-<li><a href="#sec:authoring"><span class="section-number main-number">5</span> Authoring</a>
+<li><a href="#chp:authoring"><span class="section-number main-number">5</span> Authoring</a>
 <ul>
 <li><a href="#sec:the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</a></li>
 <li><a href="#sec:live-preview"><span class="section-number">5.2</span> Live preview</a>
@@ -152,7 +152,7 @@
 <li><a href="#sec:visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
 </ul>
 </li>
-<li><a href="#sec:books-and-websites"><span class="section-number main-number">6</span> Books and Websites</a>
+<li><a href="#chp:sites"><span class="section-number main-number">6</span> Books and Websites</a>
 <ul>
 <li><a href="#sec:books"><span class="section-number">6.1</span> Books</a>
 <ul>
@@ -162,10 +162,10 @@
 <li><a href="#sec:websites"><span class="section-number">6.2</span> Websites</a></li>
 </ul>
 </li>
-<li><a href="#sec:appendix">Appendix</a></li>
-<li><a href="#sec:for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
-<li><a href="#sec:package-vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
-<li><a href="#sec:technical-notes"><span class="section-number main-number">C</span> Technical Notes</a>
+<li><a href="#chp:appendix">Appendix</a></li>
+<li><a href="#chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
+<li><a href="#chp:vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
+<li><a href="#chp:notes"><span class="section-number main-number">C</span> Technical Notes</a>
 <ul>
 <li><a href="#sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</a></li>
 <li><a href="#sec:css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</a></li>
@@ -177,7 +177,7 @@
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/index.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:preface" class="unnumbered">Preface</h1>
+<h1 id="chp:preface" class="unnumbered">Preface</h1>
 <div class="callout-important">
 <p>The <strong>litedown</strong> package is still new and experimental. The documentation is
 very incomplete. Besides, <strong>litedown</strong> was designed for minimalists with a
@@ -614,7 +614,7 @@ re-implemented, especially when the implementation is not simple enough.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/02-syntax.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:markdown-syntax"><span class="section-number main-number">2</span> Markdown Syntax</h1>
+<h1 id="chp:syntax"><span class="section-number main-number">2</span> Markdown Syntax</h1>
 <h2 id="sec:basic-syntax"><span class="section-number">2.1</span> Basic syntax</h2>
 <p>For the full list of supported document elements, please read the GFM spec.
 Below is a quick summary:</p>
@@ -1128,10 +1128,16 @@ below.</p>
 <h3 id="sec:auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></h3>
 <p>Add automatic IDs to headings, e.g.,</p>
 <pre><code class="language-markdown"># Hello world!
+
+## Introduction
 </code></pre>
 <p>will be converted to</p>
-<pre><code class="language-html">&lt;h1 id=&quot;sec:hello-world&quot;&gt;Hello world!&lt;/h1&gt;
+<pre><code class="language-html">&lt;h1 id=&quot;chp:hello-world&quot;&gt;Hello world!&lt;/h1&gt;
+
+&lt;h2 id=&quot;sec:introduction&quot;&gt;Hello world!&lt;/h2&gt;
 </code></pre>
+<p>The prefix <code>chp:</code> (chapter) will be added to the automatic IDs of level-one
+headings, and <code>sec:</code> (section) will be added for other levels of headings.</p>
 <p>You can override the automatic ID by providing an ID manually via the ID
 attribute, e.g.,</p>
 <pre><code class="language-markdown"># Hello world! {#hello}
@@ -1139,7 +1145,7 @@ attribute, e.g.,</p>
 <p>An automatic ID is generated by substituting non-alphanumeric characters in the
 heading text with hyphens. If the result is empty, the ID will be <code>section</code>. If
 any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
-<code>example_1</code> and <code>example_2</code>. A prefix <code>sec:</code> will be added to the automatic IDs.</p>
+<code>example_1</code> and <code>example_2</code>.</p>
 <h3 id="sec:embed-resources"><span class="section-number">3.1.2</span> <code>embed_resources</code></h3>
 <p>Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
@@ -1723,8 +1729,9 @@ chunk, e.g.,</p>
 ```{r}
 #| sunspots, echo=FALSE, fig.dim=c(14, 4),
 #| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red', panel.first = grid())
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
 ```
 :::
 </code></pre>
@@ -1734,8 +1741,9 @@ e.g.,</p>
 <pre><code class="language-md">```{r}
 #| sunspots, fig.dim=c(14, 4), fig.env='.fullwidth .figure .box',
 #| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightgoldenrodyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red', panel.first = grid())
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
 ```
 </code></pre>
 <h4 id="sec:left-right-quotes"><span class="section-number">4.2.3.2</span> Left/right quotes</h4>
@@ -1977,7 +1985,7 @@ multiple features.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/05-editor.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:authoring"><span class="section-number main-number">5</span> Authoring</h1>
+<h1 id="chp:authoring"><span class="section-number main-number">5</span> Authoring</h1>
 <h2 id="sec:the-knit-button"><span class="section-number">5.1</span> The <code>Knit</code> button</h2>
 <p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
 <strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
@@ -2005,18 +2013,27 @@ can turn off the live preview via <code>litedown::roam(live = FALSE)</code>. In 
 the document will be rebuilt only when you refresh the page by yourself.</p>
 <h3 id="sec:the-file-listing"><span class="section-number">5.2.2</span> The file listing</h3>
 <p>After launching the preview via <code>litedown::roam()</code>, a file listing will be
-displayed, which shows the first few lines of <code>*.Rmd</code> and <code>*.md</code> files in boxes,
-and the names of other files at the bottom.</p>
-<p>By clicking on a filename, <code>.Rmd</code> and <code>.md</code> files will be rendered to HTML, so
-you can preview their HTML output. For other plain-text files, you will see
-their full content. For binary files, they may be opened in your browser; if
-they cannot be opened, the browser may prompt to download the file.</p>
+displayed, which shows the first few lines of <code>*.R</code>, <code>*.Rmd</code>, and <code>*.md</code> files
+in boxes, followed by the list of other files.</p>
+<p>By clicking on plain-text files, you will see their full content. For binary
+files, they may be opened in your browser; if they cannot be opened, the browser
+may prompt to download the file.</p>
 <p>Each file will have its size displayed after the filename, with a link attached
 to the file size. The link points to the raw file (the behavior of the link is
 up to the browser—the file may be opened or downloaded), and <strong>litedown</strong> will
 not process it at all.</p>
 <p>The full path of the file or directory being previewed is displayed at the top
 left.</p>
+<p>For <code>.R</code>, <code>.Rmd</code>, and <code>.md</code> files, you can click on the “Run” button
+(<span class="larger">⏵</span>) to render them to HTML in memory and preview the output. This
+button is displayed at the top right of each file box on the listing page, and
+at the top right of the preview page of an individual file.</p>
+<div class="callout-caution">
+<p>Rendering <code>.R</code> and <code>.Rmd</code> files via the <code>Run</code> button means <em>the full R code</em> in
+them will be executed. If the R code involves intensive computing, it may not be
+a good idea to run the whole file, unless you have taken measures to speed up
+the computing (e.g., via caching).</p>
+</div>
 <h3 id="sec:the-buttons"><span class="section-number">5.2.3</span> The buttons</h3>
 <style type="text/css">
 .larger { font-size: 1.5em; }
@@ -2065,7 +2082,7 @@ supported.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/06-site.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:books-and-websites"><span class="section-number main-number">6</span> Books and Websites</h1>
+<h1 id="chp:sites"><span class="section-number main-number">6</span> Books and Websites</h1>
 <p>Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named <code>_litedown.yml</code>.</p>
@@ -2153,8 +2170,8 @@ the header of each web page, and <code>include_after</code> will be the footer.<
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/A-rmarkdown.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:appendix" class="appendix">Appendix</h1>
-<h1 id="sec:for-rmarkdown-users"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
+<h1 id="chp:appendix" class="appendix">Appendix</h1>
+<h1 id="chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
 <p>The <strong>litedown</strong> package has also provided two <em>internal</em> output formats for
 compatibility with <strong>rmarkdown</strong>: <code>litedown:::html_document</code> and
 <code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>6</a></sup> The purpose is to make it a little
@@ -2192,7 +2209,7 @@ options include:
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/B-vignettes.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:package-vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
+<h1 id="chp:vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
 <p>To build package vignettes with <strong>litedown</strong>, first add this to the package
 <code>DESCRIPTION</code> file:</p>
 <pre><code class="language-yaml">VignetteBuilder: litedown
@@ -2219,7 +2236,7 @@ their output files will overwrite each other.</p>
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/C-notes.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="sec:technical-notes"><span class="section-number main-number">C</span> Technical Notes</h1>
+<h1 id="chp:notes"><span class="section-number main-number">C</span> Technical Notes</h1>
 <h2 id="sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</h2>
 <p>When <code>https</code> resources needs to be embedded (via the <code>embed_resources</code> option),
 only these elements are considered:</p>
