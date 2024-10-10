@@ -291,9 +291,10 @@ Is that cool?
 :::
 ```
 
+### Built-in callouts
 
 The stylesheet `callout.css` supports styling `tip`, `note`, `caution`,
-`warning`, and `important` callouts. For example:
+`warning`, `important`, and `example` callouts. For example:
 
 ::: callout-note
 Thank you for your notice! Your notice has been noted.
@@ -317,11 +318,21 @@ document in a *new R session* before publishing or submitting the output
 document.
 :::
 
+::: callout-example
+```{md}
+::: {.callout-example data-legend="Demo"}
+Change the title of this example to "Demo".
+:::
+```
+:::
+
+### Customizing callouts
+
 You do not have to use `callout.css` but can define your own CSS rules, e.g.,
 
 ``` css
 .callout-important {
-  background-color: red;
+  background: red;
   color: yellow;
 }
 ```
@@ -363,7 +374,8 @@ the music note symbol ♫ in the CSS:
 
 ``` css
 .callout-music {
-  background-color: springgreen;
+  background: springgreen;
+  border-color: yellow;
 }
 .callout-music legend::before {
   content: "♫ ";
@@ -376,6 +388,17 @@ Then you can insert a `music` callout in your document:
 ::: callout-music
 Please listen to this lovely song.
 :::
+```
+
+Alternatively, if you are using `callout.css`, you can also use CSS variables to
+define the border color, background, and icon of a callout, e.g.,
+
+``` css
+.callout-music {
+  --callout-background: springgreen;
+  --callout-border: yellow;
+  --callout-icon: "♫ ";
+}
 ```
 
 ## Right-align a quote footer
