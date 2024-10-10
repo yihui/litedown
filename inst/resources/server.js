@@ -42,7 +42,7 @@
     a.onclick = e => {
       e.preventDefault();
       action === 'print' ? window.print() : (
-        action === 'refresh' ? location.reload() : history[action]()
+        action === 'refresh' ? (location.hash = '', location.reload()) : history[action]()
       );
     };
     btn.append(a);
