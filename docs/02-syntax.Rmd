@@ -63,14 +63,13 @@ x &\text{if } x \geq 0 \\
 
 For expressions in pairs of single or double dollar signs to be recognized as
 LaTeX math, there must be no spaces after the opening dollar sign, or before the
-closing dollar sign. There should be at least one space before the opening
-dollar sign, unless the math expression starts from the very beginning of a
-line.
+closing dollar sign. The math expression should either start from the very
+beginning of a line, or have a space or `(` before the opening dollar sign.
 
 -   For a pair of single dollar signs, they must be on the same line in the
     text, and the closing dollar sign should not be followed by a number (to
     avoid detecting math mistakenly from text like "a \$5 bill and a \$10
-    bill").
+    bill"). The inner math expression should not be wrapped in backticks.
 
 -   For `$$ $$` expressions, they can span over multiple lines, in which case
     the closing `$$` must have at least one non-space character before it, and
@@ -80,6 +79,7 @@ Valid examples:
 
 ``` tex
 $x + y$
+($x + y$)
   $x + y$
 text $x + y$ text
 
@@ -93,16 +93,17 @@ $$x +
 Invalid examples:
 
 ``` md
-$ x + y$  (space after the opening `$`)
-text$x + y$  (lack of space before the opening `$`)
-text $x + y$10 text  (number after closing `$`)
+$ x + y$  <- space after the opening `$`
+text$x + y$  <- lack of space before the opening `$`
+text $x + y$10 text  <- number after closing `$`
 $x +
-y$  (`$ $` expressions cannot be written on multiple lines)
+y$  <- multi-line `$ $` expressions
+$`x + y`$  <- expression wrapped in backticks
 
 $$x +
   y
 $$
-(lack of non-space character before closing `$$`)
+^- lack of non-space character before closing `$$`
 ```
 
 LaTeX math environments are also supported, e.g., below are an `align`
