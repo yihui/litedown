@@ -179,8 +179,7 @@ file_resp = function(x, raw) {
       if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
     ))
   } else {
-    # TODO: use xfun::mime_type() in v0.48
-    type = xfun:::guess_type(x)
+    type = xfun::mime_type(x)
     if (!raw && is_text_file(ext, type) &&
         !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
       list(payload = mark_full(
