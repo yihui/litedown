@@ -39,17 +39,19 @@
     const a = d.createElement('a');
     a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1); a.className = action;
     a.innerText = ['←', '→', '⟳', '⎙'][i];
-    a.onclick = e => {
-      e.preventDefault();
-      action === 'print' ? window.print() : (
-        action === 'refresh' ? (location.hash = '', location.reload()) : history[action]()
-      );
-    };
+    a.onclick = e => btnAction(e, action);
     btn.append(a);
   });
   if (nav) {
     nav.querySelectorAll('a[href="#"]').forEach(a => btn.append(a));
     nav.append(btn);
+  }
+  function btnAction(e, action) {
+    if (!action) return;
+    e.preventDefault();
+    action === 'print' ? window.print() : (
+      action === 'refresh' ? location.reload() : history[action]()
+    );
   }
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {
@@ -166,7 +168,15 @@
       };
     });
   }
-  window.addEventListener('load', new_interval);
+  window.addEventListener('load', () => {
+    d.onkeydown = e => {
+      const k = e.key; let a;
+      k === 'r' && (e.metaKey || e.ctrlKey) && (a = 'refresh');
+      e.altKey && (a = ({'ArrowLeft': 'back', 'ArrowRight': 'forward'})[k]);
+      btnAction(e, a);
+    };
+    new_interval();
+  });
   // when updating a book chapter, this script will be reloaded, and we need to
   // clear the old interval and create a new loop
   if (d.body.dataset.timerId) {
