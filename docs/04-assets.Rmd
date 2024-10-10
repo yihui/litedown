@@ -1,4 +1,4 @@
-# CSS/JS assets {#chp-assets}
+# CSS/JS assets {#chp:assets}
 
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we

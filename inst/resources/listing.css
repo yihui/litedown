@@ -20,6 +20,9 @@ pre > code:not([class]) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+pre:hover {
+  white-space: pre;
+}
 ul {
   width: 100%;
   padding-left: .5em;

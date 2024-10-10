@@ -21,19 +21,71 @@ knit: litedown:::knit
 
 Unless it has become your muscle memory to click on the `Knit` button in
 RStudio, you may try to switch to `litedown::roam()` to preview your HTML
-output. It also allows you to render a document or project in a new R session by
-clicking on the ↯ button at the top, which is similar to what the `Knit` button
-does.
+output. Note that the preview takes place *in memory only*. Although you see an
+HTML page rendered from a file in the preview, the page is not rendered to disk,
+unless you click on the render button (@sec:the-buttons), or call
+`litedown::fuse()` (@chp:fuse) or `mark()` (@chp:mark) on the file.
+
+### Live reload
 
 By default, the preview will automatically refresh the content after you edit
 and save a file. If you prefer building the document only when you want to, you
 can turn off the live preview via `litedown::roam(live = FALSE)`. In this case,
 the document will be rebuilt only when you refresh the page by yourself.
 
-In the preview mode, you can click on the ✎ button to open a plain-text file in
-your editor. Code blocks in the preview mode will have line numbers
-automatically added to their left. If you click on a line number, it will bring
-you to the that line in the source document.
+### The file listing
+
+After launching the preview via `litedown::roam()`, a file listing will be
+displayed, which shows the first few lines of `*.Rmd` and `*.md` files in boxes,
+and the names of other files at the bottom.
+
+By clicking on a filename, `.Rmd` and `.md` files will be rendered to HTML, so
+you can preview their HTML output. For other plain-text files, you will see
+their full content. For binary files, they may be opened in your browser; if
+they cannot be opened, the browser may prompt to download the file.
+
+Each file will have its size displayed after the filename, with a link attached
+to the file size. The link points to the raw file (the behavior of the link is
+up to the browser—the file may be opened or downloaded), and **litedown** will
+not process it at all.
+
+The full path of the file or directory being previewed is displayed at the top
+left.
+
+### The buttons
+
+```{css, echo=FALSE}
+.larger { font-size: 1.5em; }
+```
+
+There is a button group at the top right of the preview page.
+
+-   The `render` button (with the lightning or voltage icon, [↯](){.larger}): It
+    renders a document or project in a new R session and save the output file(s)
+    to disk, which is similar to what the `Knit` button does in RStudio.
+
+-   The `edit` buttons (with a pencil icon, [✎](){.larger}): Clicking on this
+    button will open a plain-text file in your default editor.
+
+-   The `back`/`forward` buttons (with arrow icons, [←](){.larger} and
+    [→](){.larger}): They are similar to the back/forward buttons on web browser
+    toolbars, and can be used to go back/forward through the browsing history.
+
+    You can also use the keyboard shortcuts `Alt + Left` / `Alt + Right`.
+
+-   The `refresh` button (with the refresh icon, [⟳](){.larger}): It can be used
+    to refresh the page. If you are previewing an Rmd file, refreshing the page
+    will rebuild it.
+
+    You can also use the keyboard shortcut `Ctrl + R` (or `Command + R` on
+    macOS).
+
+-   The `printer` button (with a printer icon, [⎙](){.larger}): It brings up the
+    printer dialog, e.g., you can print the page to PDF.
+
+Code blocks in the preview mode will have line numbers automatically added to
+their left. If you click on a line number, it will bring you to that line in the
+source document.
 
 ## Visual editor
 

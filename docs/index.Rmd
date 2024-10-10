@@ -204,7 +204,7 @@ Feel free to comment out anything, such as a code chunk:
 ### Versioned CSS/JS assets
 
 By default, **litedown** produces bare minimal HTML output, but many features
-can be enabled by adding CSS/JS assets (see @chp-assets). You can freely choose
+can be enabled by adding CSS/JS assets (see @chp:assets). You can freely choose
 whatever versions that work for you to avoid potential future breakage when the
 assets are upgraded. The assets are not bundled in the **litedown** package, but
 hosted on CDN, so updating **litedown** will not update your assets.

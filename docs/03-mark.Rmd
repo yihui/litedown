@@ -1,4 +1,4 @@
-# Markdown Rendering
+# Markdown Rendering {#chp:mark}
 
 The main function to convert Markdown to other formats is `litedown::mark()`.
 

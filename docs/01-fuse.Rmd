@@ -1,4 +1,4 @@
-# Knitting, or Fusing
+# Knitting, or Fusing {#chp:fuse}
 
 R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function `litedown::fuse()` plays a role similar to
