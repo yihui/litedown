@@ -37,6 +37,8 @@
 
 - As-is output accepts attributes via the chunk option `attr.asis` now. If provided, as-is output will be wrapped in a fenced Div with these attributes.
 
+- Numeric output from inline code will no longer be formatted if the value is wrapped in `I()`.
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

@@ -74,6 +74,8 @@ which can be useful for telling readers the full source of a chunk, e.g.,
 
 ## Inline code
 
+### The syntax {#sec:inline-syntax}
+
 The syntax for inline code expressions is `` `{lang} code` ``, where `lang` is
 the language name, e.g., `r`. Spaces are allowed after the opening backtick and
 before the closing backtick. If the `code` happens to contain `N` backticks, you
@@ -85,12 +87,35 @@ write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
 Comma-separated chunk options can also be provided to inline code expressions
 after the language name, e.g., `` `{r, eval=FALSE} code` ``.
 
+### Compatibility with knitr
+
 For **knitr** users, please note that the syntax `` `r code` `` is not supported
 by default. You have to wrap the language name `r` in curly braces. As a
 temporary workaround, you may set `options(litedown.enable.knitr_inline = TRUE)`
 in your `.Rprofile` to make **litedown** recognize `` `r code` ``, but we
 recommend that you convert the document via `litedown:::convert_knitr()` instead
 if you decide to stay with **litedown** in the long run.
+
+### Numeric output
+
+If the inline expression returns a single number, the number will be formatted.
+To bypass the formatting, wrap the inline expression in `I()`. We denote the
+number by $x$ for now.
+
+-   First, $x$ will be rounded to $n$ significant digits, where $n$ is
+    controlled by the global R option `litedown.inline.signif` and its default
+    value is `3`. To change the default, set
+    `options(litedown.inline.signif = N)` anywhere before the inline code is
+    executed, where `N` is the desired number of significant digits.
+
+-   Then $x$ will be formatted using the scientific notation $\pm m\times 10^n$
+    if $|x| \geq 10^p$ or $|x| \leq 10^{-p}$, where $p$ is controlled by the
+    global option `litedown.inline.power`, which defaults to `6`. If you want to
+    avoid the scientific notation, you can set this option to `Inf`.
+
+    When a number is formatted in the scientific notation, you need to wrap it
+    in an inline LaTeX math expression. For example, `` $`{r} 1234567`$ `` will
+    be rendered to $`{r} 1234567`$.
 
 ## R scripts
 

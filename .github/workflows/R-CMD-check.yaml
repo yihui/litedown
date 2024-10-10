@@ -83,6 +83,7 @@ jobs:
       - name: Publish documentation
         if: runner.os == 'macOS'
         run: |
+          Rscript -e 'install.packages("xfun", repos="https://yihui.r-universe.dev")'
           Rscript -e 'litedown::fuse_book("docs")'
           cd docs; cp -r *.html ../gh-pages/; cd ../gh-pages
           git config user.name "Yihui Xie"

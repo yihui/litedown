@@ -804,7 +804,7 @@ exec_inline = function(x) {
 }
 
 fmt_inline = function(x) {
-  if (is.numeric(x) && length(x) == 1) sci_num(x) else as.character(x)
+  if (is.numeric(x) && length(x) == 1 && !inherits(x, 'AsIs')) sci_num(x) else as.character(x)
 }
 
 # change scientific notation to LaTeX math
