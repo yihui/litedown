@@ -130,10 +130,8 @@ more, you can implement features by yourself if you know CSS/JS.
 ### Small footprint
 
 Almost everything in **litedown** was written from scratch. The package is very
-lightweight. Currently, it has two dependencies, **commonmark** and
-**xfun**.[^2] It does not depend on **knitr** or Pandoc.
-
-[^2]: The **commonmark** dependency might be removed in the (far) future.
+lightweight. Currently, it has two dependencies, **commonmark** and **xfun**. It
+does not depend on **knitr** or Pandoc.
 
 It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions `mark()` and
@@ -150,11 +148,13 @@ into **knitr** in the future.
 
 To get started, run `litedown::roam()` and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as `.md`, `.Rmd`, and
-`.R` files. The rendering takes place in memory, which means it will not render
-`.html` files on your disk, unless you request so. The page will be
-automatically updated as you edit and save a file. This update-on-save feature
-can be turned off, and then you can manually refresh the page to re-render the
-file whenever you want.
+`.R` files.
+
+The rendering takes place in memory, which means it will not render `.html`
+files on your disk, unless you request so. The page will be automatically
+updated as you edit and save a file. This update-on-save feature can be turned
+off, and then you can manually refresh the page to re-render the file whenever
+you want.
 
 You can open any file in your editor or the default system application by
 clicking a button in the browser. You can also render a file or a project in a
@@ -315,10 +315,10 @@ unexpected changes before publishing the output.
 
 ### Features out of scope
 
-Output formats besides HTML and LaTeX are unlikely to be supported.[^3] If other
+Output formats besides HTML and LaTeX are unlikely to be supported.[^2] If other
 output formats are desired, you may use Pandoc to do the conversion.
 
-[^3]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
+[^2]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
     supported (thanks to the **commonmark** package), but perhaps they are not
     very useful to average users.
 
