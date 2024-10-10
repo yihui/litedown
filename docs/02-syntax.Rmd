@@ -108,7 +108,7 @@ $$
 LaTeX math environments are also supported, e.g., below are an `align`
 environment and an `equation` environment:
 
-```{md, attr.source='.tex', attr.asis='.callout-example'}
+```{md, attr.source='.tex', attr.asis='.callout-output'}
 \begin{align}
 a^{2}+b^{2} & =  c^{2}\\
 \sin^{2}(\theta)+\cos^{2}(\theta) & =  1
@@ -376,7 +376,7 @@ the label "Eq." and square brackets).
 In addition to equation numbers, you can also specify a tag for an equation via
 `\tag{}` and refer to the equations by its tag, e.g.,
 
-```{md, attr.source='.tex', attr.asis='.callout-example'}
+```{md, attr.source='.tex', attr.asis='.callout-output'}
 For a right-angled triangle, we are all familiar with @eqn:pyth-theorem.
 
 \begin{equation}
@@ -389,7 +389,7 @@ a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 You can cross-reference any other type of elements by adding empty anchors of
 the form `[](#@ID)` into them, e.g.,
 
-```{md, attr.asis='.callout-example'}
+```{md, attr.asis='.callout-output'}
 ::: {style="background: ghostwhite; padding: 1px 1em;"}
 [](#@blk:example) This is a numbered block.
 :::

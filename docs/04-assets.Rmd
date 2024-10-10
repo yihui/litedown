@@ -279,33 +279,18 @@ js: ["@callout"]
 
 For example:
 
-``` md
+```{md, attr.asis='.callout-output'}
 ::: callout-tip
 This is a tip.
 
 > You can write arbitrary content, such as a blockquote.
 
-::: callout-caution
-Even another callout!
-:::
+You can even _nest another callout_ into this one!
 
 Is that cool?
 :::
 ```
 
-Output:
-
-:::: callout-tip
-This is a tip.
-
-> You can write arbitrary content, such as a blockquote.
-
-::: callout-caution
-Even another callout!
-:::
-
-Is that cool?
-::::
 
 The stylesheet `callout.css` supports styling `tip`, `note`, `caution`,
 `warning`, and `important` callouts. For example:
