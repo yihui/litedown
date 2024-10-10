@@ -113,7 +113,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
   if (dir.exists(path)) list(payload = dir_page(path)) else {
-    file_page(path, !identical(query[['preview']], '1'))
+    file_page(path, query[['preview']] %||% '0')
   }
 }
 
@@ -125,15 +125,21 @@ dir_page = function(dir = '.') {
   info = function(f, b) {
     sprintf(
       '_( [%s](<%s>) %s%s)_', file_size(f), b, file_time(f),
-      if (is_text_file(file = f)) sprintf(' [&#9998;](%s)', b) else ''
+      if (is_text_file(file = f)) btn('.open', b) else ''
     )
   }
-  i1 = grepl(r <- '[.]([Rq]?md|R)$', files, ignore.case = TRUE)
+  # create link to preview a file
+  p_link = function(f, t = f, n = 1, a = NULL) {
+    btn(t, sprintf('%s?preview=%d', f, n), a)
+  }
+  i1 = is_lite_ext(file = files)
   # order first by folder, then by .Rmd/.R, and other files go to the end
   res = lapply(files[i1], function(f) {
     b = basename(f)
     fenced_div(c(
-      fenced_div(c(sprintf('[%s](<%s?preview=1>)', b, b), info(f, b)), '.name'),
+      fenced_div(c(
+        p_link(b, a = NULL), info(f, b), p_link(b, '.run', 2, 'title="Run"')
+      ), '.name'),
       xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
   })
@@ -151,11 +157,11 @@ dir_page = function(dir = '.') {
 }
 
 # add directory navigation to the top of the page
-file_page = function(x, raw) {
-  res = file_resp(x, raw)
+file_page = function(x, preview) {
+  res = file_resp(x, preview)
   if (is.null(p <- res$payload)) return(res)
   # inject navigation links to the top of the page
-  nav = commonmark::markdown_html(dir_title(x))
+  nav = dir_title(x, preview)
   nav = sub('<p>', '<p class="nav-path">', nav, fixed = TRUE)
   res$payload = sub('<body>', paste0('<body>\n', nav), p, fixed = TRUE)
   res
@@ -167,9 +173,10 @@ lite_exts = c('md', 'rmd', 'qmd', 'r')
 is_lite_ext = function(ext = file_ext(file), file) tolower(ext) %in% lite_exts
 
 # render the path to HTML if possible
-file_resp = function(x, raw) {
+file_resp = function(x, preview) {
+  raw = preview == '0'  # 0: send raw response; 1: render verbatim; 2: fuse()/mark()
   ext = if (raw) '' else tolower(xfun::file_ext(x))
-  if (is_lite_ext(ext)) {
+  if (preview == '2' && is_lite_ext(ext)) {
     # check if the file is for a book or site
     info = proj_info(x)
     list(payload = switch(
@@ -230,15 +237,31 @@ file_raw = function(x, type = xfun:::guess_type(x)) {
 
 file_size = function(x) xfun::format_bytes(file.size(x))
 file_time = function(x) format(file.mtime(x))
-dir_title = function(f) {
+dir_title = function(f, preview = '1') {
   links = if (f != '.') {
     d = if (file_exists(f)) dirname(f) else f
     d = if (d == '.') character() else unlist(strsplit(d, '/'))
+    b = basename(f)
     c(
       sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
-      if (file_exists(f)) basename(f), if (is_lite_ext(file = f)) '[&#8623;](#)',
-      if (is_text_file(file = f)) '[&#9998;](#)'
+      if (file_exists(f)) b, if (is_lite_ext(file = f)) c(
+        btn('.save'), if (preview != '2')
+          btn('.run', sprintf('%s?preview=2', b), 'title="Run"')
+      ),
+      if (is_text_file(file = f)) btn('.open')
     )
   }
-  one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
+  txt = one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
+  move_attrs(commonmark::markdown_html(txt, smart = TRUE))
 }
+
+btn = function(t, u = '#', a = character()) {
+  if (startsWith(t, '.')) {
+    a = c(t, a); t = .icons[t]
+  }
+  a = if (is.character(a)) one_string(c('.btn-lite', a), ' ')
+  a = if (is.null(a)) '' else paste0('{', a, '}')
+  sprintf(' [%s](<%s>)%s ', t, u, a)
+}
+
+.icons = c(.open = '&#9998;', .run = '&#9205;', .save = '&#8623;')

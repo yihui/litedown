@@ -13,6 +13,9 @@ h1 {
   width: 30em;
   flex-grow: 1;
   margin: .5em;
+  .run {
+    float: right;
+  }
 }
 pre > code:not([class]) {
   border: none;

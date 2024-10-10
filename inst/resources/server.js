@@ -37,13 +37,19 @@
   ['back', 'forward', 'refresh', 'print'].forEach((action, i) => {
     if (btn.querySelector(`.${action}`)) return;
     const a = d.createElement('a');
-    a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1); a.className = action;
+    a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1);
+    const k = ({
+      back: 'Alt + LeftArrow', forward: 'Alt + RightArrow',
+      refresh: 'Ctrl + R / Command + R'
+    })[action];
+    if (k) a.title += ` (${k})`;
+    a.className = action + ' btn-lite';
     a.innerText = ['←', '→', '⟳', '⎙'][i];
     a.onclick = e => btnAction(e, action);
     btn.append(a);
   });
   if (nav) {
-    nav.querySelectorAll('a[href="#"]').forEach(a => btn.append(a));
+    nav.querySelectorAll('a.btn-lite').forEach(a => btn.append(a));
     nav.append(btn);
   }
   function btnAction(e, action) {
@@ -63,9 +69,9 @@
     };
   });
   // add classes and events to save buttons
-  d.querySelectorAll('a[href]').forEach(a => {
-    if (a.innerText !== '↯' || a.classList.contains('save')) return;
-    a.classList.add('save'); a.title = 'Render to disk';
+  d.querySelectorAll('a.save[href]').forEach(a => {
+    if (a.innerText !== '↯') return;
+    a.title = 'Render to disk';
     a.onclick = e => {
       e.preventDefault();
       const cls = d.body.classList;

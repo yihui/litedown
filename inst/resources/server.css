@@ -6,11 +6,13 @@
 .buttons {
   float: right;
   a {
-    text-decoration: none;
-    font-size: 1.2em;
-    font-style: normal;
     margin-left: .5em;
   }
+}
+.btn-lite {
+  font-style: normal;
+  text-decoration: none;
+  font-size: 1.3em;
 }
 td .pencil {
   font-size: inherit;

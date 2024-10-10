@@ -36,13 +36,12 @@ the document will be rebuilt only when you refresh the page by yourself.
 ### The file listing
 
 After launching the preview via `litedown::roam()`, a file listing will be
-displayed, which shows the first few lines of `*.Rmd` and `*.md` files in boxes,
-and the names of other files at the bottom.
+displayed, which shows the first few lines of `*.R`, `*.Rmd`, and `*.md` files
+in boxes, followed by the list of other files.
 
-By clicking on a filename, `.Rmd` and `.md` files will be rendered to HTML, so
-you can preview their HTML output. For other plain-text files, you will see
-their full content. For binary files, they may be opened in your browser; if
-they cannot be opened, the browser may prompt to download the file.
+By clicking on plain-text files, you will see their full content. For binary
+files, they may be opened in your browser; if they cannot be opened, the browser
+may prompt to download the file.
 
 Each file will have its size displayed after the filename, with a link attached
 to the file size. The link points to the raw file (the behavior of the link is
@@ -51,6 +50,18 @@ not process it at all.
 
 The full path of the file or directory being previewed is displayed at the top
 left.
+
+For `.R`, `.Rmd`, and `.md` files, you can click on the "Run" button
+([⏵](){.larger}) to render them to HTML in memory and preview the output. This
+button is displayed at the top right of each file box on the listing page, and
+at the top right of the preview page of an individual file.
+
+::: callout-caution
+Rendering `.R` and `.Rmd` files via the `Run` button means *the full R code* in
+them will be executed. If the R code involves intensive computing, it may not be
+a good idea to run the whole file, unless you have taken measures to speed up
+the computing (e.g., via caching).
+:::
 
 ### The buttons
 
