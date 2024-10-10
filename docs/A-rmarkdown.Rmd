@@ -1,6 +1,6 @@
 # Appendix {.appendix}
 
-# For rmarkdown Users
+# For rmarkdown Users {#chp:rmarkdown}
 
 The **litedown** package has also provided two *internal* output formats for
 compatibility with **rmarkdown**: `litedown:::html_document` and

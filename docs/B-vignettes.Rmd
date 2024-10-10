@@ -1,4 +1,4 @@
-# Package vignettes
+# Package vignettes {#chp:vignettes}
 
 To build package vignettes with **litedown**, first add this to the package
 `DESCRIPTION` file:

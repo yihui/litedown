@@ -39,6 +39,8 @@
 
 - Numeric output from inline code will no longer be formatted if the value is wrapped in `I()`.
 
+- The prefix for the automatic IDs of `h1` headings has been changed from `sec:` to `chp:`. For other levels of headings, the prefix is still `sec:`.
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

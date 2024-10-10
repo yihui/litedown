@@ -1,4 +1,4 @@
-# Books and Websites
+# Books and Websites {#chp:sites}
 
 Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to

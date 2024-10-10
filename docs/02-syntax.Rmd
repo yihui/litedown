@@ -1,4 +1,4 @@
-# Markdown Syntax
+# Markdown Syntax {#chp:syntax}
 
 ## Basic syntax
 

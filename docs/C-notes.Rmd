@@ -1,4 +1,4 @@
-# Technical Notes
+# Technical Notes {#chp:notes}
 
 ## Embedding resources
 

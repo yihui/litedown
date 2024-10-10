@@ -672,7 +672,8 @@ auto_identifier = function(x) {
     z2 = sub(r, '\\2', z)  # attrs
     z3 = sub(r, '\\3', z)  # content
     i = !grepl(' id="[^"]*"', z2)  # skip headings that already have IDs
-    id = unique_id(paste0('sec:', alnum_id(z3[i])), 'section')
+    p = ifelse(z1 == 'h1', 'chp:', 'sec:')  # h1 is chapter; h2+ are sections
+    id = unique_id(paste0(p[i], alnum_id(z3[i])), 'section')
     z[i] = sprintf('<%s id="%s"%s>%s</%s>', z1[i], id, z2[i], z3[i], z1[i])
     z
   })
