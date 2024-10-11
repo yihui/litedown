@@ -65,6 +65,11 @@ heading text with hyphens. If the result is empty, the ID will be `section`. If
 any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 `example_1` and `example_2`.
 
+### `embed_cleanup`
+
+Whether to clean up plot files after they have been embedded in HTML output (see
+@sec:embed-resources).
+
 ### `embed_resources`
 
 Embed resources (images, CSS, and JS) in the HTML output using their

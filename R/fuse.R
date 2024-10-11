@@ -685,14 +685,19 @@ fuse_code = function(x, blocks) {
   if (is.null(alt)) alt = cap
   p1 = Filter(function(x) !is_plot(x), res)
   p2 = Filter(is_plot, res)
+  p3 = unlist(p2)  # vector of plot paths
   # get the relative path of the plot directory
-  fig.dir = if (length(p2)) tryCatch(
-    sub('^[.]/', '.', paste0(dirname(xfun::relative_path(p2[[1]][1], .env$wd.out)), '/')),
+  fig.dir = if (length(p3)) tryCatch(
+    sub('^[.]/', '.', paste0(dirname(xfun::relative_path(p3[1], .env$wd.out)), '/')),
     error = function(e) NULL
   )
 
+  # record plot paths so they can be cleaned up if option embed_cleanup = true;
+  # however, when cache = true, we shouldn't clean up plots since they won't be
+  # regenerated next time (then they won't be found)
+  if (!isTRUE(opts$cache)) .env$plot_files = c(.env$plot_files, p3)
   # recycle alt and attributes for all plots
-  pn = length(unlist(p2))
+  pn = length(p3)
   if (pn && is.null(alt)) {
     # reminder about missing alt text if this option is set to TRUE
     if (getOption('litedown.fig.alt', FALSE)) message(
@@ -703,8 +708,7 @@ fuse_code = function(x, blocks) {
   alt = rep(alt, length.out = pn)
   att = rep(att, length.out = pn)
   # if figure caption is provided, merge all plots in one env
-  if (pn && length(cap))
-    res = c(xfun:::merge_record(p1), list(new_plot(unlist(p2))))
+  if (pn && length(cap)) res = c(xfun:::merge_record(p1), list(new_plot(p3)))
   i = 0  # plot counter
 
   l1 = x$code_start  # starting line number of the whole code chunk

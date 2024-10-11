@@ -43,6 +43,8 @@
 
 - The prefix for the automatic IDs of `h1` headings has been changed from `sec:` to `chp:`. For other levels of headings, the prefix is still `sec:`.
 
+- Provided a new option `embed_cleanup` to clean up plot files that have been embedded in HTML output (thanks, @TimTaylor, #16).
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

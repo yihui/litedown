@@ -821,10 +821,11 @@ add_ref = function(id, type, x = NULL) {
   c(sprintf('[](#@%s:%s)', type, id), x)
 }
 
-embed_resources = function(x, embed = 'local') {
+embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
-  embed = c('https', 'local') %in% embed
+  embed = c('https', 'local') %in% options[['embed_resources']]
   if (!any(embed)) return(x)
+  clean = isTRUE(options[['embed_cleanup']])
 
   r = '(<img[^>]* src="|<!--#[^>]*? style="background-image: url\\("?)([^"]+?)("|"?\\);)'
   x = match_replace(x, r, function(z) {
@@ -833,10 +834,13 @@ embed_resources = function(x, embed = 'local') {
     z3 = sub(r, '\\3', z)
     # skip images already base64 encoded
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
-      if (file_exists(f <- URLdecode(z2[i]))) {
+      if (is_https(f <- z2[i])) {
+        if (embed[1]) z2[i] = download_cache$get(f, 'base64')
+      } else if (file_exists(f <- URLdecode(f))) {
         z2[i] = base64_uri(f)
-      } else if (embed[1] && is_https(f)) {
-        z2[i] = download_cache$get(f, 'base64')
+        if (clean && normalize_path(f) %in% .env$plot_files) file.remove(f)
+      } else {
+        warning("File '", f, "' not found (hence cannot be embedded).")
       }
     }
     paste0(z1, z2, z3)

@@ -36,8 +36,9 @@
 #' @param meta A named list of metadata. Elements in the metadata will be used
 #'   to fill out the template by their names and values, e.g., `list(title =
 #'   ...)` will replace the `$title$` variable in the template. See the Section
-#'   \dQuote{YAML metadata} in the vignette `vignette('intro', package =
-#'   'litedown')` for supported variables.
+#'   \dQuote{YAML metadata} [in the
+#'   documentation](https://yihui.org/litedown/#sec:yaml-metadata) for supported
+#'   variables.
 #' @return The output file path if output is written to a file, otherwise a
 #'   character vector of the rendered output (wrapped in [xfun::raw_string()]
 #'   for clearer printing).
@@ -345,7 +346,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   if (format == 'html') {
-    ret = in_dir(out_dir, embed_resources(ret, options[['embed_resources']]))
+    ret = in_dir(out_dir, embed_resources(ret, options))
     ret = clean_html(ret)
   } else if (format == 'latex') {
     # remove \maketitle if \title is absent
@@ -429,8 +430,8 @@ yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2
 #' by default are marked by a `+` prefix, and those disabled by default are
 #' marked by `-`.
 #'
-#' See `vignette('intro', package = 'litedown')` for the full list of options
-#' and their documentation.
+#' See <https://yihui.org/litedown/#sec:markdown-options> for the full list of
+#' options and their documentation.
 #' @return A character vector of all available options.
 #' @export
 #' @examples
@@ -441,7 +442,7 @@ yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2
 markdown_options = function() {
   # options enabled by default
   x1 = c(
-    'smart', 'embed_resources', 'js_math', 'js_highlight',
+    'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight',
     'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )
