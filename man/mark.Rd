@@ -58,7 +58,8 @@ Options that do not take logical values must be specified via a list, e.g.,
 
 \item{meta}{A named list of metadata. Elements in the metadata will be used
 to fill out the template by their names and values, e.g., \code{list(title = ...)} will replace the \verb{$title$} variable in the template. See the Section
-\dQuote{YAML metadata} in the vignette \code{vignette('intro', package = 'litedown')} for supported variables.}
+\dQuote{YAML metadata} \href{https://yihui.org/litedown/#sec:yaml-metadata}{in the documentation} for supported
+variables.}
 }
 \value{
 The output file path if output is written to a file, otherwise a

@@ -101,7 +101,7 @@ vig_filter = function(ifile, encoding) {
   structure(split_lines(unlist(res)), control = '-H -t')
 }
 
-#' Get the package description, news, citation, and manual pages
+#' Print the package description, news, citation, manual pages, and source code
 #'
 #' Helper functions to retrieve various types of package information that can be
 #' put together as the full package documentation like a \pkg{pkgdown} website.
@@ -147,8 +147,9 @@ pkg_desc = function(name = detect_pkg()) {
   new_asis(res)
 }
 
-#' @param path Path to the `NEWS.md` file. If empty, [news()] will be called to
-#'   retrieve the news entries.
+#' @param path For [pkg_news()], path to the `NEWS.md` file. If empty, [news()]
+#'   will be called to retrieve the news entries. For [pkg_code()], path to the
+#'   package root directory that contains `R/` and/or `src/` subdirectories.
 #' @param recent The number of recent versions to show. By default, only the
 #'   latest version's news entries are retrieved. To show the full news, set
 #'   `recent = 0`.
@@ -179,6 +180,32 @@ pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, .
     res = sub('^(# .+)', '#\\1 {-}', res)
   }
   new_asis(res)
+}
+
+#' @param pattern A regular expression to match filenames that should be treated
+#'   as source code.
+#' @return `pkg_code()` returns the package source code under the `R/` and
+#'   `src/` directories.
+#' @rdname pkg_desc
+#' @export
+pkg_code = function(path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cpp)$') {
+  if (!isTRUE(dir.exists(path))) return()
+  ds = c('R', 'src')
+  ds = ds[ds %in% list.dirs(path, FALSE, FALSE)]
+  flat = length(ds) == 1  # if only one dir exists, list files in a flat structure
+  code = in_dir(path, lapply(ds, function(d) {
+    fs = list.files(d, pattern, full.names = TRUE, recursive = TRUE)
+    if (length(fs) == 0) return()
+    x = uapply(fs, function(f) c(
+      sprintf('##%s `%s`', if (flat) '' else '#', f), '',
+      fenced_block(read_utf8(f), c(
+        paste0('.', tolower(file_ext(f))), '.line-numbers', 'data-start="1"'
+      )), ''
+    ))
+    e = unique(file_ext(fs))
+    c(if (!flat) paste('##', paste0('`*.', e, '`', collapse = ' / ')), '', x)
+  }))
+  new_asis(unlist(code))
 }
 
 #' @return `pkg_citation()` returns the package citation in both the plain-text

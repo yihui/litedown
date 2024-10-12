@@ -3,13 +3,16 @@
 \name{pkg_desc}
 \alias{pkg_desc}
 \alias{pkg_news}
+\alias{pkg_code}
 \alias{pkg_citation}
 \alias{pkg_manual}
-\title{Get the package description, news, citation, and manual pages}
+\title{Print the package description, news, citation, manual pages, and source code}
 \usage{
 pkg_desc(name = detect_pkg())
 
 pkg_news(name = detect_pkg(), path = detect_news(name), recent = 1, ...)
+
+pkg_code(path = attr(detect_pkg(), "path"), pattern = "[.](R|c|h|f|cpp)$")
 
 pkg_citation(name = detect_pkg())
 
@@ -20,14 +23,18 @@ pkg_manual(name = detect_pkg())
 the \code{DESCRIPTION} file if it exists in the current working directory or
 upper-level directories).}
 
-\item{path}{Path to the \code{NEWS.md} file. If empty, \code{\link[=news]{news()}} will be called to
-retrieve the news entries.}
+\item{path}{For \code{\link[=pkg_news]{pkg_news()}}, path to the \code{NEWS.md} file. If empty, \code{\link[=news]{news()}}
+will be called to retrieve the news entries. For \code{\link[=pkg_code]{pkg_code()}}, path to the
+package root directory that contains \verb{R/} and/or \verb{src/} subdirectories.}
 
 \item{recent}{The number of recent versions to show. By default, only the
 latest version's news entries are retrieved. To show the full news, set
 \code{recent = 0}.}
 
 \item{...}{Other arguments to be passed to \code{\link[=news]{news()}}.}
+
+\item{pattern}{A regular expression to match filenames that should be treated
+as source code.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
@@ -36,6 +43,9 @@ inside a code chunk of an R Markdown document.
 \code{pkg_desc()} returns an HTML table containing the package metadata.
 
 \code{pkg_news()} returns the news entries.
+
+\code{pkg_code()} returns the package source code under the \verb{R/} and
+\verb{src/} directories.
 
 \code{pkg_citation()} returns the package citation in both the plain-text
 and BibTeX formats.

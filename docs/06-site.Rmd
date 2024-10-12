@@ -43,10 +43,10 @@ before/after each chapter, in which you can use some variables such as
 R package developers can build the full package documentation as a book. A
 series of helper functions have been provided in **litedown** to get various
 information about the package, such as the package description (`pkg_desc()`),
-news (`pkg_news()`), citation (`pkg_citation()`), and all manual pages
-(`pkg_manual()`). You can call these functions in code chunks to print out the
-desired information. For example, you may put them in the appendix
-(@sec:appendices):
+news (`pkg_news()`), citation (`pkg_citation()`), source code (`pkg_code()`),
+and all manual pages (`pkg_manual()`). You can call these functions in code
+chunks to print out the desired information. For example, you may put them in
+the appendix (@sec:appendices):
 
 ```` md
 # Appendix {.appendix}
@@ -73,6 +73,12 @@ litedown::pkg_news(recent = 0)  # show full news
 
 ```{r, echo=FALSE}
 litedown::pkg_manual()
+```
+
+# Source code
+
+```{r, echo=FALSE}
+litedown::pkg_code()
 ```
 ````
 
