@@ -45,6 +45,8 @@
 
 - Provided a new option `embed_cleanup` to clean up plot files that have been embedded in HTML output (thanks, @TimTaylor, #16).
 
+- `fuse()` supports the output format `litedown::markdown_format` now, which generates the intermediate Markdown from R Markdown without further rendering Markdown to other formats. Using this output format is equivalent to `fuse(..., output = '.md')` or `fuse(..., output = 'markdown')` (thanks, @mikmart, #35).
+
 # CHANGES IN litedown VERSION 0.2
 
 - A data frame (or matrix/tibble) wrapped in `I()` is fully printed to a table now by default. Without `I()`, data objects are truncated to 10 rows by default when printing to tables.

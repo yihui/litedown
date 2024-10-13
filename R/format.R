@@ -175,5 +175,5 @@ detect_format = function(output, yaml) {
 
 md_formats = c(
   html = '.html', xml = '.xml', man = '.man', commonmark = '.markdown',
-  text = '.txt', latex = '.tex'
+  markdown = '.md', text = '.txt', latex = '.tex'
 )
