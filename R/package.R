@@ -268,6 +268,8 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
   al = lapply(db, Rd_aliases)
 
   cl = header_class(toc, number_sections, FALSE)
+  r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
+  r2 = sprintf('<p[^>]*>\\s*%s\\s*</p>', r1)  # display math
   # show the page name-package first
   idx = vapply(al, is.element, el = paste0(name, '-package'), FALSE)
   res = uapply(names(db)[order(!idx)], function(i) {
@@ -277,6 +279,9 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
     close(con)
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
+    # free math from <code>
+    txt = gsub(r2, '<p>$$\\1$$</p>', txt)
+    txt = gsub(r1, '\\\\(\\1\\\\)', txt)
     # remove existing ID and class
     for (a in c('id', 'class')) txt = gsub(sprintf('(<h2[^>]*?) %s="[^"]+"', a), '\\1', txt)
     txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
