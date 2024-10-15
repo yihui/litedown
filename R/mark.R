@@ -168,6 +168,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       sprintf('!%s!', x)
     })
   }
+  # TODO: remove this after commonmark > 1.9.2 is on CRAN
   # disallow single tilde for <del> (I think it is an awful idea in GFM's
   # strikethrough extension to allow both single and double tilde for <del>)
   find_prose()
