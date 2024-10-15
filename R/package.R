@@ -153,11 +153,19 @@ pkg_desc = function(name = detect_pkg()) {
 #' @param recent The number of recent versions to show. By default, only the
 #'   latest version's news entries are retrieved. To show the full news, set
 #'   `recent = 0`.
+#' @param toc Whether to add section headings to the document TOC (when TOC has
+#'   been enabled for the document).
+#' @param number_sections Whether to number section headings (when sections are
+#'   numbered in the document).
 #' @param ... Other arguments to be passed to [news()].
 #' @return `pkg_news()` returns the news entries.
 #' @rdname pkg_desc
 #' @export
-pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, ...) {
+pkg_news = function(
+  name = detect_pkg(), path = detect_news(name), recent = 1, toc = TRUE,
+  number_sections = TRUE, ...
+) {
+  a = header_class(toc, number_sections)
   if (length(path) != 1 || path == '') {
     db = news(package = name, ...)
     if (recent > 0) db = head(db, recent)
@@ -165,9 +173,9 @@ pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, .
     for (v in unique(db$Version)) {
       df = db[db$Version == v, ]
       res = c(
-        res, paste('## Changes in version', v, '{-}'), '',
+        res, paste('## Changes in version', v, a), '',
         if (all(df$Category == '')) paste0(df$HTML, '\n') else paste0(
-          '### ', df$Category, '{-}\n\n', df$HTML, '\n\n'
+          '### ', df$Category, a, '\n\n', df$HTML, '\n\n'
         ), ''
       )
     }
@@ -175,11 +183,19 @@ pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, .
     res = read_utf8(path)
     if (recent > 0 && length(h <- grep('^# ', res)) >= 2)
       res = res[h[1]:(h[1 + recent] - 1)]
-    # lower heading levels: # -> ##, ## -> ###, etc, and unnumber them
-    res = sub('^(## .+)', '#\\1 {-}', res)
-    res = sub('^(# .+)', '#\\1 {-}', res)
+    # lower heading levels: # -> ##, ## -> ###, etc, and add attributes
+    for (i in 2:1) res = sub(sprintf('^(#{%d} .+)', i), paste0('#\\1', a), res)
   }
   new_asis(res)
+}
+
+# classes for section headings in news, code, and manual
+header_class = function(toc, number_sections, md = TRUE) {
+  a = c(if (!toc) 'unlisted', if (!number_sections) 'unnumbered')
+  if (md) a = paste0('.', a)
+  a = one_string(a, ' ')
+  if (a != '') a = if (md) paste0(' {', a, '}') else paste0(' class="', a, '"')
+  a
 }
 
 #' @param pattern A regular expression to match filenames that should be treated
@@ -188,8 +204,12 @@ pkg_news = function(name = detect_pkg(), path = detect_news(name), recent = 1, .
 #'   `src/` directories.
 #' @rdname pkg_desc
 #' @export
-pkg_code = function(path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cpp)$') {
+pkg_code = function(
+  path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cpp)$', toc = TRUE,
+  number_sections = TRUE
+) {
   if (!isTRUE(dir.exists(path))) return()
+  a = header_class(toc, number_sections)
   ds = c('R', 'src')
   ds = ds[ds %in% list.dirs(path, FALSE, FALSE)]
   flat = length(ds) == 1  # if only one dir exists, list files in a flat structure
@@ -197,13 +217,13 @@ pkg_code = function(path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cp
     fs = list.files(d, pattern, full.names = TRUE, recursive = TRUE)
     if (length(fs) == 0) return()
     x = uapply(fs, function(f) c(
-      sprintf('##%s `%s`', if (flat) '' else '#', f), '',
+      sprintf('##%s `%s`%s', if (flat) '' else '#', f, a), '',
       fenced_block(read_utf8(f), c(
         paste0('.', tolower(file_ext(f))), '.line-numbers', 'data-start="1"'
       )), ''
     ))
     e = unique(file_ext(fs))
-    c(if (!flat) paste('##', paste0('`*.', e, '`', collapse = ' / ')), '', x)
+    c(if (!flat) paste0('## ', paste0('`*.', e, '`', collapse = ' / '), a), '', x)
   }))
   new_asis(unlist(code))
 }
@@ -232,7 +252,7 @@ tweak_citation = function(x) {
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
-pkg_manual = function(name = detect_pkg()) {
+pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
@@ -247,6 +267,7 @@ pkg_manual = function(name = detect_pkg()) {
   db = tools::Rd_db(name)  # all Rd pages
   al = lapply(db, Rd_aliases)
 
+  cl = header_class(toc, number_sections, FALSE)
   # show the page name-package first
   idx = vapply(al, is.element, el = paste0(name, '-package'), FALSE)
   res = uapply(names(db)[order(!idx)], function(i) {
@@ -256,7 +277,9 @@ pkg_manual = function(name = detect_pkg()) {
     close(con)
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
-    txt = gsub('<h2 id="[^"]+"', '<h2', txt)  # remove existing ID
+    # remove existing ID and class
+    for (a in c('id', 'class')) txt = gsub(sprintf('(<h2[^>]*?) %s="[^"]+"', a), '\\1', txt)
+    txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
     sub('<h2', sprintf('<h2 id="sec:man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
   })
 
