@@ -499,8 +499,9 @@ work after you go offline, you can enable `"https"` in the Markdown option
 #### The `js` variable
 
 A vector of JavaScript files to be included in the output. The syntax is the
-same as the `css` variable, e.g., `snap` means `snap.js` in this package, and
-`@snap` means a "jsdelivr" resource.
+same as the `css` variable, e.g., `snap` means `snap.js` in this package,
+`@snap` means a "jsdelivr" resource, and you can use arbitrary paths or URLs to
+other JS files.
 
 #### The `body-class` variable
 

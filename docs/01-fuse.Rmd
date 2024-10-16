@@ -142,6 +142,97 @@ plot(cars)
 
 Both `#'` and `#|` comments are optional.
 
+## Language engines {#sec:engines}
+
+Currently, the main computing language supported by **litedown** is R. You can
+check all supported languages via:
+
+```{r}
+names(litedown::engines())
+```
+
+You can get a language engine definition via `litedown::engines('LANG')`, where
+`LANG` is the language name, e.g.,
+
+``` r
+litedown::engines('md')
+```
+
+You can also set a new language engine via:
+
+``` r
+litedown::engines(LANG = function(x, inline = FALSE, ...) {
+
+})
+```
+
+The function's argument `x` is an element in the list returned by
+`litedown::crack()`.
+
+### The Markdown engine
+
+The `md` engine will output Markdown text both verbatim and as-is, which can be
+useful for showing Markdown examples, e.g.,
+
+```` md
+```{md}
+You can see both the _source_ and _output_ of
+this `md` chunk.
+```
+
+You can also use `{md} the engine **inline**`.
+````
+
+### The CSS/JS engines
+
+You can insert CSS/JS to the output via the `css`/`js` engines, e.g.,
+
+```` md
+```{css}
+a {
+  color: red;
+}
+```
+
+```{js}
+document.body.classList.add('dark');
+```
+````
+
+### The Mermaid engine
+
+The `mermaid` engine can be used to draw diagrams with
+[mermaid.js](https://mermaid.js.org), e.g.,
+
+```` md
+```{mermaid, flow-abcd, echo=FALSE, fig.cap='A flowchart.'}
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+````
+
+The JS library mermaid.js has to be loaded for the diagrams to be rendered. By
+default, the latest version of mermaid.js will be added to the `js` variable
+(@sec:the-js-variable) in the YAML metadata automatically. If you prefer using a
+specific version, you can add it manually to the YAML metadata, e.g.,
+
+```` md
+---
+title: "A mermaid diagram"
+output:
+  litedown::html_format:
+    meta:
+      js: ["@npm/mermaid@11.3.0/dist/mermaid.min.js"]
+---
+
+```{mermaid}
+
+```
+````
+
 ## Comparison to **knitr**
 
 Major differences between **knitr** and **litedown** include:
