@@ -733,7 +733,7 @@ fuse_code = function(x, blocks) {
         '![%s](<%s>)%s', alt[i2],
         if (is.null(fig.dir)) x else gsub('^.*/', fig.dir, x), att[i2]
       )
-      add_cap(img, cap, lab, opts$cap.pos %||% 'bottom', env)
+      add_cap(img, cap, lab, opts$cap.pos, env)
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
@@ -767,11 +767,13 @@ fuse_code = function(x, blocks) {
   out
 }
 
+# add caption to an element (e.g., figure/table)
 add_cap = function(x, cap, lab, pos, env, type = 'fig') {
-  if (length(cap) == 0) return(x)
+  if (length(cap) == 0 || length(lab) == 0) return(x)
   cap = fenced_div(add_ref(lab, type, cap), sprintf('.%s-caption', type))
+  pos = pos %||% 'bottom'
   x = if (pos == 'top') c(cap, '', x) else c(x, '', cap)
-  fenced_div(x, c(sub('^[.]?', '.', env), sprintf('#%s-%s', type, lab)))
+  fenced_div(x, c(sub('^[.]?', '.', env), sprintf('#%s:%s', type, lab)))
 }
 
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
