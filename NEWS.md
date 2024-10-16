@@ -11,6 +11,18 @@
   You can also use `{md} the engine **inline**`.
   ````
 
+- Added a new engine `mermaid` to generate Mermaid diagrams, e.g.,
+
+  ````md
+  ```{mermaid, fig.cap='A nice flowchart.'}
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+  ```
+  ````
+
 - Added helper functions `pkg_desc()`, `pkg_news()`, `pkg_citation()`, `pkg_code()`, and `pkg_manual()` to get various package information for building the full package documentation as a single-file book (thanks, @jangorecki @llrs #24, @TimTaylor #22).
 
 - LaTeX math environments such as equations can be numbered and cross-referenced now (thanks, @hturner, #32).

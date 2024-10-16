@@ -251,6 +251,15 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       x[!(i1 | i2)] = ''
       x
     }, perl = FALSE)  # for perl = TRUE, we'd need (?s) before (.+?)
+    # support mermaid
+    r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
+    if (length(grep(r_mmd, ret))) {
+      ret = gsub(r_mmd, '<pre class="mermaid">\\1</pre>', ret)
+      # add the js asset automatically if not detected
+      if (length(grep('mermaid', meta[['js']])) == 0) meta = add_meta(
+        meta, c(js = '@npm/mermaid/dist/mermaid.min.js')
+      )
+    }
     r4 = '(<pre><code class="language-)\\{([^"]+)}">'
     # deal with ```{.class1 .class2 attrs}, which is not supported by commonmark
     ret = convert_attrs(ret, r4, '\\2', function(r, z, z2) {

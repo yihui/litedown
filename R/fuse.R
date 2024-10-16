@@ -955,6 +955,16 @@ eng_md = function(x, inline = FALSE, ...) {
   } else list(new_source(s), new_asis(s))
 }
 
+# the Mermaid engine: put code in ```mermaid and add caption if necessary
+eng_mermaid = function(x, inline = FALSE, ...) {
+  code = fenced_block(src <- x$source, 'mermaid')
+  opts = reactor()
+  code = add_cap(code, opts$fig.cap, opts$label, opts$cap.pos, opts$fig.env)
+  if (inline) one_string(c(code, '')) else {
+    list(new_source(src), new_asis(code))
+  }
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -978,7 +988,7 @@ eng_md = function(x, inline = FALSE, ...) {
 #' litedown::engines()  # built-in engines
 engines = new_opts()
 engines(
-  r = eng_r, md = eng_md,
+  r = eng_r, md = eng_md, mermaid = eng_mermaid,
   css = function(x, ...) eng_html(x, '<style type="text/css">', '</style>', ...),
   js = function(x, ...) eng_html(x, '<script>', '</script>', ...)
 )
