@@ -426,25 +426,12 @@ For the countdown timer, when the time is up, the timer will start to blink.
 
 When the height of a slide exceeds the window height, you need to be careful
 because it can be easy to accidentally scroll to the next page as you approach
-the bottom of the slide.
-
-One solution is to add more space to the bottom of the slide using the `extend`
-class.
-
-``` css
-:root { --slide-ratio: .75; }
-```
-
-This will add a placeholder with the class `spacer` to the end of the slide.
-This placeholder has a height of `50vh`, i.e., half of the window height (you
-can customize it via CSS). That means as soon as the bottom of the slide reaches
-the middle of the screen, you will be navigated to the next slide. Be careful!
-If you move from an oversized slide to the next slide by accident, you *will
-not* be able to move back to the bottom of the previous slide directly! Instead,
-you will always be navigated to the top of the previous slide if you want to go
-back. When you are on a long slide, I recommend that you use your mouse wheel or
-the `Down` arrow key to scroll at small steps, instead of using the `PageDown`
-key to scroll over to the next screen at once.
+the bottom of the slide. If you move from an oversized slide to the next slide
+by accident, you *will not* be able to move back to the bottom of the previous
+slide directly! Instead, you will always be navigated to the top of the previous
+slide if you want to go back. When you are on a long slide, I recommend that you
+use your mouse wheel or the `Down` arrow key to scroll at small steps, instead
+of using the `PageDown` key to scroll over to the next screen at once.
 
 Because of this hassle, you may not really want to make a slide lengthy, but it
 may be unavoidable when you have lengthy content to show on one slide and it
@@ -459,37 +446,38 @@ cat(1:10, sep = "\n")
 
 --------------------------------------------------------------------------------
 
+### Page mode
+
+The page will switch between the *slides* and *article* mode depending on the
+ratio of the window height to width, $R_w=H_w/W_w$.
+
+-   If $R_w$ is greater than the screen height/width ratio $R_s=H_s/W_s$, the
+    page will be in the article mode.
+
+-   If $R_w \leq R_s$, the page will be in the slides mode.
+
+-   That means when the window is too narrow, the page will be a continuous
+    article. If the window is wide enough (at least 992px), it will show the
+    slides.
+
+--------------------------------------------------------------------------------
+
 ### Aspect ratio
 
-<!--# class="extend" -->
-
-The aspect ratio of slides is not defined by default. The content will fit all
-available space on the screen. If you present the slides directly with your own
-computer, this may not be a problem since you know if all content fits well on
-your own screen. However, if you connect your computer to a projector or present
-the slides on another computer, you'd better know the screen resolution
+The aspect ratio of slides is determined by your screen aspect ratio by default.
+The content will fit all available space on the screen when the slides are
+full-screen (press <kbd>f</kbd>). If you present the slides directly with your
+own computer, this may not be a problem since you know if all content fits well
+on your own screen. However, if you connect your computer to a projector or
+present the slides on another computer, you'd better know the screen resolution
 beforehand, because the aspect ratio may be different, and your slides can look
 different on that screen.
 
-You can fix the aspect ratio by setting the body width in CSS. For example, if
-your computer screen's resolution is 1440 × 900, and you want the aspect ratio
-4:3, you should set the body width to 1200px (= 900 × 4/3).
+You can fix the aspect ratio by setting the CSS variable `--slide-ratio`, e.g.,
 
 ``` css
-body { width: 1200px; }
+:root { --slide-ratio: .75; }
 ```
-
-Or set the width to a proportion of the height. A relative value will work with
-any screen height, e.g., 4/3 ≈ 1.33:
-
-``` css
-body { width: 133vh; }
-```
-
-However, note that when the presentation is not fullscreen, the slides will not
-take the full screen height (the browser UI elements such as the menu and tool
-bar will take some vertical space), so `133vh` will be an underestimate of the
-width.
 
 --------------------------------------------------------------------------------
 
