@@ -1,3 +1,7 @@
+# CHANGES IN litedown VERSION 0.4
+
+- Fixed an error in the internal function `detect_pkg()` during `R CMD check` on CRAN.
+
 # CHANGES IN litedown VERSION 0.3
 
 - Added a new engine `md` to output Markdown text both verbatim and as-is, which can be useful for showing Markdown examples, e.g.,

@@ -318,15 +318,27 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
 
 detect_pkg = function(error = TRUE) {
   # when running R CMD check, DESCRIPTION won't be under working directory but 00_pkg_src
-  for (d in c(head(list.files('00_pkg_src', full.names = TRUE), 1), './')) {
+  ds = if (dir.exists('00_pkg_src'))
+    dirname(list.files('.', '^DESCRIPTION$', recursive = TRUE))
+  for (d in c(ds, './')) {
     if (!is.null(root <- xfun::proj_root(d, head(xfun::root_rules, 1)))) break
   }
-  if (is.null(root)) if (error) stop(
-    "Cannot automatically detect the package root directory from '", getwd(), "'. ",
-    "You must provide the package name explicitly."
-  ) else return()
-  desc = read_utf8(file.path(root, 'DESCRIPTION'))
-  name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
+  name = NULL
+  if (is.null(root)) {
+    # R CMD check's working directory is PKG_NAME.Rcheck by default
+    name = grep_sub('[.]Rcheck$', '', basename(getwd()))
+    root = if (length(name)) system.file(package = name)
+    if (identical(root, '')) root = NULL
+  }
+  if (is.null(root)) {
+    if (error) stop(
+      "Cannot automatically detect the package root directory from '", getwd(), "'. ",
+      "You must provide the package name explicitly."
+    ) else return()
+  } else if (is.null(name)) {
+    desc = read_utf8(file.path(root, 'DESCRIPTION'))
+    name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
+  }
   structure(name, path = root)
 }
 
