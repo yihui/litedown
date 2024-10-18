@@ -113,7 +113,7 @@ nav_menu = function(info) {
   x = gsub('[-_]', ' ', sans_ext(ifelse(is_index(b), 'home', b)))
   sprintf(
     '[%s](/%s)', tools::toTitleCase(x),
-    if (is_roaming()) paste0(b, '?preview=1') else with_ext(b, '.html')
+    if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
   )
 }
 
