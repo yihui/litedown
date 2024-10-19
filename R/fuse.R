@@ -530,10 +530,7 @@ fiss = function(input, output = '.R', text = NULL) {
   }
   # suppress tidyverse progress bars and use cairo for bitmap devices (for
   # smaller plot files and possible parallel execution)
-  opt = options(
-    rstudio.notebook.executing = TRUE,
-    bitmapType = if (capabilities('cairo')) 'cairo' else .Options$bitmapType
-  )
+  opt = options(rstudio.notebook.executing = TRUE, bitmapType = bitmap_type())
   on.exit({ options(opt); on_error() }, add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
@@ -554,6 +551,19 @@ fiss = function(input, output = '.R', text = NULL) {
   }
   k = n
   res
+}
+
+# use options(bitmapType = 'cairo') for bitmap devices if possible
+bitmap_type = function() {
+  if (!is.null(type <- getOption('litedown.bitmapType'))) return(type)
+  type = if (capabilities('cairo')) {
+    f = tempfile(fileext = '.png'); on.exit(file.remove(f))
+    n = length(dev.list())
+    xfun::try_silent(suppressWarnings(png(f, type = 'cairo')))
+    if (length(dev.list()) > n) { dev.off(); 'cairo' }
+  } %||% .Options$bitmapType
+  options(litedown.bitmapType = type)
+  type
 }
 
 time_frame = function(s = NA_character_, l = integer(), lab = NA_character_, t = NA_real_) {
