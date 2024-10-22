@@ -4,6 +4,8 @@
 
 - Set `options(bitmapType = 'cairo')` only when the system supports it. Previously only `capabilities('cairo')` was checked, which was not enough (e.g., on macOS without xquartz installed). This option can also be manually set via `options(litedown.bitmapType)` if the automatic switch to `cairo` is not desired.
 
+- Fixed the bug that the span syntax `[text](){...}` doesn't work when `text` contains markup (e.g., bold or italic).
+
 # CHANGES IN litedown VERSION 0.3
 
 - Added a new engine `md` to output Markdown text both verbatim and as-is, which can be useful for showing Markdown examples, e.g.,
