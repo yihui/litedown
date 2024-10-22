@@ -773,7 +773,7 @@ fuse_code = function(x, blocks) {
   }
   out = unlist(out)
   if (!is.null(a)) out = fenced_div(out, a)
-  if (!is.null(x$prefix)) out = paste0(x$prefix, out)
+  if (!is.null(x$prefix)) out = gsub('^|(?<=\n)', x$prefix, out, perl = TRUE)
   out
 }
 
