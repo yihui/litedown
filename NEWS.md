@@ -2,7 +2,7 @@
 
 - Fixed an error in the internal function `detect_pkg()` during `R CMD check` on CRAN.
 
-- Set `options(bitmapType = 'cairo')` only when the system supports it. Previously only `capabilities('cairo')` was checked, which was not enough (e.g., on macOS without xquartz installed). This option can also be manually set via `options(litedown.bitmapType)` if the automatic switch to `cairo` is not desired.
+- Set `options(bitmapType = 'cairo')` on macOS only when `xquartz` is available. Previously only `capabilities('cairo')` was checked, which was not enough. This option can also be manually set via `options(bitmapType)` in a code chunk if the automatic switch to `cairo` is not desired.
 
 - Fixed the bug that indented or quoted code blocks are not correctly indented or quoted when a code expression contains multiple lines.
 

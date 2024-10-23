@@ -553,17 +553,11 @@ fiss = function(input, output = '.R', text = NULL) {
   res
 }
 
-# use options(bitmapType = 'cairo') for bitmap devices if possible
+# use options(bitmapType = 'cairo') for bitmap devices on macOS if possible
 bitmap_type = function() {
-  if (!is.null(type <- getOption('litedown.bitmapType'))) return(type)
-  type = if (capabilities('cairo')) {
-    f = tempfile(fileext = '.png'); on.exit(unlink(f))
-    n = length(dev.list())
-    xfun::try_silent(suppressWarnings(png(f, type = 'cairo')))
-    if (length(dev.list()) > n) { dev.off(); 'cairo' }
-  } %||% .Options$bitmapType
-  options(litedown.bitmapType = type)
-  type
+  # xquartz has to be installed for cairo to work (I don't know why)
+  if (xfun::is_macos() && capabilities('cairo') && Sys.which('xquartz') != '')
+    'cairo' else .Options$bitmapType
 }
 
 time_frame = function(s = NA_character_, l = integer(), lab = NA_character_, t = NA_real_) {
