@@ -317,16 +317,18 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
 }
 
 detect_pkg = function(error = TRUE) {
-  # when running R CMD check, DESCRIPTION won't be under working directory but 00_pkg_src
-  ds = if (dir.exists('00_pkg_src'))
-    dirname(list.files('.', '^DESCRIPTION$', recursive = TRUE))
+  ds = if (xfun::is_R_CMD_check()) {
+    # R CMD check's working directory is PKG_NAME.Rcheck by default
+    name = grep_sub('[.]Rcheck$', '', basename(getwd()))
+    # when running R CMD check, DESCRIPTION won't be under working directory but
+    # ../PKG_NAME/ (on CRAN's *nix) or ./00_pkg_src/
+    c(file.path('..', name), if (dir.exists('00_pkg_src'))
+      dirname(list.files('.', '^DESCRIPTION$', recursive = TRUE)))
+  } else name = NULL
   for (d in c(ds, './')) {
     if (!is.null(root <- xfun::proj_root(d, head(xfun::root_rules, 1)))) break
   }
-  name = NULL
   if (is.null(root)) {
-    # R CMD check's working directory is PKG_NAME.Rcheck by default
-    name = grep_sub('[.]Rcheck$', '', basename(getwd()))
     root = if (length(name)) system.file(package = name)
     if (identical(root, '')) root = NULL
   }
