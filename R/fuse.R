@@ -557,7 +557,7 @@ fiss = function(input, output = '.R', text = NULL) {
 bitmap_type = function() {
   if (!is.null(type <- getOption('litedown.bitmapType'))) return(type)
   type = if (capabilities('cairo')) {
-    f = tempfile(fileext = '.png'); on.exit(file.remove(f))
+    f = tempfile(fileext = '.png'); on.exit(unlink(f))
     n = length(dev.list())
     xfun::try_silent(suppressWarnings(png(f, type = 'cairo')))
     if (length(dev.list()) > n) { dev.off(); 'cairo' }
