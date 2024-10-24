@@ -2,6 +2,8 @@
 
 - Provided an option `options(litedown.roam.cleanup = TRUE)` to clean up the `*__files/` directory after previewing `.Rmd` or `.R` files via `litedown::roam()` (thanks, @TimTaylor, #36).
 
+- Added the keyboard shortcut `Ctrl + K` (or `Command + K` on macOS) for rendering a file to disk in the `litedown::roam()` preview.
+
 - Fixed an error in the internal function `detect_pkg()` during `R CMD check` on CRAN.
 
 - Set `options(bitmapType = 'cairo')` on macOS only when `xquartz` is available. Previously only `capabilities('cairo')` was checked, which was not enough. This option can also be manually set via `options(bitmapType)` in a code chunk if the automatic switch to `cairo` is not desired.

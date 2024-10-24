@@ -68,20 +68,22 @@
       new_req(a.href, 'open');
     };
   });
+  function btnSave(e, a) {
+    e.preventDefault();
+    const cls = d.body.classList;
+    if (cls.contains('waiting')) return;
+    cls.add('waiting');
+    new_req(a ? a.href : location.href, 'save', e => {
+      show_dialog(e.target);
+      cls.remove('waiting');
+    });
+  };
   // add classes and events to save buttons
   d.querySelectorAll('a.save[href]').forEach(a => {
     if (a.innerText !== '↯') return;
     a.title = 'Render to disk';
-    a.onclick = e => {
-      e.preventDefault();
-      const cls = d.body.classList;
-      if (cls.contains('waiting')) return;
-      cls.add('waiting');
-      new_req(a.href, 'save', e => {
-        show_dialog(e.target);
-        cls.remove('waiting');
-      });
-    };
+    a.getAttribute('href') === '#' && (a.title += '(Ctrl + K / Command + K)');
+    a.onclick = e => btnSave(e, a);
   });
   function check_one(q, a, s) {
     (q ? d.querySelectorAll(q) : [d.body]).forEach(el => {
@@ -176,10 +178,11 @@
   }
   window.addEventListener('load', e => {
     d.onkeydown = e => {
-      const k = e.key; let a;
-      k === 'r' && (e.metaKey || e.ctrlKey) && (a = 'refresh');
+      const k = e.key, ctrl = e.metaKey || e.ctrlKey; let a;
+      k === 'r' && ctrl && (a = 'refresh');
       e.altKey && (a = ({'ArrowLeft': 'back', 'ArrowRight': 'forward'})[k]);
       btnAction(e, a);
+      k == 'k' && ctrl && btnSave(e);
     };
     new_interval();
   });

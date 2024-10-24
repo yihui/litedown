@@ -75,6 +75,9 @@ There is a button group at the top right of the preview page.
     renders a document or project in a new R session and save the output file(s)
     to disk, which is similar to what the `Knit` button does in RStudio.
 
+    You can also use the keyboard shortcut `Ctrl + K` (or `Command + K` on
+    macOS).
+
 -   The `edit` buttons (with a pencil icon, [✎](){.larger}): Clicking on this
     button will open a plain-text file in your default editor.
 
@@ -97,6 +100,11 @@ There is a button group at the top right of the preview page.
 Code blocks in the preview mode will have line numbers automatically added to
 their left. If you click on a line number, it will bring you to that line in the
 source document.
+
+Note that the keyboard shortcuts require the page to be currently on focus
+before they can take effect. This is important when you are viewing a page
+inside RStudio or other IDEs, because the viewer may not gain focus
+automatically, and you will have to explicitly click on it.
 
 ### Cleaning up
 
