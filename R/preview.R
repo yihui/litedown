@@ -141,10 +141,10 @@ dir_page = function(dir = '.') {
   # index.* files should appear first
   files = files[order(!sans_ext(basename(files)) == 'index')]
   # show file size and mtime
-  info = function(f, b) {
+  info = function(f, b, extra = '') {
     sprintf(
-      '_( [%s](<%s>) %s%s)_', file_size(f), b, file_time(f),
-      if (is_text_file(file = f)) btn('.open', b) else ''
+      '_( [%s](<%s>) %s%s%s)_', file_size(f), b, file_time(f),
+      if (is_text_file(file = f)) btn('.open', b) else '', extra
     )
   }
   # create link to preview a file
@@ -157,7 +157,8 @@ dir_page = function(dir = '.') {
     b = basename(f)
     fenced_div(c(
       fenced_div(c(
-        p_link(b, a = NULL), info(f, b), p_link(b, '.run', 2, 'title="Run"')
+        p_link(b, a = NULL), info(f, b, btn('.save', b)),
+        p_link(b, '.run', 2, 'title="Run"')
       ), '.name'),
       xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
