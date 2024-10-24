@@ -174,7 +174,7 @@
       };
     });
   }
-  window.addEventListener('load', () => {
+  window.addEventListener('load', e => {
     d.onkeydown = e => {
       const k = e.key; let a;
       k === 'r' && (e.metaKey || e.ctrlKey) && (a = 'refresh');
@@ -183,6 +183,8 @@
     };
     new_interval();
   });
+  // send a request to clean up __files/ before page is unloaded
+  window.addEventListener('beforeunload', e => new_req(location.href, 'cleanup'));
   // when updating a book chapter, this script will be reloaded, and we need to
   // clear the old interval and create a new loop
   if (d.body.dataset.timerId) {

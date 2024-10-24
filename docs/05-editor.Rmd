@@ -98,6 +98,29 @@ Code blocks in the preview mode will have line numbers automatically added to
 their left. If you click on a line number, it will bring you to that line in the
 source document.
 
+### Cleaning up
+
+Previewing `.Rmd` and `.R` files that generate plots will leave `*__files/`
+directories (containing plot files) on disk by default. If you want to clean up
+such directories when closing or navigating away from the preview page, you may
+set the option
+
+``` r
+options(litedown.roam.cleanup = TRUE)
+```
+
+before you run `litedown::roam()` or in your `.Rprofile`. Note that it will not
+clean up a `*__files/` directory if it has existed before you preview a file.
+This is to make sure `roam()` will not delete existing files by accident. If you
+are certain that a `*__files/` directory can be safely deleted, you can always
+delete it by hand. After that, `roam()` will automatically clean it up when you
+preview the file again.
+
+Please also note that when caching is enabled (via the chunk option
+`cache = TRUE`) in the file being previewed, the `*__files/` directory will not
+be cleaned up, because when a code chunk is cached, it will not be re-evaluated
+or re-generate plots next time (unless the cache is invalidated).
+
 ## Visual editor
 
 Since the Markdown syntax of **litedown** can be viewed as a subset of Pandoc's

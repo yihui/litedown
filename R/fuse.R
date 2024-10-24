@@ -442,9 +442,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   set_path = function(name) {
     # fig.path = output__files/ if `output` is a path, otherwise use
     # litedown__files/ (we don't use _files because of rstudio/rmarkdown#2550)
-    if (is.null(p <- opts[[name]])) p = paste0(
-      output_base %||% 'litedown', c(fig.path = '__files/', cache.path = '__cache/')[name]
-    )
+    if (is.null(p <- opts[[name]])) p = aux_path(output_base %||% 'litedown', name)
     slash = endsWith(p, '/')
     # make sure path is absolute so it will be immune to setwd() (in code chunks)
     if (xfun::is_rel_path(p)) {
@@ -468,6 +466,12 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   }
   fuse_output(input, output, res, full)
 }
+
+# default fig/cache path
+aux_path = function(base = sans_ext(file), type, file) {
+  paste0(base, c(fig.path = '__files/', cache.path = '__cache/')[type])
+}
+fig_path = function(path) aux_path(, 'fig.path', path)
 
 # if output = '.md' or 'markdown', no need for further mark() conversion
 fuse_output = function(input, output, res, full = NULL) {

@@ -84,6 +84,25 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
         ))
       })
     }
+    # clean up __files/
+    if (type == 'cleanup') {
+      if (dir.exists(fig <- fig_path(path)) &&
+          !is.null(fig_time <- .env$roam_files[[fig]]) &&
+          !dir.exists(aux_path(, 'cache.path', path))) {
+        fig_time2 = file.mtime(fig)
+        # remove fig dir if it has not been modified since its mtime was
+        # recorded last time (in file_resp()); if it has, update to new mtime so
+        # we can clean it up next time when we receive the request; checking
+        # mtime is necessary because the Ajax cleanup request (sent from the
+        # 'beforeunload' event) may arrive _after_ file_resp() rebuilds the
+        # current page when the page is refreshed, which may be counterintuitive
+        # but Ajax is _asynchronous_ anyway (this took me hours to figure out)
+        .env$roam_files[[fig]] = if (fig_time2 <= fig_time) {
+          unlink(fig, recursive = TRUE); NULL
+        } else fig_time2
+      }
+      return(list(payload = ''))
+    }
     # TODO: should we implement Hugo's --navigateToChanged?
     if (live && type != '') {
       resp = ''
@@ -177,6 +196,14 @@ file_resp = function(x, preview) {
   raw = preview == '0'  # 0: send raw response; 1: render verbatim; 2: fuse()/mark()
   ext = if (raw) '' else tolower(xfun::file_ext(x))
   if (preview == '2' && is_lite_ext(ext)) {
+    # to clean up the __files/ dir if requested (via options()) and the dir
+    # didn't exist before
+    if (getOption('litedown.roam.cleanup', FALSE)) {
+      fig = fig_path(x)
+      if (!dir.exists(fig)) on.exit({
+        if (dir.exists(fig)) .env$roam_files[[fig]] = file.mtime(fig)
+      })
+    }
     # check if the file is for a book or site
     info = proj_info(x)
     list(payload = switch(
