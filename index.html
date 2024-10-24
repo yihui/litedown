@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.3.2">
+<meta name="generator" content="litedown 0.3.3">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.43/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-23</h3></div>
+<div class="date"><h3>2024-10-24</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -155,6 +155,7 @@
 <li><a href="#sec:live-reload"><span class="section-number">5.2.1</span> Live reload</a></li>
 <li><a href="#sec:the-file-listing"><span class="section-number">5.2.2</span> The file listing</a></li>
 <li><a href="#sec:the-buttons"><span class="section-number">5.2.3</span> The buttons</a></li>
+<li><a href="#sec:cleaning-up"><span class="section-number">5.2.4</span> Cleaning up</a></li>
 </ul>
 </li>
 <li><a href="#sec:visual-editor"><span class="section-number">5.3</span> Visual editor</a></li>
@@ -2158,6 +2159,23 @@ printer dialog, e.g., you can print the page to PDF.</p>
 <p>Code blocks in the preview mode will have line numbers automatically added to
 their left. If you click on a line number, it will bring you to that line in the
 source document.</p>
+<h3 id="sec:cleaning-up"><span class="section-number">5.2.4</span> Cleaning up</h3>
+<p>Previewing <code>.Rmd</code> and <code>.R</code> files that generate plots will leave <code>*__files/</code>
+directories (containing plot files) on disk by default. If you want to clean up
+such directories when closing or navigating away from the preview page, you may
+set the option</p>
+<pre><code class="language-r">options(litedown.roam.cleanup = TRUE)
+</code></pre>
+<p>before you run <code>litedown::roam()</code> or in your <code>.Rprofile</code>. Note that it will not
+clean up a <code>*__files/</code> directory if it has existed before you preview a file.
+This is to make sure <code>roam()</code> will not delete existing files by accident. If you
+are certain that a <code>*__files/</code> directory can be safely deleted, you can always
+delete it by hand. After that, <code>roam()</code> will automatically clean it up when you
+preview the file again.</p>
+<p>Please also note that when caching is enabled (via the chunk option
+<code>cache = TRUE</code>) in the file being previewed, the <code>*__files/</code> directory will not
+be cleaned up, because when a code chunk is cached, it will not be re-evaluated
+or re-generate plots next time (unless the cache is invalidated).</p>
 <h2 id="sec:visual-editor"><span class="section-number">5.3</span> Visual editor</h2>
 <p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
 Markdown, you can use RStudio’s visual Markdown editor to author documents.
