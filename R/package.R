@@ -120,10 +120,17 @@ vig_filter = function(ifile, encoding) {
 #' litedown::pkg_citation()
 #' litedown::pkg_manual()
 pkg_desc = function(name = detect_pkg()) {
-  d = packageDescription(name, fields = c(
+  fields = c(
     'Title', 'Version', 'Description', 'Depends', 'Imports', 'Suggests',
     'License', 'URL', 'BugReports', 'VignetteBuilder', 'Authors@R', 'Author'
-  ))
+  )
+  # read the DESCRIPTION file if pkg root is found, otherwise use installed info
+  d = if (is.character(p <- attr(name, 'path'))) {
+    as.list(read.dcf(file.path(p, 'DESCRIPTION'))[1, ][fields])
+  } else {
+    packageDescription(name, fields = fields)
+  }
+  names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
   # format authors
