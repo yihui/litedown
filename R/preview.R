@@ -143,7 +143,7 @@ dir_page = function(dir = '.') {
   # show file size and mtime
   info = function(f, b, extra = '') {
     sprintf(
-      '_( [%s](<%s>) %s%s%s)_', file_size(f), b, file_time(f),
+      '_( [%s](<%s>){title="Raw file"} %s%s%s)_', file_size(f), b, file_time(f),
       if (is_text_file(file = f)) btn('.open', b) else '', extra
     )
   }
@@ -158,7 +158,7 @@ dir_page = function(dir = '.') {
     fenced_div(c(
       fenced_div(c(
         p_link(b, a = NULL), info(f, b, btn('.save', b)),
-        p_link(b, '.run', 2, 'title="Run"')
+        p_link(b, '.run', 2, 'title="Run in memory"')
       ), '.name'),
       xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
