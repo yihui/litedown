@@ -218,7 +218,7 @@ file_resp = function(x, preview) {
     if (!raw && is_text_file(ext, type) &&
         !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
       list(payload = mark_full(
-        fenced_block(txt, paste0('.', if (ext == '') 'plain' else ext))
+        fenced_block(txt, lineno_attr(if (ext == '') 'plain' else ext))
       ))
     } else {
       file_raw(x, type)

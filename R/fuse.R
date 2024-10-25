@@ -748,9 +748,7 @@ fuse_code = function(x, blocks) {
         # use engine name as class name; when `a` contains class names, prefix language-
         if (!any(grepl('(^| )[.]', a))) a = c(paste0('.',  lang), a)
         # add line numbers
-        if (is_roaming()) a = c(
-          a, sprintf('.line-numbers .auto-numbers data-start="%d"', l1 + l2 - 1)
-        )
+        if (is_roaming()) a = c(a, lineno_attr(NA, l1 + l2 - 1))
       } else {
         if (type == 'message') x = sub('\n$', '', x)
         if (!asis) {
@@ -790,6 +788,12 @@ add_fences = function(out, x, fence) {
   fences = list(c(x$fences[1], x$comments), x$fences[2])
   append(lapply(fences, fenced_block, c('.md', '.code-fence'), fence), out, 1)
 }
+
+# attributes for code blocks with line numbers
+lineno_attr = function(lang = NA, start = 1, auto = TRUE) c(
+  if (!is.na(lang)) paste0('.', tolower(lang)), '.line-numbers',
+  if (auto) '.auto-numbers', sprintf('data-start="%d"', start)
+)
 
 new_source = function(x) xfun::new_record(x, 'source')
 new_warning = function(x) xfun::new_record(x, 'warning')

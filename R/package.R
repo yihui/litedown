@@ -225,9 +225,7 @@ pkg_code = function(
     if (length(fs) == 0) return()
     x = uapply(fs, function(f) c(
       sprintf('##%s `%s`%s', if (flat) '' else '#', f, a), '',
-      fenced_block(read_utf8(f), c(
-        paste0('.', tolower(file_ext(f))), '.line-numbers', 'data-start="1"'
-      )), ''
+      fenced_block(read_utf8(f), lineno_attr(file_ext(f), auto = FALSE)), ''
     ))
     e = unique(file_ext(fs))
     c(if (!flat) paste0('## ', paste0('`*.', e, '`', collapse = ' / '), a), '', x)
