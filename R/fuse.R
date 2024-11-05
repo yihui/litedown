@@ -524,12 +524,7 @@ fiss = function(input, output = '.R', text = NULL) {
   on_error = function() {
     if (k == n) return()  # blocks have been successfully fused
     p_bar(p_clr)
-    # should we check if ANSI links are actually supported? e.g., via
-    # Sys.getenv('RSTUDIO_CLI_HYPERLINKS')
-    if (length(input)) .env$input = sprintf(
-      "\033]8;%s;file://%s\a%s\033]8;;\a", link_pos(),
-      normalize_path(input), input
-    )
+    ansi_link(input)
     message('Quitting from ', get_loc(nms[k]))
   }
   # suppress tidyverse progress bars and use cairo for bitmap devices (for
@@ -555,6 +550,14 @@ fiss = function(input, output = '.R', text = NULL) {
   }
   k = n
   res
+}
+
+# add ANSI link on input path if supported
+ansi_link = function(x) {
+  if (length(x) && isTRUE(as.logical(Sys.getenv('RSTUDIO_CLI_HYPERLINKS'))))
+    .env$input = sprintf(
+      '\033]8;%s;file://%s\a%s\033]8;;\a', link_pos(), normalize_path(x), x
+    )
 }
 
 # use options(bitmapType = 'cairo') for bitmap devices on macOS if possible
