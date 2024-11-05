@@ -578,9 +578,9 @@ move_attrs = function(x, format = 'html') {
     r = sprintf('(\\\\(%s)\\{.+?) \\\\\\{([^}]+)\\\\\\}(\\})', paste(sec_levels, collapse = '|'))
     x = convert_attrs(x, r, '\\3', function(r, z, z3) {
       z = gsub(r, '\\1\\4', z)
-      k = grepl('unnumbered', z3)
+      k = has_class(z3, 'unnumbered')
       z[k] = sub('{', '*{', z[k], fixed = TRUE)
-      k = grepl('appendix', z3)
+      k = has_class(z3, 'appendix')
       z[k] = '\\appendix'
       z
     }, format)
@@ -693,7 +693,7 @@ unique_id = function(x, empty) {
 
 # test if a class name exists in attributes
 has_class = function(x, class) {
-  grepl(sprintf(' class="([^"]+ )?%s( [^"]+)?"', class), x)
+  grepl(sprintf('(^| )class="([^"]+ )?%s( [^"]+)?"', class), x)
 }
 
 # number sections in HTML output
