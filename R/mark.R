@@ -314,7 +314,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       x
     }, perl = FALSE)
     # fix horizontal rules from --- (\linethickness doesn't work)
-    # TODO: cross-refs for latex output
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
     if (isTRUE(options[['toc']])) ret = paste0('\\tableofcontents\n', ret)
@@ -330,7 +329,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (format == 'latex') meta = bib_meta(meta, bib, pkg_cite)
   }
 
-  meta$body = ret
   # convert some meta variables in case they use Markdown syntax
   for (i in top_meta) if (meta_len <- length(meta[[i]])) {
     # if author is of length > 1, render them individually
@@ -350,11 +348,21 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       sprintf(cmd_meta[i], if (m_author) one_string(meta[[i]], ' \\and ') else meta[[i]])
     })
   }
+
+  # cross references (\ref or clever \cref)
+  clever = isTRUE(options[['cleveref']])
+  if (format == 'latex') ret = latex_refs(ret, r_ref, clever) else clever = FALSE
+
+  meta$body = ret
+
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
     # add HTML dependencies to `include-headers` if found
     meta = add_html_deps(meta, output, 'local' %in% options[['embed_resources']])
     ret = build_output(format, options, template, meta)
+    # load the cleveref package if not loaded
+    if (clever && !any(grepl('\\\\usepackage.*\\{cleveref\\}', ret, perl = TRUE)))
+      ret = sub('(?=\\\\begin\\{document\\})', '\\\\usepackage{cleveref}\n', ret, perl = TRUE)
   }
 
   if (format == 'html') {
@@ -459,6 +467,6 @@ markdown_options = function() {
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )
   # options disabled by default
-  x2 = c('toc', 'hardbreaks', 'tagfilter', 'number_sections', 'smartypants')
+  x2 = c('toc', 'hardbreaks', 'tagfilter', 'number_sections', 'cleveref', 'smartypants')
   sort(c(paste0('+', x1), paste0('-', x2)))
 }

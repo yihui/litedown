@@ -65,6 +65,15 @@ heading text with hyphens. If the result is empty, the ID will be `section`. If
 any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 `example_1` and `example_2`.
 
+### `cleveref`
+
+Whether to use the LaTeX package [**cleveref**](https://ctan.org/pkg/cleveref)
+for "clever" cross-references (@sec:cross-references). This option is for LaTeX
+output only. If enabled, **cleveref** will be loaded and references will use the
+command `\cref{}` instead of `\ref{}`, which will automatically add the type of
+reference before the reference number, e.g., `\cref{sec:intro}` may generate
+`Section 1`, so you do not have to write `Section \ref{sec:intro}`.
+
 ### `embed_cleanup`
 
 Whether to clean up plot files after they have been embedded in HTML output (see

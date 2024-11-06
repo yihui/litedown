@@ -827,6 +827,17 @@ add_ref = function(id, type, x = NULL) {
   c(sprintf('[](#@%s:%s)', type, id), x)
 }
 
+# make cross-refs for LaTeX output, to be resolved by a LaTeX engine
+latex_refs = function(x, r, clever = FALSE) {
+  ar = paste0('@', r)
+  r0 = function(a, b) sprintf('\\\\protect\\\\hyperlink\\{%s\\}\\{%s\\}', a, b)
+  r1 = r0(ar, '\\s*')  # \label{}
+  r2 = r0(r, ar)  # \ref{}
+  x = gsub(r1, '\\\\label{\\1}', x)
+  x = gsub(r2, sprintf('\\\\%sref{\\1}', if (clever) 'c' else ''), x)
+  x
+}
+
 embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% options[['embed_resources']]
