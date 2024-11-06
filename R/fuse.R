@@ -794,8 +794,8 @@ add_fences = function(out, x, fence) {
 
 # attributes for code blocks with line numbers
 lineno_attr = function(lang = NA, start = 1, auto = TRUE) c(
-  if (!is.na(lang)) paste0('.', tolower(lang)), '.line-numbers',
-  if (auto) '.auto-numbers', sprintf('data-start="%d"', start)
+  if (!is.na(lang)) paste0('.', sub('^[rq]md$', 'md', tolower(lang))),
+  '.line-numbers', if (auto) '.auto-numbers', sprintf('data-start="%d"', start)
 )
 
 new_source = function(x) xfun::new_record(x, 'source')
