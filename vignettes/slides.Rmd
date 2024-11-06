@@ -13,7 +13,6 @@ output:
 vignette: >
   %\VignetteEngine{litedown::vignette}
   %\VignetteIndexEntry{Making HTML Slides with the litedown Package}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ## Get started
@@ -276,6 +275,26 @@ should see a normal continuous page, since you cannot adjust the window size.
 
 --------------------------------------------------------------------------------
 
+If you need to print each slide on a separate page, you may include the
+following CSS and may need to tweak the paper size and font size. The PDF will
+not have exactly the same appearance as HTML.
+
+``` css
+@page {
+  size: a4 landscape;
+  margin: 0;
+}
+
+@media print {
+  .slide {
+    font-size: 1.8em;
+    page-break-after: always;
+  }
+}
+```
+
+--------------------------------------------------------------------------------
+
 ## Slide attributes
 
 You can add more attributes to a slide via an HTML comment that starts with `#`
@@ -478,6 +497,27 @@ You can fix the aspect ratio by setting the CSS variable `--slide-ratio`, e.g.,
 ``` css
 :root { --slide-ratio: .75; }
 ```
+
+--------------------------------------------------------------------------------
+
+### Zooming
+
+For best results in the slide mode, set the browser zooming level to 100%.
+Zooming out (\< 100%) is usually okay. Zooming in (\> 100%) may lead to slides
+being cut off at the margin.
+
+--------------------------------------------------------------------------------
+
+### Cross-browser/device issues
+
+Unlike PDF, HTML slides may not look exactly the same in different web browsers
+or on different devices. For example, text may be rendered via system fonts, and
+different systems may have different fonts. To ensure the same fonts are used on
+different devices, you may use web fonts (e.g., Google Fonts).
+
+You may print the slides to PDF in advance. In case you have trouble with HTML
+slides when presenting from a different device, you may use the PDF copy (of
+course, you will lose features that rely on HTML/CSS/JS).
 
 --------------------------------------------------------------------------------
 
