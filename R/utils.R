@@ -624,7 +624,7 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
       if ((n <- length(i))) {
         # merge multiple classes into one class attribute
         a[i] = sub('^[.]', '', a[i])
-        a[i] = c(rep('', n - 1), sprintf('class="%s"', paste(a[i], collapse = ' ')))
+        a[i] = c(sprintf('class="%s"', paste(a[i], collapse = ' ')), rep('', n - 1))
         a = c(a[i], a[-i])
       }
       if (length(i <- grep('^#', a))) {
@@ -633,6 +633,8 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
       }
       a
     })
+    # remove spaces after class="..." (caused by merging multiple classes)
+    z2 = sub('(^| )(class="[^"]+")  +', '\\1\\2 ', z2)
     f(r, z, str_trim(z2))
   })
 }
