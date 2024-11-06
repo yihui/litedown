@@ -253,6 +253,10 @@ Most attributes in `{}` are ignored for LaTeX output except for:
 -   The `.appendix` attribute on a heading, which will start the appendix, e.g.,
     `# Appendix {.appendix}` will be converted to `\appendix`.
 
+-   The ID attributes on headings, which will be converted to `\label{}`, e.g.,
+    `# Introduction {#sec:intro}` will be converted to
+    `\section{Introduction}\label{sec:intro}`.
+
 ### Appendices
 
 When a top-level heading has the attribute `.appendix`, the rest of the document

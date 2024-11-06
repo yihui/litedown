@@ -582,6 +582,10 @@ move_attrs = function(x, format = 'html') {
       z[k] = sub('{', '*{', z[k], fixed = TRUE)
       k = has_class(z3, 'appendix')
       z[k] = '\\appendix'
+      r2 = '(^|.* )id="([^"]+)".*'
+      k = grepl(r2, z3)
+      id = gsub(r2, '\\2', z3[k])
+      z[k] = paste0(z[k], '\\label{', id, '}')
       z
     }, format)
     # fenced Div's
