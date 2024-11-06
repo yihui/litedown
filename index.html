@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.3.3">
+<meta name="generator" content="litedown 0.3.4">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.43/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-10-25</h3></div>
+<div class="date"><h3>2024-11-06</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -97,18 +97,19 @@
 <li><a href="#sec:markdown-options"><span class="section-number">3.1</span> Markdown options</a>
 <ul>
 <li><a href="#sec:auto-identifiers"><span class="section-number">3.1.1</span> <code>auto_identifiers</code></a></li>
-<li><a href="#sec:embed-cleanup"><span class="section-number">3.1.2</span> <code>embed_cleanup</code></a></li>
-<li><a href="#sec:embed-resources"><span class="section-number">3.1.3</span> <code>embed_resources</code></a></li>
-<li><a href="#sec:js-highlight"><span class="section-number">3.1.4</span> <code>js_highlight</code></a></li>
-<li><a href="#sec:js-math"><span class="section-number">3.1.5</span> <code>js_math</code></a></li>
-<li><a href="#sec:keep-yaml"><span class="section-number">3.1.6</span> <code>keep_yaml</code></a></li>
-<li><a href="#sec:latex-math_2"><span class="section-number">3.1.7</span> <code>latex_math</code></a></li>
-<li><a href="#sec:number-sections"><span class="section-number">3.1.8</span> <code>number_sections</code></a></li>
-<li><a href="#sec:smartypants"><span class="section-number">3.1.9</span> <code>smartypants</code></a></li>
-<li><a href="#sec:superscript"><span class="section-number">3.1.10</span> <code>superscript</code></a></li>
-<li><a href="#sec:subscript"><span class="section-number">3.1.11</span> <code>subscript</code></a></li>
-<li><a href="#sec:toc"><span class="section-number">3.1.12</span> <code>toc</code></a></li>
-<li><a href="#sec:top-level"><span class="section-number">3.1.13</span> <code>top_level</code></a></li>
+<li><a href="#sec:cleveref"><span class="section-number">3.1.2</span> <code>cleveref</code></a></li>
+<li><a href="#sec:embed-cleanup"><span class="section-number">3.1.3</span> <code>embed_cleanup</code></a></li>
+<li><a href="#sec:embed-resources"><span class="section-number">3.1.4</span> <code>embed_resources</code></a></li>
+<li><a href="#sec:js-highlight"><span class="section-number">3.1.5</span> <code>js_highlight</code></a></li>
+<li><a href="#sec:js-math"><span class="section-number">3.1.6</span> <code>js_math</code></a></li>
+<li><a href="#sec:keep-yaml"><span class="section-number">3.1.7</span> <code>keep_yaml</code></a></li>
+<li><a href="#sec:latex-math_2"><span class="section-number">3.1.8</span> <code>latex_math</code></a></li>
+<li><a href="#sec:number-sections"><span class="section-number">3.1.9</span> <code>number_sections</code></a></li>
+<li><a href="#sec:smartypants"><span class="section-number">3.1.10</span> <code>smartypants</code></a></li>
+<li><a href="#sec:superscript"><span class="section-number">3.1.11</span> <code>superscript</code></a></li>
+<li><a href="#sec:subscript"><span class="section-number">3.1.12</span> <code>subscript</code></a></li>
+<li><a href="#sec:toc"><span class="section-number">3.1.13</span> <code>toc</code></a></li>
+<li><a href="#sec:top-level"><span class="section-number">3.1.14</span> <code>top_level</code></a></li>
 </ul>
 </li>
 <li><a href="#sec:templates"><span class="section-number">3.2</span> Templates</a></li>
@@ -817,7 +818,7 @@ blocks (<code>```{=latex}</code>), but we recommend that you use raw LaTeX block
 because they are more robust. LaTeX math environments work for both LaTeX and
 HTML output.</p>
 <p>For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
-math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">3.1.5</a>).</p>
+math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">3.1.6</a>).</p>
 <h3 id="sec:superscripts-and-subscripts"><span class="section-number">2.2.3</span> Superscripts and subscripts</h3>
 <p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
 Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
@@ -905,11 +906,16 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <p>The <code>.appendix</code> attribute on a heading, which will start the appendix, e.g.,
 <code># Appendix {.appendix}</code> will be converted to <code>\appendix</code>.</p>
 </li>
+<li>
+<p>The ID attributes on headings, which will be converted to <code>\label{}</code>, e.g.,
+<code># Introduction {#sec:intro}</code> will be converted to
+<code>\section{Introduction}\label{sec:intro}</code>.</p>
+</li>
 </ul>
 <h3 id="sec:appendices"><span class="section-number">2.2.6</span> Appendices</h3>
 <p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
 will be treated as the appendix. If section numbering is enabled
-(<a class="cross-ref-sec" href="#sec:number-sections">3.1.8</a>), the appendix section headings will be numbered
+(<a class="cross-ref-sec" href="#sec:number-sections">3.1.9</a>), the appendix section headings will be numbered
 differently.</p>
 <h3 id="sec:fenced-divs"><span class="section-number">2.2.7</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
@@ -952,19 +958,36 @@ example,</p>
 <p>will be converted to:</p>
 <pre><code class="language-latex">\begin{minipage}{.5\linewidth}
 </code></pre>
-<p>If a fenced <code>Div</code> doesn’t have the <code>data-latex</code> attribute, the fence will be
-ignored, and its content will be written out normally without a surrounding
-environment. If a fenced <code>Div</code> has multiple class names (e.g., <code>{.a .b .c}</code>),
-only the first class name will be used as the LaTeX environment name. However,
-all class names will be used if the output format is HTML (e.g.,
-<code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
+<p>The <code>data-latex</code> attribute is optional for fenced <code>Div</code>s with class names
+<code>figure</code> or <code>table</code>. They will be converted to <code>figure</code> or <code>table</code> environments.
+For example,</p>
+<pre><code class="language-markdown">:::: {.figure}
+![](foo.png)
+
+::: {.fig-caption}
+This is a caption.
+:::
+::::
+</code></pre>
+<p>will be converted to:</p>
+<pre><code class="language-tex">\begin{figure}
+  \includegraphics{foo.png}
+  \caption{This is a caption.}
+\end{figure}
+</code></pre>
+<p>Other fenced <code>Div</code>s will be ignored if they don’t have the <code>data-latex</code>
+attribute, and their inner content will be written out normally without a
+surrounding environment.</p>
+<p>If a fenced <code>Div</code> has multiple class names (e.g., <code>{.a .b .c}</code>), only the first
+class name will be used as the LaTeX environment name. However, all class names
+will be used if the output format is HTML (e.g., <code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
 <h3 id="sec:cross-references"><span class="section-number">2.2.8</span> Cross-references</h3>
 <p>To cross-reference an element, it must be numbered first. Then we can refer to
 it by its ID.</p>
 <h4 id="sec:sections-figures-and-tables"><span class="section-number">2.2.8.1</span> Sections, figures, and tables</h4>
 <p>Section heading IDs can be either manually assigned or automatically generated
 (<a class="cross-ref-sec" href="#sec:auto-identifiers">3.1.1</a>). Section numbers are automatically generated if the
-<code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">3.1.8</a>).</p>
+<code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">3.1.9</a>).</p>
 <p>Figures and tables are automatically numbered if their captions are provided
 (via the chunk options <code>fig.cap</code> / <code>tab.cap</code>), e.g.,</p>
 <pre><code class="language-md">```{r}
@@ -1222,10 +1245,17 @@ attribute, e.g.,</p>
 heading text with hyphens. If the result is empty, the ID will be <code>section</code>. If
 any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 <code>example_1</code> and <code>example_2</code>.</p>
-<h3 id="sec:embed-cleanup"><span class="section-number">3.1.2</span> <code>embed_cleanup</code></h3>
+<h3 id="sec:cleveref"><span class="section-number">3.1.2</span> <code>cleveref</code></h3>
+<p>Whether to use the LaTeX package <a href="https://ctan.org/pkg/cleveref"><strong>cleveref</strong></a>
+for “clever” cross-references (<a class="cross-ref-sec" href="#sec:cross-references">2.2.8</a>). This option is for LaTeX
+output only. If enabled, <strong>cleveref</strong> will be loaded and references will use the
+command <code>\cref{}</code> instead of <code>\ref{}</code>, which will automatically add the type of
+reference before the reference number, e.g., <code>\cref{sec:intro}</code> may generate
+<code>Section 1</code>, so you do not have to write <code>Section \ref{sec:intro}</code>.</p>
+<h3 id="sec:embed-cleanup"><span class="section-number">3.1.3</span> <code>embed_cleanup</code></h3>
 <p>Whether to clean up plot files after they have been embedded in HTML output (see
-<a class="cross-ref-sec" href="#sec:embed-resources">3.1.3</a>).</p>
-<h3 id="sec:embed-resources"><span class="section-number">3.1.3</span> <code>embed_resources</code></h3>
+<a class="cross-ref-sec" href="#sec:embed-resources">3.1.4</a>).</p>
+<h3 id="sec:embed-resources"><span class="section-number">3.1.4</span> <code>embed_resources</code></h3>
 <p>Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
 <ul>
@@ -1246,7 +1276,7 @@ base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
 resources are not. This means the output document may not work offline. If you
 have to view the output offline, you need to use the option value <code>&quot;https&quot;</code> (or
 <code>&quot;all&quot;</code>) and render the document at least once before you go offline.</p>
-<h3 id="sec:js-highlight"><span class="section-number">3.1.4</span> <code>js_highlight</code></h3>
+<h3 id="sec:js-highlight"><span class="section-number">3.1.5</span> <code>js_highlight</code></h3>
 <p>Specify the JavaScript library to syntax highlight code blocks. Possible values
 are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
 (<a href="https://prismjs.com">Prism.js</a>). The default is <code>prism</code>. This option can also
@@ -1281,7 +1311,7 @@ the automatic detection fails.</p>
 and <code>js</code> in <a class="cross-ref-sec" href="#sec:yaml-metadata">3.3</a>. If you want full control, you may disable this
 option (set it to <code>false</code> or <code>null</code>) and use metadata variables directly, which
 requires more familiarity with the JS libraries and the jsdelivr CDN.</p>
-<h3 id="sec:js-math"><span class="section-number">3.1.5</span> <code>js_math</code></h3>
+<h3 id="sec:js-math"><span class="section-number">3.1.6</span> <code>js_math</code></h3>
 <p>Specify the JavaScript library for rendering math expressions in HTML output.
 Possible values are <code>&quot;mathjax&quot;</code> and <code>&quot;katex&quot;</code> (the default). Like the
 <code>js_highlight</code> option, this option is also essentially a shorthand for setting
@@ -1331,34 +1361,34 @@ embedded and used offline, but currently only its fonts can be embedded, and
 extensions cannot. If you must view HTML output offline, we recommend using
 KaTeX, but please also note that KaTeX and MathJax do not fully cover each
 other’s features.</p>
-<h3 id="sec:keep-yaml"><span class="section-number">3.1.6</span> <code>keep_yaml</code></h3>
+<h3 id="sec:keep-yaml"><span class="section-number">3.1.7</span> <code>keep_yaml</code></h3>
 <p>Whether to keep the YAML metadata in the output. When <code>TRUE</code>, the original YAML
 in the Markdown input (if exists) will be written to the output. Note that when
 this option is enabled, templates (<a class="cross-ref-sec" href="#sec:templates">3.2</a>) will be disabled and <code>mark()</code>
 will only generate a document fragment. This option was introduced mainly for
 Hugo websites to use <strong>litedown</strong> instead of Hugo’s Markdown engines to render
 pages.</p>
-<h3 id="sec:latex-math_2"><span class="section-number">3.1.7</span> <code>latex_math</code></h3>
+<h3 id="sec:latex-math_2"><span class="section-number">3.1.8</span> <code>latex_math</code></h3>
 <p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
 dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
 rendered by MathJax (HTML output) or LaTeX.</p>
-<h3 id="sec:number-sections"><span class="section-number">3.1.8</span> <code>number_sections</code></h3>
+<h3 id="sec:number-sections"><span class="section-number">3.1.9</span> <code>number_sections</code></h3>
 <p>Whether to number section headings. To skip numbering a specific heading, add a
 class attribute <code>.unnumbered</code> (or use the shorthand <code>-</code>) to it. For example:</p>
 <pre><code class="language-md">## Preface {.unnumbered}
 
 ## About the author {-}
 </code></pre>
-<h3 id="sec:smartypants"><span class="section-number">3.1.9</span> <code>smartypants</code></h3>
+<h3 id="sec:smartypants"><span class="section-number">3.1.10</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>).</p>
-<h3 id="sec:superscript"><span class="section-number">3.1.10</span> <code>superscript</code></h3>
+<h3 id="sec:superscript"><span class="section-number">3.1.11</span> <code>superscript</code></h3>
 <p>Whether to translate strings between two carets into superscripts, e.g.,
 <code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>.</p>
-<h3 id="sec:subscript"><span class="section-number">3.1.11</span> <code>subscript</code></h3>
+<h3 id="sec:subscript"><span class="section-number">3.1.12</span> <code>subscript</code></h3>
 <p>Whether to translate strings between two tildes into subscripts, e.g.,
 <code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>.</p>
-<h3 id="sec:toc"><span class="section-number">3.1.12</span> <code>toc</code></h3>
+<h3 id="sec:toc"><span class="section-number">3.1.13</span> <code>toc</code></h3>
 <p>Whether to generate a table of contents (TOC) from section headings. If a
 heading has an <code>id</code> attribute, the corresponding TOC item will be a link to this
 heading. You can also set a sub-option:</p>
@@ -1375,7 +1405,7 @@ default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
 For example:</p>
 <pre><code class="language-md">## Acknowledgments {.unlisted}
 </code></pre>
-<h3 id="sec:top-level"><span class="section-number">3.1.13</span> <code>top_level</code></h3>
+<h3 id="sec:top-level"><span class="section-number">3.1.14</span> <code>top_level</code></h3>
 <p>The desired type of the top-level headings in LaTeX output. Possible values are
 <code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
 will be rendered to <code>\chapter{heading}</code> instead of the default
@@ -1386,13 +1416,13 @@ e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argu
 extension in <strong>commonmark</strong>’s extensions.</p>
 <pre><code class="language-r">litedown::markdown_options()
 </code></pre>
-<pre><code>#&gt;  [1] &quot;-hardbreaks&quot;       &quot;-number_sections&quot;  &quot;-smartypants&quot;     
-#&gt;  [4] &quot;-tagfilter&quot;        &quot;-toc&quot;              &quot;+auto_identifiers&quot;
-#&gt;  [7] &quot;+autolink&quot;         &quot;+cross_refs&quot;       &quot;+embed_cleanup&quot;   
-#&gt; [10] &quot;+embed_resources&quot;  &quot;+js_highlight&quot;     &quot;+js_math&quot;         
-#&gt; [13] &quot;+latex_math&quot;       &quot;+smart&quot;            &quot;+strikethrough&quot;   
-#&gt; [16] &quot;+subscript&quot;        &quot;+superscript&quot;      &quot;+table&quot;           
-#&gt; [19] &quot;+tasklist&quot;        
+<pre><code>#&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
+#&gt;  [4] &quot;-smartypants&quot;      &quot;-tagfilter&quot;        &quot;-toc&quot;             
+#&gt;  [7] &quot;+auto_identifiers&quot; &quot;+autolink&quot;         &quot;+cross_refs&quot;      
+#&gt; [10] &quot;+embed_cleanup&quot;    &quot;+embed_resources&quot;  &quot;+js_highlight&quot;    
+#&gt; [13] &quot;+js_math&quot;          &quot;+latex_math&quot;       &quot;+smart&quot;           
+#&gt; [16] &quot;+strikethrough&quot;    &quot;+subscript&quot;        &quot;+superscript&quot;     
+#&gt; [19] &quot;+table&quot;            &quot;+tasklist&quot;        
 </code></pre>
 <pre><code class="language-r"># commonmark's arguments
 opts = formals(commonmark::markdown_html)
