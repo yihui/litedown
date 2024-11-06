@@ -588,21 +588,32 @@ move_attrs = function(x, format = 'html') {
       z[k] = paste0(z[k], '\\label{', id, '}')
       z
     }, format)
-    # fenced Div's
+    # fenced Div's: first class name is the environment name; options from data-latex
     r = '\n\\\\begin\\{verbatim\\}\n(:::+)( \\{([^\n]+?)\\})? \\1\n\\\\end\\{verbatim\\}\n'
     x = convert_attrs(x, r, '\\3', function(r, z, z3) {
-      r3 = '(^|.*? )class="([^" ]+)[" ].*? data-latex="([^"]*)".*$'
-      z3 = ifelse(
-        grepl(r3, z3), gsub(r3, '{\\2}\\3', z3), ifelse(z3 == '', '', '{@}')
-      )
-      z3 = latex_envir(gsub('\\\\', '\\', z3, fixed = TRUE))
+      r1 = '(^|.*? )class="([^" ]+)[" ].*'
+      r2 = ' data-latex="([^"]*)".*$'
+      r3 = paste0(r1, '?', r2)
+      i3 = grepl(r3, z3)
+      z4 = ifelse(i3, gsub(r3, '{\\2}\\3', z3), ifelse(z3 == '', '', '{@}'))
+      cls = gsub(r1, '\\2', z3)
+      # fig/tab environments don't need the data-latex attribute
+      i4 = !i3 & cls %in% c('figure', 'fig-caption', 'table', 'tab-caption')
+      z4[i4] = sprintf('{%s}', cls[i4])
+      z3 = latex_envir(gsub('\\\\', '\\', z4, fixed = TRUE))
       z3[z3 %in% c('\\begin{@}', '\\end{@}')] = ''
       i = grep('^\\\\begin', z3)
       z3[i] = paste0('\n', z3[i])
       i = grep('^\\\\end', z3)
       z3[i] = paste0(z3[i], '\n')
+      # put fig/tab captions in \caption{}
+      z3 = gsub('\\\\begin\\{(fig|tab)-caption}', '\\\\caption{', z3)
+      z3 = gsub('\\\\end\\{(fig|tab)-caption}', '}', z3)
       z3
     }, format)
+    # remove table env generated from commonmark and use those from fenced Divs
+    x = gsub('\\\\begin\\{table\\}\n(?=\\\\begin\\{tabular\\})', '', x, perl = TRUE)
+    x = gsub('(?<=\\\\end\\{tabular\\}\n)\\\\end\\{table}', '', x, perl = TRUE)
   } else {
     # TODO: remove attributes for other formats
   }

@@ -324,14 +324,38 @@ will be converted to:
 \begin{minipage}{.5\linewidth}
 ```
 
-If a fenced `Div` doesn't have the `data-latex` attribute, the fence will be
-ignored, and its content will be written out normally without a surrounding
-environment. If a fenced `Div` has multiple class names (e.g., `{.a .b .c}`),
-only the first class name will be used as the LaTeX environment name. However,
-all class names will be used if the output format is HTML (e.g.,
-`<div class="a b c">`).
+The `data-latex` attribute is optional for fenced `Div`s with class names
+`figure` or `table`. They will be converted to `figure` or `table` environments.
+For example,
 
-### Cross-references
+``` markdown
+:::: {.figure}
+![](foo.png)
+
+::: {.fig-caption}
+This is a caption.
+:::
+::::
+```
+
+will be converted to:
+
+``` tex
+\begin{figure}
+  \includegraphics{foo.png}
+  \caption{This is a caption.}
+\end{figure}
+```
+
+Other fenced `Div`s will be ignored if they don't have the `data-latex`
+attribute, and their inner content will be written out normally without a
+surrounding environment.
+
+If a fenced `Div` has multiple class names (e.g., `{.a .b .c}`), only the first
+class name will be used as the LaTeX environment name. However, all class names
+will be used if the output format is HTML (e.g., `<div class="a b c">`).
+
+### Cross-references {#sec:cross-references}
 
 To cross-reference an element, it must be numbered first. Then we can refer to
 it by its ID.
