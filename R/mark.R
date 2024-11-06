@@ -431,7 +431,7 @@ sub_vars = function(tpl, meta) {
 top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
 tag_meta = c('h1', 'h2', 'h2', 'h3', '')
 names(tag_meta) = top_meta
-cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}%s\\end{abstract}')
+cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}\n%s\\end{abstract}')
 names(cmd_meta) = top_meta
 
 yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2]]
