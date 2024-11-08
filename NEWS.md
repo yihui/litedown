@@ -1,3 +1,6 @@
+# CHANGES IN litedown VERSION 0.5
+
+
 # CHANGES IN litedown VERSION 0.4
 
 - Provided an option `options(litedown.roam.cleanup = TRUE)` to clean up the `*__files/` directory after previewing `.Rmd` or `.R` files via `litedown::roam()` (thanks, @TimTaylor, #36).

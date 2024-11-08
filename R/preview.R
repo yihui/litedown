@@ -252,14 +252,14 @@ full_output = structure('html', full = TRUE)
 mark_full = function(...) mark(..., output = full_output)
 
 # guess if a file is a text file
-is_text_file = function(ext = file_ext(file), type = xfun:::guess_type(file), file) {
+is_text_file = function(ext = file_ext(file), type = xfun::mime_type(file), file) {
   (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
 is_roaming = function() isTRUE(getOption('litedown.roaming'))
 
 # return a raw file response
-file_raw = function(x, type = xfun:::guess_type(x)) {
+file_raw = function(x, type = xfun::mime_type(x)) {
   list(file = normalizePath(x), `content-type` = type)
 }
 
