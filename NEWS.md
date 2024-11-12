@@ -1,5 +1,6 @@
 # CHANGES IN litedown VERSION 0.5
 
+- `pkg_manual()` will point out the name of the problematic Rd file when the Rd file fails to convert to HTML (thanks, @BSchamberger).
 
 # CHANGES IN litedown VERSION 0.4
 

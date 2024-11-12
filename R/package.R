@@ -280,8 +280,11 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
   res = uapply(names(db)[order(!idx)], function(i) {
     txt = ''
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
-    tools::Rd2HTML(db[[i]], Links = links, out = con)
-    close(con)
+    tryCatch(
+      tools::Rd2HTML(db[[i]], Links = links, out = con), error = function(e) {
+        warning("The Rd file '", i, "' appears to be malformed.", call. = FALSE)
+        stop(e)
+      }, finally = close(con))
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
     # free math from <code>
