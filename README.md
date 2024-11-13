@@ -59,9 +59,25 @@ Try `litedown::roam()`.
 ## Scope
 
 We want to limit the scope of this package. Most planned features have been
-implemented so far. Please feel free to file feature requests anyway, but we may
-be a little conservative when considering them (we will take votes into
-consideration, so please upvote features you like).
+(re-)implemented so far, such as reports, slides, books, websites (including
+package sites), and paged HTML documents, etc. See the set $R$ below:
+
+$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
+
+-   $R$ = **knitr** + **evaluate** + **rmarkdown** + **bookdown** +
+    **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
+    **distill**
+
+-   $D_i$ = (internal dependencies) **commonmark** + **xfun**
+
+-   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
+    Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
+
+-   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/misc.js)
+
+Please feel free to file feature requests anyway, but we may be a little
+conservative when considering them (we will take votes into consideration, so
+please upvote features you like).
 
 ## License
 
