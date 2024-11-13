@@ -272,6 +272,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     }, 'html', function(z2) gsub(id4, ' ', restore_html(z2)))
     # some code blocks with "attributes" are verbatim ones
     ret = match_replace(ret, '```+\\{.+}', function(x) gsub(id4, ' ', x, fixed = TRUE))
+    # remove empty table header
+    ret = gsub('<thead>\n<tr>\n(<th[^>]*></th>\n)+</tr>\n</thead>\n', '', ret)
     # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
     ret = gsub(
       '(<table>)(?s)(.+?</table>)\n<p>(Table)?: (?s)(.+?)</p>',
