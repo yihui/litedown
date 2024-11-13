@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.1">
+<meta name="generator" content="litedown 0.4.2">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.44/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-11-08</h3></div>
+<div class="date"><h3>2024-11-13</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -2109,8 +2109,8 @@ multiple features.</p>
 <p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
 <strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
 <code>litedown::latex_format</code>). Please also remember to add a top-level setting
-<code>knit: litedown:::knit</code> in YAML, otherwise RStudio will use <code>knitr::knit()</code>
-instead of <code>litedown::fuse()</code> to compile R Markdown.</p>
+<code>knit: litedown:::knit</code> in YAML, otherwise <strong>litedown</strong> will throw an error as a
+reminder.</p>
 <pre><code class="language-yaml">---
 output:
   litedown::html_format: null
