@@ -1,7 +1,7 @@
 Package: litedown
 Type: Package
 Title: A Lightweight Version of R Markdown
-Version: 0.4.1
+Version: 0.4.2
 Authors@R: c(
    person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666")),
    person()
@@ -23,12 +23,9 @@ Imports:
     commonmark (>= 1.9.1),
     xfun (>= 0.49)
 Suggests:
-    knitr,
     rbibutils,
-    rmarkdown (>= 2.18),
     rstudioapi,
-    tinytex,
-    yaml
+    tinytex
 License: MIT + file LICENSE
 URL: https://github.com/yihui/litedown
 BugReports: https://github.com/yihui/litedown/issues

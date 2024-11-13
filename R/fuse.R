@@ -376,10 +376,10 @@ block_order = function(res) {
 
 #' @description The function `fuse()` extracts and runs code from code chunks
 #'   and inline code expressions in R Markdown, and interweaves the results with
-#'   the rest of text in the input, which is similar to what [knitr::knit()] and
-#'   [rmarkdown::render()] do. It also works on R scripts in a way similar to
-#'   [knitr::spin()]. The function `fiss()` extracts code from the input, and is
-#'   similar to [knitr::purl()].
+#'   the rest of text in the input, which is similar to what `knitr::knit()` and
+#'   `rmarkdown::render()` do. It also works on R scripts in a way similar to
+#'   `knitr::spin()`. The function `fiss()` extracts code from the input, and is
+#'   similar to `knitr::purl()`.
 #' @rdname mark
 #' @param envir An environment in which the code is to be evaluated. It can be
 #'   accessed via [fuse_env()] inside [fuse()].

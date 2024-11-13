@@ -69,10 +69,10 @@ for clearer printing).
 \description{
 The function \code{fuse()} extracts and runs code from code chunks
 and inline code expressions in R Markdown, and interweaves the results with
-the rest of text in the input, which is similar to what \code{\link[knitr:knit]{knitr::knit()}} and
-\code{\link[rmarkdown:render]{rmarkdown::render()}} do. It also works on R scripts in a way similar to
-\code{\link[knitr:spin]{knitr::spin()}}. The function \code{fiss()} extracts code from the input, and is
-similar to \code{\link[knitr:knit]{knitr::purl()}}.
+the rest of text in the input, which is similar to what \code{knitr::knit()} and
+\code{rmarkdown::render()} do. It also works on R scripts in a way similar to
+\code{knitr::spin()}. The function \code{fiss()} extracts code from the input, and is
+similar to \code{knitr::purl()}.
 
 The function \code{mark()} renders Markdown to an output format via the
 \pkg{commonmark} package.

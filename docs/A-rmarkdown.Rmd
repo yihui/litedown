@@ -41,4 +41,4 @@ output:
 Note that not all **rmarkdown** options are supported, and not even all
 supported options have exactly the same effects in **litedown**. The supported
 options include:
-`` {r} knitr::combine_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.
+`` {r} xfun::join_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.

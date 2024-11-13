@@ -31,7 +31,9 @@ latex_format(
 values are \code{none}, \code{natbib}, and \code{biblatex}.}
 }
 \value{
-An R Markdown output format.
+These functions are not meant to be called directly, but should be
+used only in YAML metadata. If you call them directly, they will only throw
+errors.
 }
 \description{
 The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
@@ -55,17 +57,11 @@ output:
 }\if{html}{\out{</div>}}
 
 The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
-\code{\link[knitr:knit]{knitr::knit()}} and \code{\link[=mark]{mark()}} (instead of Pandoc), and also use the \code{Knit}
-button in RStudio. Although you can render R Markdown to Markdown via either
-\code{knitr::knit()} or \code{\link[=fuse]{fuse()}}, please note that the two ways are not 100\%
-compatible with each other. If you choose to use \pkg{litedown}, we recommend
-that you use \code{fuse()} instead. If you want \code{fuse()} to work with the \code{Knit}
-button in RStudio, you have to add a special field to YAML:
+the \code{Knit} button in RStudio, which requires you to add a special field to
+the YAML metadata:
 
-\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
-knit: litedown:::knit
----
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{knit: litedown:::knit
 }\if{html}{\out{</div>}}
 
-Without this field, RStudio will use \pkg{knitr} to render R Markdown.
+Without this field, RStudio will throw an error when you click the button.
 }

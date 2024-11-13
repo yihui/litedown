@@ -5,8 +5,8 @@
 If you use the RStudio IDE, the `Knit` button can render R Markdown to a
 **litedown** output format specified in YAML (e.g., `litedown::html_format` or
 `litedown::latex_format`). Please also remember to add a top-level setting
-`knit: litedown:::knit` in YAML, otherwise RStudio will use `knitr::knit()`
-instead of `litedown::fuse()` to compile R Markdown.
+`knit: litedown:::knit` in YAML, otherwise **litedown** will throw an error as a
+reminder.
 
 ``` yaml
 ---

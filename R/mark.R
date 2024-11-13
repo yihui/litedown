@@ -357,8 +357,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   # use the template (if provided) to create a standalone document
   if (format %in% c('html', 'latex') && is.character(template)) {
-    # add HTML dependencies to `include-headers` if found
-    meta = add_html_deps(meta, output, 'local' %in% options[['embed_resources']])
     ret = build_output(format, options, template, meta)
     # load the cleveref package if not loaded
     if (clever && !any(grepl('\\\\usepackage.*\\{cleveref\\}', ret, perl = TRUE)))
@@ -394,11 +392,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         )
       }
     }
-    # for RStudio to capture the output path when previewing the output (don't
-    # emit the message when rendering Rmd with rmarkdown::render() because
-    # render() will do it)
-    if (is_rmd_preview() && !'knit_meta' %in% ls(.env))
-      message('\nOutput created: ', output)
+    # for RStudio to capture the output path when previewing the output
+    if (is_rmd_preview()) message('\nOutput created: ', output)
     if (is_pdf) invisible(output) else write_utf8(ret, output)
   } else raw_string(ret)
 }

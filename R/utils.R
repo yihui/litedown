@@ -1144,32 +1144,6 @@ base64_url = function(url, code, ext) {
   code
 }
 
-# resolve HTML dependencies and write out the appropriate HTML code to `header-includes`
-add_html_deps = function(meta, output, embed = TRUE) {
-  if (!loadable('knitr')) return(meta)
-  deps = c(knitr::knit_meta(), .env$knit_meta)
-  if (length(deps) == 0 || !any(vapply(deps, inherits, logical(1), 'html_dependency'))) return(meta)
-  if (!loadable('rmarkdown')) stop(
-    'It seems the document contains HTML dependencies, which require ',
-    'the rmarkdown package but it is not available.'
-  )
-  deps = rmarkdown:::flatten_html_dependencies(deps)
-  deps = rmarkdown:::html_dependency_resolver(deps)
-  if (length(deps) == 0) return(meta)
-  d1 = d2 = NULL
-  # if resources need to be embedded, use their absolute paths; otherwise copy
-  # dependencies to 'libs/' and use relative paths
-  if (!embed) {
-    if (is.character(output)) {
-      owd = setwd(dirname(output)); on.exit(setwd(owd), add = TRUE)
-    }
-    d1 = 'libs'; d2 = '.'
-  }
-  deps = rmarkdown:::html_dependencies_as_string(deps, d1, d2)
-  meta[['header-includes']] = paste(deps, one_string(meta[['header-includes']], test = TRUE), sep = '\n')
-  meta
-}
-
 # compact HTML code
 clean_html = function(x) {
   x = gsub('\n+(\n<[a-z1-6]+[^>]*>|\n</(body|div|head|html)>)', '\\1', x)

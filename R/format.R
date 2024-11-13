@@ -1,27 +1,13 @@
 is_rmd_preview = function() Sys.getenv('RMARKDOWN_PREVIEW_DIR') != ''
 
-output_format = function(to, options, meta, template, keep_md, ...) {
-  if (is_rmd_preview()) xfun::do_once(message(
-    "It appears that you clicked the 'Knit' button in RStudio to render the document, ",
-    "but perhaps should add a top-level field 'knit: litedown:::knit' to the YAML metadata, ",
-    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render().",
-    "Alternatively, use litedown::roam() to preview or render documents.\n"
-  ), 'litedown.rmarkdown.reminder')
-  opts = rmarkdown::pandoc_options(to = to, ...)
-  opts$convert_fun = function(input, output, ...) {
-    mark(input, output, options, meta, text = NULL)
-  }
-  rmarkdown::output_format(
-    NULL, opts, keep_md = keep_md,
-    pre_processor = function(meta, input, runtime, knit_meta, ...) {
-      # knitr::knit_meta() has been emptied at this stage and only available in
-      # the `knit_meta` argument; make a copy in .env so that it can be accessed
-      # in add_html_deps() later
-      .env$knit_meta = knit_meta; NULL
-    },
-    on_exit = function() .env$knit_meta = NULL,
-    clean_supporting = 'local' %in% normalize_options(options)[['embed_resources']]
-  )
+output_format = function(...) {
+  msg = if (is_rmd_preview()) c(
+    "It appears that you clicked the 'Knit' button in RStudio to render the document. ",
+    "You are recommended to use litedown::roam() to preview or render documents instead. ",
+    "Alternatively, you can add a top-level field 'knit: litedown:::knit' to the YAML metadata, ",
+    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render()."
+  ) else 'Please render the document via litedown::fuse() instead of rmarkdown::render().'
+  stop(msg, call. = FALSE)
 }
 
 #' Output formats in YAML metadata
@@ -47,20 +33,14 @@ output_format = function(to, options, meta, template, keep_md, ...) {
 #' ```
 #'
 #' The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
-#' [knitr::knit()] and [mark()] (instead of Pandoc), and also use the `Knit`
-#' button in RStudio. Although you can render R Markdown to Markdown via either
-#' `knitr::knit()` or [fuse()], please note that the two ways are not 100%
-#' compatible with each other. If you choose to use \pkg{litedown}, we recommend
-#' that you use `fuse()` instead. If you want `fuse()` to work with the `Knit`
-#' button in RStudio, you have to add a special field to YAML:
+#' the `Knit` button in RStudio, which requires you to add a special field to
+#' the YAML metadata:
 #'
 #' ```yaml
-#' ---
 #' knit: litedown:::knit
-#' ---
 #' ```
 #'
-#' Without this field, RStudio will use \pkg{knitr} to render R Markdown.
+#' Without this field, RStudio will throw an error when you click the button.
 #' @param meta,options Arguments to be passed to [mark()].
 #' @param template A template file path.
 #' @param keep_md,keep_tex Whether to keep the intermediate \file{.md} and
@@ -68,10 +48,12 @@ output_format = function(to, options, meta, template, keep_md, ...) {
 #' @param latex_engine The LaTeX engine to compile \file{.tex} to \file{.pdf}.
 #' @param citation_package The LaTeX package for processing citations. Possible
 #'   values are `none`, `natbib`, and `biblatex`.
-#' @return An R Markdown output format.
+#' @return These functions are not meant to be called directly, but should be
+#'   used only in YAML metadata. If you call them directly, they will only throw
+#'   errors.
 #' @export
 html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
-  output_format('html', options, meta, template, keep_md)
+  output_format()
 }
 
 #' @rdname html_format
@@ -80,16 +62,8 @@ latex_format = function(
   options = NULL, meta = NULL, template = NULL, keep_md = FALSE,
   keep_tex = FALSE, latex_engine = 'xelatex', citation_package = 'natbib'
 ) {
-  output_format(
-    'latex', options, meta, template, keep_md,
-    keep_tex = keep_tex, latex_engine = latex_engine
-  )
+  output_format()
 }
-
-# compatibility layers to rmarkdown::[html|pdf]_document
-html_document = function(...) do.call(html_format, map_args(...))
-html_vignette = function(...) html_document(...)
-pdf_document = function(...) do.call(latex_format, map_args(...))
 
 # map rmarkdown arguments to markdown
 map_args = function(
