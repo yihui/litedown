@@ -16,20 +16,20 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,   r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: '4.3'}
+          - {os: ubuntu-latest, r: '4.2'}
+          - {os: ubuntu-latest, r: '4.1'}
+          - {os: ubuntu-latest, r: '4.0'}
+          - {os: ubuntu-latest, r: '3.6'}
+          - {os: ubuntu-latest, r: '3.5'}
+          - {os: ubuntu-latest, r: '3.4'}
+          - {os: ubuntu-latest, r: '3.3'}
+          - {os: ubuntu-latest, r: '3.2'}
+          - {os: ubuntu-latest, r: '3.2.0'}
+          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
+          - {os: macOS-latest, r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: '4.3'}
-          - {os: ubuntu-latest,   r: '4.2'}
-          - {os: ubuntu-latest,   r: '4.1'}
-          - {os: ubuntu-latest,   r: '4.0'}
-          - {os: ubuntu-latest,   r: '3.6'}
-          - {os: ubuntu-latest,   r: '3.5'}
-          - {os: ubuntu-latest,   r: '3.4'}
-          - {os: ubuntu-latest,   r: '3.3'}
-          - {os: ubuntu-latest,   r: '3.2'}
-          - {os: ubuntu-latest,   r: '3.2.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -39,8 +39,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@HEAD
-
-      - uses: r-lib/actions/setup-pandoc@HEAD
 
       - uses: r-lib/actions/setup-r@HEAD
         with:
