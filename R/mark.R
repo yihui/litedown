@@ -98,9 +98,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # whether to write YAML metadata to output
   keep_yaml = isTRUE(options[['keep_yaml']])
 
-  # if keep_yaml, generate a fragment only, otherwise check the `template` value
-  # in the output format litedown::(html|latex)_format in YAML
-  template = if (keep_yaml) FALSE else yaml_field(yaml, format, 'template')
+  # if keep_yaml or format is not html/latex, don't use template; otherwise
+  # check the `template` value in litedown::(html|latex)_format in YAML
+  template = if (keep_yaml || !format %in% c('html', 'latex')) FALSE else
+    yaml_field(yaml, format, 'template')
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
   if (is.null(template))
@@ -332,7 +333,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   # convert some meta variables in case they use Markdown syntax
-  for (i in top_meta) if (meta_len <- length(meta[[i]])) {
+  if (is.character(template)) for (i in top_meta) if (meta_len <- length(meta[[i]])) {
     # if author is of length > 1, render them individually
     m_author = i == 'author' && meta_len > 1
     meta[[i]] = if (m_author) uapply(meta[[i]], render) else {
@@ -358,7 +359,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   meta$body = ret
 
   # use the template (if provided) to create a standalone document
-  if (format %in% c('html', 'latex') && is.character(template)) {
+  if (is.character(template)) {
     ret = build_output(format, options, template, meta)
     # load the cleveref package if not loaded
     if (clever && !any(grepl('\\\\usepackage.*\\{cleveref\\}', ret, perl = TRUE)))
