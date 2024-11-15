@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.2">
+<meta name="generator" content="litedown 0.4.3">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.44/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -20,7 +20,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-11-13</h3></div>
+<div class="date"><h3>2024-11-15</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -1415,27 +1415,22 @@ e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argu
 <code>commonmark::markdown_*()</code> functions, and the <code>table</code> option is for the <code>table</code>
 extension in <strong>commonmark</strong>’s extensions.</p>
 <pre><code class="language-r">litedown::markdown_options()
-</code></pre>
-<pre><code>#&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
+#&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
 #&gt;  [4] &quot;-smartypants&quot;      &quot;-tagfilter&quot;        &quot;-toc&quot;             
 #&gt;  [7] &quot;+auto_identifiers&quot; &quot;+autolink&quot;         &quot;+cross_refs&quot;      
 #&gt; [10] &quot;+embed_cleanup&quot;    &quot;+embed_resources&quot;  &quot;+js_highlight&quot;    
 #&gt; [13] &quot;+js_math&quot;          &quot;+latex_math&quot;       &quot;+smart&quot;           
 #&gt; [16] &quot;+strikethrough&quot;    &quot;+subscript&quot;        &quot;+superscript&quot;     
 #&gt; [19] &quot;+table&quot;            &quot;+tasklist&quot;        
-</code></pre>
-<pre><code class="language-r"># commonmark's arguments
+# commonmark's arguments
 opts = formals(commonmark::markdown_html)
 opts = opts[setdiff(names(opts), c('text', 'extensions'))]
 unlist(opts)
-</code></pre>
-<pre><code>#&gt; hardbreaks      smart  normalize  sourcepos  footnotes 
+#&gt; hardbreaks      smart  normalize  sourcepos  footnotes 
 #&gt;      FALSE      FALSE      FALSE      FALSE      FALSE 
-</code></pre>
-<pre><code class="language-r"># commonmark's extensions
+# commonmark's extensions
 commonmark::list_extensions()
-</code></pre>
-<pre><code>#&gt; [1] &quot;table&quot;         &quot;strikethrough&quot; &quot;autolink&quot;      &quot;tagfilter&quot;    
+#&gt; [1] &quot;table&quot;         &quot;strikethrough&quot; &quot;autolink&quot;      &quot;tagfilter&quot;    
 #&gt; [5] &quot;tasklist&quot;     
 </code></pre>
 <h2 id="sec:templates"><span class="section-number">3.2</span> Templates</h2>
