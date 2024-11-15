@@ -87,4 +87,4 @@ jobs:
           git config user.name "Yihui Xie"
           git config user.email "xie@yihui.name"
           git add .
-          git commit -m "update docs" && git push || true
+          git commit -m "update docs" && git push && curl -X POST ${{secrets.URL_DEPLOY_DOCS}} || true
