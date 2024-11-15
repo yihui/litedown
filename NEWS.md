@@ -2,6 +2,8 @@
 
 - Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).
 
+- Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).
+
 - `pkg_manual()` will point out the name of the problematic Rd file when the Rd file fails to convert to HTML (thanks, @BSchamberger).
 
 - Dropped **knitr** and **rmarkdown** from the `Suggests` field in `DESCRIPTION`. Previously, **litedown** allowed `rmarkdown::render()` to use the output formats `litedown::html_format` and `litedown::latex_format`. Now `rmarkdown::render()` is no longer supported, and `litedown::fuse()` must be used instead.

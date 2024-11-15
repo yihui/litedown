@@ -764,6 +764,24 @@ fuse_code = function(x, blocks) {
       } else fenced_block(x, a, fence)
     }
   })
+
+  # collapse a code block without attributes into previous adjacent code block
+  if (isTRUE(opts$collapse) && (n <- length(res)) > 1) {
+    i1 = 1; k = NULL  # indices of elements to be removed from `out`
+    for (i in 2:n) {
+      if (i - i1 > 1) i1 = i - 1  # make sure blocks are adjacent
+      o1 = out[[i1]]; n1 = length(o1); e1 = o1[n1]
+      # previous block should have a closing fence ```+
+      if (n1 < 3 || !grepl('^```+$', e1)) next
+      o2 = out[[i]]
+      if (continue_block(o1[2], e1, head(o2, 2))) {
+        out[[i]] = c(o1[-n1], o2[-(1:2)])
+        k = c(k, i1)  # merge previous block into current and remove previous
+      }
+    }
+    if (length(k)) out = out[-k]
+  }
+
   a = opts$attr.chunk
   if (length(x$fences) == 2) {
     # add a class name to the chunk output so we can style it differently
@@ -797,6 +815,15 @@ lineno_attr = function(lang = NA, start = 1, auto = TRUE) c(
   if (!is.na(lang)) paste0('.', sub('^[rq]md$', 'md', tolower(lang))),
   '.line-numbers', if (auto) '.auto-numbers', sprintf('data-start="%d"', start)
 )
+
+# two blocks are continuous if first 2 elements of next block are '' and
+# previous block's closing or opening fence (after removing data-start attribute)
+continue_block = function(e1_open, e1_end, e2) {
+  if (length(e2) != 2 || e2[1] != '') return(FALSE)
+  if ((e2_open <- e2[2]) == e1_end) return(TRUE)
+  e3 = sub(' data-start="[0-9]+"', '', c(e1_open, e2_open))
+  e3[1] == e3[2]
+}
 
 new_source = function(x) xfun::new_record(x, 'source')
 new_warning = function(x) xfun::new_record(x, 'warning')
@@ -917,7 +944,7 @@ reactor = new_opts()
 reactor(
   eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
   warning = TRUE, message = TRUE, error = NA, include = TRUE,
-  strip.white = TRUE, order = 0,
+  strip.white = TRUE, collapse = FALSE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
   cache = FALSE, cache.path = NULL,
