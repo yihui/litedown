@@ -34,7 +34,7 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
 table {
   margin: auto; border-top: 1px solid #666;
   thead th { border-bottom: 1px solid #ddd; }
-  th, td { padding: 5px; }
+  th, td { padding: 5px; font-variant-numeric: tabular-nums; }
   thead, tfoot, tr:nth-child(even) { background: #eee; }
 }
 .table-full {

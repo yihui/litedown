@@ -1,4 +1,9 @@
-# Knitting, or Fusing {#chp:fuse}
+# Fusing, aka Knitting {#chp:fuse}
+
+> If you give someone a program, you will frustrate them for a day; if you teach
+> them how to program, you will frustrate them for a lifetime.
+>
+> ---David Leinweber
 
 R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function `litedown::fuse()` plays a role similar to

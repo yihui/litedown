@@ -113,9 +113,9 @@ R Markdown is rendered via `litedown::fuse()`, which is similar to
 
 The **commonmark** package follows the GFM (GitHub Flavored Markdown) spec,
 which can be seen as a subset of Pandoc's Markdown. Therefore the **litedown**
-package can be viewed as a small subset of the current R Markdown ecosystem (the
-latter is based on Pandoc). It aims at simplicity, lightweight, and speed, at
-the cost of giving up some advanced features. This package is intended for
+package can be viewed as a small subset of the existing R Markdown ecosystem
+(the latter is based on Pandoc). It aims at simplicity, lightweight, and speed,
+at the cost of giving up some advanced features. This package is intended for
 minimalists. Most users may prefer using tools based on Pandoc instead, such as
 **rmarkdown** or Quarto, which offer richer features.
 
@@ -125,24 +125,105 @@ some features are definitely not that simple. However, the point is that the
 core is simple and small, and you can enable or disable most features. What's
 more, you can implement features by yourself if you know CSS/JS.
 
+## Scope
+
+You can view **litedown** as a minimal (re-)implementation of some core packages
+in the existing R Markdown ecosystem, such as **rmarkdown** for reports,
+**xaringan** for slides, **bookdown** for books, **blogdown** for websites,
+**pkgdown** for R package sites, and **pagedown** for paged HTML documents.
+
+$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
+
+-   $R$ = **knitr** + **evaluate** + **rmarkdown** + **bookdown** +
+    **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
+    **distill**
+
+-   $D_i$ = (internal dependencies) **commonmark** + **xfun**
+
+-   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
+    Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
+
+-   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/misc.js)
+
+It is absolutely not the goal for **litedown** to become a substitute of tools
+based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not
+sure if you should choose **litedown** or **rmarkdown**/Quarto, you may want to
+choose the latter (especially Quarto).
+
+### Features out of scope
+
+Output formats besides HTML and LaTeX are unlikely to be supported.[^2] If other
+output formats are desired, you may use Pandoc to do the conversion.
+
+[^2]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
+    supported (thanks to the **commonmark** package), but perhaps they are not
+    very useful to average users.
+
+For tables, only pipe tables are supported. Other table formats are not
+recognized.
+
+At the moment, **litedown** mainly supports R as the computing language. Other
+languages might be added in the future, but please keep your expectation low,
+because the support is unlikely to be as good as R. Back in 2013, I experimented
+with a simple idea to run program code in other languages, and the outcome was
+the [**runr**](https://github.com/yihui/runr) package. However, I forsook
+simplicity after other sophisticated packages emerged, such as **reticulate**
+and **JuliaCall**. I may revisit the idea in the future.
+
+HTML widgets are not supported yet, but may be reimagined in the future with
+some minimal support. Meanwhile, you are free to add arbitrary JS libraries to
+your documents (@sec:arbitrary-assets), so it is entirely possible that you can
+create HTML widgets on your own.
+
 ## Highlights
 
 ### Small footprint
 
 Almost everything in **litedown** was written from scratch. The package is very
-lightweight. Currently, it has two dependencies, **commonmark** and **xfun**. It
-does not depend on **knitr** or Pandoc.
+lightweight, with only two R package dependencies: **commonmark** and **xfun**.
 
 It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions `mark()` and
 `fuse()` can be viewed as significantly trimmed-down versions of Pandoc and
 **knitr**, respectively.
 
-It is absolutely not the goal for **litedown** to become a substitute of tools
-based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not
-sure if you should choose **litedown** or **rmarkdown**/Quarto, you may want to
-choose the latter (especially Quarto). Some **litedown** features may be ported
-into **knitr** in the future.
+Just to give you a better idea about the "lightweight" (the numbers below refer
+to *uncompressed* software and source code as of today):
+
+-   As the Markdown converter, Pandoc 3.5 is about 180Mb, and **commonmark** is
+    about 1Mb on my macOS.
+
+-   Bootstrap's CSS is about 12,000 lines (plus 1500 lines of JS), and
+    **litedown**'s base CSS is about 100 lines (no JS).
+
+-   For paginating HTML documents,
+    [paged.js](https://cdn.jsdelivr.net/npm/pagedjs/) has 33,000+ lines of code,
+    and my naive implementation,
+    [pages.js](https://github.com/yihui/misc.js/blob/main/js/pages.js), has
+    about 400 lines (200 lines of JS and 200 lines of CSS).
+
+Admittedly, pursuing lightweight requires sacrifice in features and quality
+(e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
+the trade-off should be reasonable to those who prefer minimalism. With a 2Mb
+footprint (the total file size of **litedown**, **commonmark**, and **xfun**),
+you can:
+
+-   Write basic components of Pandoc's Markdown (@chp:syntax), including
+    headings, table of contents (TOC), lists, tables, pipe figures, code blocks,
+    quotes, fenced Divs, LaTeX math, footnotes, and citations, etc.
+
+-   Automatically number and cross-reference arbitrary elements
+    (@sec:cross-references), including but not limited to headings, figures,
+    tables, and equations.
+
+-   Perform computing with code chunks and inline code expressions (@chp:fuse).
+
+-   Create single-file reports/slides, or multiple-file books/websites
+    (@chp:sites).
+
+If you load additional JS/CSS assets, you can create more types of elements,
+such as folded code blocks, tabsets, side elements, sticky TOC, and callout
+blocks (@chp:assets).
 
 ### Live preview everything
 
@@ -312,22 +393,3 @@ more importantly, it is easier to inspect the differences between two versions
 of output (e.g., in Git). Every time when you update the source document, you
 can know more clearly what has changed in the output, which can help you avoid
 unexpected changes before publishing the output.
-
-### Features out of scope
-
-Output formats besides HTML and LaTeX are unlikely to be supported.[^2] If other
-output formats are desired, you may use Pandoc to do the conversion.
-
-[^2]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
-    supported (thanks to the **commonmark** package), but perhaps they are not
-    very useful to average users.
-
-For tables, only pipe tables are supported. Other table formats are not
-recognized.
-
-At the moment, **litedown** mainly supports R as the computing language. Other
-languages might be added in the future, but please keep your expectation low,
-because the support is unlikely to be as good as R.
-
-HTML widgets are not supported yet, but may be reimagined in the future with
-some minimal support.

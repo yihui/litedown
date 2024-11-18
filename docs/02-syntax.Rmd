@@ -1,5 +1,11 @@
 # Markdown Syntax {#chp:syntax}
 
+> All the tired horses in a run; how’m I gonna get any writing done!
+>
+> ---[Michael
+> Friendly](https://bsky.app/profile/datavisfriendly.bsky.social/post/3lapaume4m22k)
+> (and Bob Dylan)
+
 ## Basic syntax
 
 For the full list of supported document elements, please read the GFM spec.

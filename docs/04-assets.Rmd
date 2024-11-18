@@ -435,3 +435,32 @@ js: ["@key-buttons"]
 
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
+
+## Include arbitrary CSS/JS {#sec:arbitrary-assets}
+
+You can include arbitrary CSS frameworks and JS libraries in your documents, not
+limited to aforementioned ones in the GitHub repository `yihui/misc.js`. Below
+is a quick example of using the DataTables library to create interactive tables:
+
+```` md
+---
+title: Display Tables with the JS Library DataTables
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default", "@npm/datatables/media/css/jquery.dataTables.min.css"]
+      js: ["@npm/jquery/dist/jquery", "@npm/datatables/media/js/jquery.dataTables.min.js"]
+---
+
+::: {#mtcars-table}
+```{r}
+I(mtcars)
+```
+:::
+
+```{js}
+window.addEventListener('load', () => {
+  $('#mtcars-table table').DataTable();
+});
+```
+````
