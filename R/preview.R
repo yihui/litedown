@@ -119,12 +119,17 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     p = res$payload
     if (is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
       return(res)
-    res$payload = sub(
+    p = sub(
       '</head>', one_string(c(
         if (live) '<meta name="live-previewer" content="litedown::roam">',
-        gen_tags(asset_url(c('server.js', 'server.css'))), '</head>'
+        gen_tags(asset_url('server.css')), '</head>'
       )), p, fixed = TRUE
     )
+    p = sub(
+      '</body>', one_string(c(gen_tags(asset_url('server.js')), '</body>')), p,
+      fixed = TRUE
+    )
+    res$payload = p
     res
   }, ...)
 })
