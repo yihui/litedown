@@ -26,10 +26,12 @@
   if (fm && !fm.innerText) fm.remove();
   const chapters = d.querySelectorAll('div[data-source]');
   // add edit buttons for book chapters
-  chapters.forEach(el => {
+  chapters.length > 1 && chapters.forEach((el, i) => {
     const u = el.dataset.source;
-    u && !el.querySelector('.pencil') &&
-      el.insertAdjacentHTML('afterbegin', `<span class="buttons"><a href="?path=${u}" title="Open ${u}">✎</a></span>`);
+    if (!u || el.querySelector('.buttons')) return;
+    const u2 = Array((u.match(/\/+/g) || []).length).fill('../').join(''),
+      a2 = i === 0 ? '' : `<a href="${u2}${u}?preview=2" class="btn-lite run" title="Preview single chapter">⏵</a>`;
+    el.insertAdjacentHTML('afterbegin', `<span class="buttons">${a2}<a href="?path=${u}" class="btn-lite open pencil" title="Open ${u}">✎</a></span>`);
   });
   const nav = d.querySelector('.nav-path, .title h1');
   const btn = nav.querySelector('.buttons') || d.createElement('span');
