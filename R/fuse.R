@@ -675,10 +675,7 @@ fuse_code = function(x, blocks) {
 
   lab = opts$label
   lang = opts$engine
-  res = if (isFALSE(opts$eval)) {
-    len_src = length(x$source)
-    list(structure(new_source(x$source), lines = if (len_src) c(1L, len_src) else c(0L, 0L)))
-  } else {
+  res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
       new_warning(sprintf("The engine '%s' is not supported yet.", lang))
@@ -825,7 +822,10 @@ continue_block = function(e1_open, e1_end, e2) {
   e3[1] == e3[2]
 }
 
-new_source = function(x) xfun::new_record(x, 'source')
+new_source = function(x) {
+  len = length(x)
+  structure(xfun::new_record(x, 'source'), lines = if (len) c(1L, len) else c(0L, 0L))
+}
 new_warning = function(x) xfun::new_record(x, 'warning')
 new_plot = function(x) xfun::new_record(x, 'plot')
 new_asis = function(x) xfun::new_record(x, 'asis')
