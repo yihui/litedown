@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.5
 
+- Added a new engine `embed` to embed text files via a code chunk.
+
 - Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).

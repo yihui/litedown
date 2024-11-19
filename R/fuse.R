@@ -678,11 +678,18 @@ fuse_code = function(x, blocks) {
   res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
-      new_warning(sprintf("The engine '%s' is not supported yet.", lang))
+      new_warning(sprintf("The engine '%s' is not supported.", lang))
     )
   }
 
   if (!opts$include) return('')
+
+  # if the engine result contains new chunk options, apply the new options, and
+  # make sure they will be properly restored via `old` on exit
+  if (length(opts_new <- attr(res, 'options'))) {
+    old2 = reactor(opts_new)
+    for (i in setdiff(names(old2), names(old))) old[i] = old2[i]
+  }
 
   # decide the number of backticks to wrap up output
   fence = xfun::make_fence(c(unlist(res), x$fences))
@@ -826,6 +833,7 @@ new_source = function(x) {
   len = length(x)
   structure(xfun::new_record(x, 'source'), lines = if (len) c(1L, len) else c(0L, 0L))
 }
+new_output = function(x) xfun::new_record(x, 'output')
 new_warning = function(x) xfun::new_record(x, 'warning')
 new_plot = function(x) xfun::new_record(x, 'plot')
 new_asis = function(x) xfun::new_record(x, 'asis')
@@ -1007,6 +1015,25 @@ eng_mermaid = function(x, inline = FALSE, ...) {
   }
 }
 
+# embed a file verbatim
+eng_embed = function(x, ...) {
+  s = x$source; opts = reactor()
+  # if chunk option `file` is empty, use source code as the list of files
+  if (is.null(f <- opts$file)) {
+    f = gsub('^["\']|["\']$', '', s)  # in case paths are quoted
+    if (length(f) == 0) return()
+    s = xfun::read_all(f)
+  }
+  opts_new = list(comment = NULL)  # don't comment out file content
+  # use the filename extension as the default language name
+  if (is.null(opts$attr.output) && nchar(lang <- file_ext(f[1])) > 1) {
+    lang = sub('^R', '', lang)  # Rmd -> md, Rhtml -> html, etc.
+    if (lang == 'nw') lang = 'tex'
+    opts_new$attr.output = paste0('.', lang)
+  }
+  structure(list(new_output(s)), options = opts_new)
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -1030,7 +1057,7 @@ eng_mermaid = function(x, inline = FALSE, ...) {
 #' litedown::engines()  # built-in engines
 engines = new_opts()
 engines(
-  r = eng_r, md = eng_md, mermaid = eng_mermaid,
+  r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
   css = function(x, ...) eng_html(x, '<style type="text/css">', '</style>', ...),
   js = function(x, ...) eng_html(x, '<script>', '</script>', ...)
 )

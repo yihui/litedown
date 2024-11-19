@@ -238,6 +238,63 @@ output:
 ```
 ````
 
+### The embed engine
+
+The `embed` engine can be used to embed text files verbatim in the output. You
+can pass the file paths to the chunk option `file` or write the paths in the
+chunk body (with optional quotes), e.g.,
+
+```` md
+```{embed, file="foo.txt"}
+```
+
+```{embed}
+"foo.txt"
+```
+````
+
+You can use multiple paths in either case, e.g.,
+
+```` md
+```{embed, file=c("foo.txt", "bar.R")}
+```
+
+```{embed}
+"foo.txt"
+bar.R
+```
+````
+
+The content of the file(s) will be included in a fenced code block in the
+output. For example, if `foo.txt` contains a single line "hello world", the
+output will be:
+
+```` md
+``` {.txt}
+hello world
+```
+````
+
+By default, the language name of the code block is from the file extension. You
+can use the chunk option `attr.output` to customize the name, e.g.,
+
+```` md
+```{embed, file="foo.txt", attr.output=".md"}
+```
+````
+
+Then the output will be in a Markdown (`.md`) block:
+
+```` md
+``` {.md}
+hello world
+```
+````
+
+You can use the chunk option `results = "hide"` to hide the output, or
+`results = "asis"` to output the file content as is (i.e., not wrapping it in a
+code block).
+
 ## Comparison to **knitr**
 
 Major differences between **knitr** and **litedown** include:
