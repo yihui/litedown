@@ -91,6 +91,8 @@
       // only check assets served by local server
       if (a && u && !(u.startsWith(location.origin) && u.includes('/custom/litedown/')))
         return;
+      // ignore plots under *__files/
+      if (u && u.includes('__files/')) return;
       if (el.dataset.wait) return;
       el.dataset.wait = 1;  // don't send another request while waiting
       new_req(u, q ? (a ? 'asset' : `book:${el.dataset[s]}`) : 'page', e => {
