@@ -214,7 +214,12 @@ file_resp = function(x, preview) {
     info = proj_info(x)
     list(payload = switch(
       info$type,
-      book = fuse_book(if (info$index) info$root else x, full_output, globalenv()),
+      book = {
+        # store cross-refs because the book may be partially rendered (in which
+        # case we can't resolve refs to other chapters)
+        .env$current_book = info$root; on.exit(.env$current_book <- NULL, add = TRUE)
+        fuse_book(if (info$index) info$root else x, full_output, globalenv())
+      },
       site = fuse_site(x),
       if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
     ))

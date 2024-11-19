@@ -20,11 +20,12 @@ knit: litedown:::knit
 ## Live preview
 
 Unless it has become your muscle memory to click on the `Knit` button in
-RStudio, you may try to switch to `litedown::roam()` to preview your HTML
-output. Note that the preview takes place *in memory only*. Although you see an
-HTML page rendered from a file in the preview, the page is not rendered to disk,
-unless you click on the render button (@sec:the-buttons), or call
-`litedown::fuse()` (@chp:fuse) or `mark()` (@chp:mark) on the file.
+RStudio, you may try to switch to `litedown::roam()` to preview your HTML output
+by clicking on the `run` buttons in the user interface. Note that the preview
+takes place *in memory only*. Although you see an HTML page rendered from a file
+in the preview, the page is not rendered to disk, unless you click on the
+`render` button (@sec:the-buttons), or call `litedown::fuse()` (@chp:fuse) or
+`mark()` (@chp:mark) on the file.
 
 ### Live reload
 

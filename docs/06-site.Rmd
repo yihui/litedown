@@ -38,6 +38,39 @@ use `.md` or `.R` files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 `$input$`, which is the path of each input file.
 
+### Previewing a single chapter
+
+Rendering a whole book may be time-consuming[^06-site-1] and unnecessary when
+you work on a book. It may be easier to only preview the single chapter that you
+currently work on. The preview can be done with `litedown::roam()`:
+
+[^06-site-1]: Remember that you can cache time-consuming code chunks to make the
+    rendering faster.
+
+-   If you run the index file (e.g., `index.Rmd`), the whole book will be
+    previewed.
+
+-   If you run other chapter files, only the specific chapter is previewed.
+
+When a chapter contains dependencies on certain elements in other chapters
+(e.g., a chapter includes cross-references to other chapters), we recommend that
+you run the index file to preview the whole book at least once before you
+preview individual chapters, to make **litedown** know the book elements fully.
+
+Similarly, if you use the configuration `new_session: false` to render all
+chapters in the same R session, and a later chapter uses computed results from a
+previous chapter, you will need to preview the full book at least once to make
+sure the results are computed and exist in the R session.
+
+You may also choose to run the index file to preview the whole book but then
+work on an individual chapter. In this case, `roam()` will try to detect changes
+in chapter files. When a certain chapter file has been updated, its output on
+the full book page will be updated. That is, the full book page is *partially*
+updated without being reloaded. This method lets you preview changes in one
+chapter while presenting the whole book. However, please note that certain JS
+libraries may not work well in this preview mode. When in doubt, refresh the
+page.
+
 ### R package documentation
 
 R package developers can build the full package documentation as a book. A

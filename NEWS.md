@@ -4,6 +4,8 @@
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).
 
+- Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a singe chapter.
+
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/misc.js@5e06d19.
 
 - `pkg_manual()` will point out the name of the problematic Rd file when the Rd file fails to convert to HTML (thanks, @BSchamberger).

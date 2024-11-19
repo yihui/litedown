@@ -30,7 +30,7 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
 .box > :first-child > p:first-child, .box > :last-child > p:last-child { padding: 1em; }
 .box > :first-child, .box > :first-child > p:first-child { margin-top: 0; }
 .box > :last-child, .box > :last-child > p:last-child { margin-bottom: 0; }
-.figure > p:has(img) { text-align: center; }
+.figure > :is(p:has(img), pre:has(svg)) { text-align: center; }
 table {
   margin: auto; border-top: 1px solid #666;
   thead th { border-bottom: 1px solid #ddd; }
