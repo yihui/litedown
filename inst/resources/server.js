@@ -23,7 +23,7 @@
   }
   // remove empty frontmatter
   const fm = d.querySelector('.frontmatter');
-  if (fm && !fm.innerText) fm.remove();
+  fm && !fm.innerText.trim() && fm.remove();
   const chapters = d.querySelectorAll('div[data-source]');
   // add edit buttons for book chapters
   chapters.length > 1 && chapters.forEach((el, i) => {
@@ -121,6 +121,7 @@
   }
   function update_chapter(el, html) {
     const w = d.createElement('div'); w.innerHTML = html;
+    w.querySelector('#TOC')?.remove();
     // current chapter number
     const n = el.querySelector('.section-number')?.innerText.replace(/^([0-9A-Z]+).*/, '$1');
     // change the leading 1 to n in section numbers
