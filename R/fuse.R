@@ -853,8 +853,10 @@ exec_inline = function(x) {
   o = reactor(x$options); on.exit(reactor(o), add = TRUE)
   if (isFALSE(reactor('eval'))) return('')
   lang = x$options$engine
-  if (is.function(eng <- engines(lang))) eng(x, inline = TRUE) else {
-    warning("The inline engine '", lang, "' is not supported yet")
+  if (is.function(eng <- engines(lang))) {
+    one_string(eng(x, inline = TRUE))
+  } else {
+    warning("The inline engine '", lang, "' is not supported.")
     sprintf('`{%s} %s`', lang, x$source)
   }
 }
