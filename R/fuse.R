@@ -646,9 +646,7 @@ fuse_code = function(x, blocks) {
     if (is_lang(o <- opts[[i]])) delayedAssign(i, eval(o, fuse_env()), environment(), opts)
   })
   # set the working directory before evaluating anything else
-  if (is.character(opts$wd)) {
-    owd = setwd(opts$wd); on.exit(setwd(owd), add = TRUE)
-  }
+  change_wd(opts$wd)
 
   # fuse child documents (empty the `child` option to avoid infinite recursion)
   if (length(opts$child)) return(uapply(reactor(child = NULL)$child, function(.) {
@@ -798,6 +796,13 @@ fuse_code = function(x, blocks) {
   out
 }
 
+# temporarily change the working directory inside a function call
+change_wd = function(dir) {
+  if (is.character(dir)) {
+    owd = setwd(dir); xfun::exit_call(function() setwd(owd))
+  }
+}
+
 # add caption to an element (e.g., figure/table)
 add_cap = function(x, cap, lab, pos, env, type = 'fig') {
   if (length(cap) == 0 || length(lab) == 0) return(x)
@@ -851,7 +856,9 @@ fuse_text = function(x) {
 exec_inline = function(x) {
   save_pos(x$pos)
   o = reactor(x$options); on.exit(reactor(o), add = TRUE)
-  if (isFALSE(reactor('eval'))) return('')
+  opts = reactor()
+  if (isFALSE(opts$eval)) return('')
+  change_wd(opts$wd)
   lang = x$options$engine
   if (is.function(eng <- engines(lang))) {
     one_string(eng(x, inline = TRUE))
