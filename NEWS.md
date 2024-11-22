@@ -6,6 +6,8 @@
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).
 
+- Added support for the chunk option `fig.dim`, which is a shortcut for `fig.width` and `fig.height`.
+
 - Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a singe chapter.
 
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/misc.js@5e06d19.

@@ -966,7 +966,7 @@ reactor(
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
   cache = FALSE, cache.path = NULL,
   dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
-  fig.width = 7, fig.height = 7, fig.cap = NULL, fig.alt = NULL, fig.env = '.figure',
+  fig.width = 7, fig.height = 7, fig.dim = NULL, fig.cap = NULL, fig.alt = NULL, fig.env = '.figure',
   tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
@@ -988,12 +988,13 @@ eng_r = function(x, inline = FALSE, ...) {
     'cache', 'print', 'print.args', 'verbose'
   )
   if (is.character(args$fig.path)) args$fig.path = paste0(args$fig.path, opts$label)
+  size = list(width = opts$fig.width, height = opts$fig.height)
+  # if fig.dim is provided, override fig.width and fig.height
+  if (length(dm <- opts$fig.dim) == 2) size[] = as.list(dm)
   # map chunk options to record() argument names
   names(args)[1:2] = c('dev.path', 'dev.ext')
   args = dropNULL(args)
-  args$dev.args = merge_list(
-    list(width = opts$fig.width, height = opts$fig.height), opts$dev.args
-  )
+  args$dev.args = merge_list(size, opts$dev.args)
   args$cache = list(
     path = if (args$cache) opts$cache.path, vars = opts$cache.vars,
     hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
