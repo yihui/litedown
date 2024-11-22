@@ -976,7 +976,7 @@ eng_r = function(x, inline = FALSE, ...) {
   }
   args = reactor(
     'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
-    'cache', 'print', 'print.args'
+    'cache', 'print', 'print.args', 'verbose'
   )
   if (is.character(args$fig.path)) args$fig.path = paste0(args$fig.path, opts$label)
   # map chunk options to record() argument names
@@ -990,8 +990,6 @@ eng_r = function(x, inline = FALSE, ...) {
     hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
     id = opts$label, rw = opts$cache.rw
   )
-  # support eval = 1, 2, 3 (pass to the 'verbose' argument of record())
-  if (is.numeric(opts$eval)) args$verbose = opts$eval - 1
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 
