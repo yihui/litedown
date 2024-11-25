@@ -833,7 +833,9 @@ add_cap = function(x, cap, lab, pos, env, type = 'fig') {
 # if original chunk header contains multiple curly braces (e.g., ```{{lang}}),
 # include chunk fences in the output (and also pipe comments if exist)
 add_fences = function(out, x, fence) {
-  fences = list(c(x$fences[1], x$comments), x$fences[2])
+  # remove last line of pipe comments if empty
+  if ((n <- length(o <- x$comments)) > 1 && o[n] == '') o = o[-n]
+  fences = list(c(x$fences[1], o), x$fences[2])
   append(lapply(fences, fenced_block, c('.md', '.code-fence'), fence), out, 1)
 }
 
