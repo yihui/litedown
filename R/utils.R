@@ -655,6 +655,8 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
 }
 
 str_trim = function(x) gsub('^\\s+|\\s+$', '', x)
+# trim blank lines from both ends
+trim_blank = function(x) gsub('^(\\s*\n)+|\n\\s*$', '', x)
 
 # {A}, '', {B}, {C}, '', '' -> \begin{A}\end{A}\begin{B}\begin{C}\end{C}\end{B}
 latex_envir = function(x, env = NULL) {

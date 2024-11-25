@@ -743,7 +743,7 @@ fuse_code = function(x, blocks) {
       if (!opts$echo) return()
       l2 = attr(x, 'lines')[1]  # starting line number of a code block
       x = one_string(x)
-      if (opts$strip.white) x = str_trim(x)
+      if (opts$strip.white) x = trim_blank(x)
     }
     asis = if (type %in% c('output', 'asis')) {
       if (opts$results == 'hide') return()
