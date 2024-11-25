@@ -4,6 +4,9 @@ book:
 
 output:
   litedown::html_format:
+    options:
+      toc:
+        depth: 4
     meta:
       css: ["@default", "@article", "@book", "@copy-button", "@heading-anchor", "@key-buttons", "@callout", "@pages"]
       js: ["@sidenotes", "@appendix", "@toc-highlight", "@copy-button", "@external-link", "@heading-anchor", "@right-quote", "@key-buttons", "@callout", "@pages"]

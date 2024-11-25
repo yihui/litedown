@@ -1,0 +1,21 @@
+---
+title: The graphics device
+---
+
+The default (png) device with a higher resolution:
+
+```{r}
+#| chunk-a, dev.args = list(res = 96),
+#| fig.alt = 'png with a resolution of 96 ppi'
+
+plot(cars)
+```
+
+The `svg` device with a background color:
+
+```{r}
+#| chunk-b, dev = 'svg', dev.args = list(bg = 'lightyellow'),
+#| fig.alt = 'svg with a lightyellow background'
+
+plot(cars)
+```

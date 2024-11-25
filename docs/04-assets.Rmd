@@ -99,7 +99,7 @@ external CSS file (via the `css` meta variable) or just embedding CSS in the
 document body, e.g.,
 
 ```` md
-```{css, echo=FALSE}
+```{css, echo = FALSE}
 body {
   font-family: Palatino, "Book Antiqua", Georgia, serif;
   font-size: 1em;
@@ -185,8 +185,8 @@ chunk, e.g.,
 ```` markdown
 ::: {.fullwidth}
 ```{r}
-#| sunspots, echo=FALSE, fig.dim=c(14, 4),
-#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+#| sunspots, echo = FALSE, fig.dim = c(14, 4),
+#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
 par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
 plot(sunspots, col = 'red')
 grid()
@@ -200,8 +200,8 @@ e.g.,
 
 ```` md
 ```{r}
-#| sunspots, fig.dim=c(14, 4), fig.env='.fullwidth .figure .box',
-#| fig.cap='Monthly mean relative sunspot numbers from 1749 to 1983.'
+#| sunspots, fig.dim = c(14, 4), fig.env = '.fullwidth .figure .box',
+#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
 par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
 plot(sunspots, col = 'red')
 grid()
@@ -241,7 +241,7 @@ article body. You can use the extra space to explain the embedded element with
 text.
 
 ::: embed-right
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 mtcars[1:4, 1:8]
 ```
 :::
@@ -281,7 +281,7 @@ js: ["@callout"]
 
 For example:
 
-```{md, attr.asis='.callout-output'}
+```{md, attr.asis = '.callout-output'}
 ::: callout-tip
 This is a tip.
 

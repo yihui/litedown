@@ -1,0 +1,32 @@
+---
+title: Decorating figures
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default", "@article"]
+      js: ["@sidenotes"]
+---
+
+Place two plots side by side via the `width` attribute:
+
+```{r}
+#| chunk-a, attr.plot = 'width="45%"',
+#| fig.alt = c('a histogram', 'a sunflower plot'),
+#| fig.cap = 'Exploring the faithful dataset.',
+#| fig.env = '.figure .box'
+
+hist(faithful$eruptions, main = '', border = 'white')
+sunflowerplot(faithful)
+```
+
+A full-width figure (requires the `@article` CSS):
+
+```{r}
+#| chunk-b, fig.dim = c(14, 4), fig.env = '.figure .fullwidth',
+#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
+```
+
+Feel free to experiment with other class names provided by the `@article` CSS, such as `.side .side-right` or `.embed-right` in addition to `.fullwidth`.

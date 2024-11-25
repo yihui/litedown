@@ -268,7 +268,7 @@ e.g., the `hardbreaks` option is for the `hardbreaks` argument of
 extension in **commonmark**'s extensions.
 
 ```{r}
-#| collapse=TRUE
+#| collapse = TRUE
 
 litedown::markdown_options()
 # commonmark's arguments
@@ -378,7 +378,7 @@ shows the values of the underscore variables, assuming the original value of a
 variable is `TEXT`:
 
 | Variables | HTML | LaTeX |
-|---------------------------|---------------------------|---------------------------|
+|----|----|----|
 | `$title_$` | `<div class="title"> <h1>TEXT</h1> </div>` | `\title{TEXT}` |
 | `$subtitle_$` | `<div class="subtitle"> <h2>TEXT</h2> </div>` | `\subtitle{TEXT}` |
 | `$author_$` | `<div class="author"> <h2>TEXT</h2> </div>` | `\author{TEXT}` |
@@ -461,7 +461,7 @@ templates:
 
 The following variables are for HTML templates:
 
-#### **The `css` variable**
+#### The `css` variable
 
 A vector of CSS files to be included in the output. The default value is
 `litedown:::pkg_file('resources', 'default.css')`.

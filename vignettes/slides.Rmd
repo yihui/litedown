@@ -151,7 +151,7 @@ code chunk:
 
 ```` markdown
 ```{css}
-#| echo=FALSE
+#| echo = FALSE
 
 /* your CSS rules */
 ```
@@ -458,7 +458,7 @@ cannot be broken. Below is a toy example (the output block cannot be split onto
 two slides):
 
 ```{r}
-#| comment=''
+#| comment = ''
 
 cat(1:10, sep = "\n")
 ```

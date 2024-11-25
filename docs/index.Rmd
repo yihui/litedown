@@ -4,8 +4,35 @@ author: "Yihui Xie"
 date: "`{r} Sys.Date()`"
 ---
 
-```{r, include=FALSE}
+```{r, include = FALSE}
 options(width = 80)
+
+# return an example file in fenced Div
+.ex = function(n, ext = '.Rmd', class = if (ext == '.Rmd') 'example' else 'output', last = NA) {
+  f = Sys.glob(sprintf('../examples/%03d*', n))
+  f = f[endsWith(f, ext)]
+  if (length(f) != 1) stop('cannot find the example ', n)
+  x = xfun::read_utf8(f)
+  i = which(x == '<!-- ... -->')[1]
+  if (ext == '.Rmd') {
+    if (!is.na(i)) x = x[-(i + 0:1)]
+  } else {
+    partial = TRUE
+    if (!is.na(last)) x = tail(x, last) else {
+      if (!is.na(i)) x = x[-(1 + 0:i)] else partial = FALSE
+    }
+    if (partial) x = c(rep('.', 3), x)
+  }
+  x = litedown:::trim_blank(paste(x, collapse = '\n'))
+  x = xfun::fenced_block(x, sub('^R(.+)', '\\1', ext))
+  xfun::fenced_div(x, sprintf('.callout-%s', class))
+}
+```
+
+```{css, echo = FALSE}
+.pagesjs #TOC > ul > li > ul > li > ul > li > ul {
+  display: none;
+}
 ```
 
 # Preface {.unnumbered}
@@ -229,7 +256,7 @@ blocks (@chp:assets).
 
 To get started, run `litedown::roam()` and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as `.md`, `.Rmd`, and
-`.R` files.
+`.R` files (@sec:live-preview).
 
 The rendering takes place in memory, which means it will not render `.html`
 files on your disk, unless you request so. The page will be automatically
@@ -285,7 +312,7 @@ Feel free to comment out anything, such as a code chunk:
 ### Versioned CSS/JS assets
 
 By default, **litedown** produces bare minimal HTML output, but many features
-can be enabled by adding CSS/JS assets (see @chp:assets). You can freely choose
+can be enabled by adding CSS/JS assets (@chp:assets). You can freely choose
 whatever versions that work for you to avoid potential future breakage when the
 assets are upgraded. The assets are not bundled in the **litedown** package, but
 hosted on CDN, so updating **litedown** will not update your assets.
@@ -298,21 +325,21 @@ are not satisfied with the original version.
 
 ### Chunk options management
 
-Chunk options are managed by an environment, i.e., `litedown::reactor()`. Using
-an environment (as compared to a list like **knitr**'s `opts_chunk`) means you
-can access the up-to-date chunk options anywhere, because environments in R are
-mutable. I cannot explain how awkward **knitr**'s `opts_current` has been. It is
-basically a lie—chunk options that you get from `opts_current` are not
-necessarily "current".
+Chunk options are managed by an environment, i.e., `litedown::reactor()`
+(@sec:reactor). Using an environment (as compared to a list like **knitr**'s
+`opts_chunk`) means you can access the up-to-date chunk options anywhere,
+because environments in R are mutable. I cannot explain how awkward **knitr**'s
+`opts_current` has been. It is basically a lie—chunk options that you get from
+`opts_current` are not necessarily "current".
 
 ### Non-linear order of execution
 
 A document does not have to be compiled in the linear order. With the chunk
 option `order`, you can specify code chunks and inline code expressions to be
-executed in an arbitrary order. For example, if you have an abstract in the
-beginning of a document, and the abstract needs to use a number calculated at
-the end of the document, you can let the abstract be compiled in the end,
-although it appears earlier in the document.
+executed in an arbitrary order (@sec:option-order). For example, if you have an
+abstract in the beginning of a document, and the abstract needs to use a number
+calculated at the end of the document, you can let the abstract be compiled in
+the end, although it appears earlier in the document.
 
 I guess some users may want to kill me upon knowing this feature, and some may
 send me flowers (although I'm not sure if they want to thank me or prepare the
@@ -326,16 +353,17 @@ detriment reproducibility.
 ### Time code chunks
 
 If you want to figure out which code chunks are time-consuming, simply set the
-chunk option `litedown::reactor(time = TRUE)` in the beginning, and put
-`litedown::timing_data()` in the last code chunk. It will tell you detailed
-information. In the `roam()` preview, the data will also contain links to
-specific lines of code chunks, so you click to jump to a specific code chunk.
+chunk option `litedown::reactor(time = TRUE)` (@sec:option-time) in the
+beginning, and put `litedown::timing_data()` in the last code chunk. It will
+tell you detailed information. In the `roam()` preview, the data will also
+contain links to specific lines of code chunks, so you click to jump to a
+specific code chunk.
 
 ### Table output for data frames by default
 
 Rectangular objects such as data frames (including tibbles) and matrices are
-printed as tables by default, and the number of rows is limited to 10 by default
-to avoid generating huge tables by accident.
+printed as tables by default (@sec:option-tab), and the number of rows is
+limited to 10 by default to avoid generating huge tables by accident.
 
 ### Relieved pain of paths
 
@@ -352,7 +380,7 @@ output; if you pass text input, you get text output.
 
 You can feel more confident with using the chunk option `cache = TRUE` in
 **litedown** than in **knitr**. The new cache system is more robust and
-intelligent.
+intelligent (@sec:option-cache).
 
 ### A book is a single HTML file
 
@@ -374,9 +402,9 @@ lazy-load images to make the book load faster.
 
 ### R scripts as first-class citizens
 
-An R script has the same status as an R Markdown document. You can write
-Markdown in `#'` comments, and chunk options in `#|` comments (both are
-optional). These are the only two rules to remember. Compared to
+An R script has the same status as an R Markdown document (@sec:r-scripts). You
+can write Markdown in `#'` comments, and chunk options in `#|` comments (both
+are optional). These are the only two rules to remember. Compared to
 `knitr::spin()`, the rules are much simpler. Besides, R scripts are also
 carefully parsed into "code chunks", so their line numbers work as well as R
 Markdown's line numbers.

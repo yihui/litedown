@@ -86,31 +86,31 @@ the appendix (@sec:appendices):
 
 # Package Metadata
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 litedown::pkg_desc()
 ```
 
 To cite the package:
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 litedown::pkg_citation()
 ```
 
 # News
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 litedown::pkg_news(recent = 0)  # show full news
 ```
 
 # Manual pages
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 litedown::pkg_manual()
 ```
 
 # Source code
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 litedown::pkg_code()
 ```
 ````

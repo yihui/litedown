@@ -1,0 +1,17 @@
+---
+title: Custom execution order
+abstract: "We analyzed `{r, order = N + 1} nrow(x)` `{r} n_cyl`-cylinder cars, with an average MPG of `{r} m`."
+---
+
+Subset the data:
+
+```{r}
+n_cyl = 8
+x = subset(mtcars, cyl == n_cyl)
+```
+
+The average MPG `{r} m` is calculated from:
+
+```{r, order = i - 1.5}
+m = mean(x$mpg)
+```

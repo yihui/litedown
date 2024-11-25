@@ -66,7 +66,7 @@ the computing (e.g., via caching).
 
 ### The buttons
 
-```{css, echo=FALSE}
+```{css, echo = FALSE}
 .larger { font-size: 1.5em; }
 ```
 

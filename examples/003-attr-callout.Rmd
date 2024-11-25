@@ -1,0 +1,18 @@
+---
+title: Create a callout via the option `attr.chunk`
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default", "@callout"]
+      js: ["@callout"]
+---
+
+If you use the class name `.callout-*` on a chunk, you can turn it into a callout, e.g.,
+
+```{r}
+#| attr.chunk = '.callout-example'
+
+1 + 1
+```
+
+Remember to load the `callout` CSS/JS assets in YAML.

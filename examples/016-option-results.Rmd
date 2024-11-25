@@ -1,0 +1,19 @@
+---
+title: Text output
+---
+
+Default verbatim output:
+
+```{r, test-out}
+cat('Hello _world_!\n')
+```
+
+Hide output:
+
+```{r, test-out, results = FALSE}
+```
+
+Output as is:
+
+```{r, test-out, results = 'asis'}
+```

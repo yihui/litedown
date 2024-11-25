@@ -1,0 +1,22 @@
+---
+title: Printing verbosity
+---
+
+Default `verbose = 0`:
+
+```{r, test}
+1:5  # a visible value
+x = 1 + 1  # invisible
+for (i in 1:10) i^2  # for loop returns invisible NULL
+y = x^2  # invisible
+```
+
+`verbose = 1` always prints the last value:
+
+```{r, test, verbose = 1}
+```
+
+`verbose = 2` prints all invisible values (except for `NULL`):
+
+```{r, test, verbose = 2}
+```

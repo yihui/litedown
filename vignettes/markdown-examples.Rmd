@@ -12,6 +12,6 @@ vignette: >
 This vignette shows some examples for different Markdown rendering options.
 
 ```{r}
-#| render-options, tidy=FALSE,
-#| file=litedown:::pkg_file('examples', 'render-options.R'), comment=''
+#| render-options,
+#| file = litedown:::pkg_file('examples', 'render-options.R'), comment = ''
 ```
