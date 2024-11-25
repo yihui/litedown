@@ -4,7 +4,6 @@ title: The area of a circle
 
 Define the radius of a circle as `x`:
 
-
 ``` {.r}
 x = 1 + 1
 x

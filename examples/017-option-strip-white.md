@@ -6,7 +6,6 @@ Keep blank lines at the beginning/end:
 
 <!-- ... -->
 
-
 ``` {.r}
 
 # a blank line above

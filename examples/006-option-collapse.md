@@ -4,7 +4,6 @@ title: Collapse source code and text output
 
 By default, the source and output are in separate blocks:
 
-
 ``` {.r}
 x = 1 + 1
 x
@@ -23,7 +22,6 @@ x + 2
 ```
 
 Set `collapse = TRUE` to collapse them:
-
 
 ``` {.r}
 x = 1 + 1

@@ -9,7 +9,6 @@ output:
 
 Place two plots side by side via the `width` attribute:
 
-
 ``` {.r}
 hist(faithful$eruptions, main = '', border = 'white')
 sunflowerplot(faithful)
@@ -27,7 +26,6 @@ Exploring the faithful dataset.
 ::::
 
 A full-width figure (requires the `@article` CSS):
-
 
 ``` {.r}
 par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)

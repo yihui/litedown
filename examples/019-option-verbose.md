@@ -4,7 +4,6 @@ title: Printing verbosity
 
 Default `verbose = 0`:
 
-
 ``` {.r}
 1:5  # a visible value
 ```
@@ -20,7 +19,6 @@ y = x^2  # invisible
 ```
 
 `verbose = 1` always prints the last value:
-
 
 ``` {.r}
 1:5  # a visible value
@@ -41,7 +39,6 @@ y = x^2  # invisible
 ```
 
 `verbose = 2` prints all invisible values (except for `NULL`):
-
 
 ``` {.r}
 1:5  # a visible value

@@ -4,7 +4,6 @@ title: Caption position
 
 ## Default caption positions
 
-
 ``` {.r}
 plot(cars)
 ```
@@ -18,7 +17,6 @@ plot(cars)
 Bottom figure caption.
 :::
 ::::
-
 
 ``` {.r}
 cars
@@ -49,7 +47,6 @@ Top table caption.
 
 ## Change the positions
 
-
 ``` {.r}
 plot(cars)
 ```
@@ -63,7 +60,6 @@ Top figure caption.
 
 ![Top figure caption.](<004-caption-position__files/fig-top-1.png>)
 ::::
-
 
 ``` {.r}
 cars

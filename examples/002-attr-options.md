@@ -10,7 +10,6 @@ title: The `attr.*` chunk options
 
 4. Add two classes `.dark` and `.img-center` to the second plot.
 
-
 ::: {#example-a}
 
 ``` {.line-numbers}
@@ -27,7 +26,6 @@ sunflowerplot(i34, add = TRUE)
 :::
 
 Define CSS rules for the classes in the `#example-a` chunk:
-
 
 ```` {.css}
 #example-a {

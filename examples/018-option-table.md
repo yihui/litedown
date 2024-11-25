@@ -6,7 +6,6 @@ See @tab:simple.
 
 <!-- ... -->
 
-
 ``` {.r}
 head(cars, 3)
 ```

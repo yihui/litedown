@@ -4,7 +4,6 @@ title: The `code` option
 
 Define a code template `tpl`:
 
-
 ``` {.r}
 tpl    = 'lm(mpg ~ %s, data = mtcars) |> summary() |> coef()'
 x_vars = names(mtcars)[2:4]
@@ -13,7 +12,6 @@ x_vars = names(mtcars)[2:4]
 We run regressions on three variables one by one:
 
 <!-- ... -->
-
 
 ``` {.r}
 lm(mpg ~ cyl, data = mtcars) |> summary() |> coef()

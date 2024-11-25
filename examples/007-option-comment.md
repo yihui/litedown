@@ -4,7 +4,6 @@ title: The `comment` option
 
 Use `#-> ` to comment out text output:
 
-
 ``` {.r}
 matrix(1:12, 3)
 ```
@@ -17,7 +16,6 @@ matrix(1:12, 3)
 ```
 
 Do not comment out text output:
-
 
 ``` {.r}
 matrix(1:12, 3)

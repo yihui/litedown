@@ -4,7 +4,6 @@ title: Print objects
 
 Print objects with `base::print()`, and use different arguments for different objects.
 
-
 ``` {.r}
 X = c('a', 'b', 'c', 'c', 'c', 'a')
 Y = factor(c('A', 'B', 'C', 'C', 'D', 'E'))

@@ -9,7 +9,6 @@ output:
 
 If you use the class name `.callout-*` on a chunk, you can turn it into a callout, e.g.,
 
-
 ::: {.callout-example}
 
 ``` {.r}

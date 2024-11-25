@@ -806,6 +806,10 @@ fuse_code = function(x, blocks) {
   }
   out = unlist(out)
   if (!is.null(a)) out = fenced_div(out, a)
+  # if first line of chunk output is empty, remove it (the chunk should have had
+  # an empty line before it in the source)
+  if (length(out) && out[1] == '') out = out[-1]
+  # add prefix (possibly indentation and > quote chars)
   if (!is.null(x$prefix)) out = gsub('^|(?<=\n)', x$prefix, out, perl = TRUE)
   out
 }

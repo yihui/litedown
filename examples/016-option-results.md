@@ -4,7 +4,6 @@ title: Text output
 
 Default verbatim output:
 
-
 ``` {.r}
 cat('Hello _world_!\n')
 ```
@@ -15,13 +14,11 @@ cat('Hello _world_!\n')
 
 Hide output:
 
-
 ``` {.r}
 cat('Hello _world_!\n')
 ```
 
 Output as is:
-
 
 ``` {.r}
 cat('Hello _world_!\n')
