@@ -735,6 +735,9 @@ fuse_code = function(x, blocks) {
   if (pn && length(cap)) res = c(xfun:::merge_record(p1), list(new_plot(p3)))
   i = 0  # plot counter
 
+  res_show = opts$results  # normalize the 'results' option
+  if (is.logical(res_show)) res_show = if (res_show) 'markup' else 'hide'
+
   l1 = x$code_start  # starting line number of the whole code chunk
   # generate markdown output
   out = lapply(res, function(x) {
@@ -746,8 +749,8 @@ fuse_code = function(x, blocks) {
       if (opts$strip.white) x = trim_blank(x)
     }
     asis = if (type %in% c('output', 'asis')) {
-      if (opts$results == 'hide') return()
-      any(c(opts$results, type) == 'asis')
+      if (res_show == 'hide') return()
+      any(c(res_show, type) == 'asis')
     } else FALSE
     if (type == 'warning' && !isTRUE(opts$warning)) return()
     if (type == 'message' && !isTRUE(opts$message)) return()
@@ -970,7 +973,7 @@ new_opts = function() {
 #' ls(opts)  # built-in options
 reactor = new_opts()
 reactor(
-  eval = TRUE, echo = TRUE, results = 'markup', comment = '#> ',
+  eval = TRUE, echo = TRUE, results = TRUE, comment = '#> ',
   warning = TRUE, message = TRUE, error = NA, include = TRUE,
   strip.white = TRUE, collapse = FALSE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
