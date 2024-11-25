@@ -661,6 +661,8 @@ fuse_code = function(x, blocks) {
     fuse(., output = 'markdown', envir = fuse_env(), quiet = TRUE)
   }))
 
+  lab = opts$label; lang = opts$engine
+
   # the source code could be from these chunk options: file, code, or ref.label
   test_source = function(name) {
     if (length(opts[[name]]) == 0) return(FALSE)
@@ -674,12 +676,14 @@ fuse_code = function(x, blocks) {
     x$source = read_all(opts$file)
   } else if (test_source('code')) {
     x$source = opts$code
-  } else if (test_source('ref.label')) {
-    x$source = uapply(blocks[opts$ref.label], `[[`, 'source')
+  } else {
+    labs = if (test_source('ref.label')) opts$ref.label else {
+      # use code from other chunks of the same label
+      if (length(x$source) == 0) which(names(blocks) == lab)
+    }
+    if (length(labs)) x$source = uapply(blocks[labs], `[[`, 'source')
   }
 
-  lab = opts$label
-  lang = opts$engine
   res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
