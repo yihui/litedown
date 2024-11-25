@@ -5,6 +5,11 @@ date: "`{r} Sys.Date()`"
 ---
 
 ```{r, include = FALSE}
+if (packageVersion('xfun') < '0.49.7') stop(
+  'package versions too low; please install newer versions:\n',
+  "install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')"
+)
+
 options(width = 80)
 
 # return an example file in fenced Div
