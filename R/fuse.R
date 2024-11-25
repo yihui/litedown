@@ -354,24 +354,29 @@ link_pos = function() {
   sprintf('line = %d:col = %d', l[1], if (length(l) == 4) l[2] else 1)
 }
 
-# get the execution order of code/text blocks via the `order` option (higher
-# values indicate higher priority)
-block_order = function(res) {
-  check = function(b) {
-    if (is.null(o <- b$options[['order']])) return(o)
-    if (is_lang(o)) o = eval(o, fuse_env())
-    if (length(o) == 1) return(o)
+# get the execution order of code/text blocks via the `order` option (lower
+# values indicate earlier execution)
+block_order = function(res, N = length(res)) {
+  check = function(b, env) {
+    if (is.null(o <- b$options[['order']])) return(NA)
+    if (is_lang(o)) o = eval(o, env)
+    if (length(o) == 1 && is.numeric(o)) return(o)
     save_pos(b$pos %||% b$lines)
-    stop("The chunk option 'order' must be either NULL or of length 1.", call. = FALSE)
+    stop("The chunk option 'order' must be either NULL or a number.", call. = FALSE)
   }
-  x = lapply(res, function(b) {
-    if (b$type == 'code_chunk') return(check(b) %||% 0)
-    if (!is.list(b$source)) return(0)
-    for (s in b$source)
-      if (is.list(s) && !is.null(o <- check(s))) return(o)
-    0
-  })
-  order(unlist(x), decreasing = TRUE)
+  x = seq_len(N); e = new.env(parent = fuse_env()); e$N = N
+  for (i in x) {
+    b = res[[i]]; e$i = i
+    if (b$type == 'code_chunk') {
+      if (!is.na(o <- check(b, e))) x[i] = o
+    } else if (is.list(b$source)) {
+      # use the first found `order` option in all inline expressions
+      for (s in b$source) if (is.list(s) && !is.na(o <- check(s, e))) {
+        x[i] = o; break
+      }
+    }
+  }
+  order(x)
 }
 
 #' @description The function `fuse()` extracts and runs code from code chunks
@@ -533,7 +538,7 @@ fiss = function(input, output = '.R', text = NULL) {
   on.exit({ options(opt); on_error() }, add = TRUE)
 
   # the chunk option `order` determines the execution order of chunks
-  o = block_order(blocks)
+  o = block_order(blocks, n)
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
@@ -642,8 +647,10 @@ fuse_code = function(x, blocks) {
   opts = reactor()
 
   # delayed assignment to evaluate a chunk option only when it is actually used
-  lapply(names(opts), function(i) {
-    if (is_lang(o <- opts[[i]])) delayedAssign(i, eval(o, fuse_env()), environment(), opts)
+  lapply(setdiff(names(opts), 'order'), function(i) {
+    # skip the `order` option since it needs to be eval()ed in block_order()
+    if (i != 'order' && is_lang(o <- opts[[i]]))
+      delayedAssign(i, eval(o, fuse_env()), environment(), opts)
   })
   # set the working directory before evaluating anything else
   change_wd(opts$wd)

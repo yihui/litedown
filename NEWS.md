@@ -2,6 +2,8 @@
 
 - Added a new engine `embed` to embed text files via a code chunk.
 
+- Changed the meaning of the chunk option `order`: previously, higher values indicate earlier execution; now higher values indicate later execution. This is a breaking change, but the new meaning should feel more natural. For example, `order = i` means to execute the chunk in the i-th step, and `order = i - 1.5` means to move the chunk back 1.5 step in the queue so it will be executed earlier than its previous chunk. See https://yihui.org/litedown/#sec:option-order for details.
+
 - Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).
