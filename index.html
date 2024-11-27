@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.4.5">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/css/pages.min.css">
 </head>
 <body>
 <div class="frontmatter">
@@ -607,7 +607,11 @@ unexpected changes before publishing the output.</p>
 </div>
 <h1 id="chp:start"><span class="section-number main-number">1</span> Get Started</h1>
 <blockquote>
-<p>I can at least listen without indignation to the critic who is of the opinion that when one surveys the aims of cultural endeavour and the means it employs, one is bound to come to the conclusion that the whole effort is not worth the trouble, and that the outcome of it can only be a state of affairs which the individual will be unable to tolerate.</p>
+<p>I can at least listen without indignation to the critic who is of the opinion
+that when one surveys the aims of cultural endeavour and the means it employs,
+one is bound to come to the conclusion that the whole effort is not worth the
+trouble, and that the outcome of it can only be a state of affairs which the
+individual will be unable to tolerate.</p>
 <p>—Sigmund Freud, <em>Civilization and Its Discontents</em></p>
 </blockquote>
 <p>R Markdown documents need to be compiled to Markdown before being rendered to a
@@ -652,14 +656,14 @@ documents through a web interface.</p>
 the following mouse-clicking exercise (but try not to be addicted):</p>
 <div class="new-road">
 <p><button class="old-knit">Knit</button></p>
-<p><button class="new-fuse">Fuse</button> <button class="new-fuse new-preview">Run</button></p>
+<p><button class="new-fuse">Render</button> <button class="new-fuse new-preview">Run</button></p>
 </div>
 <p>If the <code>Knit</code> button still sticks to your mind after you have practiced for a
 few hundred times, I’d like to thank you for your loyalty to <strong>knitr</strong>, and
 please see <a class="cross-ref-sec" href="#sec:knit-button">6.1</a> for how to continue to use the <code>Knit</code> button with
 <strong>litedown</strong>.</p>
-<p>You can learn more about the <code>Fuse</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">6.2</a>.
-Basically, the <code>Fuse</code> button renders a document to an output file, whereas the
+<p>You can learn more about the <code>Render</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">6.2</a>.
+Basically, the <code>Render</code> button renders a document to an output file, whereas the
 <code>Run</code> button renders a document in memory without writing to disk.</p>
 <div class="callout-tip">
 <p>Unless you use <strong>litedown</strong> programmatically (i.e., in scripts), you should
@@ -669,8 +673,7 @@ rarely need to call <code>fuse()</code> or <code>mark()</code> directly—<code>
 <h2 id="sec:a-minimal-example"><span class="section-number">1.2</span> A minimal example</h2>
 <p>To understand what <code>fuse()</code> does, we look at a minimal example:</p>
 <div class="flex-col">
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="001.Rmd">---
 title: The area of a circle
 ---
 
@@ -683,9 +686,7 @@ x
 
 The area of the circle with a radius of `x` is `{r} pi * x^2`.
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="001.md">---
 title: The area of a circle
 ---
 
@@ -702,7 +703,6 @@ x
 
 The area of the circle with a radius of `x` is 12.6.
 </code></pre>
-</div>
 </div>
 <p>When we <code>fuse()</code> the source document, the program code will be executed, writing
 results to the output.</p>
@@ -778,7 +778,7 @@ surprised if you run across Blippi and garbage trucks somewhere in this book.</p
 </div>
 </div>
 <p>Take the following document for example:</p>
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="*.Rmd">---
 title: &quot;A Report on the Wall&quot;
 author: &quot;`{r} who`&quot;
 date: &quot;`{r} Sys.Date()`&quot;
@@ -1146,8 +1146,7 @@ language name of the code chunk as the class name. For example, for
 </ul>
 <p>Below is an example of using options <code>attr.chunk</code>, <code>attr.source</code>, and
 <code>attr.plot</code>:</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="002.Rmd">---
 title: The `attr.*` chunk options
 ---
 
@@ -1183,11 +1182,9 @@ Define CSS rules for the classes in the `#example-a` chunk:
 }
 ```
 </code></pre>
-</div>
 <p>Here is an example of creating a callout (<a class="cross-ref-sec" href="#sec:callout-blocks">5.5</a>) from a code
 chunk:</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="003.Rmd">---
 title: Create a callout via the option `attr.chunk`
 output:
   litedown::html_format:
@@ -1206,7 +1203,6 @@ If you use the class name `.callout-*` on a chunk, you can turn it into a callou
 
 Remember to load the `callout` CSS/JS assets in YAML.
 </code></pre>
-</div>
 <h4 id="sec:option-cache"><span class="section-number">2.1.5.2</span> <code>cache</code>: speed up the computing</h4>
 <blockquote>
 <p>There are only two hard things in Computer Science: cache invalidation and
@@ -1405,8 +1401,7 @@ A table caption at the bottom via <code>cap.pos = &quot;bottom&quot;</code>.</p>
 </div>
 <p>You can test different positions for both figures and tables in the following
 example.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="004.Rmd">---
 title: Caption position
 ---
 
@@ -1430,7 +1425,6 @@ plot(cars)
 cars
 ```
 </code></pre>
-</div>
 <h4 id="sec:option-child"><span class="section-number">2.1.5.4</span> <code>child</code>: child documents</h4>
 <p>The <code>child</code> option can take a vector of file paths to other <code>.Rmd</code> files, which
 will be compiled and included as the output the current chunk. This offers a way
@@ -1451,8 +1445,7 @@ and non-empty, the <code>code</code> option will be ignored.</p>
 </ul>
 <p>These options will be ignored (with a warning) if the code chunk is not empty.
 They can be used in any code chunks (not necessarily R code chunks).</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="005.Rmd">---
 title: The `code` option
 ---
 
@@ -1468,9 +1461,7 @@ We run regressions on three variables one by one:
 ```{r, code = sprintf(tpl, x_vars)}
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">.
+<pre><code class="language-md" data-file="005.md">.
 .
 .
 ``` {.r}
@@ -1499,7 +1490,6 @@ lm(mpg ~ hp, data = mtcars) |&gt; summary() |&gt; coef()
 |(Intercept)|30.099| 1.634|18.421| 0.000|
 |hp|-0.068| 0.010|-6.742| 0.000|
 </code></pre>
-</div>
 <h4 id="sec:option-collapse"><span class="section-number">2.1.5.6</span> <code>collapse</code>: collapse source code and text output</h4>
 <p>When the option <code>collapse = TRUE</code> (it is <code>FALSE</code> by default), adjacent source
 code blocks and verbatim text output blocks will be merged, which can make the
@@ -1576,8 +1566,7 @@ so it will not be passed to <code>png()</code>, whereas you can use
 <code>dev.args = list(bg = 'yellow')</code> to pass a custom <code>bg</code> value (yellow background)
 to <code>png()</code>. Please read the help page of the device function (e.g., <code>?png</code>) to
 learn the possible arguments that you can use.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="008.Rmd">---
 title: The graphics device
 ---
 
@@ -1599,7 +1588,6 @@ The `svg` device with a background color:
 plot(cars)
 ```
 </code></pre>
-</div>
 <h4 id="sec:option-echo"><span class="section-number">2.1.5.9</span> <code>echo</code>: visibility of source code</h4>
 <p>By default, the source code blocks are displayed in the output with the chunk
 option <code>echo = TRUE</code>. To suppress source code blocks, you can use
@@ -1687,8 +1675,7 @@ be moved into the same figure environment at the end of the chunk output. As a
 result, one code chunk can produce at most one figure environment, which may
 contain one or more plots. If you need multiple figure environments, you have to
 write separate code chunks.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="009.Rmd">---
 title: Decorating figures
 output:
   litedown::html_format:
@@ -1721,7 +1708,6 @@ grid()
 
 Feel free to experiment with other class names provided by the `@article` CSS, such as `.side .side-right` or `.embed-right` in addition to `.fullwidth`.
 </code></pre>
-</div>
 <p>Chunk options for plot files include:</p>
 <ul>
 <li>
@@ -1760,8 +1746,7 @@ default.</p>
 plots will not be captured for output.</p>
 </li>
 </ul>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="010.Rmd">---
 title: Plot files
 ---
 
@@ -1783,7 +1768,6 @@ Write plot files to a different folder:
 plot(cars)
 ```
 </code></pre>
-</div>
 <h4 id="sec:option-include"><span class="section-number">2.1.5.13</span> <code>include</code>: visibility of whole code chunk</h4>
 <p>When you want to hide the full output of a code chunk, you can use the option
 <code>include = FALSE</code>, instead of trying to hide elements individually like
@@ -1799,8 +1783,7 @@ unexpected output. If one of these chunks does not produce plots/tables or use
 cache, it is fine for them to use the same label.</p>
 <p>If two code chunks share the same label, and one of the chunks is empty, the
 empty chunk will copy code from the non-empty one.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="011.Rmd">---
 title: Shared chunk labels
 ---
 
@@ -1813,9 +1796,7 @@ Repeat `chunk-a` but suppress the message:
 ```{r, chunk-a, message=FALSE}
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="011.md">---
 title: Shared chunk labels
 ---
 
@@ -1833,7 +1814,6 @@ Repeat `chunk-a` but suppress the message:
 message(&quot;This chunk's label is chunk-a&quot;)
 ```
 </code></pre>
-</div>
 <p>If the label is not provided in a chunk, a label of the form <code>chunk-i</code> will be
 assigned to the chunk, where <code>i</code> is the chunk number in the document. For
 example, the labels for the following code chunks will be <code>chunk-a</code>, <code>chunk-2</code>,
@@ -1903,8 +1883,7 @@ inline code expression in the chunk.</p>
 <code>order = i - 1.5</code>, so the variable <code>m</code> will be ready for the text chunk before.
 Without the custom order, this example will either throw errors (objects not
 found) or use wrong values of these variables (from elsewhere in the session).</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="012.Rmd">---
 title: Custom execution order
 abstract: &quot;We analyzed `{r, order = N + 1} nrow(x)` `{r} n_cyl`-cylinder cars, with an average MPG of `{r} m`.&quot;
 ---
@@ -1922,9 +1901,7 @@ The average MPG `{r} m` is calculated from:
 m = mean(x$mpg)
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="012.md">---
 title: Custom execution order
 abstract: &quot;We analyzed 14 8-cylinder cars, with an average MPG of 15.1.&quot;
 ---
@@ -1942,7 +1919,6 @@ The average MPG 15.1 is calculated from:
 m = mean(x$mpg)
 ```
 </code></pre>
-</div>
 <p>You can change the value of <code>n_cyl</code> to 4 or 6, re-run the example, and get a new
 report of cars with 4 or 6 cylinders.</p>
 <h4 id="sec:option-print"><span class="section-number">2.1.5.17</span> <code>print</code>: printing function</h4>
@@ -1976,8 +1952,7 @@ function.</p>
 setting the chunk option <code>print = NA</code>). The argument <code>zero.print = '.'</code> (see
 <code>?print.table</code>) is used for <code>table</code> objects, and arguments <code>quote</code> /
 <code>max.levels</code> (see <code>?print.factor</code>) are used for <code>factor</code> objects.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="013.Rmd">---
 title: Print objects
 ---
 
@@ -1995,9 +1970,7 @@ Y  # factor
 table(X, Y)  # table
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">.
+<pre><code class="language-md" data-file="013.md">.
 .
 .
 ```
@@ -2017,7 +1990,6 @@ table(X, Y)  # table
 #&gt;   c . . 2 1 .
 ```
 </code></pre>
-</div>
 <p>If you do not want to pass arguments by class names but pass a list of arguments
 to the print function regardless of the object classes, you can wrap the list in
 <code>I()</code>. For example, <code>print.args = I(list(zero.print = '.'))</code> means that
@@ -2030,8 +2002,7 @@ is often better to define <code>print.args</code> by class names.</p>
 <p>When using <code>litedown::fiss()</code> to extract code from a document, all code chunks
 are extracted by default. To skip a code chunk, set <code>purl = FALSE</code> for that
 chunk.</p>
-<div class="callout-example">
-<pre><code class="language-md">This code chunk is not important for the `fiss()` output.
+<pre><code class="language-md" data-file="014.Rmd">This code chunk is not important for the `fiss()` output.
 
 ```{r, setup, purl = FALSE}
 litedown::reactor(fig.height = 5)
@@ -2045,13 +2016,10 @@ if (TRUE) {
 }
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-R">if (TRUE) {
+<pre><code class="language-R" data-file="014.R">if (TRUE) {
   x = 1 + 1
 }
 </code></pre>
-</div>
 <p>You can see that the <code>setup</code> chunk with the option <code>purl = FALSE</code> was omitted in
 the R script output (generated by <code>fiss()</code>).</p>
 <h4 id="sec:option-ref-label"><span class="section-number">2.1.5.19</span> <code>ref.label</code>: chunk references</h4>
@@ -2059,8 +2027,7 @@ the R script output (generated by <code>fiss()</code>).</p>
 It takes a vector of chunk labels, and will copy code from these chunks.</p>
 <p>Using chunk references makes it possible to avoid copying code from one chunk to
 another manually. You can also compose code freely from other chunks.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="015.Rmd">---
 title: Reference chunks by labels
 ---
 
@@ -2087,9 +2054,7 @@ See if it works:
 abs2(c(1, -2, 0, -100))
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">.
+<pre><code class="language-md" data-file="015.md">.
 .
 .
 The full function (combining `chunk-a` and `chunk-b`):
@@ -2109,7 +2074,6 @@ abs2(c(1, -2, 0, -100))
 #&gt; [1]   1   2   0 100
 ```
 </code></pre>
-</div>
 <h4 id="sec:option-results"><span class="section-number">2.1.5.20</span> <code>results</code>: text output behavior</h4>
 <p>Text output from code chunks can be shown verbatim, hidden, or just written out
 as is. The behavior is controlled by the option <code>results</code>, with possible values:</p>
@@ -2124,8 +2088,7 @@ as is. The behavior is controlled by the option <code>results</code>, with possi
 <p><code>&quot;asis&quot;</code>: Write raw text (interpreted as Markdown) to the output.</p>
 </li>
 </ul>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="016.Rmd">---
 title: Text output
 ---
 
@@ -2145,9 +2108,7 @@ Output as is:
 ```{r, test-out, results = 'asis'}
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="016.md">---
 title: Text output
 ---
 
@@ -2174,12 +2135,10 @@ cat('Hello _world_!\n')
 ```
 Hello _world_!
 </code></pre>
-</div>
 <h4 id="sec:option-strip-white"><span class="section-number">2.1.5.21</span> <code>strip.white</code>: leading / trailing blank lines in code</h4>
 <p>By default, blank lines at the beginning and end of a source code block are
 removed. To keep them, you can use the chunk option <code>strip.white = FALSE</code>.</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="017.Rmd">---
 title: Blank lines in source code
 ---
 
@@ -2193,9 +2152,7 @@ Keep blank lines at the beginning/end:
 
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">.
+<pre><code class="language-md" data-file="017.md">.
 .
 .
 ``` {.r}
@@ -2213,7 +2170,6 @@ Keep blank lines at the beginning/end:
 
 ```
 </code></pre>
-</div>
 <h4 id="sec:option-tab"><span class="section-number">2.1.5.22</span> <code>tab.*</code>: table options</h4>
 <p>Unless the default <code>print</code> option (<a class="cross-ref-sec" href="#sec:option-print">2.1.5.17</a>) is changed, common
 rectangular data objects are printed to Markdown tables through
@@ -2224,8 +2180,7 @@ rectangular data objects are printed to Markdown tables through
 table environment, and it defaults to <code>.table</code>, i.e., a class name <code>table</code>.
 Below is a quick example showing where <code>tab.cap</code> and <code>tab.env</code> are used in the
 Markdown output:</p>
-<div class="callout-example">
-<pre><code class="language-md">---
+<pre><code class="language-md" data-file="018.Rmd">---
 title: A simple table
 ---
 
@@ -2237,9 +2192,7 @@ See @tab:simple.
 head(cars, 3)
 ```
 </code></pre>
-</div>
-<div class="callout-output">
-<pre><code class="language-md">.
+<pre><code class="language-md" data-file="018.md">.
 .
 .
 ``` {.r}
@@ -2260,7 +2213,6 @@ First 3 rows of the `cars` data.
 |7| 4|
 ::::
 </code></pre>
-</div>
 <p>The position of the caption can be changed via the chunk option <code>cap.pos</code>
 (<a class="cross-ref-sec" href="#sec:option-cap-pos">2.1.5.3</a>).</p>
 <p>To customize the table content, you can pass arguments to <code>xfun::md_table()</code> via
@@ -3048,7 +3000,6 @@ the number and reference of the block above:</p>
   content: &quot;Block &quot;;
 }
 .ref-number-blk {
-  font-weight: bold;
   font-style: italic;
 }
 .ref-number-blk::after {
@@ -3060,7 +3011,6 @@ the number and reference of the block above:</p>
   content: "Block ";
 }
 .ref-number-blk {
-  font-weight: bold;
   font-style: italic;
 }
 .ref-number-blk::after {
@@ -4503,17 +4453,18 @@ which is to avoid name conflicts between the two packages. <a href="#fnref-a-rma
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.11/dist/katex.min.js,npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/render-katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.46/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.47/js/pages.min.js" defer></script>
 </body>
 </html>
