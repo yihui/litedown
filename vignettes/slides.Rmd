@@ -542,7 +542,7 @@ This can be generated from Markdown.
 
 ### snap.js
 
-The script [`snap.js`](https://github.com/yihui/misc.js/blob/main/js/snap.js)
+The script [`snap.js`](https://github.com/yihui/lite.js/blob/main/js/snap.js)
 converts HTML to a structure more convenient to style as slides:
 
 ``` html
@@ -565,7 +565,7 @@ converts HTML to a structure more convenient to style as slides:
 The core technique is [CSS Scroll
 Snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts).
 The full CSS is
-[`snap.css`](https://github.com/yihui/misc.js/blob/main/css/snap.css), and the
+[`snap.css`](https://github.com/yihui/lite.js/blob/main/css/snap.css), and the
 essential rules are:
 
 ``` css
@@ -589,7 +589,7 @@ just need to have the correct HTML structure. Then in your HTML document:
 ```
 
 Remember to substitute `VERSION` with [an appropriate
-version](https://github.com/yihui/misc.js/tags) (e.g., `1.11.0`). You can omit
+version](https://github.com/yihui/lite.js/tags) (e.g., `1.11.0`). You can omit
 `@VERSION` to use the latest version but it is not recommended because future
 updates might break your old slides.
 

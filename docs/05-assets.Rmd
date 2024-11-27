@@ -3,7 +3,7 @@
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we
 introduce some CSS/JS assets from the GitHub repository
-<https://github.com/yihui/misc.js>. You can load arbitrary external JS and CSS
+<https://github.com/yihui/lite.js>. You can load arbitrary external JS and CSS
 files via the `js` and `css` meta variables. There are numerous JS libraries and
 CSS frameworks on the web that you can use, and you do not have to use the ones
 mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
@@ -25,7 +25,7 @@ output:
 For the sake of brevity, we will omit the full YAML fields in examples
 throughout this chapter but only use the `css` and `js` fields. A file name
 `foo.js` denotes the file under the `js/` directory of the aforementioned
-[`yihui/misc.js` repository](https://github.com/yihui/misc.js). Similarly,
+[`yihui/lite.js` repository](https://github.com/yihui/lite.js). Similarly,
 `foo.css` is under the `css/` directory.
 
 All these CSS/JS resources can be used offline, and there are two ways to do it.
@@ -50,7 +50,7 @@ output:
 After you have embedded CSS/JS resources once when you have Internet access,
 these resources will be cached locally and will not require an Internet
 connection again. This solution works for any online resources, not limited to
-the `yihui/misc.js` repository.
+the `yihui/lite.js` repository.
 
 ## HTML slides
 
@@ -439,7 +439,7 @@ multiple features.
 ## Include arbitrary CSS/JS {#sec:arbitrary-assets}
 
 You can include arbitrary CSS frameworks and JS libraries in your documents, not
-limited to aforementioned ones in the GitHub repository `yihui/misc.js`. Below
+limited to aforementioned ones in the GitHub repository `yihui/lite.js`. Below
 is a quick example of using the DataTables library to create interactive tables:
 
 ```` md

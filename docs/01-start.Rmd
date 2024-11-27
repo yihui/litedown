@@ -1,0 +1,239 @@
+# Get Started {#chp:start}
+
+R Markdown documents need to be compiled to Markdown before being rendered to a
+target output format such as HTML and LaTeX.
+
+For those who are familiar with R Markdown, you can think of the function
+`litedown::fuse()` as the new `knitr::knit()`, `litedown::fiss()` as the new
+`knitr::purl()`, and `litedown::mark()` as the new Pandoc. @fig:fuse-flow shows
+the conversion process from R Markdown to a target format.
+
+```{mermaid}
+#| fuse-flow, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'A diagram illustrating how **litedown** converts R Markdown documents to target output formats.'
+
+flowchart LR
+  A@{ shape: doc, label: "*.Rmd" }-. <code>fuse()</code> .-o F@{ shape: bolt }
+  F o--- B@{ shape: doc, label: "*.md" }
+  B-. <code>mark()</code> .-o G@{ shape: framed-circle }
+  G --> C@{ shape: doc, label: "*.html" }
+  G --> D@{ shape: doc, label: "*.tex" }
+  G --> E@{ shape: doc, label: "..." }
+  A-. <code>fiss()</code> .-o H@{ shape: cross-circ } --> I@{ shape: lin-doc, label: "*.R" }
+```
+
+The function `fuse()` "fuses" program code with narratives, i.e., it executes
+all code in the source document and interweaves results with narratives in the
+output document; `fiss()` splits the document and extracts the code. Similar to
+**knitr**, **litedown** supports code chunks (@sec:code-chunks) and inline code
+(@sec:inline-code).
+
+We will first introduce `fuse()` in @chp:fuse, and then `mark()` in @chp:syntax
+and @chp:mark.
+
+::: callout-tip
+If you do not do computing in Markdown, you do not need to learn
+`fuse()`---`mark()` will be enough.
+:::
+
+## A new road to `roam()`
+
+Before entering the **litedown** world, I suggest you forget the `Knit` button
+if it has become your muscle memory to click on that button to view results
+after writing every single line of code. The recommended way to work with
+**litedown** is `litedown::roam()`, which allows you to preview and render
+documents through a web interface.
+
+To help you bid goodbye to the `Knit` button, please take 5 minutes to practice
+the following mouse-clicking exercise (but try not to be addicted):
+
+::: new-road
+```{=html}
+<p><button class="old-knit">Knit</button></p>
+<p><button class="new-fuse">Fuse</button> <button class="new-fuse new-preview">Run</button></p>
+```
+:::
+
+If the `Knit` button still sticks to your mind after you have practiced for a
+few hundred times, I'd like to thank you for your loyalty to **knitr**, and
+please see @sec:knit-button for how to continue to use the `Knit` button with
+**litedown**.
+
+You can learn more about the `Fuse` and `Run` buttons in @sec:live-preview.
+Basically, the `Fuse` button renders a document to an output file, whereas the
+`Run` button renders a document in memory without writing to disk.
+
+::: callout-tip
+Unless you use **litedown** programmatically (i.e., in scripts), you should
+rarely need to call `fuse()` or `mark()` directly---`litedown::roam()` will call
+`fuse()` and `mark()` for you behind the scenes.
+:::
+
+## A minimal example
+
+To understand what `fuse()` does, we look at a minimal example:
+
+`{r} .ex2(1)`
+
+When we `fuse()` the source document, the program code will be executed, writing
+results to the output.
+
+You can see that the value `2` was assigned to the object `x` in a code chunk,
+and the inline R expression `pi * x^2` was also evaluated to a number.
+
+The advantage of interweaving computing code with text is that you can freely
+update the source code according to the purpose of computing, and you will get
+the up-to-date results after rebuilding the document. For example, you can
+change `x` to `3`, and the area of the circle will be automatically updated
+after you re-run `fuse()`. You do not need to copy and paste computational
+outcome manually from one place to another.
+
+## Basic concepts
+
+A computational document contains both text narratives and code for computing.
+@fig:flow-concepts shows the basic components of a document and how they work
+together.
+
+```{mermaid}
+#| flow-concepts, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'An illustration of the structure of a computational document and how its components are split, computed, and merged.'
+flowchart TD
+  O@{ shape: lin-doc, label: "Input document" }--"crack()"--> A@{ shape: f-circ } -.-o B[[YAML]]
+  A -.-o C[[Text chunk]]
+  C -.- C1>Text] --- C12{ } --> H[[Text output]]
+  C -.- C2>Inline code]--> F{Value} --> H
+  C -.- C3>More...] --- C32{ } --> H
+  A -.-o D[[Code chunk]]
+  D -.- D1>Chunk options]
+  D -.- D2>Code]--> G{Results} --> I[[Chunk output]]
+  A -.-o E[[More chunks...]] -.- K>...] --> L{...} --> M[[More output...]] -.-> J
+  H -.-> J@{ shape: doc, label: "Markdown" }
+  I -.-> J
+  B -.-> P>...] --> Q{...} --> R[[YAML]] -.-> J
+  J--"mark()" --> N@{ shape: tag-doc, label: "Output document" }
+  subgraph "fuse()"
+  C1
+  C2
+  C3
+  D1
+  D2
+  K
+  P
+  end
+  class O,J,N document
+  classDef document stroke-width:3px
+  class C12,F,C32,G,L,Q fuse-out
+  classDef fuse-out fill:lightyellow
+  class H,I,J,M,N,R output
+  classDef output fill:none
+```
+
+First, the input is split into three types of blocks: the YAML metadata, text
+chunks, and code chunks.
+
+The *YAML metadata* contains information such as the title, author, date, and
+other configurations for the document.
+
+A *text chunk* could consist entirely of plain-text narratives that do not
+require computing, or contain both text fragments and *inline code expressions*.
+In the latter case, the inline code can be executed to return its value to the
+output.
+
+A *code chunk* contains code that often does more sophisticated computing than
+inline code. Optionally, a code chunk can contain *chunk options* to control the
+behavior of the computing and output.
+
+After all code has been executed, the output blocks will be merged to a Markdown
+document, which can be further rendered to a target output format such as HTML
+and LaTeX.
+
+:::: {.figure .box}
+![Humpty
+Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg)
+
+::: fig-caption
+[ ](#@fig:humpty-dumpty) After raising two kids for a few years, I have been so
+seriously brainwashed by nursery rhymes that Humpty Dumpty came to my mind when
+I was thinking about an example to explain computational documents. Don't be
+surprised if you run across Blippi and garbage trucks somewhere in this book.
+:::
+::::
+
+Take the following document for example:
+
+```` md
+---
+title: "A Report on the Wall"
+author: "`{r} who`"
+date: "`{r} Sys.Date()`"
+---
+
+```{r, order = 0}
+who = 'Humpty Dumpty'
+```
+
+`{r} who` sat on a wall.
+
+`{r} who` had a great fall.
+
+```{r}
+broken = strsplit(who, ' ') |> unlist()
+```
+
+All the king's horses and all the king's men
+
+Couldn't put `{r} broken[1]` together again.
+
+<!--
+If the king's horses and men knew R, they could've put
+Humpty together again by paste(broken, collapse = ' ').
+-->
+````
+
+The YAML metadata is provided between `---` and `---` in the beginning. Note
+that it can also contain code to be evaluated, such as the variable `who` and
+the function call `Sys.Date()`.
+
+The document has two code chunks in triple-backtick (```` ``` ````) fences. The
+first code chunk contains a chunk option `order = 0` (you may see
+@sec:option-order for its meaning later). You can do any computing in code
+chunks and generate text results or graphics.
+
+There are two text chunks: one between the two code chunks, and one after the
+second code chunk. These text chunks contain inline R code expressions in
+`` `{r} ` ``. An inline code expression is typically used to get a single value.
+
+In the end, there is a comment in `<!-- -->`. Comments will not be displayed in
+the output document.
+
+## A few words on naming
+
+When I started writing the **litedown** package, I was thinking of nuclear
+fusion reactions (although my knowledge in physics is quite limited): text and
+code chunks are like atomic nuclei, and they can be combined to form a report.
+The process is controlled by a reactor. That was how I came up with the function
+names `fuse()` and `reactor()`.
+
+To prepare the atomic nuclei, I need to `crack()` the source document. When the
+input is not a document but a script, I will `sieve()` out the elements from
+comments. The fusion reaction can take place after `crack()` or `sieve()` is
+done.
+
+Maybe the neurons in my brain are wired in an odd way, but I feel mysteriously
+happy that the names `crack()` and `sieve()` weakly resembles my friend Carson
+Sievert's name. For that reason, Carson will live in my heart forever, even if
+he will never send a pull request to **litedown**.
+
+Since there also exist fission reactions, the function `fiss()` is meant to
+decompose a document.
+
+As for the package name "litedown", it has three meanings:
+
+1.  The obvious meaning is the lightweight of the package.
+
+2.  The less obvious meaning is that light comes down from the fusion reactor
+    like the Sun. This meaning is represented by the symbol for `fuse()`, which
+    is a zigzag arrow (↯).
+
+3.  Finally, it is a play on the phrase "lie down". I intended to write this
+    package as my last "down" package. After it is done, I wish to lie down.

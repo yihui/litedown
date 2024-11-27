@@ -73,7 +73,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 -   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
     Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
 
--   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/misc.js)
+-   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/lite.js)
 
 Please feel free to file feature requests anyway, but we may be a little
 conservative when considering them (we will take votes into consideration, so

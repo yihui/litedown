@@ -1,6 +1,6 @@
 # Authoring
 
-## The `Knit` button
+## The `Knit` button {#sec:knit-button}
 
 If you use the RStudio IDE, the `Knit` button can render R Markdown to a
 **litedown** output format specified in YAML (e.g., `litedown::html_format` or
@@ -65,10 +65,6 @@ the computing (e.g., via caching).
 :::
 
 ### The buttons
-
-```{css, echo = FALSE}
-.larger { font-size: 1.5em; }
-```
 
 There is a button group at the top right of the preview page.
 

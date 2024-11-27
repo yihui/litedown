@@ -12,7 +12,7 @@
 
 - Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a singe chapter.
 
-- Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/misc.js@5e06d19.
+- Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/lite.js@5e06d19.
 
 - `pkg_manual()` will point out the name of the problematic Rd file when the Rd file fails to convert to HTML (thanks, @BSchamberger).
 
@@ -71,7 +71,7 @@
 
 - Changed the behavior of `.Rmd` and `.R` file links in the `litedown::roam()` interface: previously, clicking on an `.Rmd` or `.R` filename will execute them; now it will only show their content, because fully executing the code may be expensive or even dangerous (especially when the files were not authored by you). A new "Run" button has been provided in the interface, on which you can click on to run a file in memory and preview it (i.e., the old behavior of clicking on filenames). You should use this button only if you trust the file.
 
-- Added the JS asset [`@mathjax-config`](https://github.com/yihui/misc.js/blob/main/js/mathjax-config.js) to enable equation numbering by default when the JS math library is set to MathJax (thanks, @hturner, #32).
+- Added the JS asset [`@mathjax-config`](https://github.com/yihui/lite.js/blob/main/js/mathjax-config.js) to enable equation numbering by default when the JS math library is set to MathJax (thanks, @hturner, #32).
 
 - Set `options(bitmapType = 'cairo')` in `fuse()` if `capabilities('cairo')` is TRUE, which will generate smaller bitmap plot files (e.g., `.png`) than using `quartz` or `Xlib`, and is also a safer option for `fuse()` to be executed in parallel (rstudio/rmarkdown#2561).
 

@@ -29,14 +29,14 @@ options(width = 80)
     if (partial) x = c(rep('.', 3), x)
   }
   x = litedown:::trim_blank(paste(x, collapse = '\n'))
-  x = xfun::fenced_block(x, sub('^R(.+)', '\\1', ext))
+  x = xfun::fenced_block(x, sub('^([.])R(.+)', '\\1\\2', ext))
   xfun::fenced_div(x, sprintf('.callout-%s', class))
 }
-```
-
-```{css, echo = FALSE}
-.pagesjs #TOC > ul > li > ul > li > ul > li > ul {
-  display: none;
+# source and output in the same div
+.ex2 = function(n, ext = c('.Rmd', '.md'), ...) {
+  x1 = .ex(n, ext[1])
+  x2 = .ex(n, ext[2], ...)
+  xfun::fenced_div(c(x1, x2), '.flex-col')
 }
 ```
 
@@ -175,7 +175,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 -   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
     Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
 
--   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/misc.js)
+-   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/lite.js)
 
 It is absolutely not the goal for **litedown** to become a substitute of tools
 based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not
@@ -231,7 +231,7 @@ to *uncompressed* software and source code as of today):
 -   For paginating HTML documents,
     [paged.js](https://cdn.jsdelivr.net/npm/pagedjs/) has 33,000+ lines of code,
     and my naive implementation,
-    [pages.js](https://github.com/yihui/misc.js/blob/main/js/pages.js), has
+    [pages.js](https://github.com/yihui/lite.js/blob/main/js/pages.js), has
     about 400 lines (200 lines of JS and 200 lines of CSS).
 
 Admittedly, pursuing lightweight requires sacrifice in features and quality

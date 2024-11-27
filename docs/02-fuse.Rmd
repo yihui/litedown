@@ -5,63 +5,9 @@
 >
 > ---David Leinweber
 
-```{mermaid}
-#| fuse-flow, echo = FALSE, fig.env = '.figure .box',
-#| fig.cap = 'A diagram illustrating how **litedown** converts R Markdown documents to target output formats.'
-
-flowchart LR
-  A@{ shape: doc, label: "*.Rmd" }-. <code>fuse()</code> .-o F@{ shape: bolt }
-  F o--- B@{ shape: doc, label: "*.md" }
-  B-. <code>mark()</code> .-o G@{ shape: framed-circle }
-  G --> C@{ shape: doc, label: "*.html" }
-  G --> D@{ shape: doc, label: "*.tex" }
-  G --> E@{ shape: doc, label: "..." }
-  A-. <code>fiss()</code> .-o H@{ shape: cross-circ } --> I@{ shape: lin-doc, label: "*.R" }
-```
-
-R Markdown documents need to be knitted to Markdown before being rendered to a
-target output format. For those who are familiar with R Markdown, you can think
-of the function `litedown::fuse()` as the new `knitr::knit()`,
-`litedown::fiss()` as the new `knitr::purl()`, and `litedown::mark()` as the new
-Pandoc. @fig:fuse-flow shows the conversion process from R Markdown to a target
-format.
-
-We will focus on `fuse()` in this chapter, and leave `mark()` to @chp:syntax and
-@chp:mark.
-
-::: callout-note
-Unless you use **litedown** programmatically (i.e., via R code), you should
-rarely need to call `fuse()` or `mark()` directly. Instead, please consider
-using `litedown::roam()` to preview or render your files (@sec:live-preview),
-which will call `fuse()` and `mark()` behind the scenes.
-:::
-
-The function `fuse()` "fuses" program code with narratives, i.e., it executes
-all code in the source document and interweaves results with narratives in the
-output document; `fiss()` splits the document and extracts the code. Similar to
-**knitr**, **litedown** supports code chunks (@sec:code-chunks) and inline code
-(@sec:inline-code).
-
-## A minimal example
-
-To understand what `fuse()` does, we look at a minimal example:
-
-`{r} .ex(1)`
-
-When we `fuse()` the document, the program code will be executed, giving us the
-results below:
-
-`{r} .ex(1, '.md')`
-
-You can see that the value `2` was assigned to the object `x` in a code chunk,
-and the inline R expression `pi * x^2` was also evaluated to a number.
-
-The advantage of interweaving computing code with text is that you can freely
-update the source code according to the purpose of computing, and you will get
-the up-to-date results after rebuilding the document. For example, you can
-change `x` to `3`, and the area of the circle will be automatically updated
-after you re-run `fuse()`. You do not need to copy and paste computational
-outcome manually from one place to another.
+In this chapter, we introduce how to manage computing in computational
+documents. The computing may be done in code chunks, inline code expressions,
+script files, and in R or other languages.
 
 ## Code chunks
 
@@ -172,7 +118,7 @@ p { color: red; }
 ````
 
 In this book, I will write options in the chunk header when they are relatively
-short, and write them in pipe comments when they are too long.
+short, and write them in pipe comments when they are too long to fit one line.
 
 See @sec:chunk-options for the full list of possible chunk options.
 
@@ -392,11 +338,11 @@ chunk:
 You can cache the computing of code chunks via the chunk option `cache = TRUE`.
 When a code chunk is cached, the computing will be skipped when the document is
 compiled on the next time if the source code in the chunk has not
-changed[^01-fuse-1] and the external dependencies used by the chunk have not
+changed[^02-fuse-1] and the external dependencies used by the chunk have not
 changed, either, otherwise the cache will be invalidated and the results will be
 re-computed.
 
-[^01-fuse-1]: Cosmetic changes such as adding/deleting spaces and blank lines or
+[^02-fuse-1]: Cosmetic changes such as adding/deleting spaces and blank lines or
     modifying comments do not matter. The code is considered unchanged if it
     still parses to the same expressions via `parse()`. For example,
     `parse(text = '1+1')` and `parse(text = '1 + 1')` generate the same result.
@@ -419,10 +365,10 @@ found").
 When cache is enabled on a code chunk, the global and local variables will be
 automatically inferred from the code. If the value of any global variable has
 changed, the cache will be invalidated. Local variables will be saved in a
-current run, and (lazy-)loaded[^01-fuse-2] in the next run, so they can be
+current run, and (lazy-)loaded[^02-fuse-2] in the next run, so they can be
 available to later code chunks in the document.
 
-[^01-fuse-2]: Lazy-loading means that the value of a variable will not be read
+[^02-fuse-2]: Lazy-loading means that the value of a variable will not be read
     from the cache until the variable is actually used somewhere. This can save
     the read time, especially if a large variable is not actually used later in
     the document.
@@ -1309,7 +1255,7 @@ code block).
 Major differences between **knitr** and **litedown** include:
 
 | knitr | litedown |
-|----------------------------------------|----------------------------------------|
+|----|----|
 | Supports multiple graphical devices for a chunk. | Only supports one device for a chunk (but there are multiple choices for this device). |
 | Depending on certain chunk options, figure output could be both Markdown (`![]()`) and raw HTML (`<img>`) / LaTeX (`\includegraphics{}`). | Always use Markdown syntax for figures. |
 | The document parser is based on regular expressions and not robust. Code chunks and inline expressions are not aware of their contexts (e.g., code blocks or comments). | The parser is based on **commonmark**, which is more robust and makes it straightforward to write verbatim code (in a parent code block) or comment out code (in `<!-- -->` comments). |
