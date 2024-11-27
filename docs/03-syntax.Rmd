@@ -457,7 +457,6 @@ the number and reference of the block above:
   content: "Block ";
 }
 .ref-number-blk {
-  font-weight: bold;
   font-style: italic;
 }
 .ref-number-blk::after {

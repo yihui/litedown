@@ -13,7 +13,7 @@ if (packageVersion('xfun') < '0.49.7') stop(
 options(width = 80)
 
 # return an example file in fenced Div
-.ex = function(n, ext = '.Rmd', class = if (ext == '.Rmd') 'example' else 'output', last = NA) {
+.ex = function(n, ext = '.Rmd', last = NA) {
   f = Sys.glob(sprintf('../examples/%03d*', n))
   f = f[endsWith(f, ext)]
   if (length(f) != 1) stop('cannot find the example ', n)
@@ -29,8 +29,9 @@ options(width = 80)
     if (partial) x = c(rep('.', 3), x)
   }
   x = litedown:::trim_blank(paste(x, collapse = '\n'))
-  x = xfun::fenced_block(x, sub('^([.])R(.+)', '\\1\\2', ext))
-  xfun::fenced_div(x, sprintf('.callout-%s', class))
+  xfun::fenced_block(x, c(
+    sub('^([.])R(.+)', '\\1\\2', ext), sprintf('data-file="%03d%s"', n, ext)
+  ))
 }
 # source and output in the same div
 .ex2 = function(n, ext = c('.Rmd', '.md'), ...) {

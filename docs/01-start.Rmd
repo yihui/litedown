@@ -1,5 +1,13 @@
 # Get Started {#chp:start}
 
+> I can at least listen without indignation to the critic who is of the opinion
+> that when one surveys the aims of cultural endeavour and the means it employs,
+> one is bound to come to the conclusion that the whole effort is not worth the
+> trouble, and that the outcome of it can only be a state of affairs which the
+> individual will be unable to tolerate.
+>
+> ---Sigmund Freud, *Civilization and Its Discontents*
+
 R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.
 
@@ -50,7 +58,7 @@ the following mouse-clicking exercise (but try not to be addicted):
 ::: new-road
 ```{=html}
 <p><button class="old-knit">Knit</button></p>
-<p><button class="new-fuse">Fuse</button> <button class="new-fuse new-preview">Run</button></p>
+<p><button class="new-fuse">Render</button> <button class="new-fuse new-preview">Run</button></p>
 ```
 :::
 
@@ -59,8 +67,8 @@ few hundred times, I'd like to thank you for your loyalty to **knitr**, and
 please see @sec:knit-button for how to continue to use the `Knit` button with
 **litedown**.
 
-You can learn more about the `Fuse` and `Run` buttons in @sec:live-preview.
-Basically, the `Fuse` button renders a document to an output file, whereas the
+You can learn more about the `Render` and `Run` buttons in @sec:live-preview.
+Basically, the `Render` button renders a document to an output file, whereas the
 `Run` button renders a document in memory without writing to disk.
 
 ::: callout-tip
@@ -161,7 +169,7 @@ surprised if you run across Blippi and garbage trucks somewhere in this book.
 
 Take the following document for example:
 
-```` md
+```` {.md data-file="*.Rmd"}
 ---
 title: "A Report on the Wall"
 author: "`{r} who`"

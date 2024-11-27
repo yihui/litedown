@@ -5,7 +5,7 @@ body {
   padding: 1em;
   line-height: 1.5;
 }
-body, .abstract, code, .footnotes, #refs { font-size: .9em; }
+body, .abstract, code, .footnotes, #refs, .box > div { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }
@@ -57,6 +57,7 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
 table, .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
+span[class^="ref-number-"] { font-weight: bold; }
 .ref-number-fig::after, .ref-number-tab::after { content: ":"; }
 .cross-ref-chp::before { content: "Chapter "; }
 .cross-ref-sec::before { content: "Section "; }
@@ -87,5 +88,5 @@ section.footnotes {
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
-  pre { white-space: pre; }
+  pre:has(.line-numbers) { white-space: pre; }
 }

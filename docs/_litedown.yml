@@ -9,4 +9,4 @@ output:
         depth: 4
     meta:
       css: ["@default", "@article", "@book", "@book-litedown", "@copy-button", "@heading-anchor", "@key-buttons", "@callout", "@pages"]
-      js: ["@sidenotes", "@appendix", "@toc-highlight", "@copy-button", "@external-link", "@heading-anchor", "@right-quote", "@key-buttons", "@callout", "@pages"]
+      js: ["@sidenotes", "@appendix", "@toc-highlight", "@chapter-toc", "@copy-button", "@external-link", "@heading-anchor", "@right-quote", "@key-buttons", "@callout", "@pages"]
