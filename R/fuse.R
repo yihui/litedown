@@ -824,7 +824,7 @@ change_wd = function(dir) {
 # add caption to an element (e.g., figure/table)
 add_cap = function(x, cap, lab, pos, env, type = 'fig') {
   if (length(cap) == 0 || length(lab) == 0) return(x)
-  cap = fenced_div(add_ref(lab, type, cap), sprintf('.%s-caption', type))
+  cap = fenced_div(add_ref(lab, type, cap), '.caption')
   pos = pos %||% 'bottom'
   x = if (pos == 'top') c(cap, '', x) else c(x, '', cap)
   fenced_div(x, c(sub('^[.]?', '.', env), sprintf('#%s:%s', type, lab)))

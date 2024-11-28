@@ -159,11 +159,12 @@ and LaTeX.
 ![Humpty
 Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg)
 
-::: fig-caption
+::: caption
 [ ](#@fig:humpty-dumpty) After raising two kids for a few years, I have been so
-seriously brainwashed by nursery rhymes that Humpty Dumpty came to my mind when
-I was thinking about an example to explain computational documents. Don't be
-surprised if you run across Blippi and garbage trucks somewhere in this book.
+deeply brainwashed by nursery rhymes that it was Humpty Dumpty that came to my
+mind when I was thinking about an example to explain computational documents.
+Don't be surprised if you run across Blippi and garbage trucks somewhere in this
+book.
 :::
 ::::
 
@@ -230,7 +231,7 @@ done.
 Maybe the neurons in my brain are wired in an odd way, but I feel mysteriously
 happy that the names `crack()` and `sieve()` weakly resembles my friend Carson
 Sievert's name. For that reason, Carson will live in my heart forever, even if
-he will never send a pull request to **litedown**.
+he would never send a pull request to **litedown**.
 
 Since there also exist fission reactions, the function `fiss()` is meant to
 decompose a document.
@@ -245,3 +246,5 @@ As for the package name "litedown", it has three meanings:
 
 3.  Finally, it is a play on the phrase "lie down". I intended to write this
     package as my last "down" package. After it is done, I wish to lie down.
+
+Let there be light.

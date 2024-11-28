@@ -598,7 +598,7 @@ move_attrs = function(x, format = 'html') {
       z4 = ifelse(i3, gsub(r3, '{\\2}\\3', z3), ifelse(z3 == '', '', '{@}'))
       cls = gsub(r1, '\\2', z3)
       # fig/tab environments don't need the data-latex attribute
-      i4 = !i3 & cls %in% c('figure', 'fig-caption', 'table', 'tab-caption')
+      i4 = !i3 & cls %in% c('figure', 'caption', 'table')
       z4[i4] = sprintf('{%s}', cls[i4])
       z3 = latex_envir(gsub('\\\\', '\\', z4, fixed = TRUE))
       z3[z3 %in% c('\\begin{@}', '\\end{@}')] = ''
@@ -607,8 +607,8 @@ move_attrs = function(x, format = 'html') {
       i = grep('^\\\\end', z3)
       z3[i] = paste0(z3[i], '\n')
       # put fig/tab captions in \caption{}
-      z3 = gsub('\\\\begin\\{(fig|tab)-caption}', '\\\\caption{', z3)
-      z3 = gsub('\\\\end\\{(fig|tab)-caption}', '}', z3)
+      z3 = gsub('\\begin{caption}', '\\\\caption{', z3, fixed = TRUE)
+      z3 = gsub('\\end{caption}', '}', z3, fixed = TRUE)
       z3
     }, format)
     # remove table env generated from commonmark and use those from fenced Divs

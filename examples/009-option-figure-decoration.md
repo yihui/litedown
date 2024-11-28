@@ -19,7 +19,7 @@ sunflowerplot(faithful)
 ![a sunflower plot](<009-option-figure-decoration__files/chunk-a-2.png>){width="45%"}
 
 
-::: {.fig-caption}
+::: {.caption}
 [](#@fig:chunk-a)
 Exploring the faithful dataset.
 :::
@@ -37,7 +37,7 @@ grid()
 ![Monthly mean relative sunspot numbers from 1749 to 1983.](<009-option-figure-decoration__files/chunk-b-1.png>)
 
 
-::: {.fig-caption}
+::: {.caption}
 [](#@fig:chunk-b)
 Monthly mean relative sunspot numbers from 1749 to 1983.
 :::

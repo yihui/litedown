@@ -338,7 +338,7 @@ For example,
 :::: {.figure}
 ![](foo.png)
 
-::: {.fig-caption}
+::: {.caption}
 This is a caption.
 :::
 ::::

@@ -13,8 +13,12 @@ h1 {
   width: 30em;
   flex-grow: 1;
   margin: .5em;
-  .name {
+  & > .name {
     font-size: 1em;
+    padding: 1px .5em;
+    p {
+      margin: .5em 0;
+    }
   }
   .run {
     float: right;

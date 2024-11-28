@@ -12,7 +12,7 @@ head(cars, 3)
 
 :::: {.table .box #tab:simple}
 
-::: {.tab-caption}
+::: {.caption}
 [](#@tab:simple)
 First 3 rows of the `cars` data.
 :::

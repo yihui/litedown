@@ -12,7 +12,7 @@ plot(cars)
 ![Bottom figure caption.](<004-caption-position__files/fig-bottom-1.png>)
 
 
-::: {.fig-caption}
+::: {.caption}
 [](#@fig:fig-bottom)
 Bottom figure caption.
 :::
@@ -24,7 +24,7 @@ cars
 
 :::: {.table #tab:tab-top}
 
-::: {.tab-caption}
+::: {.caption}
 [](#@tab:tab-top)
 Top table caption.
 :::
@@ -53,7 +53,7 @@ plot(cars)
 
 :::: {.figure #fig:fig-top}
 
-::: {.fig-caption}
+::: {.caption}
 [](#@fig:fig-top)
 Top figure caption.
 :::
@@ -81,7 +81,7 @@ cars
 |25| 85|
 
 
-::: {.tab-caption}
+::: {.caption}
 [](#@tab:tab-bottom)
 Bottom table caption.
 :::

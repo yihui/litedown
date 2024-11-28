@@ -165,7 +165,7 @@ dir_page = function(dir = '.') {
       fenced_div(c(
         p_link(b, a = NULL), info(f, b, btn('.save', b)),
         p_link(b, '.run', 2, 'title="Run in memory"')
-      ), '.name'),
+      ), '.caption .name'),
       xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
   })
