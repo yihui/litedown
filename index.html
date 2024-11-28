@@ -21,7 +21,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-11-27</h3></div>
+<div class="date"><h3>2024-11-28</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -630,7 +630,7 @@ the conversion process from R Markdown to a target format.</p>
   G --&gt; E@{ shape: doc, label: &quot;...&quot; }
   A-. &lt;code&gt;fiss()&lt;/code&gt; .-o H@{ shape: cross-circ } --&gt; I@{ shape: lin-doc, label: &quot;*.R&quot; }
 </pre>
-<div class="fig-caption">
+<div class="caption">
 <p><span class="ref-number-fig">1</span>
 A diagram illustrating how <strong>litedown</strong> converts R Markdown documents to target output formats.</p>
 </div>
@@ -749,7 +749,7 @@ together.</p>
   class H,I,J,M,N,R output
   classDef output fill:none
 </pre>
-<div class="fig-caption">
+<div class="caption">
 <p><span class="ref-number-fig">2</span>
 An illustration of the structure of a computational document and how its components are split, computed, and merged.</p>
 </div>
@@ -770,11 +770,12 @@ document, which can be further rendered to a target output format such as HTML
 and LaTeX.</p>
 <div class="figure box">
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg" alt="Humpty Dumpty" /></p>
-<div class="fig-caption">
+<div class="caption">
 <p><span class="ref-number-fig">3</span> After raising two kids for a few years, I have been so
-seriously brainwashed by nursery rhymes that Humpty Dumpty came to my mind when
-I was thinking about an example to explain computational documents. Don’t be
-surprised if you run across Blippi and garbage trucks somewhere in this book.</p>
+deeply brainwashed by nursery rhymes that it was Humpty Dumpty that came to my
+mind when I was thinking about an example to explain computational documents.
+Don’t be surprised if you run across Blippi and garbage trucks somewhere in this
+book.</p>
 </div>
 </div>
 <p>Take the following document for example:</p>
@@ -830,7 +831,7 @@ done.</p>
 <p>Maybe the neurons in my brain are wired in an odd way, but I feel mysteriously
 happy that the names <code>crack()</code> and <code>sieve()</code> weakly resembles my friend Carson
 Sievert’s name. For that reason, Carson will live in my heart forever, even if
-he will never send a pull request to <strong>litedown</strong>.</p>
+he would never send a pull request to <strong>litedown</strong>.</p>
 <p>Since there also exist fission reactions, the function <code>fiss()</code> is meant to
 decompose a document.</p>
 <p>As for the package name “litedown”, it has three meanings:</p>
@@ -848,6 +849,7 @@ is a zigzag arrow (↯).</p>
 package as my last “down” package. After it is done, I wish to lie down.</p>
 </li>
 </ol>
+<p>Let there be light.</p>
 <div class="chapter-after side side-right">
 </div>
 </div>
@@ -1096,7 +1098,7 @@ plot(cars)
     [&quot;plot(cars)&quot;]@{ assigned: '_source_', priority: 'High' }
     [&quot;!\[alt](*__files/*.png)&quot;]@{ assigned: '_plot_' }
 </pre>
-<div class="fig-caption">
+<div class="caption">
 <p><span class="ref-number-fig">4</span>
 An illustration of the output structure of a code chunk.</p>
 </div>
@@ -1256,7 +1258,7 @@ invalidates the old cache and creates new cache.</p>
   D--&quot;Yes (skip running)&quot;--&gt; F[(Load cache)]--import--&gt; G@{ shape: bow-rect, label: &quot;Local variables&quot; }
   E--&quot;export&quot;--&gt; G
 </pre>
-<div class="fig-caption">
+<div class="caption">
 <p><span class="ref-number-fig">5</span>
 The cache (in)validation process.</p>
 </div>
@@ -1391,7 +1393,7 @@ placed below figures, and table captions are placed above tables.
 </tr>
 </tbody>
 </table>
-<div class="tab-caption">
+<div class="caption">
 <p><span class="ref-number-tab">1</span>
 A table caption at the bottom via <code>cap.pos = &quot;bottom&quot;</code>.</p>
 </div>
@@ -2201,7 +2203,7 @@ head(cars, 3)
 
 :::: {.table .box #tab:simple}
 
-::: {.tab-caption}
+::: {.caption}
 [](#@tab:simple)
 First 3 rows of the `cars` data.
 :::
@@ -2901,7 +2903,7 @@ For example,</p>
 <pre><code class="language-markdown">:::: {.figure}
 ![](foo.png)
 
-::: {.fig-caption}
+::: {.caption}
 This is a caption.
 :::
 ::::
