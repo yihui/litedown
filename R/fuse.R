@@ -163,19 +163,23 @@ crack = function(input, text = NULL) {
       x2[N] = gsub('^`+', '', x2[N])  # leading ` of last
       # ` at both ends for text in the middle
       if (N > 2) x2[2:(N - 1)] = gsub('^`+|`+$', '', x2[2:(N - 1)])
+      # see if the code is wrapped in $ $
+      d1 = substring(x2, nchar(x2), nchar(x2)) == '$'
+      d2 = substring(x2, 1, 1) == '$'
+      dollar = d1[-N] & d2[-1]
       # position of code c(row1, col1, row2, col2)
       pos = matrix(b$pos, nrow = 4)
-      x = head(c(rbind(x2, c(x1, ''))), -1)
-      x = lapply(seq_along(x), function(i) {
-        z = x[i]
-        if (i %% 2 == 1) return(z)
-        z = match_one(z, rx_inline)[[1]][-1]
-        p2 = pos[, i / 2]; save_pos(p2)
-        list(
+      x = as.list(head(c(rbind(x2, c(x1, ''))), -1))
+      for (i in seq_len(N - 1)) {
+        z = match_one(x1[i], rx_inline)[[1]][-1]
+        p2 = pos[, i]; save_pos(p2)
+        xi = list(
           source = z[2], pos = p2,
           options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
         )
-      })
+        if (dollar[i]) xi$math = TRUE
+        x[[2 * i]] = xi
+      }
       b$source = x
     } else {
       b$source = paste(b$source, collapse = '\n')
@@ -888,22 +892,27 @@ exec_inline = function(x) {
   }
 }
 
-fmt_inline = function(x) {
-  if (is.numeric(x) && length(x) == 1 && !inherits(x, 'AsIs')) sci_num(x) else as.character(x)
+fmt_inline = function(x, ...) {
+  if (is.numeric(x) && length(x) == 1 && !inherits(x, 'AsIs'))
+    sci_num(x, ...) else as.character(x)
 }
 
 # change scientific notation to LaTeX math
-sci_num = function(x) {
-  s = getOption('litedown.inline.signif', 3)
-  p = getOption('litedown.inline.power', 6)
+sci_num = function(x, math = NULL) {
+  opts = reactor()
+  s = x != 0 && abs(log10(abs(x))) >= opts$power
+  x = format(signif(x, opts$signif), scientific = s)
   r = '^(-)?([0-9.]+)e([-+])0*([0-9]+)$'
-  x = format(signif(x, s), scientific = x != 0 && abs(log10(abs(x))) >= p)
-  if (!grepl(r, x)) return(x)
-  n = match_one(x, r)[[1]]
-  sprintf(
-    '%s%s10^{%s%s}', n[2], if (n[3] == '1') '' else paste(n[3], '\\times '),
-    if (n[4] == '+') '' else n[4], n[5]
-  )
+  s = grepl(r, x)
+  if (s) {
+    n = match_one(x, r)[[1]]
+    x = sprintf(
+      '%s%s10^{%s%s}', n[2], if (n[3] == '1') '' else paste(n[3], '\\times '),
+      if (n[4] == '+') '' else n[4], n[5]
+    )
+  }
+  if (is.na(d <- opts$dollar)) d = s && !isTRUE(math)
+  if (d) paste0('$', x, '$') else x
 }
 
 # similar to the base R options() interface but for litedown options / engines /
@@ -990,7 +999,8 @@ reactor(
   tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
   code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
-  wd = NULL
+  wd = NULL,
+  signif = 3, power = 6, dollar = NA
 )
 
 # the R engine
@@ -1001,7 +1011,7 @@ eng_r = function(x, inline = FALSE, ...) {
     res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
       eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
     )
-    return(fmt_inline(res))
+    return(fmt_inline(res, x$math))
   }
   args = reactor(
     'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',

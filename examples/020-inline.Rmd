@@ -1,0 +1,22 @@
+---
+title: Inline output
+---
+
+We know that $\pi = `{r} pi`$, and the first 3 letters are `{r} LETTERS[1:3]`. The first 3 variables of `mtcars` are `{r} xfun::join_words(names(mtcars)[1:3])`. You will not see this value `{r, eval = FALSE} 2 * pi`.
+
+Some numbers:
+
+```{r}
+x = 1.23456789 * 10^c(0, 5, 7, 9, -6) * c(1, 1, -1, 1, 1)
+sprintf('%f', x)
+```
+
+| n = signif, p = power | default (n = 3, p = 6) | n = 5/2/4/1/7 | p = 0/4/Inf/10/5 |
+|------------|-----------:|--------------------:|---------------------------:|
+| x[1]       | `{r} x[1]` | `{r, signif = 5} x[1]` | `{r, power = 0}   x[1]` | 
+| x[2] 10^5  | `{r} x[2]` | `{r, signif = 2} x[2]` | `{r, power = 4}   x[2]` |
+| x[3] 10^7  | `{r} x[3]` | `{r, signif = 4} x[3]` | `{r, power = Inf} x[3]` |
+| x[4] 10^9  | `{r} x[4]` | `{r, signif = 1} x[4]` | `{r, power = 10}  x[4]` |
+| x[5] 10^-6 | `{r} x[5]` | `{r, signif = 7} x[5]` | `{r, power = 5}   x[5]` |
+
+An equation: $Y = 300 `{r, dollar = FALSE, signif = 1} x[3]`x$.

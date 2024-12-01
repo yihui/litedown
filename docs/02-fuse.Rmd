@@ -181,7 +181,7 @@ litedown::reactor(echo = FALSE)
 The chunk option `echo` will be restored to `TRUE` after `fuse()` finishes this
 document.
 
-### Skipped code chunks
+### Skipped code chunks {#sec:skipped-chunks}
 
 Code chunks inside other code blocks are not parsed or evaluated, which provides
 a way to write verbatim code chunks, e.g.,
@@ -246,43 +246,100 @@ elements, such as source code blocks, messages, and plots, etc. To understand
 these options, you need to learn the Markdown syntax in @sec:attributes and
 @sec:fenced-divs.
 
-The Markdown output from a code chunk follows a structure like this (illustrated
-in @fig:attr-kanban):
+@fig:attr-structure illustrates the structure of Markdown output from a code
+chunk (the class names in the figure such as `.chunk` are not names used in the
+actual output but for illustration only).
 
-```` md
+```{css, echo = FALSE}
+.attr-blocks {
+  margin: 1em auto;
+  max-width: 30em;
+  border-right: 1px solid;
+  pre { margin: 0 2em; }
+  code { padding: .5em; border-left: 1px solid; }
+  .source-block { border-left-color: orangered; }
+  pre:has(.open-fence, .close-fence) {
+    code { border-left-width: 2px; }
+  }
+  pre:has(.open-fence) {
+    margin-top: 1em;
+    &:first-child { margin: 0 0 1em 0; }
+  }
+  pre:has(.close-fence) {
+    margin-bottom: 1em;
+    &:last-child { margin: 1em 0 0; }
+  }
+}
+```
+
+::::: {.figure .box}
+::: {.attr-blocks .fenced-chunk}
+``` {.md .open-fence .code-fence}
 :::: {.chunk}
+```
+
+``` {.md .open-fence .code-fence .source-block}
 ``` {.source}
+```
+
+``` {.r .source-block}
 1:2 + 1:3
 ```
 
+```` {.md .close-fence .code-fence .source-block}
+```
+````
+
+``` {.md .open-fence .code-fence}
 ``` {.output}
+```
+
+```         
 #> [1] 2 4 4
 ```
 
+```` {.md .close-fence .code-fence}
+```
+````
+
+``` {.md .open-fence .code-fence}
 ``` {.warning}
+```
+
+``` {.plain .warning}
 #> longer object length is not a multiple of ...
 ```
 
+```` {.md .close-fence .code-fence}
+```
+````
+
+``` {.md .open-fence .code-fence .source-block}
 ``` {.source}
+```
+
+``` {.r .source-block}
 plot(cars)
 ```
 
-![alt](*__files/*.png){.plot}
-::::
+```` {.md .close-fence .code-fence .source-block}
+```
 ````
 
-```{mermaid}
-#| attr-kanban, echo = FALSE, fig.env = '.figure .box',
-#| fig.cap = 'An illustration of the output structure of a code chunk.'
-
-kanban
-  _chunk_
-    ["1:2 + 1:3"]@{ assigned: '_source_', priority: 'High' }
-    ["#> [1] 2 4 4"]@{ assigned: '_output_' }
-    ["#> longer object length is not a multiple of ..."]@{ assigned: '_warning_' }
-    ["plot(cars)"]@{ assigned: '_source_', priority: 'High' }
-    ["!\[alt](*__files/*.png)"]@{ assigned: '_plot_' }
+``` md
+![alt](*__files/*.png){.plot}
 ```
+
+``` {.md .close-fence .code-fence}
+::::
+```
+:::
+
+::: caption
+[ ](#@fig:attr-structure) An illustration of the output structure of a code
+chunk.
+:::
+:::::
 
 The source code, text output, and messages (including warnings and errors) are
 formatted as fenced code blocks. Plots are written in `![]()`. The whole chunk
@@ -308,8 +365,8 @@ add attributes to these fenced code blocks, plots, and fenced `Div`s.
 -   `attr.plot`: Attributes for plots. If a code chunk produces multiple plots,
     you may provide a vector to `attr.plot` so that *i*-th element of the vector
     is applied to the *i*-th plot. For example, if a code chunk has two plots,
-    you may use `attr.plot = sprintf('width="%s"', c('40%', '60%'))` to set the
-    width of the first plot to `40%`, and the second plot to `60%`.
+    you may use `attr.plot = c('width="40%"', 'width="60%"')` to set the width
+    of the first plot to `40%`, and the second plot to `60%`.
 
 -   `attr.source`: Attributes for the source blocks. By default, it uses the
     language name of the code chunk as the class name. For example, for
@@ -1045,7 +1102,65 @@ another piece of inline code is not parsed or evaluated, which provides a way to
 write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
 
 Comma-separated chunk options can also be provided to inline code expressions
-after the language name, e.g., `` `{r, eval = FALSE} code` ``.
+after the language name, e.g., `` `{r, eval = FALSE} code` ``. Currently, only
+`eval` (@sec:option-eval) and `error` (@sec:option-error) are supported, and
+most other chunk options in @sec:chunk-options are not supported for inline
+code. A few additional options are provided for formatting inline numeric output
+(@sec:numeric-output).
+
+The inline code is expected to return a value of length 1. If it returns an
+object of length greater than 1, all elements in the object will be concatenated
+by line breaks (`\n`) to form a single string.
+
+### Numeric output
+
+If the inline expression returns a single number, the number will be formatted.
+To bypass the formatting, wrap the inline expression in `I()`. We denote the
+number by $x$ for now.
+
+-   First, $x$ will be rounded to $n$ significant digits, where $n$ is
+    controlled by the option `signif` and its default value is `3`.
+
+-   Then $x$ will be formatted using the scientific notation $\pm m\times 10^n$
+    if $|x| \geq 10^p$ or $|x| \leq 10^{-p}$, where $p$ is controlled by the
+    option `power`, which defaults to `6`. If you want to avoid the scientific
+    notation, you can set this option to `Inf`. When $m = 1$, it will be omitted
+    (i.e., the output will be $10^n$ instead of $1 \times 10^n$.
+
+When a number is formatted in the scientific notation, it will be enclosed with
+`$ $` as an inline LaTeX math expression. For example, `` `{r} 1234567` `` will
+be rendered to $`{r} 1234567`$.
+
+Options to control the formatting include:
+
+-   `dollar`: Whether to add `$ $` to numbers in the scientific notation. By
+    default (`dollar = NA`), dollar signs will be added automatically if the
+    inline code expression in the source is not directly enclosed with dollar
+    signs. `TRUE` means to always add dollar signs, and `FALSE` means to never
+    add dollar signs. You will need to use `dollar = FALSE` for numbers in a
+    LaTeX math expression because you should not use `$ $` inside a math
+    expression (see the example below).
+
+-   `power`: The threshold for scientific notation.
+
+-   `signif`: The desired number of significant digits.
+
+`{r} c(.ex(20), .ex(20, '.md'))`
+
+To make it easier to read the numbers in the Markdown table above, we render the
+table to @tab:inline-numbers:
+
+:::: {.table .box}
+::: caption
+[ ](#@tab:inline-numbers) Inline numbers formatted with different `signif` and
+`power` options.
+:::
+
+```{r, echo = FALSE, results = 'asis'}
+ex20 = .ex(20, '.md', verbatim = FALSE)
+cat(grep('^[|][- ]', ex20, value = TRUE), sep = '\n')
+```
+::::
 
 ### Compatibility with knitr
 
@@ -1055,27 +1170,6 @@ temporary workaround, you may set `options(litedown.enable.knitr_inline = TRUE)`
 in your `.Rprofile` to make **litedown** recognize `` `r code` ``, but we
 recommend that you convert the document via `litedown:::convert_knitr()` instead
 if you decide to stay with **litedown** in the long run.
-
-### Numeric output
-
-If the inline expression returns a single number, the number will be formatted.
-To bypass the formatting, wrap the inline expression in `I()`. We denote the
-number by $x$ for now.
-
--   First, $x$ will be rounded to $n$ significant digits, where $n$ is
-    controlled by the global R option `litedown.inline.signif` and its default
-    value is `3`. To change the default, set
-    `options(litedown.inline.signif = N)` anywhere before the inline code is
-    executed, where `N` is the desired number of significant digits.
-
--   Then $x$ will be formatted using the scientific notation $\pm m\times 10^n$
-    if $|x| \geq 10^p$ or $|x| \leq 10^{-p}$, where $p$ is controlled by the
-    global option `litedown.inline.power`, which defaults to `6`. If you want to
-    avoid the scientific notation, you can set this option to `Inf`.
-
-    When a number is formatted in the scientific notation, you need to wrap it
-    in an inline LaTeX math expression. For example, `` $`{r} 1234567`$ `` will
-    be rendered to $`{r} 1234567`$.
 
 ## R scripts
 
@@ -1100,7 +1194,31 @@ comments, e.g.,
 plot(cars)
 ```
 
-Both `#'` and `#|` comments are optional.
+Both `#'` and `#|` comments are optional. If no `#'` or `#|` comments are found
+in the script, the whole script will be treated as a single code chunk.
+
+```{mermaid}
+#| flow-sieve, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'An illustration of how scripts are rendered.'
+flowchart TD
+  O@{ shape: lin-doc, label: "Input script" }--"sieve()"--> A@{ shape: f-circ } -.-o B[["#' YAML"]]
+  A -.-o C[["#' Text"]]
+  C ---> H[[Text]]
+  A -.-o D[[Code chunk]]
+  D -.- D1>"#| Chunk options"]
+  D -.- D2>Code]--> G{Results} --> I[[Chunk output]]
+  A -.-o E[[More chunks...]] -.- K>...] --> L{...} --> M[[More output...]] -.-> J
+  H -.-> J@{ shape: doc, label: "Markdown" }
+  I -.-> J
+  B --> R[[YAML]] -.-> J
+  J--"mark()" --> N@{ shape: tag-doc, label: "Output document" }
+  class O,J,N document
+  classDef document stroke-width:3px
+  class G,L fuse-out
+  classDef fuse-out fill:lightyellow
+  class H,I,M,R output
+  classDef output fill:none
+```
 
 ## Language engines {#sec:engines}
 
@@ -1254,19 +1372,60 @@ code block).
 
 Major differences between **knitr** and **litedown** include:
 
-| knitr | litedown |
-|----|----|
-| Supports multiple graphical devices for a chunk. | Only supports one device for a chunk (but there are multiple choices for this device). |
-| Depending on certain chunk options, figure output could be both Markdown (`![]()`) and raw HTML (`<img>`) / LaTeX (`\includegraphics{}`). | Always use Markdown syntax for figures. |
-| The document parser is based on regular expressions and not robust. Code chunks and inline expressions are not aware of their contexts (e.g., code blocks or comments). | The parser is based on **commonmark**, which is more robust and makes it straightforward to write verbatim code (in a parent code block) or comment out code (in `<!-- -->` comments). |
-| Supports a large number of chunk options and language engines. | Supports a limited number of chunk options and engines. |
-| Inline code does not support options or languages other than R. | Inline code supports options and other languages. |
-| All code is executed in the linear order. | Code chunks and inline code can be executed in a custom non-linear order defined by the chunk option `order`. |
-| Supports chunk hooks and output hooks. | No hooks at the moment. |
-| The package is more than 12 years old and quite mature. | The package is new and still experimental. |
+-   **knitr** accepts a variety of input document formats, such as `*.Rnw`,
+    `*.Rhtml`, `*.Rmd`, `*.Rtex`, `*.Rrst`, and `*.Rasciidoc`,[^02-fuse-3]
+    whereas **litedown** only supports Markdown.
 
-If you feel any indispensable features are missing in **litedown**, please feel
-free to suggest them in [Github issues](https://github.com/yihui/litedown).
-However, please remember that the goal of **litedown** is not to fully
-re-implement **rmarkdown**, **knitr** or Pandoc. Some features may never be
-re-implemented, especially when the implementation is not simple enough.
+-   **knitr** supports multiple graphics devices for a chunk via the `dev`
+    option, and **litedown** only supports one device for a chunk (but there are
+    multiple choices for this device). I hate the
+    [ugly](https://github.com/yihui/knitr/blob/4510c0/R/block.R#L393-L426)
+    [hacks](https://github.com/yihui/knitr/blob/69b063/R/plot.R#L288-L306) in
+    **knitr** for drawing a plot in one device and rendering it with other
+    devices later. This feature is not worth the effort due to the daunting
+    complexity of implementation, not to mention that it doesn't always work. If
+    you need multiple file formats for the same plot in **litedown**, you should
+    start a new chunk with the same code (@sec:option-ref-label) and a different
+    `dev` option instead.
+
+-   **knitr** may output images in Markdown (`![]()`) or raw HTML (`<img>`) /
+    LaTeX (`\includegraphics{}`), depending on certain chunk options;
+    **litedown** always uses the Markdown syntax for figures, which is cleaner
+    and more portable.
+
+-   The document parser of **knitr** is based solely on regular expressions and
+    not robust. Code chunks and inline expressions are not aware of their
+    contexts. The parser of **litedown** is based on **commonmark**, which is
+    more robust and makes it straightforward to write verbatim code or comment
+    out code (@sec:skipped-chunks).
+
+-   **knitr** supports a large number of chunk options and language engines, and
+    **litedown** only supports a limited number of chunk options and engines
+    (this number may grow in the future but perhaps not significantly).
+
+-   Inline code for **knitr** does not support options or non-R languages, and
+    **litedown** is much more flexible in this regard.
+
+-   All code chunks in **knitr** are executed in the linear order, and
+    **litedown** can execute code in an arbitrary custom order
+    (@sec:option-order).
+
+-   **knitr** supports chunk hooks and output hooks; **litedown** doesn't
+    support hooks but the `attr.*` (@sec:option-attr) and `print`
+    (@sec:option-print) options have provided some flexibility in customizing
+    the chunk output.
+
+-   **knitr** is more than 12 years old and quite mature, and **litedown** is
+    new and still experimental.
+
+[^02-fuse-3]: Perhaps Paul Murrell is the only person in the world who uses the
+    `.Rhtml` format. I wonder if anyone uses any of the rest of formats, except
+    for `.Rnw` and `` `.Rmd` ``.
+
+If you feel any indispensable **knitr** features are missing in **litedown**,
+please feel free to suggest them in [Github
+issues](https://github.com/yihui/litedown). However, please remember that the
+goal of **litedown** is not to fully re-implement **rmarkdown**, **knitr** or
+Pandoc. Some features may never be re-implemented, especially when the
+implementation is not simple enough.
+

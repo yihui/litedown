@@ -4,13 +4,15 @@
 
 - Changed the meaning of the chunk option `order`: previously, higher values indicate earlier execution; now higher values indicate later execution. This is a breaking change, but the new meaning should feel more natural. For example, `order = i` means to execute the chunk in the i-th step, and `order = i - 1.5` means to move the chunk back 1.5 step in the queue so it will be executed earlier than its previous chunk. See https://yihui.org/litedown/#sec:option-order for details.
 
+- Added options `dollar`, `signif`, and `power` to format numbers from inline code. See https://yihui.org/litedown/#sec:inline-code for details.
+
 - Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).
 
 - Added support for the chunk option `fig.dim`, which is a shortcut for `fig.width` and `fig.height`.
 
-- Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a singe chapter.
+- Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a single chapter.
 
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/lite.js@5e06d19.
 
