@@ -1,14 +1,20 @@
 ```{r, include = FALSE}
-d = packageDescription(litedown:::detect_pkg())
-a = if (is.null(a <- d[['Authors@R']])) d[['Author']] else {
-  Filter(function(x) 'aut' %in% x$role, eval(xfun::parse_only(a))) |>
-    format(include = c('given', 'family')) |>
-    xfun::join_words()
+get_authors = function() {
+  d = packageDescription(litedown:::detect_pkg())
+  if (is.null(a <- d[['Authors@R']])) return(d[['Author']])
+  a = Filter(function(x) 'aut' %in% x$role, eval(xfun::parse_only(a)))
+  a = unlist(lapply(a, function(x) {
+    name = paste(x$given, x$family)
+    link = x$comment[['URL']]
+    if (length(link) != 1 || is.na(link)) return(name)
+    sprintf('[%s](%s)', name, link)
+  }))
+  xfun::join_words(a)
 }
 ```
 
 ::: flex-col
-Developed by `{r} a`
+Developed by `{r} get_authors()`
 
 Site built with [litedown](https://github.com/yihui/litedown) v`{r} packageVersion('litedown')`
 :::

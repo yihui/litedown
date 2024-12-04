@@ -11,7 +11,7 @@ ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }
 a { color: steelblue; }
 pre, img { max-width: 100%; }
-pre, pre:hover, fieldset pre { white-space: pre-wrap; word-break: break-word; }
+pre { white-space: pre-wrap; word-break: break-word; }
 pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre) > code, code[class], .box > .caption { background-color: #f8f8f8; }
@@ -34,7 +34,7 @@ table {
   border-top: 1px solid #666;
   thead th { border-bottom: 1px solid #ddd; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
-  thead, tfoot, tr:nth-child(even) { background: #eee; }
+  thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
 }
 .table-full {
   width: 100%;
@@ -87,5 +87,5 @@ section.footnotes {
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
-  pre:has(.line-numbers) { white-space: pre; }
+  pre:has(.line-numbers):not(:hover) { white-space: pre; }
 }

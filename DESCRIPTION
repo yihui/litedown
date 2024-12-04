@@ -1,9 +1,9 @@
 Package: litedown
 Type: Package
 Title: A Lightweight Version of R Markdown
-Version: 0.4.5
+Version: 0.4.6
 Authors@R: c(
-   person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666")),
+   person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666", URL = "https://yihui.org")),
    person()
    )
 Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown

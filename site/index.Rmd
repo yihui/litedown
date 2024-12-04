@@ -32,6 +32,6 @@ if (file.exists(readme <- file.path(pkg_path, 'README.md'))) {
 
 To cite the package **`{r} pkg_name`** in publications, please use:
 
-```{r}
+```{r, warning = FALSE}
 litedown::pkg_citation()
 ```

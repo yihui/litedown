@@ -11,11 +11,14 @@ runs:
   using: "composite"
   steps:
     - name: Install R packages
+      shell: bash
       run: |
-        R CMD INSTALL "${{ inputs.pkg-root }}"
-        Rscript -e "if (!requireNamespace('litedown')) install.packages('litedown')"
+        Rscript -e "install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')"
+        R CMD build "${{ inputs.pkg-root }}"
+        R CMD INSTALL *_*.tar.gz
 
     - name: Build site
+      shell: bash
       run: |
         cd "${{ inputs.pkg-root }}"
         mkdir -p "${{ inputs.site-dir }}"

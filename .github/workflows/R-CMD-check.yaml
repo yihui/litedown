@@ -78,7 +78,7 @@ jobs:
           path: gh-pages
           ref: gh-pages
 
-      - name: Publish documentation
+      - name: Publish book
         if: runner.os == 'macOS'
         run: |
           Rscript -e 'install.packages("xfun", repos="https://yihui.r-universe.dev")'
