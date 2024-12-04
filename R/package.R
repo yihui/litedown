@@ -209,16 +209,27 @@ header_class = function(toc, number_sections, md = TRUE) {
 
 #' @param pattern A regular expression to match filenames that should be treated
 #'   as source code.
+#' @param link Whether to add links on the file paths of source code. By
+#'   default, if a GitHub repo link is detected from the `BugReports` field of
+#'   the package `DESCRIPTION`, GitHub links will be added to file paths. You
+#'   can also provide a string template containing the placeholder `%s` (which
+#'   will be filled out with the file paths via `sprintf()`), e.g.,
+#'   `https://github.com/yihui/litedown/blob/main/%s`.
 #' @return `pkg_code()` returns the package source code under the `R/` and
 #'   `src/` directories.
 #' @rdname pkg_desc
 #' @export
 pkg_code = function(
   path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cpp)$', toc = TRUE,
-  number_sections = TRUE
+  number_sections = TRUE, link = TRUE
 ) {
   if (!isTRUE(dir.exists(path))) return()
   a = header_class(toc, number_sections)
+  if (isTRUE(link)) {
+    u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
+    u = xfun::grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1blob/HEAD/%s', u)
+    if (length(u)) link = u
+  }
   ds = c('R', 'src')
   ds = ds[ds %in% list.dirs(path, FALSE, FALSE)]
   flat = length(ds) == 1  # if only one dir exists, list files in a flat structure
@@ -226,7 +237,9 @@ pkg_code = function(
     fs = list.files(d, pattern, full.names = TRUE, recursive = TRUE)
     if (length(fs) == 0) return()
     x = uapply(fs, function(f) c(
-      sprintf('##%s `%s`%s', if (flat) '' else '#', f, a), '',
+      sprintf('##%s %s%s', if (flat) '' else '#', if (is.character(link)) {
+        sprintf('[`%s`](%s)', f, sprintf(link, f))
+      } else sprintf('`%s`', f), a), '',
       fenced_block(read_utf8(f), lineno_attr(file_ext(f), auto = FALSE)), ''
     ))
     e = unique(file_ext(fs))
@@ -320,6 +333,7 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
   res = gsub('<code id="[^"]+">', '<code>', res)
   res = gsub('(<code[^>]*>)\\s+', '\\1', res)
   res = gsub('\\s+(</code>)', '\\1', res)
+  res = gsub('<div class="sourceCode"><pre>(.+?)</pre></div>', '<pre><code>\\1</code></pre>', res)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
 

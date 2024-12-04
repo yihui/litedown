@@ -23,7 +23,8 @@ pkg_code(
   path = attr(detect_pkg(), "path"),
   pattern = "[.](R|c|h|f|cpp)$",
   toc = TRUE,
-  number_sections = TRUE
+  number_sections = TRUE,
+  link = TRUE
 )
 
 pkg_citation(name = detect_pkg())
@@ -53,6 +54,13 @@ numbered in the document).}
 
 \item{pattern}{A regular expression to match filenames that should be treated
 as source code.}
+
+\item{link}{Whether to add links on the file paths of source code. By
+default, if a GitHub repo link is detected from the \code{BugReports} field of
+the package \code{DESCRIPTION}, GitHub links will be added to file paths. You
+can also provide a string template containing the placeholder \verb{\%s} (which
+will be filled out with the file paths via \code{sprintf()}), e.g.,
+\verb{https://github.com/yihui/litedown/blob/main/\%s}.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
