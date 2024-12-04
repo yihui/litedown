@@ -185,10 +185,10 @@ check_output = function(input, output) {
 
 # substitute a variable in template `x` with its value; the variable may have
 # more than one possible name, in which case we try them one by one
-sub_var = function(x, name, value) {
+sub_var = function(x, name, value, ...) {
   for (i in name) {
     if (any(grepl(i, x, fixed = TRUE))) {
-      return(sub(i, one_string(value, test = TRUE), x, fixed = TRUE))
+      return(sub(i, one_string(value, ...), x, fixed = TRUE))
     }
   }
   x
@@ -397,9 +397,12 @@ get_option = function(name, format, ...) {
   getOption(sprintf('litedown.%s.%s', format, name), ...)
 }
 
-# if a string is a file path and test = TRUE, read the file; then concatenate elements by \n
-one_string = function(x, by = '\n', test = FALSE) {
-  if (test && is_file(x)) x = read_utf8(x)
+# if a string is a file path found under test dirs, read the file; then concatenate elements by \n
+one_string = function(x, by = '\n', test = NULL) {
+  if (length(test) && is_file(x)) {
+    p = if (xfun::is_abs_path(x)) x else xfun::existing_files(file.path(c(test, '.'), x))
+    if (length(p)) x = read_utf8(p[1]) else stop("The file '", x, "' is not found")
+  }
   paste(x, collapse = by)
 }
 

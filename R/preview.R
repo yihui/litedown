@@ -51,7 +51,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     query = as.list(query)
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
-    type = if (length(headers)) xfun::grep_sub(
+    type = if (length(headers)) grep_sub(
       '.*\nlitedown-data: ([^[:space:]]+).*', '\\1', rawToChar(headers)
     )
     if (length(type) != 1) type = ''
@@ -166,7 +166,7 @@ dir_page = function(dir = '.') {
         p_link(b, a = NULL), info(f, b, btn('.save', b)),
         p_link(b, '.run', 2, 'title="Run in memory"')
       ), '.caption .name'),
-      xfun::fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
+      fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
     ), '.box')
   })
   files = files[!i1]

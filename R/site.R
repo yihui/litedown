@@ -94,7 +94,7 @@ set_site_options = function(opts, input, root, extra = NULL) {
   for (i in c('include_before', 'include_after')) {
     if (!is.character(m[[i]])) next
     tag = if (i == 'include_before') 'nav' else 'footer'
-    x = mark(I(in_dir(root, one_string(m[[i]], test = TRUE))))
+    x = mark(I(one_string(m[[i]], test = c(dirname(input), root))))
     x = sprintf('<%s>%s</%s>', tag, x, tag)
     m[[i]] = sub_vars(x, list(input = I(input)))
   }

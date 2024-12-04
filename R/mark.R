@@ -360,7 +360,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   # use the template (if provided) to create a standalone document
   if (is.character(template)) {
-    ret = build_output(format, options, template, meta)
+    ret = build_output(
+      format, options, template, meta, test = c(if (length(input)) dirname(input), '.')
+    )
     # load the cleveref package if not loaded
     if (clever && !any(grepl('\\\\usepackage.*\\{cleveref\\}', ret, perl = TRUE)))
       ret = sub('(?=\\\\begin\\{document\\})', '\\\\usepackage{cleveref}\n', ret, perl = TRUE)
@@ -402,8 +404,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 }
 
 # insert body and meta variables into a template
-build_output = function(format, options, template, meta) {
-  tpl = one_string(template, test = TRUE)
+build_output = function(format, options, template, meta, ...) {
+  tpl = one_string(template, ...)
   if (format == 'html') {
     b = meta$body
     set_meta = function(name, value) {
@@ -419,17 +421,17 @@ build_output = function(format, options, template, meta) {
     # special handling for css/js "files" that have no extensions
     for (i in c('css', 'js')) meta[[i]] = resolve_files(meta[[i]], i)
   }
-  sub_vars(tpl, meta)
+  sub_vars(tpl, meta, ...)
 }
 
 # substitute all variables in template with their values
-sub_vars = function(tpl, meta) {
+sub_vars = function(tpl, meta, ...) {
   # find all variables in the template
   vars = unlist(match_full(tpl, '[$][-_[:alnum:]]+[$]'))
   # insert $body$ at last in case the body contain any $variables$ accidentally
   if (!is.na(i <- match('$body$', vars))) vars = c(vars[-i], vars[i])
   for (v in vars) {
-    tpl = sub_var(tpl, v, meta[[gsub('[$]', '', v)]])
+    tpl = sub_var(tpl, v, meta[[gsub('[$]', '', v)]], ...)
   }
   tpl
 }

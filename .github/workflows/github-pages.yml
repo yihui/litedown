@@ -1,4 +1,4 @@
-name: Render package site and deploy to Github Pages
+name: Render and deploy package site
 
 on:
   push:

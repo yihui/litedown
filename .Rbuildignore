@@ -6,3 +6,4 @@ Makefile
 ^LICENSE\.md$
 ^docs$
 ^examples$
+^site$

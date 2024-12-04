@@ -227,7 +227,7 @@ pkg_code = function(
   a = header_class(toc, number_sections)
   if (isTRUE(link)) {
     u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
-    u = xfun::grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1blob/HEAD/%s', u)
+    u = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1blob/HEAD/%s', u)
     if (length(u)) link = u
   }
   ds = c('R', 'src')

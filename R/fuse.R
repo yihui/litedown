@@ -1060,7 +1060,7 @@ eng_embed = function(x, ...) {
   if (is.null(f <- opts$file)) {
     f = gsub('^["\']|["\']$', '', s)  # in case paths are quoted
     if (length(f) == 0) return()
-    s = xfun::read_all(f)
+    s = read_all(f)
   }
   opts_new = list(comment = NULL)  # don't comment out file content
   # use the filename extension as the default language name
