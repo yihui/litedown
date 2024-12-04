@@ -1,5 +1,14 @@
 # Markdown Rendering {#chp:mark}
 
+::: epigraph
+> Mature mental health demands, then, an extraordinary capacity to flexibly
+> strike and continually restrike a delicate balance between conflicting needs,
+> goals, duties, responsibilities, directions, et cetera. The essence of this
+> discipline of balancing is "giving up."
+>
+> ---M. Scott Peck, *The Road Less Traveled*
+:::
+
 The main function to convert Markdown to other formats is `litedown::mark()`.
 
 You can either call `litedown::mark()` to render a Markdown document

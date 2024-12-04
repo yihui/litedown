@@ -1,5 +1,15 @@
 # Authoring
 
+::: epigraph
+> I don’t hide from you that I don’t detest the countryside—having been brought
+> up there, snatches of memories from past times, yearnings for that infinite of
+> which the Sower, the sheaf, are the symbols, still enchant me as before. But
+> when will I do the starry sky, then, that painting that’s always on my mind?
+>
+> ---Vincent van Gogh, [*The
+> Letters*](https://vangoghletters.org/vg/letters/let628/letter.html)
+:::
+
 ## The `Knit` button {#sec:knit-button}
 
 If you use the RStudio IDE, the `Knit` button can render R Markdown to a

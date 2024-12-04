@@ -1,5 +1,15 @@
 # Books and Websites {#chp:sites}
 
+::: epigraph
+> I can at least listen without indignation to the critic who is of the opinion
+> that when one surveys the aims of cultural endeavour and the means it employs,
+> one is bound to come to the conclusion that the whole effort is not worth the
+> trouble, and that the outcome of it can only be a state of affairs which the
+> individual will be unable to tolerate.
+>
+> ---Sigmund Freud, *Civilization and Its Discontents*
+:::
+
 Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named `_litedown.yml`.
@@ -40,11 +50,11 @@ before/after each chapter, in which you can use some variables such as
 
 ### Previewing a single chapter
 
-Rendering a whole book may be time-consuming[^06-site-1] and unnecessary when
+Rendering a whole book may be time-consuming[^07-site-1] and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with `litedown::roam()`:
 
-[^06-site-1]: Remember that you can cache time-consuming code chunks to make the
+[^07-site-1]: Remember that you can cache time-consuming code chunks to make the
     rendering faster.
 
 -   If you run the index file (e.g., `index.Rmd`), the whole book will be

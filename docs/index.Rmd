@@ -46,17 +46,25 @@ options(width = 80)
 
 ::: callout-important
 The **litedown** package is still new and experimental. The documentation is
-very incomplete. Besides, **litedown** was designed for minimalists with a
-limited scope. Average users should perhaps consider using **rmarkdown** or
-Quarto instead.
+only about 50% complete at the moment. Besides, **litedown** was designed for
+minimalists with a limited scope. Average users should perhaps consider using
+**rmarkdown** or Quarto instead.
+
+If you do wish to try **litedown**, please install from r-universe:
+
+``` r
+install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')
+```
 :::
 
+::: epigraph
 > You may say I'm a dreamer\
 > But I'm not the only one\
 > I hope someday you'll join us\
 > And the world will live as one
 >
 > ---John Lennon, *Imagine*
+:::
 
 Imagine there's no PDF. It's easy if you try. No Word below us. Above us, only
 HTML.

@@ -1,5 +1,14 @@
 # CSS/JS assets {#chp:assets}
 
+::: epigraph
+> And it seemed as though in a little while the solution would be found, and
+> then a new and splendid life would begin; and it was clear to both of them
+> that they had still a long, long road before them, and that the most
+> complicated and difficult part of it was only just beginning.
+>
+> ---Anton Chekhov, *The Lady with the Dog*
+:::
+
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we
 introduce some CSS/JS assets from the GitHub repository

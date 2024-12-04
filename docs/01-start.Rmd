@@ -1,12 +1,11 @@
 # Get Started {#chp:start}
 
-> I can at least listen without indignation to the critic who is of the opinion
-> that when one surveys the aims of cultural endeavour and the means it employs,
-> one is bound to come to the conclusion that the whole effort is not worth the
-> trouble, and that the outcome of it can only be a state of affairs which the
-> individual will be unable to tolerate.
+::: epigraph
+> Things are in the saddle,\
+> And ride mankind.
 >
-> ---Sigmund Freud, *Civilization and Its Discontents*
+> ---Ralph Waldo Emerson, *Ode, Inscribed to William H. Channing*
+:::
 
 R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.

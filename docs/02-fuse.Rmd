@@ -1,9 +1,11 @@
 # Computing {#chp:fuse}
 
+::: epigraph
 > If you give someone a program, you will frustrate them for a day; if you teach
 > them how to program, you will frustrate them for a lifetime.
 >
 > ---David Leinweber
+:::
 
 In this chapter, we introduce how to manage computing in computational
 documents. The computing may be done in code chunks, inline code expressions,
@@ -457,10 +459,12 @@ flowchart TD
   B1--"deparse()"--> C((Hash))
   B2 --> C
   B3 --> C
-  C --> D(Find cache)
+  C--find cache--> D@{ shape: f-circ }
   D--"No (re-run code)"--> E@{ shape: lin-cyl, label: "New cache" }
   D--"Yes (skip running)"--> F[(Load cache)]--import--> G@{ shape: bow-rect, label: "Local variables" }
   E--"export"--> G
+  style C stroke-dasharray:5 5,stroke-width:3px,color:orangered
+  style E fill:lightyellow
 ```
 
 Besides the option `cache`, below are other chunk options that allow you to
@@ -1285,10 +1289,9 @@ The `mermaid` engine can be used to draw diagrams with
 ```` md
 ```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
 flowchart TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+    A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
+    A --> C[CWEB]
+    D --> F[litedown]
 ```
 ````
 
@@ -1420,7 +1423,7 @@ Major differences between **knitr** and **litedown** include:
 
 [^02-fuse-3]: Perhaps Paul Murrell is the only person in the world who uses the
     `.Rhtml` format. I wonder if anyone uses any of the rest of formats, except
-    for `.Rnw` and `` `.Rmd` ``.
+    for `.Rnw` and `.Rmd`.
 
 If you feel any indispensable **knitr** features are missing in **litedown**,
 please feel free to suggest them in [Github
@@ -1428,4 +1431,3 @@ issues](https://github.com/yihui/litedown). However, please remember that the
 goal of **litedown** is not to fully re-implement **rmarkdown**, **knitr** or
 Pandoc. Some features may never be re-implemented, especially when the
 implementation is not simple enough.
-
