@@ -5,23 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.4.5">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/css/pages.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-12-01</h3></div>
+<div class="date"><h3>2024-12-04</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -245,7 +245,7 @@
 <li><a href="#sec:books"><span class="section-number">7.1</span> Books</a>
 <ul>
 <li><a href="#sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</a></li>
-<li><a href="#sec:r-package-documentation"><span class="section-number">7.1.2</span> R package documentation</a></li>
+<li><a href="#sec:pkg-site"><span class="section-number">7.1.2</span> R package documentation</a></li>
 </ul>
 </li>
 <li><a href="#sec:websites"><span class="section-number">7.2</span> Websites</a></li>
@@ -269,10 +269,14 @@
 <h1 id="chp:preface" class="unnumbered">Preface</h1>
 <div class="callout-important">
 <p>The <strong>litedown</strong> package is still new and experimental. The documentation is
-very incomplete. Besides, <strong>litedown</strong> was designed for minimalists with a
-limited scope. Average users should perhaps consider using <strong>rmarkdown</strong> or
-Quarto instead.</p>
+only about 50% complete at the moment. Besides, <strong>litedown</strong> was designed for
+minimalists with a limited scope. Average users should perhaps consider using
+<strong>rmarkdown</strong> or Quarto instead.</p>
+<p>If you do wish to try <strong>litedown</strong>, please install from r-universe:</p>
+<pre><code class="language-r">install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')
+</code></pre>
 </div>
+<div class="epigraph">
 <blockquote>
 <p>You may say I’m a dreamer<br />
 But I’m not the only one<br />
@@ -280,6 +284,7 @@ I hope someday you’ll join us<br />
 And the world will live as one</p>
 <p>—John Lennon, <em>Imagine</em></p>
 </blockquote>
+</div>
 <p>Imagine there’s no PDF. It’s easy if you try. No Word below us. Above us, only
 HTML.</p>
 <p>I do not mean PDF and Word are bad. I only lament the time that human beings
@@ -606,14 +611,13 @@ unexpected changes before publishing the output.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/01-start.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:start"><span class="section-number main-number">1</span> Get Started</h1>
+<div class="epigraph">
 <blockquote>
-<p>I can at least listen without indignation to the critic who is of the opinion
-that when one surveys the aims of cultural endeavour and the means it employs,
-one is bound to come to the conclusion that the whole effort is not worth the
-trouble, and that the outcome of it can only be a state of affairs which the
-individual will be unable to tolerate.</p>
-<p>—Sigmund Freud, <em>Civilization and Its Discontents</em></p>
+<p>Things are in the saddle,<br />
+And ride mankind.</p>
+<p>—Ralph Waldo Emerson, <em>Ode, Inscribed to William H. Channing</em></p>
 </blockquote>
+</div>
 <p>R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.</p>
 <p>For those who are familiar with R Markdown, you can think of the function
@@ -858,11 +862,13 @@ package as my last “down” package. After it is done, I wish to lie down.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/02-fuse.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:fuse"><span class="section-number main-number">2</span> Computing</h1>
+<div class="epigraph">
 <blockquote>
 <p>If you give someone a program, you will frustrate them for a day; if you teach
 them how to program, you will frustrate them for a lifetime.</p>
 <p>—David Leinweber</p>
 </blockquote>
+</div>
 <p>In this chapter, we introduce how to manage computing in computational
 documents. The computing may be done in code chunks, inline code expressions,
 script files, and in R or other languages.</p>
@@ -1279,10 +1285,12 @@ invalidates the old cache and creates new cache.</p>
   B1--&quot;deparse()&quot;--&gt; C((Hash))
   B2 --&gt; C
   B3 --&gt; C
-  C --&gt; D(Find cache)
+  C--find cache--&gt; D@{ shape: f-circ }
   D--&quot;No (re-run code)&quot;--&gt; E@{ shape: lin-cyl, label: &quot;New cache&quot; }
   D--&quot;Yes (skip running)&quot;--&gt; F[(Load cache)]--import--&gt; G@{ shape: bow-rect, label: &quot;Local variables&quot; }
   E--&quot;export&quot;--&gt; G
+  style C stroke-dasharray:5 5,stroke-width:3px,color:orangered
+  style E fill:lightyellow
 </pre>
 <div class="caption">
 <p><span class="ref-number-fig">5</span>
@@ -2492,17 +2500,17 @@ We know that $\pi = `{r} pi`$, and the first 3 letters are `{r} LETTERS[1:3]`. T
 Some numbers:
 
 ```{r}
-x = 1.23456789 * 10^c(0, 5, 7, 9, -6) * c(1, 1, -1, 1, 1)
+x = 1.23456789 * 10^c(0, 5, 6, 9, -6) * c(1, 1, -1, 1, 1)
 sprintf('%f', x)
 ```
 
-| n = signif, p = power | default (n = 3, p = 6) | n = 5/2/4/1/7 | p = 0/4/Inf/10/5 |
-|------------|-----------:|--------------------:|---------------------------:|
-| x[1]       | `{r} x[1]` | `{r, signif = 5} x[1]` | `{r, power = 0}   x[1]` | 
-| x[2] 10^5  | `{r} x[2]` | `{r, signif = 2} x[2]` | `{r, power = 4}   x[2]` |
-| x[3] 10^7  | `{r} x[3]` | `{r, signif = 4} x[3]` | `{r, power = Inf} x[3]` |
-| x[4] 10^9  | `{r} x[4]` | `{r, signif = 1} x[4]` | `{r, power = 10}  x[4]` |
-| x[5] 10^-6 | `{r} x[5]` | `{r, signif = 7} x[5]` | `{r, power = 5}   x[5]` |
+| n = signif/p = power | n = 3, p = 6 | n = 5/2/4/1/7 | p = 0/4/Inf/9/5 |
+|-----------|-----------:|---------------------:|----------------------:|
+| x_1       | `{r} x[1]` | `{r, signif=5} x[1]` | `{r, power=0}   x[1]` | 
+| x_2 10^5  | `{r} x[2]` | `{r, signif=2} x[2]` | `{r, power=4}   x[2]` |
+| x_3 10^6  | `{r} x[3]` | `{r, signif=4} x[3]` | `{r, power=Inf} x[3]` |
+| x_4 10^9  | `{r} x[4]` | `{r, signif=1} x[4]` | `{r, power=9}   x[4]` |
+| x_5 10^-6 | `{r} x[5]` | `{r, signif=7} x[5]` | `{r, power=5}   x[5]` |
 
 An equation: $Y = 300 `{r, dollar = FALSE, signif = 1} x[3]`x$.
 </code></pre>
@@ -2517,24 +2525,24 @@ C. The first 3 variables of `mtcars` are mpg, cyl, and disp. You will not see th
 Some numbers:
 
 ``` {.r}
-x = 1.23456789 * 10^c(0, 5, 7, 9, -6) * c(1, 1, -1, 1, 1)
+x = 1.23456789 * 10^c(0, 5, 6, 9, -6) * c(1, 1, -1, 1, 1)
 sprintf('%f', x)
 ```
 
 ```
-#&gt; [1] &quot;1.234568&quot;          &quot;123456.789000&quot;     &quot;-12345678.900000&quot; 
+#&gt; [1] &quot;1.234568&quot;          &quot;123456.789000&quot;     &quot;-1234567.890000&quot;  
 #&gt; [4] &quot;1234567890.000000&quot; &quot;0.000001&quot;         
 ```
 
-| n = signif, p = power | default (n = 3, p = 6) | n = 5/2/4/1/7 | p = 0/4/Inf/10/5 |
-|------------|-----------:|--------------------:|---------------------------:|
-| x[1]       | 1.23 | 1.2346 | $1.23 \times 10^{0}$ | 
-| x[2] 10^5  | 123000 | 120000 | $1.23 \times 10^{5}$ |
-| x[3] 10^7  | $-1.23 \times 10^{7}$ | $-1.235 \times 10^{7}$ | -12300000 |
-| x[4] 10^9  | $1.23 \times 10^{9}$ | $10^{9}$ | 1230000000 |
-| x[5] 10^-6 | 0.00000123 | 0.000001234568 | $1.23 \times 10^{-6}$ |
+| n = signif/p = power | n = 3, p = 6 | n = 5/2/4/1/7 | p = 0/4/Inf/9/5 |
+|-----------|-----------:|---------------------:|----------------------:|
+| x_1       | 1.23 | 1.2346 | $1.23 \times 10^{0}$ | 
+| x_2 10^5  | 123000 | 120000 | $1.23 \times 10^{5}$ |
+| x_3 10^6  | $-1.23 \times 10^{6}$ | $-1.235 \times 10^{6}$ | -1230000 |
+| x_4 10^9  | $1.23 \times 10^{9}$ | $10^{9}$ | $1.23 \times 10^{9}$ |
+| x_5 10^-6 | 0.00000123 | 0.000001234568 | $1.23 \times 10^{-6}$ |
 
-An equation: $Y = 300 -10^{7}x$.
+An equation: $Y = 300 -10^{6}x$.
 </code></pre>
 <p>To make it easier to read the numbers in the Markdown table above, we render the
 table to <a class="cross-ref-tab" href="#tab:inline-numbers">2</a>:</p>
@@ -2546,39 +2554,39 @@ table to <a class="cross-ref-tab" href="#tab:inline-numbers">2</a>:</p>
 <table>
 <thead>
 <tr>
-<th>n = signif, p = power</th>
-<th align="right">default (n = 3, p = 6)</th>
+<th>n = signif/p = power</th>
+<th align="right">n = 3, p = 6</th>
 <th align="right">n = 5/2/4/1/7</th>
-<th align="right">p = 0/4/Inf/10/5</th>
+<th align="right">p = 0/4/Inf/9/5</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>x[1]</td>
+<td>x_1</td>
 <td align="right">1.23</td>
 <td align="right">1.2346</td>
 <td align="right">\(1.23 \times 10^{0}\)</td>
 </tr>
 <tr>
-<td>x[2] 10^5</td>
+<td>x_2 10^5</td>
 <td align="right">123000</td>
 <td align="right">120000</td>
 <td align="right">\(1.23 \times 10^{5}\)</td>
 </tr>
 <tr>
-<td>x[3] 10^7</td>
-<td align="right">\(-1.23 \times 10^{7}\)</td>
-<td align="right">\(-1.235 \times 10^{7}\)</td>
-<td align="right">-12300000</td>
+<td>x_3 10^6</td>
+<td align="right">\(-1.23 \times 10^{6}\)</td>
+<td align="right">\(-1.235 \times 10^{6}\)</td>
+<td align="right">-1230000</td>
 </tr>
 <tr>
-<td>x[4] 10^9</td>
+<td>x_4 10^9</td>
 <td align="right">\(1.23 \times 10^{9}\)</td>
 <td align="right">\(10^{9}\)</td>
-<td align="right">1230000000</td>
+<td align="right">\(1.23 \times 10^{9}\)</td>
 </tr>
 <tr>
-<td>x[5] 10^-6</td>
+<td>x_5 10^-6</td>
 <td align="right">0.00000123</td>
 <td align="right">0.000001234568</td>
 <td align="right">\(1.23 \times 10^{-6}\)</td>
@@ -2684,10 +2692,9 @@ document.body.classList.add('dark');
 <a href="https://mermaid.js.org">mermaid.js</a>, e.g.,</p>
 <pre><code class="language-md">```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
 flowchart TD;
-    A--&gt;B;
-    A--&gt;C;
-    B--&gt;D;
-    C--&gt;D;
+    A[WEB] --&gt; B[noweb] --&gt; D[Sweave] --&gt; E[knitr]
+    A --&gt; C[CWEB]
+    D --&gt; F[litedown]
 ```
 </code></pre>
 <p>The JS library mermaid.js has to be loaded for the diagrams to be rendered. By
@@ -2819,12 +2826,14 @@ implementation is not simple enough.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/03-syntax.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:syntax"><span class="section-number main-number">3</span> Markdown Syntax</h1>
+<div class="epigraph">
 <blockquote>
 <p>All the tired horses in a run; how’m I gonna get any writing done!</p>
 <p>—<a href="https://bsky.app/profile/datavisfriendly.bsky.social/post/3lapaume4m22k">Michael
 Friendly</a>
 (and Bob Dylan)</p>
 </blockquote>
+</div>
 <h2 id="sec:basic-syntax"><span class="section-number">3.1</span> Basic syntax</h2>
 <p>For the full list of supported document elements, please read the GFM spec.
 Below is a quick summary:</p>
@@ -2834,7 +2843,7 @@ Below is a quick summary:</p>
 </li>
 <li>
 <p>Inline elements: <code>**strong**</code>, <code>_emphasis_</code>, <code>~~strikethrough~~</code>,
-<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-02-syntax-1" id="fnref-02-syntax-1" data-footnote-ref>6</a></sup></p>
+<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-03-syntax-1" id="fnref-03-syntax-1" data-footnote-ref>6</a></sup></p>
 </li>
 <li>
 <p>Inline code is written in a pair of backticks, e.g., <code>`code`</code>. Code
@@ -2968,14 +2977,14 @@ with <code>[^n]:</code>. For example:</p>
 
 [^1]: This is the footnote.
 </code></pre>
-<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-02-syntax-2" id="fnref-02-syntax-2" data-footnote-ref>7</a></sup> and there
+<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-03-syntax-2" id="fnref-03-syntax-2" data-footnote-ref>7</a></sup> and there
 are two caveats if the document is intended to be converted to LaTeX:</p>
 <ul>
 <li>
 <p>The footnote content must be a single paragraph.</p>
 </li>
 <li>
-<p>Only numbers<sup class="footnote-ref"><a href="#fn-02-syntax-3" id="fnref-02-syntax-3" data-footnote-ref>8</a></sup> are supported as identifiers, and other types of
+<p>Only numbers<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup> are supported as identifiers, and other types of
 identifiers are not recognized.</p>
 </li>
 </ul>
@@ -3329,6 +3338,15 @@ formats beyond HTML and LaTeX.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/04-mark.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:mark"><span class="section-number main-number">4</span> Markdown Rendering</h1>
+<div class="epigraph">
+<blockquote>
+<p>Mature mental health demands, then, an extraordinary capacity to flexibly
+strike and continually restrike a delicate balance between conflicting needs,
+goals, duties, responsibilities, directions, et cetera. The essence of this
+discipline of balancing is “giving up.”</p>
+<p>—M. Scott Peck, <em>The Road Less Traveled</em></p>
+</blockquote>
+</div>
 <p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
 <p>You can either call <code>litedown::mark()</code> to render a Markdown document
 programmatically, or click the <code>Knit</code> button in RStudio to render a (Markdown or
@@ -3839,6 +3857,15 @@ and the values of variables in the metadata will be passed to your template.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/05-assets.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:assets"><span class="section-number main-number">5</span> CSS/JS assets</h1>
+<div class="epigraph">
+<blockquote>
+<p>And it seemed as though in a little while the solution would be found, and
+then a new and splendid life would begin; and it was clear to both of them
+that they had still a long, long road before them, and that the most
+complicated and difficult part of it was only just beginning.</p>
+<p>—Anton Chekhov, <em>The Lady with the Dog</em></p>
+</blockquote>
+</div>
 <p>The <strong>litedown</strong> package aims at lightweight with a minimal number of features
 at its core, but you can add more features by yourself. In this chapter, we
 introduce some CSS/JS assets from the GitHub repository
@@ -4256,6 +4283,16 @@ window.addEventListener('load', () =&gt; {
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/06-editor.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:authoring"><span class="section-number main-number">6</span> Authoring</h1>
+<div class="epigraph">
+<blockquote>
+<p>I don’t hide from you that I don’t detest the countryside—having been brought
+up there, snatches of memories from past times, yearnings for that infinite of
+which the Sower, the sheaf, are the symbols, still enchant me as before. But
+when will I do the starry sky, then, that painting that’s always on my mind?</p>
+<p>—Vincent van Gogh, <a href="https://vangoghletters.org/vg/letters/let628/letter.html"><em>The
+Letters</em></a></p>
+</blockquote>
+</div>
 <h2 id="sec:knit-button"><span class="section-number">6.1</span> The <code>Knit</code> button</h2>
 <p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
 <strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
@@ -4374,6 +4411,16 @@ supported.</p>
 <p><a href="https://github.com/yihui/litedown/edit/main/docs/07-site.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:sites"><span class="section-number main-number">7</span> Books and Websites</h1>
+<div class="epigraph">
+<blockquote>
+<p>I can at least listen without indignation to the critic who is of the opinion
+that when one surveys the aims of cultural endeavour and the means it employs,
+one is bound to come to the conclusion that the whole effort is not worth the
+trouble, and that the outcome of it can only be a state of affairs which the
+individual will be unable to tolerate.</p>
+<p>—Sigmund Freud, <em>Civilization and Its Discontents</em></p>
+</blockquote>
+</div>
 <p>Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named <code>_litedown.yml</code>.</p>
@@ -4404,7 +4451,7 @@ use <code>.md</code> or <code>.R</code> files if you want), and additional infor
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
 <h3 id="sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</h3>
-<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-06-site-1" id="fnref-06-site-1" data-footnote-ref>9</a></sup> and unnecessary when
+<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-07-site-1" id="fnref-07-site-1" data-footnote-ref>9</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with <code>litedown::roam()</code>:</p>
 <ul>
@@ -4432,7 +4479,7 @@ updated without being reloaded. This method lets you preview changes in one
 chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.</p>
-<h3 id="sec:r-package-documentation"><span class="section-number">7.1.2</span> R package documentation</h3>
+<h3 id="sec:pkg-site"><span class="section-number">7.1.2</span> R package documentation</h3>
 <p>R package developers can build the full package documentation as a book. A
 series of helper functions have been provided in <strong>litedown</strong> to get various
 information about the package, such as the package description (<code>pkg_desc()</code>),
@@ -4619,30 +4666,30 @@ the document. <a href="#fnref-02-fuse-2" class="footnote-backref" data-footnote-
 <li id="fn-02-fuse-3">
 <p>Perhaps Paul Murrell is the only person in the world who uses the
 <code>.Rhtml</code> format. I wonder if anyone uses any of the rest of formats, except
-for <code>.Rnw</code> and <code>`.Rmd`</code>. <a href="#fnref-02-fuse-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
+for <code>.Rnw</code> and <code>.Rmd</code>. <a href="#fnref-02-fuse-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
 </li>
-<li id="fn-02-syntax-1">
+<li id="fn-03-syntax-1">
 <p>Please note that for links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not
 contain spaces</a>. If
 they do, the URLs must be enclosed in <code>&lt;&gt;</code>, e.g.,
-<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-02-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
+<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-03-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
 </li>
-<li id="fn-02-syntax-2">
+<li id="fn-03-syntax-2">
 <p>If you know C, I’ll truly appreciate it if you could help with
 the LaTeX implementation in GFM:
-<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-02-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
+<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
 </li>
-<li id="fn-02-syntax-3">
+<li id="fn-03-syntax-3">
 <p>The specific number doesn’t matter, as long as it’s a unique
 footnote number in the document. For example, the first footnote can be
 <code>[^100]</code> and the second can be <code>[^64]</code>. Eventually they will appear as <code>[1]</code>
 and <code>[2]</code>. If you use the RStudio visual editor to edit Markdown documents,
 the footnote numbers will be automatically generated and updated when new
-footnotes are inserted before existing footnotes. <a href="#fnref-02-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
+footnotes are inserted before existing footnotes. <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
 </li>
-<li id="fn-06-site-1">
+<li id="fn-07-site-1">
 <p>Remember that you can cache time-consuming code chunks to make the
-rendering faster. <a href="#fnref-06-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
+rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
 </li>
 <li id="fn-a-rmarkdown-1">
 <p>The triple-colon <code>:::</code> means these functions are not exported,
@@ -4654,18 +4701,18 @@ which is to avoid name conflicts between the two packages. <a href="#fnref-a-rma
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.11/dist/katex.min.js,npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.48/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.49/js/pages.min.js" defer></script>
 </body>
 </html>
