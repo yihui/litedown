@@ -496,6 +496,7 @@ build_toc = function(html, n = 3) {
   items = items[!has_class(items, 'unlisted')]
   if (length(items) == 0) return()
   x = gsub(r, '<toc\\2>\\3</toc>', items)  # use a tag <toc> to protect heading text
+  x = gsub('<a[^>]+>|</a>', '', x)  # clean up <a>
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
   s = strrep('  ', seq_len(n) - 1)  # indent
   x = paste0(s[h], '- ', x)  # create an unordered list
