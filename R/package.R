@@ -180,7 +180,7 @@ pkg_news = function(
     for (v in unique(db$Version)) {
       df = db[db$Version == v, ]
       res = c(
-        res, paste('## Changes in version', v, a), '',
+        res, paste('##', name, v, a), '',
         if (all(df$Category == '')) paste0(df$HTML, '\n') else paste0(
           '### ', df$Category, a, '\n\n', df$HTML, '\n\n'
         ), ''
@@ -192,6 +192,8 @@ pkg_news = function(
       res = res[h[1]:(h[1 + recent] - 1)]
     # lower heading levels: # -> ##, ## -> ###, etc, and add attributes
     for (i in 2:1) res = sub(sprintf('^(#{%d} .+)', i), paste0('#\\1', a), res)
+    # shorten headings
+    res = gsub('^## CHANGES IN ([^ ]+) VERSION( .+)', '## \\1\\2', res)
   }
   new_asis(res)
 }
@@ -199,7 +201,7 @@ pkg_news = function(
 # classes for section headings in news, code, and manual
 header_class = function(toc, number_sections, md = TRUE) {
   a = c(if (!toc) 'unlisted', if (!number_sections) 'unnumbered')
-  if (md) a = paste0('.', a)
+  if (md && length(a)) a = paste0('.', a)
   a = one_string(a, ' ')
   if (a != '') a = if (md) paste0(' {', a, '}') else paste0(' class="', a, '"')
   a
@@ -292,7 +294,7 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
     txt = gsub(r1, '\\\\(\\1\\\\)', txt)
     # remove existing ID and class
     for (a in c('id', 'class')) txt = gsub(sprintf('(<h2[^>]*?) %s="[^"]+"', a), '\\1', txt)
-    txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
+    if (cl != '') txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
     sub('<h2', sprintf('<h2 id="sec:man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
   })
 

@@ -71,7 +71,7 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-### R package documentation
+### R package documentation {#sec:pkg-site}
 
 R package developers can build the full package documentation as a book. A
 series of helper functions have been provided in **litedown** to get various

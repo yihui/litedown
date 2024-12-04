@@ -1,12 +1,25 @@
 is_rmd_preview = function() Sys.getenv('RMARKDOWN_PREVIEW_DIR') != ''
 
-output_format = function(...) {
-  msg = if (is_rmd_preview()) c(
+output_format = function(to, options, meta, ...) {
+  if (is_rmd_preview()) stop(
     "It appears that you clicked the 'Knit' button in RStudio to render the document. ",
     "You are recommended to use litedown::roam() to preview or render documents instead. ",
     "Alternatively, you can add a top-level field 'knit: litedown:::knit' to the YAML metadata, ",
-    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render()."
-  ) else 'Please render the document via litedown::fuse() instead of rmarkdown::render().'
+    "so the document can be rendered by litedown::fuse() instead of rmarkdown::render().",
+    call. = FALSE
+  )
+  msg = 'Please render the document via litedown::fuse() instead of rmarkdown::render().'
+  if ('pkgdown' %in% loadedNamespaces()) {
+    warning(
+      msg, '\n\nIf you intend to build a package website, you can also use litedown:',
+      ' https://yihui.org/litedown/#sec:pkg-site', call. = FALSE
+    )
+    ns = asNamespace('rmarkdown')
+    ag = merge_list(list(to = to), list(...))
+    ag = ag[intersect(names(formals(ns$pandoc_options)), names(ag))]
+    opts = do.call(ns$pandoc_options, ag)
+    return(ns$output_format(NULL, opts))
+  }
   stop(msg, call. = FALSE)
 }
 
@@ -53,7 +66,7 @@ output_format = function(...) {
 #'   errors.
 #' @export
 html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
-  output_format()
+  output_format('html', options, meta, template, keep_md)
 }
 
 #' @rdname html_format

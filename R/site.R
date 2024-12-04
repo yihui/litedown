@@ -42,6 +42,7 @@ fuse_site = function(input = '.') {
     preview = is_roaming() && length(input) == 1
     input
   }
+  root = info$root
   output = with_ext(inputs, '.html')
   cfg = merge_list(list(rebuild = 'outdated'), info$yaml[['site']])
   b = cfg[['rebuild']]
@@ -60,15 +61,15 @@ fuse_site = function(input = '.') {
   )
   out = lapply(inputs[i], function(x) {
     res = if (grepl('[.]md$', x)) {
-      opts = set_site_options(opts, x); on.exit(options(opts))
+      opts = set_site_options(opts, x, root); on.exit(options(opts))
       mark(x, full_output)
     } else {
       Rscript_call(
-        function(x, opts, set, flag, output) {
-          set(opts, x, list(litedown.roaming = flag))
+        function(x, opts, set, root, flag, output) {
+          set(opts, x, root, list(litedown.roaming = flag))
           litedown::fuse(x, output, envir = globalenv())
         },
-        list(x, opts, set_site_options, is_roaming(), full_output),
+        list(x, opts, set_site_options, root, is_roaming(), full_output),
         fail = paste('Failed to run litedown::fuse() on', x)
       )
     }
@@ -88,12 +89,12 @@ fuse_site = function(input = '.') {
 }
 
 # set global options litedown.html.[meta|options] read from _litedown.yml
-set_site_options = function(opts, input, extra = NULL) {
+set_site_options = function(opts, input, root, extra = NULL) {
   m = opts[['meta']]
   for (i in c('include_before', 'include_after')) {
     if (!is.character(m[[i]])) next
     tag = if (i == 'include_before') 'nav' else 'footer'
-    x = mark(I(one_string(m[[i]], test = TRUE)))
+    x = mark(I(in_dir(root, one_string(m[[i]], test = TRUE))))
     x = sprintf('<%s>%s</%s>', tag, x, tag)
     m[[i]] = sub_vars(x, list(input = I(input)))
   }

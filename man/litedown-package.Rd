@@ -16,7 +16,7 @@ dependencies), and it also has fewer Markdown features.
 Useful links:
 \itemize{
   \item \url{https://github.com/yihui/litedown}
-  \item Report bugs at \url{https://github.com/yihui/litedown/issues}
+  \item Report bugs at \url{https://github.com/yihui/litedown/discussions}
 }
 
 }

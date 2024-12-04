@@ -1,0 +1,14 @@
+```{r, include = FALSE}
+d = packageDescription(litedown:::detect_pkg())
+a = if (is.null(a <- d[['Authors@R']])) d[['Author']] else {
+  Filter(function(x) 'aut' %in% x$role, eval(xfun::parse_only(a))) |>
+    format(include = c('given', 'family')) |>
+    xfun::join_words()
+}
+```
+
+::: flex-col
+Developed by `{r} a`
+
+Site built with [litedown](https://github.com/yihui/litedown) v`{r} packageVersion('litedown')`
+:::

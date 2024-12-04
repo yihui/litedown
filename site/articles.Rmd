@@ -1,0 +1,14 @@
+---
+title: Package vignettes
+---
+
+```{r, echo = FALSE, results = 'asis'}
+pkg_name = litedown:::detect_pkg()
+res = tools::getVignetteInfo(pkg_name)
+res = if (nrow(res)) {
+  file.copy(system.file('doc', package = pkg_name), './', recursive = TRUE)
+  # TODO: show excerpts of vignettes if possible
+  sprintf('- [%s](doc/%s)\n', res[, 'Title'], res[, 'PDF'])
+} else 'This package has no vignettes.'
+xfun::raw_string(res)
+```

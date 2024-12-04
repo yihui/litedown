@@ -28,7 +28,7 @@ Suggests:
     tinytex
 License: MIT + file LICENSE
 URL: https://github.com/yihui/litedown
-BugReports: https://github.com/yihui/litedown/issues
+BugReports: https://github.com/yihui/litedown/discussions
 VignetteBuilder: litedown
 RoxygenNote: 7.3.2
 Encoding: UTF-8

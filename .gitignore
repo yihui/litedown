@@ -4,3 +4,5 @@
 .Ruserdata
 /examples/*__files/
 /examples/figures/
+/site/doc/
+/site/_footer.md

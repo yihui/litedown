@@ -1,0 +1,8 @@
+site:
+
+output:
+  litedown::html_format:
+    meta:
+      include_after: "_footer.md"
+    options:
+      number_sections: true

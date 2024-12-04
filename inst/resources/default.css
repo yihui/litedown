@@ -5,7 +5,7 @@ body {
   padding: 1em;
   line-height: 1.5;
 }
-body, .abstract, code, .footnotes, #refs, .caption { font-size: .9em; }
+body, .abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }
@@ -28,7 +28,8 @@ pre > .error { background: #f8d7da; border-color: #f8d7da; }
 }
 .box, table { margin: 1em auto; }
 .box > .caption { padding: 1px 1em; }
-.figure > :is(p:has(img), pre:has(svg)) { text-align: center; }
+.figure { p:has(img), pre:has(svg) { text-align: center; } }
+.flex-col { display: flex; justify-content: space-between; }
 table {
   border-top: 1px solid #666;
   thead th { border-bottom: 1px solid #ddd; }

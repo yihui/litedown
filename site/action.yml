@@ -1,0 +1,25 @@
+name: 'Build an R package site'
+description: 'Build an R package site with litedown that includes the description, news, manuals, vignettes, and citation, etc.'
+inputs:
+  site-dir:
+    description: 'Directory of the site'
+    default: 'site'
+  pkg-root:
+    description: 'Root directory of the R package'
+    default: '.'
+runs:
+  using: "composite"
+  steps:
+    - name: Install R packages
+      run: |
+        R CMD INSTALL "${{ inputs.pkg-root }}"
+        Rscript -e "if (!requireNamespace('litedown')) install.packages('litedown')"
+
+    - name: Build site
+      run: |
+        cd "${{ inputs.pkg-root }}"
+        mkdir -p "${{ inputs.site-dir }}"
+        cd "${{ inputs.site-dir }}"
+        [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}/*" ./
+        [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
+        Rscript -e "litedown::fuse_site()"

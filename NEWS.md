@@ -12,6 +12,8 @@
 
 - Added support for the chunk option `fig.dim`, which is a shortcut for `fig.width` and `fig.height`.
 
+- Provided templates and a Github action `yihui/litedown/site` to build package websites. See https://yihui.org/litedown/#sec:pkg-site for details.
+
 - Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a single chapter.
 
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/lite.js@5e06d19.
