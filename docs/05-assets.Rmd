@@ -18,13 +18,13 @@ CSS frameworks on the web that you can use, and you do not have to use the ones
 mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
 HTML applications.
 
-Remember that the CSS and JS are introduced under the output format
-`litedown::html_format` in YAML metadata, e.g.,
+Remember that the CSS and JS are introduced under the output format `html` in
+YAML metadata, e.g.,
 
 ``` yaml
 ---
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["one.css", "two.css"]
       js: ["three.js", "four.js"]
@@ -49,7 +49,7 @@ Another way is to enable embedding resources:
 
 ``` yaml
 output:
-  litedown::html_format:
+  html:
     meta:
       js: ["@callout"]
     options:
@@ -455,7 +455,7 @@ is a quick example of using the DataTables library to create interactive tables:
 ---
 title: Display Tables with the JS Library DataTables
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default", "@npm/datatables/media/css/jquery.dataTables.min.css"]
       js: ["@npm/jquery/dist/jquery", "@npm/datatables/media/js/jquery.dataTables.min.js"]

@@ -14,7 +14,7 @@
 #'   rebuild: "outdated"
 #'   pattern: "[.]R?md$"
 #' output:
-#'   litedown::html_format:
+#'   html:
 #'     meta:
 #'       css: ["@default"]
 #'       include_before: "[Home](/) [About](/about.html)"
@@ -132,11 +132,11 @@ nav_menu = function(info) {
 #' ```
 #' ---
 #' output:
-#'   litedown::html_format:
+#'   html:
 #'     options:
 #'       toc:
 #'         depth: 4
-#'   litedown::latex_format:
+#'   latex:
 #'     meta:
 #'       documentclass: "book"
 #' ```

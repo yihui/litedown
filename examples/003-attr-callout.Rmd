@@ -1,7 +1,7 @@
 ---
 title: Create a callout via the option `attr.chunk`
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default", "@callout"]
       js: ["@callout"]

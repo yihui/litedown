@@ -31,7 +31,7 @@ written to a file. If \code{output} is \code{NULL} or an extension, and the inpu
 a file path, the output file path will have the same base name as the input
 file, with an extension corresponding to the output format. The output
 format is retrieved from the first value in the \code{output} field of the YAML
-metadata of the \code{input} (e.g., \code{litedown::html_format} will generate HTML
+metadata of the \code{input} (e.g., \code{html} will generate HTML
 output). The \code{output} argument can also take an output format name
 (possible values are \code{html}, \code{latex}, \code{xml}, \code{man}, \code{commonmark}, and
 \code{text}). If no output format is detected or provided, the default is HTML.}

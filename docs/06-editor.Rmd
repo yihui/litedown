@@ -10,23 +10,6 @@
 > Letters*](https://vangoghletters.org/vg/letters/let628/letter.html)
 :::
 
-## The `Knit` button {#sec:knit-button}
-
-If you use the RStudio IDE, the `Knit` button can render R Markdown to a
-**litedown** output format specified in YAML (e.g., `litedown::html_format` or
-`litedown::latex_format`). Please also remember to add a top-level setting
-`knit: litedown:::knit` in YAML, otherwise **litedown** will throw an error as a
-reminder.
-
-``` yaml
----
-output:
-  litedown::html_format: null
-  litedown::latex_format: null
-knit: litedown:::knit
----
-```
-
 ## Live preview
 
 Unless it has become your muscle memory to click on the `Knit` button in
@@ -142,3 +125,19 @@ Since the Markdown syntax of **litedown** can be viewed as a subset of Pandoc's
 Markdown, you can use RStudio's visual Markdown editor to author documents.
 Please bear in mind that most common, but not all, Markdown features are
 supported.
+
+## The `Knit` button {#sec:knit-button}
+
+If you use the RStudio IDE, the `Knit` button can render R Markdown to a
+**litedown** output format specified in YAML (e.g., `html` or `latex`). Please
+also remember to add a top-level setting `knit: litedown:::knit` in YAML,
+otherwise RStudio will either throw an error if you use the output format `html`
+or `latex`, or use `rmarkdown::render()` instead of `litedown::fuse()` to render
+the document.
+
+``` yaml
+---
+output: html
+knit: litedown:::knit
+---
+```

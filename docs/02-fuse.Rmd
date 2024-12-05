@@ -1184,8 +1184,7 @@ comments, e.g.,
 ``` r
 #' ---
 #' title: An R script
-#' output:
-#'   litedown::latex_format: null
+#' output: latex
 #' ---
 #' 
 #' A _paragraph_.
@@ -1304,7 +1303,7 @@ specific version, you can add it manually to the YAML metadata, e.g.,
 ---
 title: "A mermaid diagram"
 output:
-  litedown::html_format:
+  html:
     meta:
       js: ["@npm/mermaid@11.3.0/dist/mermaid.min.js"]
 ---

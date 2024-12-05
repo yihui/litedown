@@ -3,7 +3,7 @@ title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
 date: "`{r} Sys.Date()`"
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default", "@snap", "@key-buttons", "@heading-anchor"]
       js: ["@snap", "@key-buttons", "@external-link", "@heading-anchor"]
@@ -23,7 +23,7 @@ metadata:
 ``` yaml
 ---
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [default, snap]
       js: [snap]
@@ -137,7 +137,7 @@ under the same directory as the Markdown input file:
 ``` yaml
 ---
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [default, snap, extra.css]
       js: [snap]

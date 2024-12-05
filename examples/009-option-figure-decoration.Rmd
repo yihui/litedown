@@ -1,7 +1,7 @@
 ---
 title: Decorating figures
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default", "@article"]
       js: ["@sidenotes"]

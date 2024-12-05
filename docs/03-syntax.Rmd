@@ -510,7 +510,7 @@ e.g.,
 
 ``` yaml
 output:
-  litedown::latex_format:
+  latex:
     citation_package: biblatex
 ```
 

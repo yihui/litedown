@@ -1,7 +1,7 @@
 site:
 
 output:
-  litedown::html_format:
+  html:
     meta:
       include_after: "_footer.md"
     options:

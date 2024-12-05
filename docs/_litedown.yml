@@ -3,7 +3,7 @@ book:
   chapter_after: ""
 
 output:
-  litedown::html_format:
+  html:
     options:
       toc:
         depth: 4

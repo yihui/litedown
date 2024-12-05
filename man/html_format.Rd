@@ -30,38 +30,32 @@ latex_format(
 \item{citation_package}{The LaTeX package for processing citations. Possible
 values are \code{none}, \code{natbib}, and \code{biblatex}.}
 }
-\value{
-These functions are not meant to be called directly, but should be
-used only in YAML metadata. If you call them directly, they will only throw
-errors.
-}
 \description{
-The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
-formats can be configured in the \code{output} field of the YAML metadata of the
-Markdown document.
+These functions exist only for historical reasons, and should never be called
+directly. They can be used to configure output formats in YAML, but you are
+recommended to use the file format names instead of these function names.
 }
 \details{
-The output format functions have two purposes. The main purpose is to make it
-possible (and easier) to configure the output formats using YAML metadata
-inside a document, e.g.,
+To configure output formats in the YAML metadata of the Markdown document,
+simply use the output format names such as \code{html} or \code{latex} in the \code{output}
+field in YAML, e.g.,
 
 \if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
 output:
-  litedown::html_format:
+  html:
     options:
       toc: true
     keep_md: true
-  litedown::latex_format:
+  latex:
     latex_engine: pdflatex
 ---
 }\if{html}{\out{</div>}}
 
-The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
-the \code{Knit} button in RStudio, which requires you to add a special field to
-the YAML metadata:
-
-\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{knit: litedown:::knit
-}\if{html}{\out{</div>}}
-
-Without this field, RStudio will throw an error when you click the button.
+You can also use \code{litedown::html_format} instead of \code{html} (or
+\code{litedown::latex_format} instead of \code{latex}) if you like.
+}
+\note{
+If you want to use the \code{Knit} button in RStudio, you must add a
+top-level field \code{knit: litedown:::knit} to the YAML metadata. See
+\url{https://yihui.org/litedown/#sec:knit-button} for more information.
 }

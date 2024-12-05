@@ -19,11 +19,11 @@ books or websites, you should do it in `_litedown.yml`, e.g.,
 
 ``` yaml
 output:
-  litedown::html_format:
+  html:
     options:
       toc:
         depth: 4
-  litedown::latex_format:
+  latex:
     meta:
       documentclass: "book"
 ```
@@ -137,7 +137,7 @@ site:
   pattern: "[.]R?md$"
 
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default"]
       include_before: "[Home](/) [About](/about.html)"

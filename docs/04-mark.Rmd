@@ -19,7 +19,7 @@ output format in the `output` field in YAML metadata (@sec:yaml-metadata), e.g.,
 ``` yaml
 ---
 output:
-  litedown::html_format:
+  html:
     options:
       js_math:
         package: "katex"
@@ -331,13 +331,12 @@ options(litedown.html.template = 'path/to/my/template.html')
 
 The global option will be applied to all documents to be converted by `mark()`.
 Alternatively, you can pass a template path to the `template` argument of the
-output format `litedown::html_format` or `litedown::latex_format` in an
-individual document, e.g.,
+output format `html` or `latex` in an individual document, e.g.,
 
 ``` yaml
 ---
 output:
-  litedown::html_format:
+  html:
     template: "path/to/my/template.html"
 ---
 ```
@@ -430,10 +429,10 @@ output format, the latter will override the former, e.g.,
 ``` yaml
 title: "Global Title"
 output:
-  litedown::html_format:
+  html:
     meta:
       title: "Title for HTML output"
-  litedown::latex_format:
+  latex:
     meta:
       title: "Title for LaTeX output"
 ```
@@ -448,14 +447,14 @@ e.g.,
 ---
 title: "My Title"
 output:
-  litedown::html_format:
+  html:
     meta:
       css: "style.css"
       js: "script.js"
-  litedown::latex_format:
+  latex:
     meta:
       documentclass: "book"
-      header_includes: "\\usepackage{microtype}"
+      header_includes: "\usepackage{microtype}"
 ---
 ```
 
@@ -561,7 +560,7 @@ Besides metadata variables, the aforementioned Markdown options
 
 ``` yaml
 output:
-  litedown::html_format:
+  html:
     options:
       toc: true
       js_highlight:
@@ -572,12 +571,12 @@ output:
 
 ### Other fields in YAML
 
-See the help page `?litedown::html_format` for possible fields in addiction to
-`meta` and `options` that can be specified under the format name, e.g.,
+See the help page `?html` for possible fields in addiction to `meta` and
+`options` that can be specified under the format name, e.g.,
 
 ``` yaml
 output:
-  litedown::latex_format:
+  latex:
     latex_engine: xelatex
     keep_md: true
     template: custom-template.tex

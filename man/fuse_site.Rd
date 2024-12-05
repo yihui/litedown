@@ -27,7 +27,7 @@ site:
   rebuild: "outdated"
   pattern: "[.]R?md$"
 output:
-  litedown::html_format:
+  html:
     meta:
       css: ["@default"]
       include_before: "[Home](/) [About](/about.html)"

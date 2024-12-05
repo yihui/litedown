@@ -25,35 +25,28 @@ output_format = function(to, options, meta, ...) {
 
 #' Output formats in YAML metadata
 #'
-#' The primary output formats of \pkg{litedown} are HTML and LaTeX. These output
-#' formats can be configured in the `output` field of the YAML metadata of the
-#' Markdown document.
+#' These functions exist only for historical reasons, and should never be called
+#' directly. They can be used to configure output formats in YAML, but you are
+#' recommended to use the file format names instead of these function names.
 #'
-#' The output format functions have two purposes. The main purpose is to make it
-#' possible (and easier) to configure the output formats using YAML metadata
-#' inside a document, e.g.,
+#' To configure output formats in the YAML metadata of the Markdown document,
+#' simply use the output format names such as `html` or `latex` in the `output`
+#' field in YAML, e.g.,
 #'
 #' ```yaml
 #' ---
 #' output:
-#'   litedown::html_format:
+#'   html:
 #'     options:
 #'       toc: true
 #'     keep_md: true
-#'   litedown::latex_format:
+#'   latex:
 #'     latex_engine: pdflatex
 #' ---
 #' ```
 #'
-#' The secondary purpose is for \pkg{rmarkdown} users to render R Markdown via
-#' the `Knit` button in RStudio, which requires you to add a special field to
-#' the YAML metadata:
-#'
-#' ```yaml
-#' knit: litedown:::knit
-#' ```
-#'
-#' Without this field, RStudio will throw an error when you click the button.
+#' You can also use `litedown::html_format` instead of `html` (or
+#' `litedown::latex_format` instead of `latex`) if you like.
 #' @param meta,options Arguments to be passed to [mark()].
 #' @param template A template file path.
 #' @param keep_md,keep_tex Whether to keep the intermediate \file{.md} and
@@ -61,9 +54,9 @@ output_format = function(to, options, meta, ...) {
 #' @param latex_engine The LaTeX engine to compile \file{.tex} to \file{.pdf}.
 #' @param citation_package The LaTeX package for processing citations. Possible
 #'   values are `none`, `natbib`, and `biblatex`.
-#' @return These functions are not meant to be called directly, but should be
-#'   used only in YAML metadata. If you call them directly, they will only throw
-#'   errors.
+#' @note If you want to use the `Knit` button in RStudio, you must add a
+#'   top-level field `knit: litedown:::knit` to the YAML metadata. See
+#'   \url{https://yihui.org/litedown/#sec:knit-button} for more information.
 #' @export
 html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
   output_format('html', options, meta, template, keep_md)
@@ -110,24 +103,23 @@ map_args = function(
 # YAML to litedown's formats
 yaml_body = function(text) {
   res = xfun::yaml_body(text)
-  if (length(out <- res$yaml[['output']]) == 0 || !is.list(out)) return(res)
-  fmt = c(
-    html_document = 'litedown::html_format',
-    html_vignette = 'litedown::html_format',
-    pdf_document = 'litedown::latex_format'
-  )
+  if (length(out <- res$yaml[['output']]) == 0) return(res)
+  if (is.character(out)) out = set_names(vector('list', length(out)), out)
+  if (!is.list(out)) stop('The output field in YAML must be either list or character')
+  fmt = c(html_document = 'html', html_vignette = 'html', pdf_document = 'latex')
   for (i in intersect(names(fmt), names(out))) {
     out[[i]] = if (is.list(out[[i]])) do.call(map_args, out[[i]]) else list()
     names(out)[names(out) == i] = fmt[i]
   }
+  # normalize format names `litedown::*_format` to `*`
+  names(out) = gsub('^litedown::+([^_]+)_.*', '\\1', names(out))
   res$yaml$output = out
   res
 }
 
 # get metadata from a certain field under an output format
 yaml_field = function(yaml, format, name = 'meta') {
-  i = sprintf('litedown::%s_format', format)
-  if (is.list(out <- yaml[['output']]) && is.list(out <- out[[i]])) {
+  if (is.list(out <- yaml[['output']]) && is.list(out <- out[[format]])) {
     if (length(name) == 1) out[[name]] else out[name]
   }
 }
@@ -135,8 +127,7 @@ yaml_field = function(yaml, format, name = 'meta') {
 # get output format from YAML's `output` field
 yaml_format = function(yaml) {
   if (is.list(out <- yaml[['output']])) out = names(out)
-  out = grep_sub('^litedown::([^_]+)_.*', '\\1', out)
-  if (length(out) < 1) 'html' else out[1]
+  c(out, 'html')[1]
 }
 
 # determine output format based on output file name and input's YAML

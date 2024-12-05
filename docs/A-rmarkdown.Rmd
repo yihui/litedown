@@ -2,14 +2,9 @@
 
 # For rmarkdown Users {#chp:rmarkdown}
 
-The **litedown** package has also provided two *internal* output formats for
-compatibility with **rmarkdown**: `litedown:::html_document` and
-`litedown:::pdf_document`.[^a-rmarkdown-1] The purpose is to make it a little
-easier to switch from **rmarkdown** to **litedown** by mapping some
-**rmarkdown** output format options to **litedown**.
-
-[^a-rmarkdown-1]: The triple-colon `:::` means these functions are not exported,
-    which is to avoid name conflicts between the two packages.
+The **litedown** package can partially recognize the output format names
+`html_document`, `html_vignette`, and `pdf_document` from **rmarkdown**: Some
+options of these output formats are mapped to **litedown**'s options internally.
 
 For example, for an R Markdown document with the following output format:
 
@@ -22,13 +17,11 @@ output:
     self_contained: false
 ```
 
-You can switch to **litedown** simply by changing the output format name from
-`html_document` to `litedown:::html_document`. Internally, the above output
-format is transformed to:
+It will be transformed to:
 
 ``` yaml
 output:
-  litedown::html_format:
+  html:
     options:
       toc: true
       number_sections: true
