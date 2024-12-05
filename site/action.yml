@@ -2,11 +2,17 @@ name: 'Build an R package site'
 description: 'Build an R package site with litedown that includes the description, news, manuals, vignettes, and citation, etc.'
 inputs:
   site-dir:
-    description: 'Directory of the site'
+    description: 'Directory of the site source'
     default: 'site'
   pkg-root:
-    description: 'Root directory of the R package'
+    description: 'Root directory of the R package in the repository'
     default: '.'
+  exclude:
+    description: 'Pages to be excluded (filenames separated by spaces)'
+    default: 'code.Rmd'
+  cleanup:
+    description: 'Command to clean up the site directory before publishing, e.g., you can delete the `.Rmd` source files'
+    default: 'rm -f *.Rmd *.yml _*'
 runs:
   using: "composite"
   steps:
@@ -25,4 +31,6 @@ runs:
         cd "${{ inputs.site-dir }}"
         [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}/*" ./
         [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
+        rm -f {{ inputs.exclude }}
         Rscript -e "litedown::fuse_site()"
+        {{ inputs.cleanup }}

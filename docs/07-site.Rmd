@@ -81,15 +81,42 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-### R package documentation {#sec:pkg-site}
+## Websites
 
-R package developers can build the full package documentation as a book. A
-series of helper functions have been provided in **litedown** to get various
+The `_litedown.yml` file should contain a top-level field named `site`, and you
+are likely to customize the `meta` variables `css`, `include_before`, and
+`include_after` for the `html_format`, e.g.,
+
+``` yaml
+site:
+  rebuild: "outdated"
+  pattern: "[.]R?md$"
+
+output:
+  html:
+    meta:
+      css: ["@default"]
+      include_before: "[Home](/) [About](/about.html)"
+      include_after: "&copy; 2024 | [Edit]($input$)"
+```
+
+Basically, `include_before` can take a file or text input that will be used as
+the header of each web page, and `include_after` will be the footer.
+
+## R package documentation {#sec:pkg-site}
+
+R package developers can build the full package documentation as either a book
+or a website.
+
+### The `pkg_*()` helper functions
+
+A series of helper functions have been provided in **litedown** to get various
 information about the package, such as the package description (`pkg_desc()`),
 news (`pkg_news()`), citation (`pkg_citation()`), source code (`pkg_code()`),
 and all manual pages (`pkg_manual()`). You can call these functions in code
-chunks to print out the desired information. For example, you may put them in
-the appendix (@sec:appendices):
+chunks to print out the desired information.
+
+For example, you may call them in the appendix (@sec:appendices) of a book:
 
 ```` md
 # Appendix {.appendix}
@@ -125,24 +152,79 @@ litedown::pkg_code()
 ```
 ````
 
-## Websites
+Alternatively, you can build a package website by calling these functions in
+separate `.Rmd` files, e.g., `pkg_desc()` in `index.Rmd`, `pkg_news()` in
+`news.Rmd`, and so on.
 
-The `_litedown.yml` file should contain a top-level field named `site`, and you
-are likely to customize the `meta` variables `css`, `include_before`, and
-`include_after` for the `html_format`, e.g.,
+### Package sites via GitHub Action
 
-``` yaml
-site:
-  rebuild: "outdated"
-  pattern: "[.]R?md$"
+You may use GitHub Actions to automatically build and deploy package websites.
+The key is to call `litedown::fuse_site()`. I have provided [a simple GitHub
+action](https://github.com/yihui/litedown/blob/main/site/action.yml) in the
+**litedown** repository, and you can add a step `uses: yihui/litedown/site@HEAD`
+to your GitHub workflow to use it. Below is [the full
+workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/github-pages.yml)
+for building and publishing **litedown**'s site to GitHub Pages:
 
-output:
-  html:
-    meta:
-      css: ["@default"]
-      include_before: "[Home](/) [About](/about.html)"
-      include_after: "&copy; 2024 | [Edit]($input$)"
+```{embed, attr.output = '.yaml data-file="github-pages.yml" data-source="1"'}
+"../.github/workflows/github-pages.yml"
 ```
 
-Basically, `include_before` can take a file or text input that will be used as
-the header of each web page, and `include_after` will be the footer.
+You can copy it to the `.github/workflows/` directory of the R package's Git
+repository and commit/push it via Git. Within a few minutes, the package site
+should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
+username, and `pkg` is the repository name, e.g.,
+<https://yihui.github.io/litedown/>.
+
+The action `yihui/litedown/site` supports a few options that you can configure
+under the `with` field. In the above example workflow, we used the option
+`site-dir`. Below are the options currently supported:
+
+```{r, echo = FALSE, results = 'asis'}
+inputs = xfun::yaml_load(readLines('../site/action.yml'), use_yaml = FALSE)$inputs
+cat(sprintf(
+  '- `%s`: %s (default: `%s`).', names(inputs),
+  unlist(lapply(inputs, `[[`, 'description')),
+  unlist(lapply(inputs, `[[`, 'default'))
+), sep = '\n\n')
+```
+
+By default, the site is built under the `site/` directory of the package. If you
+change this path, please remember to adjust the `path` option for the
+`actions/upload-pages-artifact` action accordingly.
+
+If the site source directory in your package does not exist or is empty, the
+action will copy [the site
+template](https://github.com/yihui/litedown/tree/main/site) from **litedown**,
+which contains the following `.Rmd` files (explained in @tab:pkg-site):
+
+```{r}
+list.files('../site/', '[.]Rmd$')
+```
+
+:::: {.table .box}
+::: caption
+[ ](#@tab:pkg-site) Explanations of site source files.
+:::
+
+| source | description | content |
+|----|----|----|
+| `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
+| `articles` | package vignettes | the `doc/` folder of the installed package |
+| `code` | source code (R, C, C++, etc.) | `pkg_code()` |
+| `manual` | help pages | `pkg_manual()` |
+| `news` | news | `pkg_news()` |
+| `_footer` | page footer | package authors |
+::::
+
+You can freely customize this template according to your own needs (e.g.,
+modify, add, or delete files), and add the folder to your repository. Then the
+action will use your custom template to build the site.
+
+The `exclude` option allows you to exclude certain pages from the site. By
+default, `code.Rmd` is excluded. You can exclude more pages. For example, if
+your package does not have vignettes, you can specify
+`exclude: 'code.Rmd articles.Rmd'` (if you do not want `code.Rmd`, either).
+
+The `cleanup` option allows you to run a command before publishing the site,
+e.g., you can delete the `.Rmd` source and `.yml` config files.

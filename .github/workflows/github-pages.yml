@@ -1,9 +1,8 @@
-name: Render and deploy package site
+name: Build and deploy package site
 
 on:
   push:
     branches: ["main"]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,8 +19,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
       - uses: r-lib/actions/setup-r@HEAD
+        with:
+          use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@HEAD
       - uses: yihui/litedown/site@HEAD
+        with:
+          site-dir: 'site'
       - uses: actions/upload-pages-artifact@v3
         with:
           path: 'site'
