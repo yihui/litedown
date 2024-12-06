@@ -170,9 +170,10 @@ more, you can implement features by yourself if you know CSS/JS.
 ## Scope
 
 You can view **litedown** as a minimal (re-)implementation of some core packages
-in the existing R Markdown ecosystem, such as **rmarkdown** for reports,
-**xaringan** for slides, **bookdown** for books, **blogdown** for websites,
-**pkgdown** for R package sites, and **pagedown** for paged HTML documents.
+in the existing R Markdown ecosystem (@fig:scope), such as **rmarkdown** for
+reports, **xaringan** for slides, **bookdown** for books, **blogdown** for
+websites, **pkgdown** for R package sites, and **pagedown** for paged HTML
+documents.
 
 $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
@@ -185,7 +186,86 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 -   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
     Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
 
--   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/lite.js)
+-   $J$ = Lightweight [vanilla JS/CSS](https://github.com/yihui/lite.js)
+
+```{mermaid}
+#| scope, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'A minimal re-implementation of the R Markdown ecosystem as **litedown**
+#|  (`R-dep` stands for recursive R package dependencies, of which the numbers
+#|  are in the parentheses; `sys-dep` stands for system dependencies; `web-dep`
+#|  stands for CSS/JS dependencies).'
+
+classDiagram
+  direction LR
+  class rmarkdown {
+    HTML/LaTeX/Word/...
+    R-dep (knitr, evaluate, ... 25)
+    sys-dep (Pandoc)
+    web-dep (Bootstrap/jQuery/...)
+  }
+  class litedown {
+    +HTML/LaTeX
+    +min [ rmarkdown,
+    bookdown, blogdown,
+    pagedown, pkgdown,
+    xaringan, tufte, distill ]
+    R-dep (xfun, commonmark)
+    web-dep (lite.js)
+  }
+  class pkgdown {
+    Package sites
+    R-dep (52)
+    web-dep (Bootstrap...)
+  }
+  pkgdown --|> rmarkdown
+  class bookdown {
+    Books
+    R-dep (26)
+    web-dep (GitBook...)
+  }
+  bookdown --|> rmarkdown
+  class blogdown {
+    Websites
+    R-dep (33)
+    sys-dep (Hugo)
+  }
+  blogdown --|> bookdown
+  class pagedown {
+    Paged HTML
+    R-dep (38)
+    web-dep (paged.js)
+  }
+  pagedown --|> bookdown
+  class distill {
+    Grid layout
+    R-dep (48)
+    web-dep (distill)
+  }
+  distill --|> bookdown
+  class xaringan {
+    HTML slides
+    R-dep (32)
+    web-dep (remark.js)
+  }
+  xaringan --|> rmarkdown
+  class tufte {
+    Two-column layout
+    R-dep (26)
+    web-dep (tufte.css)
+  }
+  tufte --|> rmarkdown
+  litedown *-- rmarkdown
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- distill
+  litedown *-- pkgdown
+  litedown *-- bookdown
+  litedown *-- xaringan
+  litedown *-- tufte
+  classDef default fill:none
+  style rmarkdown fill:lightskyblue
+  style litedown fill:lightcyan
+```
 
 It is absolutely not the goal for **litedown** to become a substitute of tools
 based on **knitr** and Pandoc, such as **rmarkdown** and Quarto. If you are not

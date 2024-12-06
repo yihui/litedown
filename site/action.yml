@@ -31,6 +31,6 @@ runs:
         cd "${{ inputs.site-dir }}"
         [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}/*" ./
         [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
-        rm -f {{ inputs.exclude }}
+        rm -f ${{ inputs.exclude }}
         Rscript -e "litedown::fuse_site()"
-        {{ inputs.cleanup }}
+        ${{ inputs.cleanup }}
