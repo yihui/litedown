@@ -727,14 +727,15 @@ number_sections = function(x) {
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
   n = rep(0, 6)  # counters for all levels of headings
   # when previewing a book chapter, set the start number if possible
+  is_appendix = FALSE  # the start "number" for appendix is A-Z
   if (length(f <- .env$current_file)) {
-    if (length(n_start <- grep_sub('^([0-9]+)[-_].+', '\\1', basename(f))))
-      n[1] = as.integer(n_start) - 1
+    if (length(n_start <- grep_sub('^([0-9]+|[A-Z])[-_].+', '\\1', basename(f))))
+      if (!(is_appendix <- grepl('^[A-Z]$', n_start))) n[1] = as.integer(n_start) - 1
   }
   k0 = 6  # level of last unnumbered heading
   match_replace(x, r, function(z) {
-    z1 = as.integer(sub(r, '\\1', z, perl = TRUE))
-    z2 = sub(r, '\\2', z, perl = TRUE)
+    z1 = as.integer(sub(r, '\\1', z, perl = TRUE))  # heading levels
+    z2 = sub(r, '\\2', z, perl = TRUE)  # heading attributes
     num_sections = identity  # generate appendix numbers
     for (i in seq_along(z)) {
       k = z1[i]
@@ -752,9 +753,9 @@ number_sections = function(x) {
           strrep('#', h), ').'
         )
         num_sections = local({
-          a = n[k]  # an offset
+          a = n[k]  # an offset (highest top-level heading number before appendix)
           # number headings with A-Z or roman numerals
-          num = if (sum(z1[i:length(z)] == h) - 1 > length(LETTERS)) as.roman else {
+          num = if (sum(z1[i:length(z)] == h) - 1 > 26) as.roman else {
             function(i) LETTERS[i]
           }
           function(s) {
@@ -771,7 +772,8 @@ number_sections = function(x) {
       n[k] <<- n[k] + 1
       # remove leading 0's
       s = if (h > 1) n[-(1:(h - 1))] else n
-      s = paste(num_sections(s), collapse = '.')
+      if (is_appendix) s[1] = n_start else s = num_sections(s)
+      s = paste(s, collapse = '.')
       s = gsub('([.]0)+$', '', s)  # remove trailing 0's
       # if section number doesn't contain '.', assign a class 'main-number' to the number
       z[i] = paste0(z[i], sprintf(

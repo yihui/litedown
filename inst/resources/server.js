@@ -123,13 +123,6 @@
   function update_chapter(el, html) {
     const w = d.createElement('div'); w.innerHTML = html;
     w.querySelector('#TOC')?.remove();
-    // current chapter number
-    const n = el.querySelector('.section-number')?.innerText.replace(/^([0-9A-Z]+).*/, '$1');
-    // change the leading 1 to n in section numbers
-    w.querySelectorAll('.section-number').forEach(el => {
-      const t = el.innerText.match(/^(\d+)(.*)/);
-      if (t.length === 3) el.innerText = `${n.match(/[A-Z]/) ? n : (t[1] - 1 + (+n || 1))}${t[2]}`;
-    });
     w.firstElementChild.className = el.className;
     // TODO: update fig/tab numbers
     let q = '[class^="ref-number-"]';
