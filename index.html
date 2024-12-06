@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.6">
+<meta name="generator" content="litedown 0.4.7">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -21,7 +21,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-12-04</h3></div>
+<div class="date"><h3>2024-12-06</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -228,16 +228,16 @@
 </li>
 <li><a href="#chp:authoring"><span class="section-number main-number">6</span> Authoring</a>
 <ul>
-<li><a href="#sec:knit-button"><span class="section-number">6.1</span> The <code>Knit</code> button</a></li>
-<li><a href="#sec:live-preview"><span class="section-number">6.2</span> Live preview</a>
+<li><a href="#sec:live-preview"><span class="section-number">6.1</span> Live preview</a>
 <ul>
-<li><a href="#sec:live-reload"><span class="section-number">6.2.1</span> Live reload</a></li>
-<li><a href="#sec:the-file-listing"><span class="section-number">6.2.2</span> The file listing</a></li>
-<li><a href="#sec:the-buttons"><span class="section-number">6.2.3</span> The buttons</a></li>
-<li><a href="#sec:cleaning-up"><span class="section-number">6.2.4</span> Cleaning up</a></li>
+<li><a href="#sec:live-reload"><span class="section-number">6.1.1</span> Live reload</a></li>
+<li><a href="#sec:the-file-listing"><span class="section-number">6.1.2</span> The file listing</a></li>
+<li><a href="#sec:the-buttons"><span class="section-number">6.1.3</span> The buttons</a></li>
+<li><a href="#sec:cleaning-up"><span class="section-number">6.1.4</span> Cleaning up</a></li>
 </ul>
 </li>
-<li><a href="#sec:visual-editor"><span class="section-number">6.3</span> Visual editor</a></li>
+<li><a href="#sec:visual-editor"><span class="section-number">6.2</span> Visual editor</a></li>
+<li><a href="#sec:knit-button"><span class="section-number">6.3</span> The <code>Knit</code> button</a></li>
 </ul>
 </li>
 <li><a href="#chp:sites"><span class="section-number main-number">7</span> Books and Websites</a>
@@ -245,10 +245,15 @@
 <li><a href="#sec:books"><span class="section-number">7.1</span> Books</a>
 <ul>
 <li><a href="#sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</a></li>
-<li><a href="#sec:pkg-site"><span class="section-number">7.1.2</span> R package documentation</a></li>
 </ul>
 </li>
 <li><a href="#sec:websites"><span class="section-number">7.2</span> Websites</a></li>
+<li><a href="#sec:pkg-site"><span class="section-number">7.3</span> R package documentation</a>
+<ul>
+<li><a href="#sec:the-pkg-helper-functions"><span class="section-number">7.3.1</span> The <code>pkg_*()</code> helper functions</a></li>
+<li><a href="#sec:package-sites-via-github-action"><span class="section-number">7.3.2</span> Package sites via GitHub Action</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#chp:appendix">Appendix</a></li>
@@ -376,9 +381,10 @@ core is simple and small, and you can enable or disable most features. What’s
 more, you can implement features by yourself if you know CSS/JS.</p>
 <h2 id="sec:scope">Scope</h2>
 <p>You can view <strong>litedown</strong> as a minimal (re-)implementation of some core packages
-in the existing R Markdown ecosystem, such as <strong>rmarkdown</strong> for reports,
-<strong>xaringan</strong> for slides, <strong>bookdown</strong> for books, <strong>blogdown</strong> for websites,
-<strong>pkgdown</strong> for R package sites, and <strong>pagedown</strong> for paged HTML documents.</p>
+in the existing R Markdown ecosystem (<a class="cross-ref-fig" href="#fig:scope">1</a>), such as <strong>rmarkdown</strong> for
+reports, <strong>xaringan</strong> for slides, <strong>bookdown</strong> for books, <strong>blogdown</strong> for
+websites, <strong>pkgdown</strong> for R package sites, and <strong>pagedown</strong> for paged HTML
+documents.</p>
 <p>$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$</p>
 <ul>
 <li>
@@ -394,9 +400,89 @@ in the existing R Markdown ecosystem, such as <strong>rmarkdown</strong> for rep
 Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 </li>
 <li>
-<p>\(J\) = Lightweight <a href="https://github.com/yihui/lite.js">vanilla JavaScript/CSS</a></p>
+<p>\(J\) = Lightweight <a href="https://github.com/yihui/lite.js">vanilla JS/CSS</a></p>
 </li>
 </ul>
+<div id="fig:scope" class="figure box">
+<pre class="mermaid">classDiagram
+  direction LR
+  class rmarkdown {
+    HTML/LaTeX/Word/...
+    R-dep (knitr, evaluate, ... 25)
+    sys-dep (Pandoc)
+    web-dep (Bootstrap/jQuery/...)
+  }
+  class litedown {
+    +HTML/LaTeX
+    +min [ rmarkdown,
+    bookdown, blogdown,
+    pagedown, pkgdown,
+    xaringan, tufte, distill ]
+    R-dep (xfun, commonmark)
+    web-dep (lite.js)
+  }
+  class pkgdown {
+    Package sites
+    R-dep (52)
+    web-dep (Bootstrap...)
+  }
+  pkgdown --|&gt; rmarkdown
+  class bookdown {
+    Books
+    R-dep (26)
+    web-dep (GitBook...)
+  }
+  bookdown --|&gt; rmarkdown
+  class blogdown {
+    Websites
+    R-dep (33)
+    sys-dep (Hugo)
+  }
+  blogdown --|&gt; bookdown
+  class pagedown {
+    Paged HTML
+    R-dep (38)
+    web-dep (paged.js)
+  }
+  pagedown --|&gt; bookdown
+  class distill {
+    Grid layout
+    R-dep (48)
+    web-dep (distill)
+  }
+  distill --|&gt; bookdown
+  class xaringan {
+    HTML slides
+    R-dep (32)
+    web-dep (remark.js)
+  }
+  xaringan --|&gt; rmarkdown
+  class tufte {
+    Two-column layout
+    R-dep (26)
+    web-dep (tufte.css)
+  }
+  tufte --|&gt; rmarkdown
+  litedown *-- rmarkdown
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- distill
+  litedown *-- pkgdown
+  litedown *-- bookdown
+  litedown *-- xaringan
+  litedown *-- tufte
+  classDef default fill:none
+  style rmarkdown fill:lightskyblue
+  style litedown fill:lightcyan
+</pre>
+<div class="caption">
+<p><span class="ref-number-fig">1</span>
+A minimal re-implementation of the R Markdown ecosystem as <strong>litedown</strong>
+(<code>R-dep</code> stands for recursive R package dependencies, of which the numbers
+are in the parentheses; <code>sys-dep</code> stands for system dependencies; <code>web-dep</code>
+stands for CSS/JS dependencies).</p>
+</div>
+</div>
 <p>It is absolutely not the goal for <strong>litedown</strong> to become a substitute of tools
 based on <strong>knitr</strong> and Pandoc, such as <strong>rmarkdown</strong> and Quarto. If you are not
 sure if you should choose <strong>litedown</strong> or <strong>rmarkdown</strong>/Quarto, you may want to
@@ -474,7 +560,7 @@ blocks (<a class="cross-ref-chp" href="#chp:assets">5</a>).</p>
 <h3 id="sec:live-preview-everything">Live preview everything</h3>
 <p>To get started, run <code>litedown::roam()</code> and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as <code>.md</code>, <code>.Rmd</code>, and
-<code>.R</code> files (<a class="cross-ref-sec" href="#sec:live-preview">6.2</a>).</p>
+<code>.R</code> files (<a class="cross-ref-sec" href="#sec:live-preview">6.1</a>).</p>
 <p>The rendering takes place in memory, which means it will not render <code>.html</code>
 files on your disk, unless you request so. The page will be automatically
 updated as you edit and save a file. This update-on-save feature can be turned
@@ -622,7 +708,7 @@ And ride mankind.</p>
 target output format such as HTML and LaTeX.</p>
 <p>For those who are familiar with R Markdown, you can think of the function
 <code>litedown::fuse()</code> as the new <code>knitr::knit()</code>, <code>litedown::fiss()</code> as the new
-<code>knitr::purl()</code>, and <code>litedown::mark()</code> as the new Pandoc. <a class="cross-ref-fig" href="#fig:fuse-flow">1</a> shows
+<code>knitr::purl()</code>, and <code>litedown::mark()</code> as the new Pandoc. <a class="cross-ref-fig" href="#fig:fuse-flow">2</a> shows
 the conversion process from R Markdown to a target format.</p>
 <div id="fig:fuse-flow" class="figure box">
 <pre class="mermaid">flowchart LR
@@ -635,7 +721,7 @@ the conversion process from R Markdown to a target format.</p>
   A-. &lt;code&gt;fiss()&lt;/code&gt; .-o H@{ shape: cross-circ } --&gt; I@{ shape: lin-doc, label: &quot;*.R&quot; }
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">1</span>
+<p><span class="ref-number-fig">2</span>
 A diagram illustrating how <strong>litedown</strong> converts R Markdown documents to target output formats.</p>
 </div>
 </div>
@@ -664,9 +750,9 @@ the following mouse-clicking exercise (but try not to be addicted):</p>
 </div>
 <p>If the <code>Knit</code> button still sticks to your mind after you have practiced for a
 few hundred times, I’d like to thank you for your loyalty to <strong>knitr</strong>, and
-please see <a class="cross-ref-sec" href="#sec:knit-button">6.1</a> for how to continue to use the <code>Knit</code> button with
+please see <a class="cross-ref-sec" href="#sec:knit-button">6.3</a> for how to continue to use the <code>Knit</code> button with
 <strong>litedown</strong>.</p>
-<p>You can learn more about the <code>Render</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">6.2</a>.
+<p>You can learn more about the <code>Render</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">6.1</a>.
 Basically, the <code>Render</code> button renders a document to an output file, whereas the
 <code>Run</code> button renders a document in memory without writing to disk.</p>
 <div class="callout-tip">
@@ -720,7 +806,7 @@ after you re-run <code>fuse()</code>. You do not need to copy and paste computat
 outcome manually from one place to another.</p>
 <h2 id="sec:basic-concepts"><span class="section-number">1.3</span> Basic concepts</h2>
 <p>A computational document contains both text narratives and code for computing.
-<a class="cross-ref-fig" href="#fig:flow-concepts">2</a> shows the basic components of a document and how they work
+<a class="cross-ref-fig" href="#fig:flow-concepts">3</a> shows the basic components of a document and how they work
 together.</p>
 <div id="fig:flow-concepts" class="figure box">
 <pre class="mermaid">flowchart TD
@@ -754,7 +840,7 @@ together.</p>
   classDef output fill:none
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">2</span>
+<p><span class="ref-number-fig">3</span>
 An illustration of the structure of a computational document and how its components are split, computed, and merged.</p>
 </div>
 </div>
@@ -775,7 +861,7 @@ and LaTeX.</p>
 <div class="figure box">
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg" alt="Humpty Dumpty" /></p>
 <div class="caption">
-<p><span class="ref-number-fig">3</span> After raising two kids for a few years, I have been so
+<p><span class="ref-number-fig">4</span> After raising two kids for a few years, I have been so
 deeply brainwashed by nursery rhymes that it was Humpty Dumpty that came to my
 mind when I was thinking about an example to explain computational documents.
 Don’t be surprised if you run across Blippi and garbage trucks somewhere in this
@@ -1073,7 +1159,7 @@ which can be useful for telling readers the full source of a chunk, e.g.,</p>
 elements, such as source code blocks, messages, and plots, etc. To understand
 these options, you need to learn the Markdown syntax in <a class="cross-ref-sec" href="#sec:attributes">3.2.5</a> and
 <a class="cross-ref-sec" href="#sec:fenced-divs">3.2.7</a>.</p>
-<p><a class="cross-ref-fig" href="#fig:attr-structure">4</a> illustrates the structure of Markdown output from a code
+<p><a class="cross-ref-fig" href="#fig:attr-structure">5</a> illustrates the structure of Markdown output from a code
 chunk (the class names in the figure such as <code>.chunk</code> are not names used in the
 actual output but for illustration only).</p>
 <style type="text/css">
@@ -1131,7 +1217,7 @@ actual output but for illustration only).</p>
 </code></pre>
 </div>
 <div class="caption">
-<p><span class="ref-number-fig">4</span> An illustration of the output structure of a code
+<p><span class="ref-number-fig">5</span> An illustration of the output structure of a code
 chunk.</p>
 </div>
 </div>
@@ -1221,7 +1307,7 @@ chunk:</p>
 <pre><code class="language-md" data-file="003.Rmd">---
 title: Create a callout via the option `attr.chunk`
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [&quot;@default&quot;, &quot;@callout&quot;]
       js: [&quot;@callout&quot;]
@@ -1272,7 +1358,7 @@ invalidate the cache and read the file again:</p>
 z = read.csv('foo.csv')
 ```
 </code></pre>
-<p><a class="cross-ref-fig" href="#fig:flow-cache">5</a> illustrates how the cache system works. The code expression,
+<p><a class="cross-ref-fig" href="#fig:flow-cache">6</a> illustrates how the cache system works. The code expression,
 global variables, and other dependencies will be summarized into a hash (a
 character string), which will be used to check if the cache exists. Any change
 in the input of the hash will lead to a change in the hash value, which in turn
@@ -1293,7 +1379,7 @@ invalidates the old cache and creates new cache.</p>
   style E fill:lightyellow
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">5</span>
+<p><span class="ref-number-fig">6</span>
 The cache (in)validation process.</p>
 </div>
 </div>
@@ -1714,7 +1800,7 @@ write separate code chunks.</p>
 <pre><code class="language-md" data-file="009.Rmd">---
 title: Decorating figures
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [&quot;@default&quot;, &quot;@article&quot;]
       js: [&quot;@sidenotes&quot;]
@@ -2607,8 +2693,7 @@ Markdown content in <code>#'</code> comments, and group lines of code into chunk
 comments, e.g.,</p>
 <pre><code class="language-r">#' ---
 #' title: An R script
-#' output:
-#'   litedown::latex_format: null
+#' output: latex
 #' ---
 #' 
 #' A _paragraph_.
@@ -2643,7 +2728,7 @@ in the script, the whole script will be treated as a single code chunk.</p>
   classDef output fill:none
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">6</span>
+<p><span class="ref-number-fig">7</span>
 An illustration of how scripts are rendered.</p>
 </div>
 </div>
@@ -2704,7 +2789,7 @@ specific version, you can add it manually to the YAML metadata, e.g.,</p>
 <pre><code class="language-md">---
 title: &quot;A mermaid diagram&quot;
 output:
-  litedown::html_format:
+  html:
     meta:
       js: [&quot;@npm/mermaid@11.3.0/dist/mermaid.min.js&quot;]
 ---
@@ -3252,7 +3337,7 @@ include multiple keywords in <code>[ ]</code> separated by semicolons.</p>
 set via the <code>citation_package</code> option of the output format in YAML metadata,
 e.g.,</p>
 <pre><code class="language-yaml">output:
-  litedown::latex_format:
+  latex:
     citation_package: biblatex
 </code></pre>
 <p>The default is <code>natbib</code>. The table below shows the LaTeX commands corresponding
@@ -3354,7 +3439,7 @@ R Markdown) document interactively. The latter requires you to specify the
 output format in the <code>output</code> field in YAML metadata (<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>), e.g.,</p>
 <pre><code class="language-yaml">---
 output:
-  litedown::html_format:
+  html:
     options:
       js_math:
         package: &quot;katex&quot;
@@ -3614,11 +3699,10 @@ option <code>litedown.FORMAT.template</code> (where <code>FORMAT</code> is the o
 </code></pre>
 <p>The global option will be applied to all documents to be converted by <code>mark()</code>.
 Alternatively, you can pass a template path to the <code>template</code> argument of the
-output format <code>litedown::html_format</code> or <code>litedown::latex_format</code> in an
-individual document, e.g.,</p>
+output format <code>html</code> or <code>latex</code> in an individual document, e.g.,</p>
 <pre><code class="language-yaml">---
 output:
-  litedown::html_format:
+  html:
     template: &quot;path/to/my/template.html&quot;
 ---
 </code></pre>
@@ -3723,10 +3807,10 @@ instead of using <code>$title_$</code>.</p>
 output format, the latter will override the former, e.g.,</p>
 <pre><code class="language-yaml">title: &quot;Global Title&quot;
 output:
-  litedown::html_format:
+  html:
     meta:
       title: &quot;Title for HTML output&quot;
-  litedown::latex_format:
+  latex:
     meta:
       title: &quot;Title for LaTeX output&quot;
 </code></pre>
@@ -3737,14 +3821,14 @@ e.g.,</p>
 <pre><code class="language-yaml">---
 title: &quot;My Title&quot;
 output:
-  litedown::html_format:
+  html:
     meta:
       css: &quot;style.css&quot;
       js: &quot;script.js&quot;
-  litedown::latex_format:
+  latex:
     meta:
       documentclass: &quot;book&quot;
-      header_includes: &quot;\\usepackage{microtype}&quot;
+      header_includes: &quot;\usepackage{microtype}&quot;
 ---
 </code></pre>
 <p>The following metadata variables are supported for both HTML and LaTeX
@@ -3832,7 +3916,7 @@ and the values of variables in the metadata will be passed to your template.</p>
 (<a class="cross-ref-sec" href="#sec:markdown-options">4.1</a>) can also be set in YAML under
 <code>output -&gt; litedown::*_format -&gt; options</code>, e.g.,</p>
 <pre><code class="language-yaml">output:
-  litedown::html_format:
+  html:
     options:
       toc: true
       js_highlight:
@@ -3841,10 +3925,10 @@ and the values of variables in the metadata will be passed to your template.</p>
         languages: [diff, latex]
 </code></pre>
 <h3 id="sec:other-fields-in-yaml"><span class="section-number">4.3.6</span> Other fields in YAML</h3>
-<p>See the help page <code>?litedown::html_format</code> for possible fields in addiction to
-<code>meta</code> and <code>options</code> that can be specified under the format name, e.g.,</p>
+<p>See the help page <code>?html</code> for possible fields in addiction to <code>meta</code> and
+<code>options</code> that can be specified under the format name, e.g.,</p>
 <pre><code class="language-yaml">output:
-  litedown::latex_format:
+  latex:
     latex_engine: xelatex
     keep_md: true
     template: custom-template.tex
@@ -3874,11 +3958,11 @@ files via the <code>js</code> and <code>css</code> meta variables. There are num
 CSS frameworks on the web that you can use, and you do not have to use the ones
 mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
 HTML applications.</p>
-<p>Remember that the CSS and JS are introduced under the output format
-<code>litedown::html_format</code> in YAML metadata, e.g.,</p>
+<p>Remember that the CSS and JS are introduced under the output format <code>html</code> in
+YAML metadata, e.g.,</p>
 <pre><code class="language-yaml">---
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [&quot;one.css&quot;, &quot;two.css&quot;]
       js: [&quot;three.js&quot;, &quot;four.js&quot;]
@@ -3896,7 +3980,7 @@ you need, e.g.,</p>
 </code></pre>
 <p>Another way is to enable embedding resources:</p>
 <pre><code class="language-yaml">output:
-  litedown::html_format:
+  html:
     meta:
       js: [&quot;@callout&quot;]
     options:
@@ -4257,7 +4341,7 @@ is a quick example of using the DataTables library to create interactive tables:
 <pre><code class="language-md">---
 title: Display Tables with the JS Library DataTables
 output:
-  litedown::html_format:
+  html:
     meta:
       css: [&quot;@default&quot;, &quot;@npm/datatables/media/css/jquery.dataTables.min.css&quot;]
       js: [&quot;@npm/jquery/dist/jquery&quot;, &quot;@npm/datatables/media/js/jquery.dataTables.min.js&quot;]
@@ -4293,33 +4377,20 @@ when will I do the starry sky, then, that painting that’s always on my mind?</
 Letters</em></a></p>
 </blockquote>
 </div>
-<h2 id="sec:knit-button"><span class="section-number">6.1</span> The <code>Knit</code> button</h2>
-<p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
-<strong>litedown</strong> output format specified in YAML (e.g., <code>litedown::html_format</code> or
-<code>litedown::latex_format</code>). Please also remember to add a top-level setting
-<code>knit: litedown:::knit</code> in YAML, otherwise <strong>litedown</strong> will throw an error as a
-reminder.</p>
-<pre><code class="language-yaml">---
-output:
-  litedown::html_format: null
-  litedown::latex_format: null
-knit: litedown:::knit
----
-</code></pre>
-<h2 id="sec:live-preview"><span class="section-number">6.2</span> Live preview</h2>
+<h2 id="sec:live-preview"><span class="section-number">6.1</span> Live preview</h2>
 <p>Unless it has become your muscle memory to click on the <code>Knit</code> button in
 RStudio, you may try to switch to <code>litedown::roam()</code> to preview your HTML output
 by clicking on the <code>run</code> buttons in the user interface. Note that the preview
 takes place <em>in memory only</em>. Although you see an HTML page rendered from a file
 in the preview, the page is not rendered to disk, unless you click on the
-<code>render</code> button (<a class="cross-ref-sec" href="#sec:the-buttons">6.2.3</a>), or call <code>litedown::fuse()</code> (<a class="cross-ref-chp" href="#chp:fuse">2</a>) or
+<code>render</code> button (<a class="cross-ref-sec" href="#sec:the-buttons">6.1.3</a>), or call <code>litedown::fuse()</code> (<a class="cross-ref-chp" href="#chp:fuse">2</a>) or
 <code>mark()</code> (<a class="cross-ref-chp" href="#chp:mark">4</a>) on the file.</p>
-<h3 id="sec:live-reload"><span class="section-number">6.2.1</span> Live reload</h3>
+<h3 id="sec:live-reload"><span class="section-number">6.1.1</span> Live reload</h3>
 <p>By default, the preview will automatically refresh the content after you edit
 and save a file. If you prefer building the document only when you want to, you
 can turn off the live preview via <code>litedown::roam(live = FALSE)</code>. In this case,
 the document will be rebuilt only when you refresh the page by yourself.</p>
-<h3 id="sec:the-file-listing"><span class="section-number">6.2.2</span> The file listing</h3>
+<h3 id="sec:the-file-listing"><span class="section-number">6.1.2</span> The file listing</h3>
 <p>After launching the preview via <code>litedown::roam()</code>, a file listing will be
 displayed, which shows the first few lines of <code>*.R</code>, <code>*.Rmd</code>, and <code>*.md</code> files
 in boxes, followed by the list of other files.</p>
@@ -4342,7 +4413,7 @@ them will be executed. If the R code involves intensive computing, it may not be
 a good idea to run the whole file, unless you have taken measures to speed up
 the computing (e.g., via caching).</p>
 </div>
-<h3 id="sec:the-buttons"><span class="section-number">6.2.3</span> The buttons</h3>
+<h3 id="sec:the-buttons"><span class="section-number">6.1.3</span> The buttons</h3>
 <p>There is a button group at the top right of the preview page.</p>
 <ul>
 <li>
@@ -4381,7 +4452,7 @@ source document.</p>
 before they can take effect. This is important when you are viewing a page
 inside RStudio or other IDEs, because the viewer may not gain focus
 automatically, and you will have to explicitly click on it.</p>
-<h3 id="sec:cleaning-up"><span class="section-number">6.2.4</span> Cleaning up</h3>
+<h3 id="sec:cleaning-up"><span class="section-number">6.1.4</span> Cleaning up</h3>
 <p>Previewing <code>.Rmd</code> and <code>.R</code> files that generate plots will leave <code>*__files/</code>
 directories (containing plot files) on disk by default. If you want to clean up
 such directories when closing or navigating away from the preview page, you may
@@ -4398,11 +4469,23 @@ preview the file again.</p>
 <code>cache = TRUE</code>) in the file being previewed, the <code>*__files/</code> directory will not
 be cleaned up, because when a code chunk is cached, it will not be re-evaluated
 or re-generate plots next time (unless the cache is invalidated).</p>
-<h2 id="sec:visual-editor"><span class="section-number">6.3</span> Visual editor</h2>
+<h2 id="sec:visual-editor"><span class="section-number">6.2</span> Visual editor</h2>
 <p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
 Markdown, you can use RStudio’s visual Markdown editor to author documents.
 Please bear in mind that most common, but not all, Markdown features are
 supported.</p>
+<h2 id="sec:knit-button"><span class="section-number">6.3</span> The <code>Knit</code> button</h2>
+<p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
+<strong>litedown</strong> output format specified in YAML (e.g., <code>html</code> or <code>latex</code>). Please
+also remember to add a top-level setting <code>knit: litedown:::knit</code> in YAML,
+otherwise RStudio will either throw an error if you use the output format <code>html</code>
+or <code>latex</code>, or use <code>rmarkdown::render()</code> instead of <code>litedown::fuse()</code> to render
+the document.</p>
+<pre><code class="language-yaml">---
+output: html
+knit: litedown:::knit
+---
+</code></pre>
 <div class="chapter-after side side-right">
 </div>
 </div>
@@ -4427,11 +4510,11 @@ contain a configuration file named <code>_litedown.yml</code>.</p>
 <p>If you want to customize the output formats <code>html_format</code> or <code>latex_format</code> for
 books or websites, you should do it in <code>_litedown.yml</code>, e.g.,</p>
 <pre><code class="language-yaml">output:
-  litedown::html_format:
+  html:
     options:
       toc:
         depth: 4
-  litedown::latex_format:
+  latex:
     meta:
       documentclass: &quot;book&quot;
 </code></pre>
@@ -4479,14 +4562,33 @@ updated without being reloaded. This method lets you preview changes in one
 chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.</p>
-<h3 id="sec:pkg-site"><span class="section-number">7.1.2</span> R package documentation</h3>
-<p>R package developers can build the full package documentation as a book. A
-series of helper functions have been provided in <strong>litedown</strong> to get various
+<h2 id="sec:websites"><span class="section-number">7.2</span> Websites</h2>
+<p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
+are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
+<code>include_after</code> for the <code>html_format</code>, e.g.,</p>
+<pre><code class="language-yaml">site:
+  rebuild: &quot;outdated&quot;
+  pattern: &quot;[.]R?md$&quot;
+
+output:
+  html:
+    meta:
+      css: [&quot;@default&quot;]
+      include_before: &quot;[Home](/) [About](/about.html)&quot;
+      include_after: &quot;&amp;copy; 2024 | [Edit]($input$)&quot;
+</code></pre>
+<p>Basically, <code>include_before</code> can take a file or text input that will be used as
+the header of each web page, and <code>include_after</code> will be the footer.</p>
+<h2 id="sec:pkg-site"><span class="section-number">7.3</span> R package documentation</h2>
+<p>R package developers can build the full package documentation as either a book
+or a website.</p>
+<h3 id="sec:the-pkg-helper-functions"><span class="section-number">7.3.1</span> The <code>pkg_*()</code> helper functions</h3>
+<p>A series of helper functions have been provided in <strong>litedown</strong> to get various
 information about the package, such as the package description (<code>pkg_desc()</code>),
 news (<code>pkg_news()</code>), citation (<code>pkg_citation()</code>), source code (<code>pkg_code()</code>),
 and all manual pages (<code>pkg_manual()</code>). You can call these functions in code
-chunks to print out the desired information. For example, you may put them in
-the appendix (<a class="cross-ref-sec" href="#sec:appendices">3.2.6</a>):</p>
+chunks to print out the desired information.</p>
+<p>For example, you may call them in the appendix (<a class="cross-ref-sec" href="#sec:appendices">3.2.6</a>) of a book:</p>
 <pre><code class="language-md"># Appendix {.appendix}
 
 # Package Metadata
@@ -4519,23 +4621,139 @@ litedown::pkg_manual()
 litedown::pkg_code()
 ```
 </code></pre>
-<h2 id="sec:websites"><span class="section-number">7.2</span> Websites</h2>
-<p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
-are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
-<code>include_after</code> for the <code>html_format</code>, e.g.,</p>
-<pre><code class="language-yaml">site:
-  rebuild: &quot;outdated&quot;
-  pattern: &quot;[.]R?md$&quot;
+<p>Alternatively, you can build a package website by calling these functions in
+separate <code>.Rmd</code> files, e.g., <code>pkg_desc()</code> in <code>index.Rmd</code>, <code>pkg_news()</code> in
+<code>news.Rmd</code>, and so on.</p>
+<h3 id="sec:package-sites-via-github-action"><span class="section-number">7.3.2</span> Package sites via GitHub Action</h3>
+<p>You may use GitHub Actions to automatically build and deploy package websites.
+The key is to call <code>litedown::fuse_site()</code>. I have provided <a href="https://github.com/yihui/litedown/blob/main/site/action.yml">a simple GitHub
+action</a> in the
+<strong>litedown</strong> repository, and you can add a step <code>uses: yihui/litedown/site@HEAD</code>
+to your GitHub workflow to use it. Below is <a href="https://github.com/yihui/litedown/blob/main/.github/workflows/github-pages.yml">the full
+workflow</a>
+for building and publishing <strong>litedown</strong>’s site to GitHub Pages:</p>
+<pre><code class="language-yaml" data-file="github-pages.yml" data-source="1">name: Build and deploy package site
 
-output:
-  litedown::html_format:
-    meta:
-      css: [&quot;@default&quot;]
-      include_before: &quot;[Home](/) [About](/about.html)&quot;
-      include_after: &quot;&amp;copy; 2024 | [Edit]($input$)&quot;
+on:
+  push:
+    branches: [&quot;main&quot;]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: r-lib/actions/setup-r@HEAD
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@HEAD
+      - uses: yihui/litedown/site@HEAD
+        with:
+          site-dir: 'site'
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'site'
+      - id: deployment
+        uses: actions/deploy-pages@v4
 </code></pre>
-<p>Basically, <code>include_before</code> can take a file or text input that will be used as
-the header of each web page, and <code>include_after</code> will be the footer.</p>
+<p>You can copy it to the <code>.github/workflows/</code> directory of the R package’s Git
+repository and commit/push it via Git. Within a few minutes, the package site
+should be ready at <code>https://user.github.io/pkg/</code>, where <code>user</code> is your GitHub
+username, and <code>pkg</code> is the repository name, e.g.,
+<a href="https://yihui.github.io/litedown/">https://yihui.github.io/litedown/</a>.</p>
+<p>The action <code>yihui/litedown/site</code> supports a few options that you can configure
+under the <code>with</code> field. In the above example workflow, we used the option
+<code>site-dir</code>. Below are the options currently supported:</p>
+<ul>
+<li>
+<p><code>site-dir</code>: Directory of the site source (default: <code>site</code>).</p>
+</li>
+<li>
+<p><code>pkg-root</code>: Root directory of the R package in the repository (default: <code>.</code>).</p>
+</li>
+<li>
+<p><code>exclude</code>: Pages to be excluded (filenames separated by spaces) (default: <code>code.Rmd</code>).</p>
+</li>
+<li>
+<p><code>cleanup</code>: Command to clean up the site directory before publishing, e.g., you can delete the <code>.Rmd</code> source files (default: <code>rm -f *.Rmd *.yml _*</code>).</p>
+</li>
+</ul>
+<p>By default, the site is built under the <code>site/</code> directory of the package. If you
+change this path, please remember to adjust the <code>path</code> option for the
+<code>actions/upload-pages-artifact</code> action accordingly.</p>
+<p>If the site source directory in your package does not exist or is empty, the
+action will copy <a href="https://github.com/yihui/litedown/tree/main/site">the site
+template</a> from <strong>litedown</strong>,
+which contains the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">3</a>):</p>
+<pre><code class="language-r">list.files('../site/', '[.]Rmd$')
+</code></pre>
+<pre><code>#&gt; [1] &quot;_footer.Rmd&quot;  &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;index.Rmd&quot;    &quot;manual.Rmd&quot;  
+#&gt; [6] &quot;news.Rmd&quot;    
+</code></pre>
+<div class="table box">
+<div class="caption">
+<p><span class="ref-number-tab">3</span> Explanations of site source files.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>source</th>
+<th>description</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index</code></td>
+<td>home page</td>
+<td><code>pkg_desc()</code>, <code>pkg_citation()</code>, and <code>README.md</code></td>
+</tr>
+<tr>
+<td><code>articles</code></td>
+<td>package vignettes</td>
+<td>the <code>doc/</code> folder of the installed package</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>source code (R, C, C++, etc.)</td>
+<td><code>pkg_code()</code></td>
+</tr>
+<tr>
+<td><code>manual</code></td>
+<td>help pages</td>
+<td><code>pkg_manual()</code></td>
+</tr>
+<tr>
+<td><code>news</code></td>
+<td>news</td>
+<td><code>pkg_news()</code></td>
+</tr>
+<tr>
+<td><code>_footer</code></td>
+<td>page footer</td>
+<td>package authors</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>You can freely customize this template according to your own needs (e.g.,
+modify, add, or delete files), and add the folder to your repository. Then the
+action will use your custom template to build the site.</p>
+<p>The <code>exclude</code> option allows you to exclude certain pages from the site. By
+default, <code>code.Rmd</code> is excluded. You can exclude more pages. For example, if
+your package does not have vignettes, you can specify
+<code>exclude: 'code.Rmd articles.Rmd'</code> (if you do not want <code>code.Rmd</code>, either).</p>
+<p>The <code>cleanup</code> option allows you to run a command before publishing the site,
+e.g., you can delete the <code>.Rmd</code> source and <code>.yml</code> config files.</p>
 <div class="chapter-after side side-right">
 </div>
 </div>
@@ -4545,11 +4763,9 @@ the header of each web page, and <code>include_after</code> will be the footer.<
 </div>
 <h1 id="chp:appendix" class="appendix">Appendix</h1>
 <h1 id="chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
-<p>The <strong>litedown</strong> package has also provided two <em>internal</em> output formats for
-compatibility with <strong>rmarkdown</strong>: <code>litedown:::html_document</code> and
-<code>litedown:::pdf_document</code>.<sup class="footnote-ref"><a href="#fn-a-rmarkdown-1" id="fnref-a-rmarkdown-1" data-footnote-ref>10</a></sup> The purpose is to make it a little
-easier to switch from <strong>rmarkdown</strong> to <strong>litedown</strong> by mapping some
-<strong>rmarkdown</strong> output format options to <strong>litedown</strong>.</p>
+<p>The <strong>litedown</strong> package can partially recognize the output format names
+<code>html_document</code>, <code>html_vignette</code>, and <code>pdf_document</code> from <strong>rmarkdown</strong>: Some
+options of these output formats are mapped to <strong>litedown</strong>’s options internally.</p>
 <p>For example, for an R Markdown document with the following output format:</p>
 <pre><code class="language-yaml">output:
   html_document:
@@ -4558,11 +4774,9 @@ easier to switch from <strong>rmarkdown</strong> to <strong>litedown</strong> by
     anchor_sections: true
     self_contained: false
 </code></pre>
-<p>You can switch to <strong>litedown</strong> simply by changing the output format name from
-<code>html_document</code> to <code>litedown:::html_document</code>. Internally, the above output
-format is transformed to:</p>
+<p>It will be transformed to:</p>
 <pre><code class="language-yaml">output:
-  litedown::html_format:
+  html:
     options:
       toc: true
       number_sections: true
@@ -4595,9 +4809,8 @@ options include:
   %\VignetteEncoding{UTF-8}
 </code></pre>
 <p>The output format of a vignette can be specified in the <code>output</code> field of the
-YAML metadata, e.g., <code>litedown::html_format</code> (for HTML vignettes) or
-<code>litedown::latex_format</code> (for PDF vignettes). If no output format is specified,
-the default is HTML.</p>
+YAML metadata, e.g., <code>html</code> (for HTML vignettes) or <code>latex</code> (for PDF vignettes).
+If no output format is specified, the default is HTML.</p>
 <p>The vignette file can be either <code>.Rmd</code> or <code>.md</code>. The former is processed by
 <code>litedown::fuse()</code>, and the latter is converted by <code>litedown::mark()</code>. Please
 avoid using the same base filename for two <code>.Rmd</code> and <code>.md</code> files, otherwise
@@ -4690,10 +4903,6 @@ footnotes are inserted before existing footnotes. <a href="#fnref-03-syntax-3" c
 <li id="fn-07-site-1">
 <p>Remember that you can cache time-consuming code chunks to make the
 rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
-</li>
-<li id="fn-a-rmarkdown-1">
-<p>The triple-colon <code>:::</code> means these functions are not exported,
-which is to avoid name conflicts between the two packages. <a href="#fnref-a-rmarkdown-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
 </li>
 </ol>
 </section>
