@@ -726,6 +726,11 @@ number_sections = function(x) {
   h = min(as.integer(h))  # highest level of headings
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
   n = rep(0, 6)  # counters for all levels of headings
+  # when previewing a book chapter, set the start number if possible
+  if (length(f <- .env$current_file)) {
+    if (length(n_start <- grep_sub('^([0-9]+)[-_].+', '\\1', basename(f))))
+      n[1] = as.integer(n_start) - 1
+  }
   k0 = 6  # level of last unnumbered heading
   match_replace(x, r, function(z) {
     z1 = as.integer(sub(r, '\\1', z, perl = TRUE))

@@ -109,7 +109,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       if (type %in% c('asset', 'page')) {
         if (check_time(path)) resp = '1'
       } else if (grepl('^book:', type) && check_time(f <- sub('^book:', '', type))) {
-        store_book(dirname(path))
+        store_book(dirname(path), f)
         # the book file path to preview is encoded in `type = book:foo/bar.Rmd`
         resp = fuse_book(c(dirname(path), f), 'html', globalenv())
       }
@@ -216,7 +216,7 @@ file_resp = function(x, preview) {
     list(payload = switch(
       info$type,
       book = {
-        store_book(info$root)
+        store_book(info$root, x)
         fuse_book(if (info$index) info$root else x, full_output, globalenv())
       },
       site = fuse_site(x),
@@ -237,9 +237,9 @@ file_resp = function(x, preview) {
 
 # store book dir for books to resolve number_refs() because the book may be
 # partially rendered (in which case we can't resolve refs to other chapters)
-store_book = function(dir) {
-  .env$current_book = dir
-  xfun::exit_call(function() .env$current_book <- NULL)
+store_book = function(dir, x) {
+  .env$current_book = dir; .env$current_file = x
+  xfun::exit_call(function() .env$current_book <- .env$current_file <- NULL)
 }
 
 # detect project type for a directory (_litedown.yml may be in an upper-level dir)
