@@ -108,6 +108,7 @@
           } else if (s) {
             // update a book chapter (response is an HTML fragment)
             update_chapter(el, res);
+            window.mermaid && mermaid?.init();
             // also reload js
             d.querySelectorAll('script[src]').forEach(update_script);
           } else {
