@@ -611,7 +611,7 @@ move_attrs = function(x, format = 'html') {
       i = grep('^\\\\end', z3)
       z3[i] = paste0(z3[i], '\n')
       # put fig/tab captions in \caption{}
-      z3 = gsub('\\begin{caption}', '\\\\caption{', z3, fixed = TRUE)
+      z3 = gsub('\\begin{caption}', '\\caption{', z3, fixed = TRUE)
       z3 = gsub('\\end{caption}', '}', z3, fixed = TRUE)
       z3
     }, format)
