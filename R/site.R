@@ -262,7 +262,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
 # read the config file _litedown.yml
 yml_config = function(d) {
   if (file_exists(cfg <- file.path(d, '_litedown.yml')))
-    xfun::yaml_load(read_utf8(cfg))
+    xfun::yaml_load(read_utf8(cfg), use_yaml = FALSE)
 }
 
 site_pattern = '[.][Rq]?md$'

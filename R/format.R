@@ -102,7 +102,7 @@ map_args = function(
 # split YAML and body from text input, and normalize rmarkdown output formats in
 # YAML to litedown's formats
 yaml_body = function(text) {
-  res = xfun::yaml_body(text)
+  res = xfun::yaml_body(text, use_yaml = FALSE)
   if (length(out <- res$yaml[['output']]) == 0) return(res)
   if (is.character(out)) out = set_names(vector('list', length(out)), out)
   if (!is.list(out)) stop('The output field in YAML must be either list or character')
