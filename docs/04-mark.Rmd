@@ -437,9 +437,8 @@ output:
 
 ### Format-specific variables
 
-Other variables need to be specified under
-`output -> litedown::*_format -> meta`, where `*` can be `html` or `latex`,
-e.g.,
+Other variables need to be specified under `output -> * -> meta`, where `*` can
+be `html` or `latex`, e.g.,
 
 ``` yaml
 ---
@@ -553,8 +552,8 @@ and the values of variables in the metadata will be passed to your template.
 ### Setting options in YAML
 
 Besides metadata variables, the aforementioned Markdown options
-(@sec:markdown-options) can also be set in YAML under
-`output -> litedown::*_format -> options`, e.g.,
+(@sec:markdown-options) can also be set in YAML under `output -> * -> options`,
+e.g.,
 
 ``` yaml
 output:

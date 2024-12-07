@@ -14,8 +14,8 @@ Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named `_litedown.yml`.
 
-If you want to customize the output formats `html_format` or `latex_format` for
-books or websites, you should do it in `_litedown.yml`, e.g.,
+If you want to customize the output formats for books or websites, you should do
+it in `_litedown.yml`, e.g.,
 
 ``` yaml
 output:
@@ -85,7 +85,7 @@ page.
 
 The `_litedown.yml` file should contain a top-level field named `site`, and you
 are likely to customize the `meta` variables `css`, `include_before`, and
-`include_after` for the `html_format`, e.g.,
+`include_after` for the `html` format, e.g.,
 
 ``` yaml
 site:

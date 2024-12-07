@@ -1136,7 +1136,7 @@ base64_url = function(url, code, ext) {
       }
     ) else warning(
       'Unable to determine the font path in MathJax. Please report an issue to ',
-      'https://github.com/yihui/litedown/discussions and mention the URL ', url, '.'
+      'https://github.com/yihui/litedown/issues and mention the URL ', url, '.'
     )
   }
   # find `attr: url(resource)` and embed url resources in CSS

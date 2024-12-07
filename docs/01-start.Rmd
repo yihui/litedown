@@ -154,7 +154,7 @@ After all code has been executed, the output blocks will be merged to a Markdown
 document, which can be further rendered to a target output format such as HTML
 and LaTeX.
 
-:::: {.figure .box}
+:::: {#fig:humpty-dumpty .figure .box}
 ![Humpty
 Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg)
 

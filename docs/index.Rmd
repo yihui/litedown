@@ -169,11 +169,11 @@ more, you can implement features by yourself if you know CSS/JS.
 
 ## Scope
 
-You can view **litedown** as a minimal (re-)implementation of some core packages
-in the existing R Markdown ecosystem (@fig:scope), such as **rmarkdown** for
-reports, **xaringan** for slides, **bookdown** for books, **blogdown** for
-websites, **pkgdown** for R package sites, and **pagedown** for paged HTML
-documents.
+You can view **litedown** as a minimal re-implementation (@fig:scope-litedown)
+of some core packages in the existing R Markdown ecosystem
+(@fig:scope-rmarkdown), such as **rmarkdown** for reports, **xaringan** for
+slides, **bookdown** for books, **blogdown** for websites, **pkgdown** for R
+package sites, and **pagedown** for paged HTML documents.
 
 $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
@@ -189,82 +189,110 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 -   $J$ = Lightweight [vanilla JS/CSS](https://github.com/yihui/lite.js)
 
 ```{mermaid}
-#| scope, echo = FALSE, fig.env = '.figure .box',
-#| fig.cap = 'A minimal re-implementation of the R Markdown ecosystem as **litedown**
-#|  (`R-dep` stands for recursive R package dependencies, of which the numbers
-#|  are in the parentheses; `sys-dep` stands for system dependencies; `web-dep`
-#|  stands for CSS/JS dependencies).'
+#| scope-litedown, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'A minimal partial re-implementation of the R Markdown ecosystem as **litedown**.'
+classDiagram
+  class litedown {
+    +HTML/LaTeX
+    +min [ * ]
+    R-dep (xfun, commonmark)
+    web-dep (lite.js)
+  }
+  class rmarkdown {
+    +[ * ]
+  }
+  class bookdown {
+    +[ * ]
+  }
+  class blogdown {
+    +[ * ]
+  }
+  class pagedown {
+    +[ * ]
+  }
+  class pkgdown {
+    +[ * ]
+  }
+  class xaringan {
+    +[ * ]
+  }
+  class tufte {
+    +[ * ]
+  }
+  class distill {
+    +[ * ]
+  }
+  litedown *-- rmarkdown
+  litedown *-- bookdown
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- pkgdown
+  litedown *-- xaringan
+  litedown *-- tufte
+  litedown *-- distill
+  classDef default fill:none
+  style litedown fill:lightcyan
+```
+
+```{mermaid}
+#| scope-rmarkdown, echo = FALSE, fig.env = '.figure .box',
+#| fig.cap = 'A set of core packages in the R Markdown ecosystem. `R-dep()`
+#|  stands for recursive R package dependencies (with their numbers), `sys-dep`
+#|  stands for system dependencies, and `web-dep` stands for CSS/JS dependencies.'
 
 classDiagram
-  direction LR
+  direction BT
   class rmarkdown {
-    HTML/LaTeX/Word/...
+    +HTML/LaTeX
+    +RTF/Word/PowerPoint/EPub/...
     R-dep (knitr, evaluate, ... 25)
     sys-dep (Pandoc)
     web-dep (Bootstrap/jQuery/...)
   }
-  class litedown {
-    +HTML/LaTeX
-    +min [ rmarkdown,
-    bookdown, blogdown,
-    pagedown, pkgdown,
-    xaringan, tufte, distill ]
-    R-dep (xfun, commonmark)
-    web-dep (lite.js)
-  }
-  class pkgdown {
-    Package sites
-    R-dep (52)
-    web-dep (Bootstrap...)
-  }
-  pkgdown --|> rmarkdown
   class bookdown {
-    Books
+    +Books
     R-dep (26)
     web-dep (GitBook...)
   }
   bookdown --|> rmarkdown
   class blogdown {
-    Websites
+    +Websites
     R-dep (33)
     sys-dep (Hugo)
   }
   blogdown --|> bookdown
   class pagedown {
-    Paged HTML
+    +Paged HTML
     R-dep (38)
     web-dep (paged.js)
   }
   pagedown --|> bookdown
   class distill {
-    Grid layout
+    +Grid layout
     R-dep (48)
     web-dep (distill)
   }
   distill --|> bookdown
+  class pkgdown {
+    +Package sites
+    R-dep (52)
+    web-dep (Bootstrap...)
+  }
+  pkgdown --|> rmarkdown
   class xaringan {
-    HTML slides
+    +HTML slides
     R-dep (32)
     web-dep (remark.js)
   }
   xaringan --|> rmarkdown
   class tufte {
-    Two-column layout
+    +Two-column layout
     R-dep (26)
     web-dep (tufte.css)
   }
   tufte --|> rmarkdown
-  litedown *-- rmarkdown
-  litedown *-- blogdown
-  litedown *-- pagedown
-  litedown *-- distill
-  litedown *-- pkgdown
-  litedown *-- bookdown
-  litedown *-- xaringan
-  litedown *-- tufte
   classDef default fill:none
   style rmarkdown fill:lightskyblue
-  style litedown fill:lightcyan
 ```
 
 It is absolutely not the goal for **litedown** to become a substitute of tools

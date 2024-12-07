@@ -125,9 +125,8 @@ nav_menu = function(info) {
 #' `bookdown::render_book()`, but one major differences is that all HTML output
 #' is written to one file, instead of one HTML file per chapter.
 #'
-#' If the output format ([html_format()] or [latex_format()]) needs to be
-#' customized, the settings should be written in the config file
-#' `_litedown.yml`, e.g.,
+#' If the output format needs to be customized, the settings should be written
+#' in the config file `_litedown.yml`, e.g.,
 #'
 #' ```
 #' ---
@@ -231,7 +230,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       }
     }
     # remove YAML in the preview mode since we only need the body
-    if (length(preview)) out = xfun::yaml_body(split_lines(out))$body
+    if (length(preview)) out = yaml_body(split_lines(out))$body  # TODO: use parse = FALSE
 
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div

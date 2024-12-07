@@ -274,7 +274,7 @@ actual output but for illustration only).
 }
 ```
 
-::::: {.figure .box}
+::::: {#fig:attr-structure .figure .box}
 ::: {.attr-blocks .fenced-chunk}
 ``` {.md .open-fence .code-fence}
 :::: {.chunk}
