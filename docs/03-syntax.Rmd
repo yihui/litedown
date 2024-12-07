@@ -52,7 +52,7 @@ i:
 any_character.is-okay: string not quoted
 ```
 
-The TASTY specifications are:
+The TRACY specifications are:
 
 1.  Each line should be of the form `field: value`. The `field` name can use any
     character. The `value` cannot span across multiple lines. If a line starts
@@ -516,32 +516,47 @@ a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 You can cross-reference any other type of elements by adding empty anchors of
 the form `[](#@ID)` into them, e.g.,
 
-```{md, attr.asis = '.callout-output'}
-::: {#blk:example style="background: ghostwhite; padding: 1px 1em;"}
-[](#@blk:example) This is a numbered block.
+````{md, attr.asis = '.callout-output'}
+:::: {#lst:example .box}
+::: caption
+[](#@lst:example) A code listing demonstrating how to fold code blocks with JS.
 :::
 
-We can cross-reference @blk:example.
+```js
+document.querySelectorAll('pre').forEach(pre => {
+  const d = document.createElement('details');
+  d.innerHTML = '<summary>Details</summary>';
+  pre.before(d);  // insert <details> before <pre>
+  d.append(pre);  // move <pre> into <details>
+});
+```
+::::
+
+We can cross-reference @lst:example.
+````
+
+```{css, echo = FALSE}
+[id^="lst:"] code[class] { background-color: inherit; }
 ```
 
-Note that we also added the ID (`#blk:example`) to the fenced Div to make it the
+Note that we also added the ID (`#lst:example`) to the fenced Div to make it the
 target of the cross reference, i.e., when you click on the reference, the
 browser will navigate to the Div.
 
 For HTML output, we can style the numbers and references with CSS. Element
 numbers are wrapped in `<span class="ref-number-*"></span>`, and references are
 wrapped in `<span class="cross-ref-*"></span>`, where `*` is the ID prefix
-(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Block" to
+(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Listing" to
 the number and reference of the block above:
 
 ```{css}
-.ref-number-blk::before, .cross-ref-blk::before {
-  content: "Block ";
+.ref-number-lst::before, .cross-ref-lst::before {
+  content: "Listing ";
 }
-.ref-number-blk {
+.ref-number-lst {
   font-style: italic;
 }
-.ref-number-blk::after {
+.ref-number-lst::after {
   content: ". "
 }
 ```
