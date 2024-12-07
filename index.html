@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.8">
+<meta name="generator" content="litedown 0.4.9">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -21,7 +21,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-12-06</h3></div>
+<div class="date"><h3>2024-12-07</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -125,28 +125,29 @@
 </li>
 <li><a href="#chp:syntax"><span class="section-number main-number">3</span> Markdown Syntax</a>
 <ul>
-<li><a href="#sec:basic-syntax"><span class="section-number">3.1</span> Basic syntax</a></li>
-<li><a href="#sec:add-on-features"><span class="section-number">3.2</span> Add-on features</a>
+<li><a href="#sec:yaml-syntax"><span class="section-number">3.1</span> YAML syntax</a></li>
+<li><a href="#sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</a></li>
+<li><a href="#sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</a>
 <ul>
-<li><a href="#sec:raw-latex-html-blocks"><span class="section-number">3.2.1</span> Raw LaTeX/HTML blocks</a></li>
-<li><a href="#sec:latex-math_1"><span class="section-number">3.2.2</span> LaTeX math</a></li>
-<li><a href="#sec:superscripts-and-subscripts"><span class="section-number">3.2.3</span> Superscripts and subscripts</a></li>
-<li><a href="#sec:footnotes_1"><span class="section-number">3.2.4</span> Footnotes</a></li>
-<li><a href="#sec:attributes"><span class="section-number">3.2.5</span> Attributes</a></li>
-<li><a href="#sec:appendices"><span class="section-number">3.2.6</span> Appendices</a></li>
-<li><a href="#sec:fenced-divs"><span class="section-number">3.2.7</span> Fenced <code>Div</code>s</a></li>
-<li><a href="#sec:cross-references"><span class="section-number">3.2.8</span> Cross-references</a>
+<li><a href="#sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</a></li>
+<li><a href="#sec:latex-math_1"><span class="section-number">3.3.2</span> LaTeX math</a></li>
+<li><a href="#sec:superscripts-and-subscripts"><span class="section-number">3.3.3</span> Superscripts and subscripts</a></li>
+<li><a href="#sec:footnotes_1"><span class="section-number">3.3.4</span> Footnotes</a></li>
+<li><a href="#sec:attributes"><span class="section-number">3.3.5</span> Attributes</a></li>
+<li><a href="#sec:appendices"><span class="section-number">3.3.6</span> Appendices</a></li>
+<li><a href="#sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</a></li>
+<li><a href="#sec:cross-references"><span class="section-number">3.3.8</span> Cross-references</a>
 <ul>
-<li><a href="#sec:sections-figures-and-tables"><span class="section-number">3.2.8.1</span> Sections, figures, and tables</a></li>
-<li><a href="#sec:latex-equations"><span class="section-number">3.2.8.2</span> LaTeX equations</a></li>
-<li><a href="#sec:arbitrary-elements"><span class="section-number">3.2.8.3</span> Arbitrary elements</a></li>
+<li><a href="#sec:sections-figures-and-tables"><span class="section-number">3.3.8.1</span> Sections, figures, and tables</a></li>
+<li><a href="#sec:latex-equations"><span class="section-number">3.3.8.2</span> LaTeX equations</a></li>
+<li><a href="#sec:arbitrary-elements"><span class="section-number">3.3.8.3</span> Arbitrary elements</a></li>
 </ul>
 </li>
-<li><a href="#sec:citations"><span class="section-number">3.2.9</span> Citations</a></li>
-<li><a href="#sec:smart-html-entities"><span class="section-number">3.2.10</span> Smart HTML entities</a></li>
+<li><a href="#sec:citations"><span class="section-number">3.3.9</span> Citations</a></li>
+<li><a href="#sec:smart-html-entities"><span class="section-number">3.3.10</span> Smart HTML entities</a></li>
 </ul>
 </li>
-<li><a href="#sec:comparison-to-pandoc"><span class="section-number">3.3</span> Comparison to Pandoc</a></li>
+<li><a href="#sec:comparison-to-pandoc"><span class="section-number">3.4</span> Comparison to Pandoc</a></li>
 </ul>
 </li>
 <li><a href="#chp:mark"><span class="section-number main-number">4</span> Markdown Rendering</a>
@@ -380,11 +381,11 @@ some features are definitely not that simple. However, the point is that the
 core is simple and small, and you can enable or disable most features. What’s
 more, you can implement features by yourself if you know CSS/JS.</p>
 <h2 id="sec:scope">Scope</h2>
-<p>You can view <strong>litedown</strong> as a minimal (re-)implementation of some core packages
-in the existing R Markdown ecosystem (<a class="cross-ref-fig" href="#fig:scope">1</a>), such as <strong>rmarkdown</strong> for
-reports, <strong>xaringan</strong> for slides, <strong>bookdown</strong> for books, <strong>blogdown</strong> for
-websites, <strong>pkgdown</strong> for R package sites, and <strong>pagedown</strong> for paged HTML
-documents.</p>
+<p>You can view <strong>litedown</strong> as a minimal re-implementation (<a class="cross-ref-fig" href="#fig:scope-litedown">1</a>)
+of some core packages in the existing R Markdown ecosystem
+(<a class="cross-ref-fig" href="#fig:scope-rmarkdown">2</a>), such as <strong>rmarkdown</strong> for reports, <strong>xaringan</strong> for
+slides, <strong>bookdown</strong> for books, <strong>blogdown</strong> for websites, <strong>pkgdown</strong> for R
+package sites, and <strong>pagedown</strong> for paged HTML documents.</p>
 <p>$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$</p>
 <ul>
 <li>
@@ -403,84 +404,114 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 <p>\(J\) = Lightweight <a href="https://github.com/yihui/lite.js">vanilla JS/CSS</a></p>
 </li>
 </ul>
-<div id="fig:scope" class="figure box">
+<div id="fig:scope-litedown" class="figure box">
 <pre class="mermaid">classDiagram
-  direction LR
+  class litedown {
+    +HTML/LaTeX
+    +min [ * ]
+    R-dep (xfun, commonmark)
+    web-dep (lite.js)
+  }
   class rmarkdown {
-    HTML/LaTeX/Word/...
+    +[ * ]
+  }
+  class bookdown {
+    +[ * ]
+  }
+  class blogdown {
+    +[ * ]
+  }
+  class pagedown {
+    +[ * ]
+  }
+  class pkgdown {
+    +[ * ]
+  }
+  class xaringan {
+    +[ * ]
+  }
+  class tufte {
+    +[ * ]
+  }
+  class distill {
+    +[ * ]
+  }
+  litedown *-- rmarkdown
+  litedown *-- bookdown
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- pkgdown
+  litedown *-- xaringan
+  litedown *-- tufte
+  litedown *-- distill
+  classDef default fill:none
+  style litedown fill:lightcyan
+</pre>
+<div class="caption">
+<p><span class="ref-number-fig">1</span>
+A minimal partial re-implementation of the R Markdown ecosystem as <strong>litedown</strong>.</p>
+</div>
+</div>
+<div id="fig:scope-rmarkdown" class="figure box">
+<pre class="mermaid">classDiagram
+  direction BT
+  class rmarkdown {
+    +HTML/LaTeX
+    +RTF/Word/PowerPoint/EPub/...
     R-dep (knitr, evaluate, ... 25)
     sys-dep (Pandoc)
     web-dep (Bootstrap/jQuery/...)
   }
-  class litedown {
-    +HTML/LaTeX
-    +min [ rmarkdown,
-    bookdown, blogdown,
-    pagedown, pkgdown,
-    xaringan, tufte, distill ]
-    R-dep (xfun, commonmark)
-    web-dep (lite.js)
-  }
-  class pkgdown {
-    Package sites
-    R-dep (52)
-    web-dep (Bootstrap...)
-  }
-  pkgdown --|&gt; rmarkdown
   class bookdown {
-    Books
+    +Books
     R-dep (26)
     web-dep (GitBook...)
   }
   bookdown --|&gt; rmarkdown
   class blogdown {
-    Websites
+    +Websites
     R-dep (33)
     sys-dep (Hugo)
   }
   blogdown --|&gt; bookdown
   class pagedown {
-    Paged HTML
+    +Paged HTML
     R-dep (38)
     web-dep (paged.js)
   }
   pagedown --|&gt; bookdown
   class distill {
-    Grid layout
+    +Grid layout
     R-dep (48)
     web-dep (distill)
   }
   distill --|&gt; bookdown
+  class pkgdown {
+    +Package sites
+    R-dep (52)
+    web-dep (Bootstrap...)
+  }
+  pkgdown --|&gt; rmarkdown
   class xaringan {
-    HTML slides
+    +HTML slides
     R-dep (32)
     web-dep (remark.js)
   }
   xaringan --|&gt; rmarkdown
   class tufte {
-    Two-column layout
+    +Two-column layout
     R-dep (26)
     web-dep (tufte.css)
   }
   tufte --|&gt; rmarkdown
-  litedown *-- rmarkdown
-  litedown *-- blogdown
-  litedown *-- pagedown
-  litedown *-- distill
-  litedown *-- pkgdown
-  litedown *-- bookdown
-  litedown *-- xaringan
-  litedown *-- tufte
   classDef default fill:none
   style rmarkdown fill:lightskyblue
-  style litedown fill:lightcyan
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">1</span>
-A minimal re-implementation of the R Markdown ecosystem as <strong>litedown</strong>
-(<code>R-dep</code> stands for recursive R package dependencies, of which the numbers
-are in the parentheses; <code>sys-dep</code> stands for system dependencies; <code>web-dep</code>
-stands for CSS/JS dependencies).</p>
+<p><span class="ref-number-fig">2</span>
+A set of core packages in the R Markdown ecosystem. <code>R-dep()</code>
+stands for recursive R package dependencies (with their numbers), <code>sys-dep</code>
+stands for system dependencies, and <code>web-dep</code> stands for CSS/JS dependencies.</p>
 </div>
 </div>
 <p>It is absolutely not the goal for <strong>litedown</strong> to become a substitute of tools
@@ -543,7 +574,7 @@ quotes, fenced Divs, LaTeX math, footnotes, and citations, etc.</p>
 </li>
 <li>
 <p>Automatically number and cross-reference arbitrary elements
-(<a class="cross-ref-sec" href="#sec:cross-references">3.2.8</a>), including but not limited to headings, figures,
+(<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>), including but not limited to headings, figures,
 tables, and equations.</p>
 </li>
 <li>
@@ -708,7 +739,7 @@ And ride mankind.</p>
 target output format such as HTML and LaTeX.</p>
 <p>For those who are familiar with R Markdown, you can think of the function
 <code>litedown::fuse()</code> as the new <code>knitr::knit()</code>, <code>litedown::fiss()</code> as the new
-<code>knitr::purl()</code>, and <code>litedown::mark()</code> as the new Pandoc. <a class="cross-ref-fig" href="#fig:fuse-flow">2</a> shows
+<code>knitr::purl()</code>, and <code>litedown::mark()</code> as the new Pandoc. <a class="cross-ref-fig" href="#fig:fuse-flow">3</a> shows
 the conversion process from R Markdown to a target format.</p>
 <div id="fig:fuse-flow" class="figure box">
 <pre class="mermaid">flowchart LR
@@ -721,7 +752,7 @@ the conversion process from R Markdown to a target format.</p>
   A-. &lt;code&gt;fiss()&lt;/code&gt; .-o H@{ shape: cross-circ } --&gt; I@{ shape: lin-doc, label: &quot;*.R&quot; }
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">2</span>
+<p><span class="ref-number-fig">3</span>
 A diagram illustrating how <strong>litedown</strong> converts R Markdown documents to target output formats.</p>
 </div>
 </div>
@@ -806,7 +837,7 @@ after you re-run <code>fuse()</code>. You do not need to copy and paste computat
 outcome manually from one place to another.</p>
 <h2 id="sec:basic-concepts"><span class="section-number">1.3</span> Basic concepts</h2>
 <p>A computational document contains both text narratives and code for computing.
-<a class="cross-ref-fig" href="#fig:flow-concepts">3</a> shows the basic components of a document and how they work
+<a class="cross-ref-fig" href="#fig:flow-concepts">4</a> shows the basic components of a document and how they work
 together.</p>
 <div id="fig:flow-concepts" class="figure box">
 <pre class="mermaid">flowchart TD
@@ -840,7 +871,7 @@ together.</p>
   classDef output fill:none
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">3</span>
+<p><span class="ref-number-fig">4</span>
 An illustration of the structure of a computational document and how its components are split, computed, and merged.</p>
 </div>
 </div>
@@ -858,10 +889,10 @@ behavior of the computing and output.</p>
 <p>After all code has been executed, the output blocks will be merged to a Markdown
 document, which can be further rendered to a target output format such as HTML
 and LaTeX.</p>
-<div class="figure box">
+<div id="fig:humpty-dumpty" class="figure box">
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg" alt="Humpty Dumpty" /></p>
 <div class="caption">
-<p><span class="ref-number-fig">4</span> After raising two kids for a few years, I have been so
+<p><span class="ref-number-fig">5</span> After raising two kids for a few years, I have been so
 deeply brainwashed by nursery rhymes that it was Humpty Dumpty that came to my
 mind when I was thinking about an example to explain computational documents.
 Don’t be surprised if you run across Blippi and garbage trucks somewhere in this
@@ -1157,9 +1188,9 @@ which can be useful for telling readers the full source of a chunk, e.g.,</p>
 <h4 id="sec:option-attr"><span class="section-number">2.1.5.1</span> <code>attr.*</code>: attributes for output elements</h4>
 <p>The <code>attr.*</code> options can be used to customize different types of output
 elements, such as source code blocks, messages, and plots, etc. To understand
-these options, you need to learn the Markdown syntax in <a class="cross-ref-sec" href="#sec:attributes">3.2.5</a> and
-<a class="cross-ref-sec" href="#sec:fenced-divs">3.2.7</a>.</p>
-<p><a class="cross-ref-fig" href="#fig:attr-structure">5</a> illustrates the structure of Markdown output from a code
+these options, you need to learn the Markdown syntax in <a class="cross-ref-sec" href="#sec:attributes">3.3.5</a> and
+<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>.</p>
+<p><a class="cross-ref-fig" href="#fig:attr-structure">6</a> illustrates the structure of Markdown output from a code
 chunk (the class names in the figure such as <code>.chunk</code> are not names used in the
 actual output but for illustration only).</p>
 <style type="text/css">
@@ -1183,7 +1214,7 @@ actual output but for illustration only).</p>
   }
 }
 </style>
-<div class="figure box">
+<div id="fig:attr-structure" class="figure box">
 <div class="attr-blocks fenced-chunk">
 <pre><code class="language-md open-fence code-fence">:::: {.chunk}
 </code></pre>
@@ -1217,13 +1248,13 @@ actual output but for illustration only).</p>
 </code></pre>
 </div>
 <div class="caption">
-<p><span class="ref-number-fig">5</span> An illustration of the output structure of a code
+<p><span class="ref-number-fig">6</span> An illustration of the output structure of a code
 chunk.</p>
 </div>
 </div>
 <p>The source code, text output, and messages (including warnings and errors) are
 formatted as fenced code blocks. Plots are written in <code>![]()</code>. The whole chunk
-can be wrapped in a fenced <code>Div</code> (<a class="cross-ref-sec" href="#sec:fenced-divs">3.2.7</a>). The <code>attr.*</code> options will
+can be wrapped in a fenced <code>Div</code> (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>). The <code>attr.*</code> options will
 add attributes to these fenced code blocks, plots, and fenced <code>Div</code>s.</p>
 <ul>
 <li>
@@ -1358,7 +1389,7 @@ invalidate the cache and read the file again:</p>
 z = read.csv('foo.csv')
 ```
 </code></pre>
-<p><a class="cross-ref-fig" href="#fig:flow-cache">6</a> illustrates how the cache system works. The code expression,
+<p><a class="cross-ref-fig" href="#fig:flow-cache">7</a> illustrates how the cache system works. The code expression,
 global variables, and other dependencies will be summarized into a hash (a
 character string), which will be used to check if the cache exists. Any change
 in the input of the hash will lead to a change in the hash value, which in turn
@@ -1379,7 +1410,7 @@ invalidates the old cache and creates new cache.</p>
   style E fill:lightyellow
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">6</span>
+<p><span class="ref-number-fig">7</span>
 The cache (in)validation process.</p>
 </div>
 </div>
@@ -2298,7 +2329,7 @@ rectangular data objects are printed to Markdown tables through
 <code>xfun::record_print()</code>, and tables are generated by a simple function
 <code>xfun::md_table()</code>, which is even much simpler than <code>knitr::kable()</code>.</p>
 <p>The chunk option <code>tab.cap</code> can be used to provide the table caption. The option
-<code>tab.env</code> can be used to customize the attributes (<a class="cross-ref-sec" href="#sec:fenced-divs">3.2.7</a>) of the
+<code>tab.env</code> can be used to customize the attributes (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>) of the
 table environment, and it defaults to <code>.table</code>, i.e., a class name <code>table</code>.
 Below is a quick example showing where <code>tab.cap</code> and <code>tab.env</code> are used in the
 Markdown output:</p>
@@ -2728,7 +2759,7 @@ in the script, the whole script will be treated as a single code chunk.</p>
   classDef output fill:none
 </pre>
 <div class="caption">
-<p><span class="ref-number-fig">7</span>
+<p><span class="ref-number-fig">8</span>
 An illustration of how scripts are rendered.</p>
 </div>
 </div>
@@ -2919,7 +2950,86 @@ Friendly</a>
 (and Bob Dylan)</p>
 </blockquote>
 </div>
-<h2 id="sec:basic-syntax"><span class="section-number">3.1</span> Basic syntax</h2>
+<p>A Markdown document consists of a YAML frontmatter providing the document
+metadata, and a Markdown body. The frontmatter is optional, and (if provided)
+should be written using the syntax introduced in <a class="cross-ref-sec" href="#sec:yaml-syntax">3.1</a>. The syntax
+for the body is introduced in <a class="cross-ref-sec" href="#sec:markdown-basic">3.2</a> and <a class="cross-ref-sec" href="#sec:markdown-addon">3.3</a>.</p>
+<h2 id="sec:yaml-syntax"><span class="section-number">3.1</span> YAML syntax</h2>
+<p>YAML stands for “YAML Ain’t Markup Language”, which aims at being a
+“human-friendly data serialization language”. You may judge how “human-friendly”
+it is<sup class="footnote-ref"><a href="#fn-03-syntax-1" id="fnref-03-syntax-1" data-footnote-ref>6</a></sup> by yourself after reading its specifications at
+<a href="https://yaml.org">https://yaml.org</a>.</p>
+<p>What we introduce in this section is a significantly trimmed-down version of
+YAML used by <strong>litedown</strong>. For now, let’s call it TRACY, a recursive acronym for
+“TRACY Really Ain’t Complete YAML” and also in honor of <a href="https://en.wikipedia.org/wiki/Tracy_Teal">Tracy
+Teal</a> since she was once a nice boss
+of mine.</p>
+<p>The following example shows all types of data that TRACY supports:</p>
+<pre><code class="language-yaml">a: 1
+b: &quot;string&quot;
+c: true
+d: null
+# e is also null
+e:
+# an expression
+f: !expr 1 + 1
+# vectors
+g: [1, 2, 3]
+h: [&quot;foo&quot;, &quot;bar&quot;]
+# a nested list
+i:
+  i1: -1e8
+  i2: &quot;another string&quot;
+  i3:
+    i31: [true, false, true]
+any_character.is-okay: string not quoted
+</code></pre>
+<p>The TASTY specifications are:</p>
+<ol>
+<li>
+<p>Each line should be of the form <code>field: value</code>. The <code>field</code> name can use any
+character. The <code>value</code> cannot span across multiple lines. If a line starts
+with <code>#</code>, it will be ignored (i.e., it is treated as a comment). Any line
+that is not of the form <code>field: value</code> or a comment are ignored.</p>
+</li>
+<li>
+<p>Values must be character, numeric, logical, expressions, null, or vectors.</p>
+<ul>
+<li>
+<p>Character strings are quoted in either single or double quotes. Quotes
+are optional when the values cannot be interpreted as other types of
+values (e.g., numeric or logical).</p>
+</li>
+<li>
+<p>Numeric values must consist of numbers (0-9), <code>+</code>, <code>-</code>, and <code>e</code>, and can
+be converted to numbers.</p>
+</li>
+<li>
+<p>Logical values must be either <code>true</code> or <code>false</code>, and cannot be other
+values (e.g., <code>yes</code>, <code>YES</code>, <code>no</code>, <code>NO</code>,<sup class="footnote-ref"><a href="#fn-03-syntax-2" id="fnref-03-syntax-2" data-footnote-ref>7</a></sup> <code>on</code>, <code>off</code>,
+<code>TRUE</code>, <code>FALSE</code>, <code>T</code>, <code>F</code>, <code>to be</code>, or <code>not to be</code>).</p>
+</li>
+<li>
+<p>Expressions start with <code>!expr</code> followed by R code.</p>
+</li>
+<li>
+<p>Null values can be either literally <code>null</code> or empty.</p>
+</li>
+<li>
+<p>A vector consists of comma-separated character/numeric/logical values in
+<code>[ ]</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>If <code>value</code> is empty, and the next line is of the form <code>field: value</code>
+indented by 2 spaces, the next line will be treated as a child member of the
+current line. One field can have multiple chidren indented to the same
+level, and each child can have its children (further indented by 2 spaces).</p>
+</li>
+</ol>
+<p>See <a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a> for all possible fields supported in <strong>litedown</strong>.</p>
+<h2 id="sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</h2>
 <p>For the full list of supported document elements, please read the GFM spec.
 Below is a quick summary:</p>
 <ul>
@@ -2928,7 +3038,7 @@ Below is a quick summary:</p>
 </li>
 <li>
 <p>Inline elements: <code>**strong**</code>, <code>_emphasis_</code>, <code>~~strikethrough~~</code>,
-<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-03-syntax-1" id="fnref-03-syntax-1" data-footnote-ref>6</a></sup></p>
+<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup></p>
 </li>
 <li>
 <p>Inline code is written in a pair of backticks, e.g., <code>`code`</code>. Code
@@ -2948,10 +3058,10 @@ table, which can be generated by <code>knitr::kable(x, &quot;pipe&quot;)</code> 
 <code>xfun::md_table()</code>).</p>
 </li>
 </ul>
-<h2 id="sec:add-on-features"><span class="section-number">3.2</span> Add-on features</h2>
+<h2 id="sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</h2>
 <p>In addition to GFM features, the <strong>litedown</strong> package also supports the
 following features.</p>
-<h3 id="sec:raw-latex-html-blocks"><span class="section-number">3.2.1</span> Raw LaTeX/HTML blocks</h3>
+<h3 id="sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</h3>
 <p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
 names <code>=latex</code> (or <code>=tex</code>) and <code>=html</code>, e.g.,</p>
 <pre><code class="language-markdown">```{=tex}
@@ -2962,7 +3072,7 @@ This only appears in \LaTeX{} output.
 output formats. Similarly, raw HTML blocks will only appear in HTML output. One
 exception is raw LaTeX blocks that are LaTeX math environments, which also work
 for HTML output (see the next section).</p>
-<h3 id="sec:latex-math_1"><span class="section-number">3.2.2</span> LaTeX math</h3>
+<h3 id="sec:latex-math_1"><span class="section-number">3.3.2</span> LaTeX math</h3>
 <p>You can write both <code>$inline$</code> and <code>$$display$$</code> LaTeX math, e.g.,
 \(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\).</p>
 <p>$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$</p>
@@ -3046,7 +3156,7 @@ because they are more robust. LaTeX math environments work for both LaTeX and
 HTML output.</p>
 <p>For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
 math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">4.1.6</a>).</p>
-<h3 id="sec:superscripts-and-subscripts"><span class="section-number">3.2.3</span> Superscripts and subscripts</h3>
+<h3 id="sec:superscripts-and-subscripts"><span class="section-number">3.3.3</span> Superscripts and subscripts</h3>
 <p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
 Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
 characters, <code>*</code>, <code>(</code>, and <code>)</code> are allowed in the scripts. For example, <code>a^b c^</code>
@@ -3054,7 +3164,7 @@ will not be recognized as a superscript (because the space is not allowed). Note
 that GFM supports striking out text via <code>~text~</code>, but this feature has been
 disabled and replaced by the feature of subscripts in <strong>litedown</strong>. To strike
 out text, you must use a pair of <em>double</em> tildes.</p>
-<h3 id="sec:footnotes_1"><span class="section-number">3.2.4</span> Footnotes</h3>
+<h3 id="sec:footnotes_1"><span class="section-number">3.3.4</span> Footnotes</h3>
 <p>Insert footnotes via <code>[^n]</code>, where <code>n</code> is a footnote number (a unique
 identifier). The footnote content should be defined in a separate block starting
 with <code>[^n]:</code>. For example:</p>
@@ -3062,20 +3172,20 @@ with <code>[^n]:</code>. For example:</p>
 
 [^1]: This is the footnote.
 </code></pre>
-<p>The support is limited for LaTeX output at the moment,<sup class="footnote-ref"><a href="#fn-03-syntax-2" id="fnref-03-syntax-2" data-footnote-ref>7</a></sup> and there
-are two caveats if the document is intended to be converted to LaTeX:</p>
+<p>The support is limited for LaTeX output at the moment, and there are two caveats
+if the document is intended to be converted to LaTeX:</p>
 <ul>
 <li>
 <p>The footnote content must be a single paragraph.</p>
 </li>
 <li>
-<p>Only numbers<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup> are supported as identifiers, and other types of
+<p>Only numbers<sup class="footnote-ref"><a href="#fn-03-syntax-4" id="fnref-03-syntax-4" data-footnote-ref>9</a></sup> are supported as identifiers, and other types of
 identifiers are not recognized.</p>
 </li>
 </ul>
 <p>The two limitations do not apply to HTML output, e.g., you can write arbitrary
 elements in footnotes and not necessarily one paragraph.</p>
-<h3 id="sec:attributes"><span class="section-number">3.2.5</span> Attributes</h3>
+<h3 id="sec:attributes"><span class="section-number">3.3.5</span> Attributes</h3>
 <p>Attributes on images, links, fenced code blocks, and section headings can be
 written in <code>{}</code>. ID and class are two common attributes. An ID can be written
 after the <code>#</code> character, and a class can be written after <code>.</code> . Attributes are
@@ -3139,12 +3249,12 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <code>\section{Introduction}\label{sec:intro}</code>.</p>
 </li>
 </ul>
-<h3 id="sec:appendices"><span class="section-number">3.2.6</span> Appendices</h3>
+<h3 id="sec:appendices"><span class="section-number">3.3.6</span> Appendices</h3>
 <p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
 will be treated as the appendix. If section numbering is enabled
 (<a class="cross-ref-sec" href="#sec:number-sections">4.1.9</a>), the appendix section headings will be numbered
 differently.</p>
-<h3 id="sec:fenced-divs"><span class="section-number">3.2.7</span> Fenced <code>Div</code>s</h3>
+<h3 id="sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
 have at least one attribute, such as the class name. For example:</p>
 <pre><code class="language-markdown">::: foo
@@ -3208,10 +3318,10 @@ surrounding environment.</p>
 <p>If a fenced <code>Div</code> has multiple class names (e.g., <code>{.a .b .c}</code>), only the first
 class name will be used as the LaTeX environment name. However, all class names
 will be used if the output format is HTML (e.g., <code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
-<h3 id="sec:cross-references"><span class="section-number">3.2.8</span> Cross-references</h3>
+<h3 id="sec:cross-references"><span class="section-number">3.3.8</span> Cross-references</h3>
 <p>To cross-reference an element, it must be numbered first. Then we can refer to
 it by its ID.</p>
-<h4 id="sec:sections-figures-and-tables"><span class="section-number">3.2.8.1</span> Sections, figures, and tables</h4>
+<h4 id="sec:sections-figures-and-tables"><span class="section-number">3.3.8.1</span> Sections, figures, and tables</h4>
 <p>Section heading IDs can be either manually assigned or automatically generated
 (<a class="cross-ref-sec" href="#sec:auto-identifiers">4.1.1</a>). Section numbers are automatically generated if the
 <code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">4.1.9</a>).</p>
@@ -3230,7 +3340,7 @@ of the element to be referenced, which typically consists of a prefix (e.g.,
 </code></pre>
 <p>Hyphens (<code>-</code>) are also allowed in place of colons in the ID prefix, e.g.,
 <code>@fig-nice-plot</code>.</p>
-<h4 id="sec:latex-equations"><span class="section-number">3.2.8.2</span> LaTeX equations</h4>
+<h4 id="sec:latex-equations"><span class="section-number">3.3.8.2</span> LaTeX equations</h4>
 <p>LaTeX math environments such as <code>align</code> and <code>equation</code> are numbered by default.
 To refer to an expression (e.g., an equation) in a math environment, a label
 needs to be assigned to the expression first via <code>\label{}</code>, and it must start
@@ -3266,48 +3376,74 @@ a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 \end{equation}</p>
 </div>
-<h4 id="sec:arbitrary-elements"><span class="section-number">3.2.8.3</span> Arbitrary elements</h4>
+<h4 id="sec:arbitrary-elements"><span class="section-number">3.3.8.3</span> Arbitrary elements</h4>
 <p>You can cross-reference any other type of elements by adding empty anchors of
 the form <code>[](#@ID)</code> into them, e.g.,</p>
-<pre><code class="language-md">::: {style=&quot;background: ghostwhite; padding: 1px 1em;&quot;}
-[](#@blk:example) This is a numbered block.
+<pre><code class="language-md">:::: {#lst:example .box}
+::: caption
+[](#@lst:example) A code listing demonstrating how to fold code blocks with JS.
 :::
 
-We can cross-reference @blk:example.
+```js
+document.querySelectorAll('pre').forEach(pre =&gt; {
+  const d = document.createElement('details');
+  d.innerHTML = '&lt;summary&gt;Details&lt;/summary&gt;';
+  pre.before(d);  // insert &lt;details&gt; before &lt;pre&gt;
+  d.append(pre);  // move &lt;pre&gt; into &lt;details&gt;
+});
+```
+::::
+
+We can cross-reference @lst:example.
 </code></pre>
 <div class="callout-output">
-<div style="background: ghostwhite; padding: 1px 1em;">
-<p><span class="ref-number-blk">1</span> This is a numbered block.</p>
+<div id="lst:example" class="box">
+<div class="caption">
+<p><span class="ref-number-lst">1</span> A code listing demonstrating how to fold code blocks with JS.</p>
 </div>
-<p>We can cross-reference <a class="cross-ref-blk" href="#blk:example">1</a>.</p>
+<pre><code class="language-js">document.querySelectorAll('pre').forEach(pre =&gt; {
+  const d = document.createElement('details');
+  d.innerHTML = '&lt;summary&gt;Details&lt;/summary&gt;';
+  pre.before(d);  // insert &lt;details&gt; before &lt;pre&gt;
+  d.append(pre);  // move &lt;pre&gt; into &lt;details&gt;
+});
+</code></pre>
 </div>
+<p>We can cross-reference <a class="cross-ref-lst" href="#lst:example">1</a>.</p>
+</div>
+<style type="text/css">
+[id^="lst:"] code[class] { background-color: inherit; }
+</style>
+<p>Note that we also added the ID (<code>#lst:example</code>) to the fenced Div to make it the
+target of the cross reference, i.e., when you click on the reference, the
+browser will navigate to the Div.</p>
 <p>For HTML output, we can style the numbers and references with CSS. Element
 numbers are wrapped in <code>&lt;span class=&quot;ref-number-*&quot;&gt;&lt;/span&gt;</code>, and references are
 wrapped in <code>&lt;span class=&quot;cross-ref-*&quot;&gt;&lt;/span&gt;</code>, where <code>*</code> is the ID prefix
-(e.g., <code>fig</code>, <code>tab</code>, and <code>eqn</code>). For example, we can add the label “Block” to
+(e.g., <code>fig</code>, <code>tab</code>, and <code>eqn</code>). For example, we can add the label “Listing” to
 the number and reference of the block above:</p>
-<pre><code class="language-css">.ref-number-blk::before, .cross-ref-blk::before {
-  content: &quot;Block &quot;;
+<pre><code class="language-css">.ref-number-lst::before, .cross-ref-lst::before {
+  content: &quot;Listing &quot;;
 }
-.ref-number-blk {
+.ref-number-lst {
   font-style: italic;
 }
-.ref-number-blk::after {
+.ref-number-lst::after {
   content: &quot;. &quot;
 }
 </code></pre>
 <style type="text/css">
-.ref-number-blk::before, .cross-ref-blk::before {
-  content: "Block ";
+.ref-number-lst::before, .cross-ref-lst::before {
+  content: "Listing ";
 }
-.ref-number-blk {
+.ref-number-lst {
   font-style: italic;
 }
-.ref-number-blk::after {
+.ref-number-lst::after {
   content: ". "
 }
 </style>
-<h3 id="sec:citations"><span class="section-number">3.2.9</span> Citations</h3>
+<h3 id="sec:citations"><span class="section-number">3.3.9</span> Citations</h3>
 <p>This feature requires the R package <strong>rbibutils</strong>. Please make sure it is
 installed before using citations.</p>
 <pre><code class="language-r">xfun::pkg_load2(&quot;rbibutils&quot;)
@@ -3373,7 +3509,7 @@ the citation package, but will redefine them to <code>\cite</code> or <code>\par
 according to the citation package. For example, it will insert
 <code>\let\citep\parencite</code> in the LaTeX preamble when <code>citation_package</code> is
 <code>biblatex</code>.</p>
-<h3 id="sec:smart-html-entities"><span class="section-number">3.2.10</span> Smart HTML entities</h3>
+<h3 id="sec:smart-html-entities"><span class="section-number">3.3.10</span> Smart HTML entities</h3>
 <p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
 write fractions in the form <code>n/m</code>. Below are some example entities:</p>
 <table>
@@ -3406,7 +3542,7 @@ write fractions in the form <code>n/m</code>. Below are some example entities:</
 </tr>
 </tbody>
 </table>
-<h2 id="sec:comparison-to-pandoc"><span class="section-number">3.3</span> Comparison to Pandoc</h2>
+<h2 id="sec:comparison-to-pandoc"><span class="section-number">3.4</span> Comparison to Pandoc</h2>
 <p>As mentioned earlier, a lot of features in Pandoc’s Markdown are not supported
 in the <strong>litedown</strong> package. Any feature that you find missing in previous
 sections is likely to be unavailable. In addition, a lot of R Markdown and
@@ -3433,10 +3569,8 @@ discipline of balancing is “giving up.”</p>
 </blockquote>
 </div>
 <p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
-<p>You can either call <code>litedown::mark()</code> to render a Markdown document
-programmatically, or click the <code>Knit</code> button in RStudio to render a (Markdown or
-R Markdown) document interactively. The latter requires you to specify the
-output format in the <code>output</code> field in YAML metadata (<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>), e.g.,</p>
+<p>The output format can be specified in the <code>output</code> (or <code>format</code>) field in YAML
+metadata (<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>), e.g.,</p>
 <pre><code class="language-yaml">---
 output:
   html:
@@ -3481,7 +3615,7 @@ any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 <code>example_1</code> and <code>example_2</code>.</p>
 <h3 id="sec:cleveref"><span class="section-number">4.1.2</span> <code>cleveref</code></h3>
 <p>Whether to use the LaTeX package <a href="https://ctan.org/pkg/cleveref"><strong>cleveref</strong></a>
-for “clever” cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.2.8</a>). This option is for LaTeX
+for “clever” cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>). This option is for LaTeX
 output only. If enabled, <strong>cleveref</strong> will be loaded and references will use the
 command <code>\cref{}</code> instead of <code>\ref{}</code>, which will automatically add the type of
 reference before the reference number, e.g., <code>\cref{sec:intro}</code> may generate
@@ -3815,9 +3949,8 @@ output:
       title: &quot;Title for LaTeX output&quot;
 </code></pre>
 <h3 id="sec:format-specific-variables"><span class="section-number">4.3.2</span> Format-specific variables</h3>
-<p>Other variables need to be specified under
-<code>output -&gt; litedown::*_format -&gt; meta</code>, where <code>*</code> can be <code>html</code> or <code>latex</code>,
-e.g.,</p>
+<p>Other variables need to be specified under <code>output -&gt; * -&gt; meta</code>, where <code>*</code> can
+be <code>html</code> or <code>latex</code>, e.g.,</p>
 <pre><code class="language-yaml">---
 title: &quot;My Title&quot;
 output:
@@ -3913,8 +4046,8 @@ template, you can use arbitrary variable names following the naming convention
 and the values of variables in the metadata will be passed to your template.</p>
 <h3 id="sec:setting-options-in-yaml"><span class="section-number">4.3.5</span> Setting options in YAML</h3>
 <p>Besides metadata variables, the aforementioned Markdown options
-(<a class="cross-ref-sec" href="#sec:markdown-options">4.1</a>) can also be set in YAML under
-<code>output -&gt; litedown::*_format -&gt; options</code>, e.g.,</p>
+(<a class="cross-ref-sec" href="#sec:markdown-options">4.1</a>) can also be set in YAML under <code>output -&gt; * -&gt; options</code>,
+e.g.,</p>
 <pre><code class="language-yaml">output:
   html:
     options:
@@ -4507,8 +4640,8 @@ individual will be unable to tolerate.</p>
 <p>Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named <code>_litedown.yml</code>.</p>
-<p>If you want to customize the output formats <code>html_format</code> or <code>latex_format</code> for
-books or websites, you should do it in <code>_litedown.yml</code>, e.g.,</p>
+<p>If you want to customize the output formats for books or websites, you should do
+it in <code>_litedown.yml</code>, e.g.,</p>
 <pre><code class="language-yaml">output:
   html:
     options:
@@ -4534,7 +4667,7 @@ use <code>.md</code> or <code>.R</code> files if you want), and additional infor
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
 <h3 id="sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</h3>
-<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-07-site-1" id="fnref-07-site-1" data-footnote-ref>9</a></sup> and unnecessary when
+<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-07-site-1" id="fnref-07-site-1" data-footnote-ref>10</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with <code>litedown::roam()</code>:</p>
 <ul>
@@ -4565,7 +4698,7 @@ page.</p>
 <h2 id="sec:websites"><span class="section-number">7.2</span> Websites</h2>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
 are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
-<code>include_after</code> for the <code>html_format</code>, e.g.,</p>
+<code>include_after</code> for the <code>html</code> format, e.g.,</p>
 <pre><code class="language-yaml">site:
   rebuild: &quot;outdated&quot;
   pattern: &quot;[.]R?md$&quot;
@@ -4588,7 +4721,7 @@ information about the package, such as the package description (<code>pkg_desc()
 news (<code>pkg_news()</code>), citation (<code>pkg_citation()</code>), source code (<code>pkg_code()</code>),
 and all manual pages (<code>pkg_manual()</code>). You can call these functions in code
 chunks to print out the desired information.</p>
-<p>For example, you may call them in the appendix (<a class="cross-ref-sec" href="#sec:appendices">3.2.6</a>) of a book:</p>
+<p>For example, you may call them in the appendix (<a class="cross-ref-sec" href="#sec:appendices">3.3.6</a>) of a book:</p>
 <pre><code class="language-md"># Appendix {.appendix}
 
 # Package Metadata
@@ -4882,27 +5015,29 @@ the document. <a href="#fnref-02-fuse-2" class="footnote-backref" data-footnote-
 for <code>.Rnw</code> and <code>.Rmd</code>. <a href="#fnref-02-fuse-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="5" aria-label="Back to reference 5">↩</a></p>
 </li>
 <li id="fn-03-syntax-1">
+<p>At least <a href="https://news.ycombinator.com/item?id=36745212">it was not quite friendly to
+Norwegian</a> until YAML 1.2. <a href="#fnref-03-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
+</li>
+<li id="fn-03-syntax-2">
+<p>TRACY is a good friend of Norwegian. <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
+</li>
+<li id="fn-03-syntax-3">
 <p>Please note that for links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not
 contain spaces</a>. If
 they do, the URLs must be enclosed in <code>&lt;&gt;</code>, e.g.,
-<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-03-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
+<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
 </li>
-<li id="fn-03-syntax-2">
-<p>If you know C, I’ll truly appreciate it if you could help with
-the LaTeX implementation in GFM:
-<a href="https://github.com/github/cmark-gfm/issues/314">https://github.com/github/cmark-gfm/issues/314</a> <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
-</li>
-<li id="fn-03-syntax-3">
+<li id="fn-03-syntax-4">
 <p>The specific number doesn’t matter, as long as it’s a unique
 footnote number in the document. For example, the first footnote can be
 <code>[^100]</code> and the second can be <code>[^64]</code>. Eventually they will appear as <code>[1]</code>
 and <code>[2]</code>. If you use the RStudio visual editor to edit Markdown documents,
 the footnote numbers will be automatically generated and updated when new
-footnotes are inserted before existing footnotes. <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
+footnotes are inserted before existing footnotes. <a href="#fnref-03-syntax-4" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
 </li>
 <li id="fn-07-site-1">
 <p>Remember that you can cache time-consuming code chunks to make the
-rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
+rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
 </li>
 </ol>
 </section>
