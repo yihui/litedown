@@ -11,10 +11,8 @@
 
 The main function to convert Markdown to other formats is `litedown::mark()`.
 
-You can either call `litedown::mark()` to render a Markdown document
-programmatically, or click the `Knit` button in RStudio to render a (Markdown or
-R Markdown) document interactively. The latter requires you to specify the
-output format in the `output` field in YAML metadata (@sec:yaml-metadata), e.g.,
+The output format can be specified in the `output` (or `format`) field in YAML
+metadata (@sec:yaml-metadata), e.g.,
 
 ``` yaml
 ---

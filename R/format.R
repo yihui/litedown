@@ -103,9 +103,13 @@ map_args = function(
 # YAML to litedown's formats
 yaml_body = function(text) {
   res = xfun::yaml_body(text, use_yaml = FALSE)
-  if (length(out <- res$yaml[['output']]) == 0) return(res)
+  if (!length(out <- res$yaml[['output']])) {
+    # if the key 'format' is provided, normalize it to 'output'
+    if (length(out <- res$yaml[['format']])) res$yaml$format = NULL else return(res)
+  }
   if (is.character(out)) out = set_names(vector('list', length(out)), out)
-  if (!is.list(out)) stop('The output field in YAML must be either list or character')
+  if (!is.list(out))
+    stop('The output format field in YAML must be either list or character')
   fmt = c(html_document = 'html', html_vignette = 'html', pdf_document = 'latex')
   for (i in intersect(names(fmt), names(out))) {
     out[[i]] = if (is.list(out[[i]])) do.call(map_args, out[[i]]) else list()
