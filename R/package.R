@@ -307,6 +307,8 @@ pkg_manual = function(
       }, finally = close(con))
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
     txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
+    # fix https://github.com/yihui/litedown/issues/52
+    txt = gsub("code class='language-R'", "code class='language-r'", txt, fixed = TRUE)
     # free math from <code>
     txt = gsub(r2, '<p>$$\\1$$</p>', txt)
     txt = gsub(r1, '\\\\(\\1\\\\)', txt)
