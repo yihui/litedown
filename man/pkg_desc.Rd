@@ -29,7 +29,12 @@ pkg_code(
 
 pkg_citation(name = detect_pkg())
 
-pkg_manual(name = detect_pkg(), toc = TRUE, number_sections = TRUE)
+pkg_manual(
+  name = detect_pkg(),
+  toc = TRUE,
+  number_sections = TRUE,
+  overview = TRUE
+)
 }
 \arguments{
 \item{name}{The package name (by default, it is automatically detected from
@@ -61,6 +66,9 @@ the package \code{DESCRIPTION}, GitHub links will be added to file paths. You
 can also provide a string template containing the placeholder \verb{\%s} (which
 will be filled out with the file paths via \code{sprintf()}), e.g.,
 \verb{https://github.com/yihui/litedown/blob/main/\%s}.}
+
+\item{overview}{Whether to include the package overview page, i.e., the
+\code{{name}-package.Rd} page.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is

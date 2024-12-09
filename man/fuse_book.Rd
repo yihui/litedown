@@ -46,9 +46,8 @@ Markdown output to a single output file, which is similar to
 is written to one file, instead of one HTML file per chapter.
 }
 \details{
-If the output format (\code{\link[=html_format]{html_format()}} or \code{\link[=latex_format]{latex_format()}}) needs to be
-customized, the settings should be written in the config file
-\verb{_litedown.yml}, e.g.,
+If the output format needs to be customized, the settings should be written
+in the config file \verb{_litedown.yml}, e.g.,
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{---
 output:

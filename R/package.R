@@ -269,10 +269,14 @@ tweak_citation = function(x) {
   x
 }
 
+#' @param overview Whether to include the package overview page, i.e., the
+#'   `{name}-package.Rd` page.
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
-pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
+pkg_manual = function(
+  name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE
+) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
@@ -285,14 +289,15 @@ pkg_manual = function(name = detect_pkg(), toc = TRUE, number_sections = TRUE) {
   links = sub(r, 'https://rdrr.io/cran/\\1/man/', links)
 
   db = tools::Rd_db(name)  # all Rd pages
+  intro = paste0(name, '-package')  # the name-package entry (package overview)
+  entries = setdiff(names(db), intro)
+  db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
 
   cl = header_class(toc, number_sections, FALSE)
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
   r2 = sprintf('<p[^>]*>\\s*%s\\s*</p>', r1)  # display math
-  # show the page name-package first
-  idx = vapply(al, is.element, el = paste0(name, '-package'), FALSE)
-  res = uapply(names(db)[order(!idx)], function(i) {
+  res = uapply(names(db), function(i) {
     txt = ''
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
     tryCatch(
