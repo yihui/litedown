@@ -5,8 +5,8 @@ get_authors = function() {
   a = Filter(function(x) 'aut' %in% x$role, eval(xfun::parse_only(a)))
   a = unlist(lapply(a, function(x) {
     name = paste(x$given, x$family)
-    link = x$comment[['URL']]
-    if (length(link) != 1 || is.na(link)) return(name)
+    link = as.list(x$comment)[['URL']]
+    if (length(link) != 1) return(name)
     sprintf('[%s](%s)', name, link)
   }))
   xfun::join_words(a)
