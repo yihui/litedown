@@ -339,6 +339,7 @@ pkg_manual = function(
   res = gsub('(<code[^>]*>)\\s+', '\\1', res)
   res = gsub('\\s+(</code>)', '\\1', res)
   res = gsub('<div class="sourceCode"><pre>(.+?)</pre></div>', '<pre><code>\\1</code></pre>', res)
+  res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
 
