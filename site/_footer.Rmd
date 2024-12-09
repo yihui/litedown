@@ -6,7 +6,8 @@ get_authors = function() {
   a = unlist(lapply(a, function(x) {
     name = paste(x$given, x$family)
     comment = x$comment
-    link = if ('URL' %in% names(comment)) comment[['URL']] else NA_character_
+    if (!'URL' %in% names(comment)) return(name)
+    link = comment[['URL']]
     if (length(link) != 1 || is.na(link)) return(name)
     sprintf('[%s](%s)', name, link)
   }))
