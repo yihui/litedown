@@ -115,8 +115,8 @@ yaml_body = function(text) {
     out[[i]] = if (is.list(out[[i]])) do.call(map_args, out[[i]]) else list()
     names(out)[names(out) == i] = fmt[i]
   }
-  # normalize format names `litedown::*_format` to `*`
-  names(out) = gsub('^litedown::+([^_]+)_.*', '\\1', names(out))
+  # normalize format names `(lite|mark)down::*_format` to `*`
+  names(out) = gsub('^(lite|mark)down::+([^_]+)_.*', '\\1', names(out))
   res$yaml$output = out
   res
 }
