@@ -116,7 +116,7 @@ yaml_body = function(text) {
     names(out)[names(out) == i] = fmt[i]
   }
   # normalize format names `(lite|mark)down::*_format` to `*`
-  names(out) = gsub('^(lite|mark)down::+([^_]+)_.*', '\\1', names(out))
+  names(out) = gsub('^(lite|mark)down::+([^_]+)_.*', '\\2', names(out))
   res$yaml$output = out
   res
 }
