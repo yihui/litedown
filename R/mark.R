@@ -356,7 +356,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   clever = isTRUE(options[['cleveref']])
   if (format == 'latex') ret = latex_refs(ret, r_ref, clever) else clever = FALSE
 
-  meta$body = ret
+  meta$body = I(ret)
 
   # use the template (if provided) to create a standalone document
   if (is.character(template)) {
