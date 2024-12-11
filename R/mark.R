@@ -135,10 +135,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       # them (to avoid issues like #33) and restore them later
       text = one_string(text)
       text = match_replace(text, sprintf('`%s(?s).{3,}?%s`', id, id), function(x) {
-        n0 = length(maths)
-        maths <<- c(maths, gsub(sprintf('`%s|%s`', id, id), '', x))
         # replace math with !id-n-id! where n is the index of the math
-        sprintf('!%s-%d-%s!', id, n0 + seq_along(x), id)
+        tokens = sprintf('!%s-%d-%s!', id, length(maths) + seq_along(x), id)
+        math = gsub(sprintf('`%s|%s`', id, id), '', x)
+        maths <<- c(maths, set_names(math, tokens))
+        tokens
       })
       if (format == 'html') maths = xfun::html_escape(maths)
       text = split_lines(text)
@@ -220,7 +221,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       'LaTeX math expressions cannot be restored correctly (expected ',
       length(maths), ' expression(s) but found ', length(x), ' in the output).'
     )
-    maths
+    maths[x]
   })
 
   if (format == 'html') {
