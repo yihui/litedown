@@ -5,23 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.4.9">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/prism-xcode.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/css/pages.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-12-10</h3></div>
+<div class="date"><h3>2024-12-11</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -126,7 +126,17 @@
 <li><a href="#chp:syntax"><span class="section-number main-number">3</span> Markdown Syntax</a>
 <ul>
 <li><a href="#sec:yaml-syntax"><span class="section-number">3.1</span> YAML syntax</a></li>
-<li><a href="#sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</a></li>
+<li><a href="#sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</a>
+<ul>
+<li><a href="#sec:inline-elements"><span class="section-number">3.2.1</span> Inline elements</a></li>
+<li><a href="#sec:headings"><span class="section-number">3.2.2</span> Headings</a></li>
+<li><a href="#sec:paragraphs"><span class="section-number">3.2.3</span> Paragraphs</a></li>
+<li><a href="#sec:code-blocks"><span class="section-number">3.2.4</span> Code blocks</a></li>
+<li><a href="#sec:lists"><span class="section-number">3.2.5</span> Lists</a></li>
+<li><a href="#sec:block-quotes"><span class="section-number">3.2.6</span> Block quotes</a></li>
+<li><a href="#sec:tables"><span class="section-number">3.2.7</span> Tables</a></li>
+</ul>
+</li>
 <li><a href="#sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</a>
 <ul>
 <li><a href="#sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</a></li>
@@ -3005,9 +3015,9 @@ values (e.g., numeric or logical).</p>
 be converted to numbers.</p>
 </li>
 <li>
-<p>Logical values must be either <code>true</code> or <code>false</code>, and cannot be other
-values (e.g., <code>yes</code>, <code>YES</code>, <code>no</code>, <code>NO</code>,<sup class="footnote-ref"><a href="#fn-03-syntax-2" id="fnref-03-syntax-2" data-footnote-ref>7</a></sup> <code>on</code>, <code>off</code>,
-<code>TRUE</code>, <code>FALSE</code>, <code>T</code>, <code>F</code>, <code>to be</code>, or <code>not to be</code>).</p>
+<p>Logical values must be either <code>true</code> or <code>false</code>. No other values are
+recognized, such as <code>yes</code>, <code>YES</code>, <code>no</code>, <code>NO</code>,<sup class="footnote-ref"><a href="#fn-03-syntax-2" id="fnref-03-syntax-2" data-footnote-ref>7</a></sup> <code>on</code>, <code>off</code>,
+<code>TRUE</code>, <code>FALSE</code>, <code>T</code>, <code>F</code>, <code>to be</code>, or <code>not to be</code> .</p>
 </li>
 <li>
 <p>Expressions start with <code>!expr</code> followed by R code.</p>
@@ -3023,44 +3033,101 @@ values (e.g., <code>yes</code>, <code>YES</code>, <code>no</code>, <code>NO</cod
 </li>
 <li>
 <p>If <code>value</code> is empty, and the next line is of the form <code>field: value</code>
-indented by 2 spaces, the next line will be treated as a child member of the
-current line. One field can have multiple chidren indented to the same
-level, and each child can have its children (further indented by 2 spaces).</p>
+indented by \(n\) white spaces (\(n \geq 1\)),<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup> the next line will
+be treated as a child member of the current line. One field can have
+multiple chidren indented to the same level, and each child can have its
+children (further indented by \(n\) spaces).</p>
 </li>
 </ol>
 <p>See <a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a> for all possible fields supported in <strong>litedown</strong>.</p>
 <h2 id="sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</h2>
-<p>For the full list of supported document elements, please read the GFM spec.
-Below is a quick summary:</p>
-<ul>
-<li>
+<p>If you cannot learn the basic Markdown in this section (i.e.,
+<a class="cross-ref-sec" href="#sec:markdown-basic">3.2</a>) in a few minutes, please feel free to file <a href="https://github.com/yihui/litedown/issues">a GitHub
+issue</a> and I will send you a
+sponsorship of $20 on GitHub.</p>
+<h3 id="sec:inline-elements"><span class="section-number">3.2.1</span> Inline elements</h3>
+<p>You can write these elements inline: <code>**strong**</code>, <code>_emphasis_</code>, <code>`code`</code>,
+<code>~~strikethrough~~</code>, <code>[text](link)</code>, and <code>![alt](image/path)</code>.</p>
+<div class="callout-note">
+<p>For links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not contain
+spaces</a>. If they do, the
+URLs must be enclosed in <code>&lt;&gt;</code>, e.g., <code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code></p>
+</div>
+<p>The rest of elements in this section are block-level elements.</p>
+<h3 id="sec:headings"><span class="section-number">3.2.2</span> Headings</h3>
 <p>Headings start with a number of <code>#</code>’s, e.g., <code>## level-two heading</code>.</p>
-</li>
-<li>
-<p>Inline elements: <code>**strong**</code>, <code>_emphasis_</code>, <code>~~strikethrough~~</code>,
-<code>[text](link)</code>, and <code>![alt](image/path)</code>.<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup></p>
-</li>
-<li>
-<p>Inline code is written in a pair of backticks, e.g., <code>`code`</code>. Code
-blocks can be indented, or fenced by <code>```</code>.</p>
-</li>
-<li>
-<p>List items start with <code>-</code>, <code>+</code>, or <code>*</code>, e.g., <code>- item</code>. A task list item is
-a regular list item with <code>[ ]</code> or <code>[x]</code> in the beginning, e.g.,
-<code>- [ ] item</code>.</p>
-</li>
-<li>
-<p>Block quotes start with <code>&gt;</code>.</p>
-</li>
-<li>
-<p>Tables are created with <code>|</code> as the column separator (i.e., Pandoc’s pipe
-table, which can be generated by <code>knitr::kable(x, &quot;pipe&quot;)</code> or
-<code>xfun::md_table()</code>).</p>
-</li>
-</ul>
+<p>You are recommended to use <code>##</code> (level-two) as the top heading level in a
+document, except for books, in which case each document is a chapter and you
+should use <code>#</code> (level-one) as the top level.</p>
+<h3 id="sec:paragraphs"><span class="section-number">3.2.3</span> Paragraphs</h3>
+<p>Paragraphs are separated by blank lines.</p>
+<h3 id="sec:code-blocks"><span class="section-number">3.2.4</span> Code blocks</h3>
+<p>Code blocks can be indented by 4 spaces, or fenced by <code>```</code>. In the
+latter case, the code block can have a class name (typically the language name).
+For example, below is a JS code block:</p>
+<pre><code class="language-md">```js
+x &lt; 0 ? -x : x;
+```
+</code></pre>
+<h3 id="sec:lists"><span class="section-number">3.2.5</span> Lists</h3>
+<p>There are three types of lists: unordered, ordered, and task lists.</p>
+<p>An unordered list item starts with <code>-</code>, <code>+</code>, or <code>*</code>, e.g., <code>- item</code>.</p>
+<p>A task list item is a regular list item with <code>[ ]</code> (unchecked) or <code>[x]</code>
+(checked) in the beginning, e.g., <code>- [ ] item</code>.</p>
+<p>An ordered list item starts with a number followed by a period. The number of
+the first item is used as the starting number of the list, and the rest of
+numbers can be arbitrary. The examples on the left below are equivalent to those
+on the right:</p>
+<div class="flex-col">
+<pre><code class="language-md">1. Get up!
+1. Write a book!
+1. Go to bed!
+</code></pre>
+<pre><code class="language-md">1. Get up!
+2. Write a book!
+3. Go to bed!
+</code></pre>
+</div>
+<div class="flex-col">
+<pre><code class="language-md">5. Get up!
+100. Write a book!
+1. Go to bed!
+</code></pre>
+<pre><code class="language-md">5. Get up!
+6. Write a book!
+7. Go to bed!
+</code></pre>
+</div>
+<h3 id="sec:block-quotes"><span class="section-number">3.2.6</span> Block quotes</h3>
+<p>Block quotes start with <code>&gt;</code> followed by a space and then the quote. A quote can
+contain any number of any Markdown elements. If it contains multiple block-level
+elements, each line needs to start with <code>&gt;</code>. For example, below is a block quote
+with multiple paragraphs:</p>
+<pre><code class="language-md">&gt; &quot;You're an oaf. I told you quite distinctly to make his discharge papers out.&quot;
+&gt;
+&gt; And all the bile which had accumulated in the judge advocate's soul in the course of that day because of Captain Linhart and Švejk poured out like a wild torrent on the head of the staff warder. At the end of it Bernis said:
+&gt;
+&gt; &quot;And now do you understand that you are a prize royal oaf?&quot;
+&gt;
+&gt; This is something which should only be said to kings and emperors, but even this simple staff warder, who was no royal personage, was not very pleased about it.
+&gt;
+&gt; ---Jaroslav Hašek, _The Good Soldier Švejk_ (Chapter 9)
+</code></pre>
+<h3 id="sec:tables"><span class="section-number">3.2.7</span> Tables</h3>
+<p>Tables are created with <code>|</code> as the column separator, i.e., Pandoc’s pipe table,
+which can be generated by <code>xfun::md_table(x)</code> or <code>knitr::kable(x, &quot;pipe&quot;)</code> if
+you want to create a table from a rectangular object <code>x</code> in R.</p>
+<pre><code class="language-md">| col 1 | col 2 | col 3 |
+|:------|------:|:-----:|
+| row 1 | row 1 | row 1 |
+| row 2 | row 2 | row 2 |
+</code></pre>
+<p>The position of the colon below the table header controls the column alignment,
+e.g., a colon on the right means the column is right-aligned, and colons on both
+ends means the column is center-aligned.</p>
 <h2 id="sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</h2>
-<p>In addition to GFM features, the <strong>litedown</strong> package also supports the
-following features.</p>
+<p>In addition to the basic features above (supported by <strong>commonmark</strong>), the
+<strong>litedown</strong> package also supports the following features.</p>
 <h3 id="sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</h3>
 <p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
 names <code>=latex</code> (or <code>=tex</code>) and <code>=html</code>, e.g.,</p>
@@ -5022,10 +5089,15 @@ Norwegian</a> until YAML 1.2. <a href="#fnref-03-syntax-1" class="footnote-backr
 <p>TRACY is a good friend of Norwegian. <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
 </li>
 <li id="fn-03-syntax-3">
-<p>Please note that for links and images, their URLs <a href="https://spec.commonmark.org/current/#link-destination">should not
-contain spaces</a>. If
-they do, the URLs must be enclosed in <code>&lt;&gt;</code>, e.g.,
-<code>![alt](&lt;some dir/a subdir/foo.png&gt;).</code> <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
+<p>Most people may want to use 2 or 4 spaces. Avoid 8, because that
+has been reserved for a VIP in the R club, <a href="https://simplystatistics.org/posts/2018-07-27-why-i-indent-my-code-8-spaces/">Roger
+Peng</a>.
+You may also choose to use tabs. If you <em>really</em> want to, you can mix tabs
+with spaces (then \(n\) is the total number of them). If people tell you that
+you are crazy by mixing up things, don’t listen and never follow. TRACY is
+human-friendly and respects the space right of all human beings. Guess what
+happens if you indent one line by 2 spaces and the next line by 3 spaces
+when you meant to use 4 spaces? <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
 </li>
 <li id="fn-03-syntax-4">
 <p>The specific number doesn’t matter, as long as it’s a unique
@@ -5045,18 +5117,18 @@ rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footn
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.15/dist/katex.min.js,npm/katex@0.16.15/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.50/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.51/js/pages.min.js" defer></script>
 </body>
 </html>
