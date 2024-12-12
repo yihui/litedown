@@ -270,7 +270,7 @@ sieve = function(input, text = NULL) {
       save_pos(c(l1, l2))
       x = text[l1:l2]
       el = if (pipe) partition(x) else list(source = x)
-      el$code_start = l1 + length(el$comments)
+      el$code_start = as.integer(l1) + length(el$comments)
       el$options$engine = 'r'
     }
     el$type = type

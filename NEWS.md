@@ -16,6 +16,8 @@
 
 - Provided templates and a Github action `yihui/litedown/site` to build package websites. See https://yihui.org/litedown/#sec:pkg-site for details.
 
+- Added an argument `examples` to `pkg_manual()` to run examples and show their output (thanks, @TimTaylor, #54).
+
 - Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a single chapter.
 
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/lite.js@5e06d19.

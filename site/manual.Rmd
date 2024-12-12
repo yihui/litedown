@@ -9,6 +9,4 @@ h2 {
 }
 ```
 
-```{r, echo = FALSE}
-litedown::pkg_manual()
-```
+`{r} litedown::pkg_manual()`

@@ -16,9 +16,11 @@ pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre) > code, code[class], .box > .caption { background-color: #f8f8f8; }
 pre > code:is(:not([class]), .language-plain, .language-none), .box { background-color: inherit; border: 1px solid #eee; }
-pre > .message { border-color: #9eeaf9; }
-pre > .warning { background: #fff3cd; border-color: #fff3cd; }
-pre > .error { background: #f8d7da; border-color: #f8d7da; }
+pre > code {
+  &.message { border-color: #9eeaf9; }
+  &.warning { background: #fff3cd; border-color: #fff3cd; }
+  &.error { background: #f8d7da; border-color: #f8d7da; }
+}
 .fenced-chunk { border-left: 1px solid #666; }
 .code-fence {
   opacity: .4;
@@ -35,10 +37,6 @@ table {
   thead th { border-bottom: 1px solid #ddd; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
   thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
-}
-.table-full {
-  width: 100%;
-  td { vertical-align: baseline; }
 }
 blockquote {
   color: #666;
@@ -81,11 +79,15 @@ section.footnotes {
   margin-top: 2em;
   &::before { content: ""; display: block; max-width: 20em; }
 }
+.fade {
+  background: repeating-linear-gradient(135deg, white, white 30px, #ddd 32px, #ddd 32px);
+  opacity: 0.6;
+}
 
 @media print {
   body { max-width: 100%; }
   tr, img { page-break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
-  pre:has(.line-numbers):not(:hover) { white-space: pre; }
+  body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
 }

@@ -35,10 +35,6 @@ a { color: #eb4a47; }
   background-color: #eee;
   filter: invert(1);
 }
-.fade {
-  background: repeating-linear-gradient(135deg, white, white 30px, #ddd 32px, #ddd 32px);
-  opacity: 0.6;
-}
 .center { text-align: center; }
 .slide-container h2 .section-number {
   display: inline-block;

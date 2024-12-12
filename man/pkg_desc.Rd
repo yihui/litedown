@@ -33,7 +33,8 @@ pkg_manual(
   name = detect_pkg(),
   toc = TRUE,
   number_sections = TRUE,
-  overview = TRUE
+  overview = TRUE,
+  examples = list()
 )
 }
 \arguments{
@@ -69,6 +70,9 @@ will be filled out with the file paths via \code{sprintf()}), e.g.,
 
 \item{overview}{Whether to include the package overview page, i.e., the
 \code{{name}-package.Rd} page.}
+
+\item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
+examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
@@ -92,8 +96,9 @@ put together as the full package documentation like a \pkg{pkgdown} website.
 These functions can be called inside any R Markdown document.
 }
 \examples{
+\dontrun{
 litedown::pkg_desc()
 litedown::pkg_news()
 litedown::pkg_citation()
-litedown::pkg_manual()
+}
 }

@@ -288,8 +288,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # build table of contents
     ret = add_toc(ret, options)
     # add js/css for math
-    if (!has_math) has_math = length(ret) &&
-      grepl('$$</p>', ret, fixed = TRUE)  # math may be from pkg_manual()'s HTML
+    if (!has_math) has_math = length(ret) && (
+      grepl('$$</p>', ret, fixed = TRUE) || grepl('\\)</span>', ret, fixed = TRUE)
+    )  # math may be from pkg_manual()'s HTML
     is_katex = TRUE
     if (has_math && length(js_math <- js_options(options[['js_math']], 'katex'))) {
       is_katex = js_math$package == 'katex'

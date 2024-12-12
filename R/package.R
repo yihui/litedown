@@ -115,10 +115,11 @@ vig_filter = function(ifile, encoding) {
 #'   `pkg_desc()` returns an HTML table containing the package metadata.
 #' @export
 #' @examples
+#' \dontrun{
 #' litedown::pkg_desc()
 #' litedown::pkg_news()
 #' litedown::pkg_citation()
-#' litedown::pkg_manual()
+#' }
 pkg_desc = function(name = detect_pkg()) {
   fields = c(
     'Title', 'Version', 'Description', 'Depends', 'Imports', 'Suggests',
@@ -271,11 +272,15 @@ tweak_citation = function(x) {
 
 #' @param overview Whether to include the package overview page, i.e., the
 #'   `{name}-package.Rd` page.
+#' @param examples A list of arguments to be passed to [xfun::record()] to run
+#'   examples each help page, e.g., `list(dev = 'svg', dev.args = list(height =
+#'   6))`. If not a list (e.g., `FALSE`), examples will not be run.
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
-  name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE
+  name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
+  examples = list()
 ) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
@@ -306,10 +311,17 @@ pkg_manual = function(
         stop(e)
       }, finally = close(con))
     # extract body, which may end at </main> (R 4.4.x) or </div></body> (R 4.3.x)
-    txt = gsub('.*?(<h2[ |>].*)(</main>|</div>\\s*</body>).*', '\\1', one_string(txt))
+    txt = gsub('(?s).*?(?=<h2)', '', one_string(txt), perl = TRUE)
+    txt = gsub('(</main>|</div>\\s*</body>).*', '', txt)
     # free math from <code>
     txt = gsub(r2, '<p>$$\\1$$</p>', txt)
-    txt = gsub(r1, '\\\\(\\1\\\\)', txt)
+    txt = gsub(r1, '<span>\\\\(\\1\\\\)</span>', txt)
+    # run examples
+    if (is.list(examples)) {
+      xfun::pkg_attach(name)
+      default = list(print = NA, dev.path = 'manual/', dev.args = list(width = 9, height = 7))
+      txt = run_examples(txt, merge_list(default, examples), sans_ext(i))
+    }
     # remove existing ID and class
     for (a in c('id', 'class')) txt = gsub(sprintf('(<h2[^>]*?) %s="[^"]+"', a), '\\1', txt)
     if (cl != '') txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
@@ -342,8 +354,53 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
+  style = gen_tag(jsd_resolve(jsdelivr('css/manual.min.css')))
+  new_asis(c(style, toc, res))
+}
 
-  new_asis(c(toc, res))
+run_examples = function(html, config, path) {
+  config$dev.path = path = paste0(config$dev.path, path)
+  on.exit(xfun::del_empty_dir(dirname(path)), add = TRUE)
+  r = '(?s).*?<pre><code[^>]*>(?s)(.+?)</code></pre>'
+  match_replace(html, paste0('(?<=<h3>Examples</h3>)', r), function(x) {
+    code = gsub(r, '\\1', x, perl = TRUE)
+    code = restore_html(str_trim(code))
+    nr1 = 'if (FALSE) {  ## Not run'
+    nr2 = '}  ## Not run'
+    code = gsub('\n?## Not run:\\s*?\n', paste0('\n', nr1, '\n'), code)
+    code = gsub('\n+## End[(]Not run[)]\n*', paste0('\n', nr2, '\n'), code)
+    res = do.call(xfun::record, merge_list(config, list(code = code, envir = globalenv())))
+    idx = seq_along(res); cls = class(res)
+    for (i in idx) {
+      ri = res[[i]]; ci = class(ri)
+      # disable asis output since it may contain raw HTML
+      if ('record_asis' %in% ci) class(res[[i]]) = 'record_output'
+      # split the dontrun block
+      if ('record_source' %in% ci && !any(is.na(nr <- match(c(nr1, nr2), ri)))) {
+        i1 = nr[1]; i2 = nr[2]
+        new_block = function(i, ...) {
+          b = trim_blank(one_string(ri[i]))
+          if (xfun::is_blank(b)) b = character()
+          list(structure(b, class = c(ci, ...)))
+        }
+        if (i1 > 1) {
+          res = c(res, new_block((i1 + 1):(i2 - 1), 'fade'))
+          idx = c(idx, i)
+        }
+        n = length(ri)
+        if (i2 < n) {
+          res = c(res, new_block((i2 + 1):n))
+          idx = c(idx, i)
+        }
+        res[i] = if (i1 > 1) new_block(1:(i1 - 1)) else
+          new_block((i1 + 1):(i2 - 1), 'fade')
+      }
+    }
+    res = res[order(idx)]
+    class(res) = cls
+    res = one_string(c('', format(res, 'markdown')))
+    res
+  })
 }
 
 detect_pkg = function(error = TRUE) {
