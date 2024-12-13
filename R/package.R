@@ -294,7 +294,7 @@ pkg_manual = function(
   links = sub(r, 'https://rdrr.io/cran/\\1/man/', links)
 
   db = tools::Rd_db(name)  # all Rd pages
-  intro = paste0(name, '-package')  # the name-package entry (package overview)
+  intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
   entries = setdiff(names(db), intro)
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
