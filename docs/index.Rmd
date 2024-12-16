@@ -359,7 +359,7 @@ footprint (the total file size of **litedown**, **commonmark**, and **xfun**),
 you can:
 
 -   Write basic components of Pandoc's Markdown (@chp:syntax), including
-    headings, table of contents (TOC), lists, tables, pipe figures, code blocks,
+    headings, table of contents (TOC), lists, figures, pipe tables, code blocks,
     quotes, fenced Divs, LaTeX math, footnotes, and citations, etc.
 
 -   Automatically number and cross-reference arbitrary elements

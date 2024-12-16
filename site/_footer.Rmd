@@ -1,7 +1,7 @@
 ```{r, include = FALSE}
 get_authors = function() {
   d = packageDescription(litedown:::detect_pkg())
-  a = litedown:::pkg_authors(d, 'aut')
+  a = litedown:::pkg_authors(d, 'aut', FALSE)
   xfun::join_words(a)
 }
 ```

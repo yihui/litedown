@@ -153,16 +153,15 @@ pkg_desc = function(name = detect_pkg()) {
 }
 
 # format authors, adding URL and ORCID links as appropriate
-pkg_authors = function(desc, role = NULL) {
+pkg_authors = function(desc, role = NULL, extra = TRUE) {
   if (is.null(a <- desc[['Authors@R']])) return(desc[['Author']])
   a = eval(xfun::parse_only(a))
   a = uapply(a, function(x) {
-    role = if (length(x$role)) {
-      if (length(role) == 0 || role %in% x$role) paste0('[', one_string(x$role, ', '), ']')
-    }
+    if (length(role) && !any(role %in% x$role)) return()
+    role = if (extra && length(x$role)) paste0('[', one_string(x$role, ', '), ']')
     name = paste(x$given, x$family)
     comment = as.list(x$comment)
-    orcid = sprintf(
+    orcid = if (extra) sprintf(
       '[![ORCID iD](https://cloud.r-project.org/web/orcid.svg){.orcid}](https://orcid.org/%s)',
       comment[["ORCID"]]
     )
