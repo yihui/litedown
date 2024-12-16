@@ -134,14 +134,34 @@ pkg_desc = function(name = detect_pkg()) {
   names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
-  # format authors
-  if (is.na(d[['Author']])) d$Author = one_string(by = ',', format(
-    eval(xfun::parse_only(d[['Authors@R']])), include = c('given', 'family', 'role')
-  ))
+  # format authors, adding URL and ORCID links as appropriate
+  if (is.na(d[['Author']])) {
+    auth = eval(xfun::parse_only(d[['Authors@R']]))
+    role = format(auth, include = 'role')
+    d$Author = Map(function(x, y) {
+      name = paste(x$given, x$family)
+      comment = as.list(x$comment)
+      orcid = comment[["ORCID"]]
+      if (length(orcid)) {
+        orcid = sprintf(
+          r"(<a href="https://orcid.org/%s" target="_top"><img alt="ORCID iD" src="orcid.svg" style="width:16px; height:16px; margin-left:4px; margin-right:4px; vertical-align:middle" /></a>)",
+          orcid
+        )
+      } else {
+        # handle inconsistency with paste0(a, NULL, b) and paste(a, NULL, b)
+        orcid <- " "
+      }
+      link = comment[['URL']]
+      if (length(link)) name = sprintf('[%s](%s)', name, link)
+      paste0(name, orcid, y)
+    }, auth, role)
+    d$Author = one_string(d$Author, by = ", ")
+  }
   d[['Authors@R']] = NULL
+
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
-    if (i %in% c('URL', 'BugReports')) {
+    if (i %in% c('Description', 'URL', 'BugReports', 'Author')) {
       sans_p(commonmark::markdown_html(d[[i]], extensions = 'autolink'))
     } else xfun::html_escape(d[[i]])
   }
