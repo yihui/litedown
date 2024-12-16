@@ -3,10 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.10">
+<meta name="generator" content="litedown 0.4.11">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/prism-xcode.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/article.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/book.min.css">
@@ -16,6 +14,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
@@ -579,7 +579,7 @@ you can:</p>
 <ul>
 <li>
 <p>Write basic components of Pandoc’s Markdown (<a class="cross-ref-chp" href="#chp:syntax">3</a>), including
-headings, table of contents (TOC), lists, tables, pipe figures, code blocks,
+headings, table of contents (TOC), lists, figures, pipe tables, code blocks,
 quotes, fenced Divs, LaTeX math, footnotes, and citations, etc.</p>
 </li>
 <li>
@@ -812,10 +812,9 @@ Define the radius of a circle as `x`:
 
 ```{r}
 x = 1 + 1
-x
 ```
 
-The area of the circle with a radius of `x` is `{r} pi * x^2`.
+The area of the circle with a radius of `{r} x` is `{r} pi * x^2`.
 </code></pre>
 <pre><code class="language-md" data-file="001.md">---
 title: The area of a circle
@@ -825,14 +824,9 @@ Define the radius of a circle as `x`:
 
 ``` {.r}
 x = 1 + 1
-x
 ```
 
-```
-#&gt; [1] 2
-```
-
-The area of the circle with a radius of `x` is 12.6.
+The area of the circle with a radius of 2 is 12.6.
 </code></pre>
 </div>
 <p>When we <code>fuse()</code> the source document, the program code will be executed, writing
@@ -5114,11 +5108,6 @@ rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footn
 </ol>
 </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.15/dist/katex.min.js,npm/katex@0.16.15/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/render-katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/appendix.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/toc-highlight.min.js" defer></script>
@@ -5130,5 +5119,10 @@ rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footn
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.15/dist/katex.min.js,npm/katex@0.16.15/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
 </body>
 </html>
