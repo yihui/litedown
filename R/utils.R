@@ -204,12 +204,12 @@ restore_html = function(x) {
 }
 
 # set js/css variables according to the js_math option
-set_math = function(meta, o, is_katex) {
+set_math = function(o, is_katex) {
   if (is_katex) o$js = c(o$js, 'dist/contrib/auto-render.min.js')
   js = js_combine(sprintf('npm/%s%s/%s', o$package, o$version, o$js))
   js = if (is_katex) c(js, '@render-katex') else c('@mathjax-config', js)
   css = sprintf('@npm/%s%s/%s', o$package, o$version, o$css)
-  add_meta(meta, list(js = js, css = css))
+  set_meta(js = js, css = css)
 }
 
 # use jsdelivr's combine feature
@@ -242,16 +242,20 @@ js_libs = list(
   )
 )
 
-add_meta = function(x, v) {
-  for (i in names(v)) x[[i]] = c(v[[i]], x[[i]])
-  x
+set_meta = function(...) {
+  v = list(...)
+  for (i in names(v)) .env[[i]] = c(.env[[i]], v[[i]])
 }
 
 # set js/css variables according to the js_highlight option
-set_highlight = function(meta, options, html) {
+set_highlight = function(options, html) {
+  # if the class .line-numbers is present, add js/css for line numbers
+  if (any(grepl('<code class="[^"]*line-numbers', html)))
+    set_meta(js = '@code-line-numbers', css = '@code-line-numbers')
+
   r = '(?<=<code class="language-)([^"]+)(?=")'
-  if (!any(grepl(r, html, perl = TRUE))) return(meta)
-  if (!length(o <- js_options(options[['js_highlight']], 'prism'))) return(meta)
+  if (!any(grepl(r, html, perl = TRUE))) return()
+  if (!length(o <- js_options(options[['js_highlight']], 'prism'))) return()
 
   p = o$package
   # return jsdelivr subpaths
@@ -302,7 +306,7 @@ set_highlight = function(meta, options, html) {
   # embedding faster because each js is a separate URL that has been downloaded)
   js = if (is.null(l)) paste0('@', js) else js_combine(js)
 
-  add_meta(meta, list(js = js, css = css))
+  set_meta(js = js, css = css)
 }
 
 # figure out which language support files are needed for highlight.js/prism.js

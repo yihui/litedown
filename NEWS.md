@@ -18,6 +18,8 @@
 
 - Added an argument `examples` to `pkg_manual()` to run examples and show their output (thanks, @TimTaylor, #54).
 
+- Fixed a bug that the default CSS wouldn't be added when a math expression exists on the page (thanks, @calvinw, #61).
+
 - Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a single chapter.
 
 - Fixed a bug that the file navigation by line numbers on code blocks stopped working in `litedown::roam()` due to yihui/lite.js@5e06d19.

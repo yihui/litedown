@@ -224,6 +224,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     maths[x]
   })
 
+  has_mermaid = FALSE
+
   if (format == 'html') {
     # don't disable check boxes
     ret = gsub('(<li><input type="checkbox" [^>]*?)disabled="" (/>)', '\\1\\2', ret)
@@ -255,12 +257,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     }, perl = FALSE)  # for perl = TRUE, we'd need (?s) before (.+?)
     # support mermaid
     r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
-    if (length(grep(r_mmd, ret))) {
+    if (has_mermaid <- length(grep(r_mmd, ret))) {
       ret = gsub(r_mmd, '<pre class="mermaid">\\1</pre>', ret)
-      # add the js asset automatically if not detected
-      if (length(grep('mermaid', meta[['js']])) == 0) meta = add_meta(
-        meta, c(js = '@npm/mermaid/dist/mermaid.min.js')
-      )
     }
     r4 = '(<pre><code class="language-)\\{([^"]+)}">'
     # deal with ```{.class1 .class2 attrs}, which is not supported by commonmark
@@ -287,14 +285,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
     ret = add_toc(ret, options)
-    # add js/css for math
+    # math
     if (!has_math) has_math = length(ret) && (
       grepl('$$</p>', ret, fixed = TRUE) || grepl('\\)</span>', ret, fixed = TRUE)
     )  # math may be from pkg_manual()'s HTML
     is_katex = TRUE
     if (has_math && length(js_math <- js_options(options[['js_math']], 'katex'))) {
       is_katex = js_math$package == 'katex'
-      meta = set_math(meta, js_math, is_katex)
     }
     # number figures and tables, etc.
     ret = number_refs(ret, r_ref, is_katex)
@@ -358,10 +355,20 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   clever = isTRUE(options[['cleveref']])
   if (format == 'latex') ret = latex_refs(ret, r_ref, clever) else clever = FALSE
 
-  meta$body = I(ret)
-
   # use the template (if provided) to create a standalone document
   if (is.character(template)) {
+    meta$body = I(ret)
+    if (format == 'html') {
+      # clear the internal js/css
+      on.exit(rm(list = intersect(c('js', 'css'), ls(.env)), envir = .env), add = TRUE)
+      # add js/css for math
+      if (has_math) set_math(js_math, is_katex)
+      # add js/css for syntax highlighting
+      set_highlight(options, ret)
+      # add js for mermaid
+      if (has_mermaid && length(grep('mermaid', meta[['js']])) == 0)
+        set_meta(js = '@npm/mermaid/dist/mermaid.min.js')
+    }
     ret = build_output(
       format, options, template, meta, test = c(if (length(input)) dirname(input), '.')
     )
@@ -409,19 +416,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 build_output = function(format, options, template, meta, ...) {
   tpl = one_string(template, ...)
   if (format == 'html') {
-    b = meta$body
-    set_meta = function(name, value) {
-      if (!name %in% names(meta)) meta[[name]] <<- value
-    }
-    set_meta('css', 'default')
-    set_meta('plain-title', I(str_trim(commonmark::markdown_text(meta[['title']]))))
-    meta = set_highlight(meta, options, b)
-    # if the class .line-numbers is present, add js/css for line numbers
-    if (any(grepl('<code class="[^"]*line-numbers', b))) for (i in c('css', 'js')) {
-      meta[[i]] = c(meta[[i]], '@code-line-numbers')
-    }
+    defaults = list(
+      'css' = 'default',
+      'plain-title' = I(str_trim(commonmark::markdown_text(meta[['title']])))
+    )
+    for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
     # special handling for css/js "files" that have no extensions
-    for (i in c('css', 'js')) meta[[i]] = resolve_files(meta[[i]], i)
+    for (i in c('css', 'js')) meta[[i]] = resolve_files(c(meta[[i]], .env[[i]]), i)
   }
   sub_vars(tpl, meta, ...)
 }

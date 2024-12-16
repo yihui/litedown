@@ -149,7 +149,8 @@ pkg_desc = function(name = detect_pkg()) {
       paste0('\n<td>', d, '</td>'), '\n</tr>', collapse = '\n'
     ), '\n</tbody></table>'
   )
-  new_asis(c(pkg_style(), res))
+  set_meta(css = '@manual')
+  new_asis(res)
 }
 
 # format authors, adding URL and ORCID links as appropriate
@@ -371,10 +372,9 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
-  new_asis(c(pkg_style(), toc, res))
+  set_meta(css = '@manual')
+  new_asis(c(toc, res))
 }
-
-pkg_style = function() gen_tag(jsd_resolve(jsdelivr('css/manual.min.css')))
 
 run_examples = function(html, config, path) {
   config$dev.path = path = paste0(config$dev.path, path)
