@@ -3,9 +3,10 @@ Type: Package
 Title: A Lightweight Version of R Markdown
 Version: 0.4.11
 Authors@R: c(
-   person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666", URL = "https://yihui.org")),
-   person()
-   )
+    person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666", URL = "https://yihui.org")),
+    person("Tim", "Taylor", role = "ctb", comment = c(ORCID = "0000-0002-8587-7113")),
+    person()
+    )
 Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     to lightweight HTML or 'LaTeX' documents with the 'commonmark' package (instead
     of 'Pandoc'). Some missing Markdown features in 'commonmark' are also

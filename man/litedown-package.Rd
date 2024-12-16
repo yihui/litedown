@@ -23,4 +23,9 @@ Useful links:
 \author{
 \strong{Maintainer}: Yihui Xie \email{xie@yihui.name} (\href{https://orcid.org/0000-0003-0645-5666}{ORCID}) (https://yihui.org)
 
+Other contributors:
+\itemize{
+  \item Tim Taylor (\href{https://orcid.org/0000-0002-8587-7113}{ORCID}) [contributor]
+}
+
 }
