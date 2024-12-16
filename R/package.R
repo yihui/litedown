@@ -170,7 +170,7 @@ pkg_authors = function(desc, role = NULL, extra = TRUE) {
     if (length(link)) name = sprintf('[%s](%s)', name, link)
     one_string(c(name, orcid, role), ' ')
   })
-  a
+  if (length(a) > 1) one_string(a, ', ') else a
 }
 
 #' @param path For [pkg_news()], path to the `NEWS.md` file. If empty, [news()]
