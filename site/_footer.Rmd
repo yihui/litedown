@@ -1,14 +1,7 @@
 ```{r, include = FALSE}
 get_authors = function() {
   d = packageDescription(litedown:::detect_pkg())
-  if (is.null(a <- d[['Authors@R']])) return(d[['Author']])
-  a = Filter(function(x) 'aut' %in% x$role, eval(xfun::parse_only(a)))
-  a = unlist(lapply(a, function(x) {
-    name = paste(x$given, x$family)
-    link = as.list(x$comment)[['URL']]
-    if (length(link) != 1) return(name)
-    sprintf('[%s](%s)', name, link)
-  }))
+  a = litedown:::pkg_authors(d, 'aut')
   xfun::join_words(a)
 }
 ```

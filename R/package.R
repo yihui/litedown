@@ -134,14 +134,11 @@ pkg_desc = function(name = detect_pkg()) {
   names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
-  # format authors
-  if (is.na(d[['Author']])) d$Author = one_string(by = ',', format(
-    eval(xfun::parse_only(d[['Authors@R']])), include = c('given', 'family', 'role')
-  ))
+  d[['Author']] = pkg_authors(d)
   d[['Authors@R']] = NULL
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
-    if (i %in% c('URL', 'BugReports')) {
+    if (i %in% c('Description', 'URL', 'BugReports', 'Author')) {
       sans_p(commonmark::markdown_html(d[[i]], extensions = 'autolink'))
     } else xfun::html_escape(d[[i]])
   }
@@ -152,7 +149,28 @@ pkg_desc = function(name = detect_pkg()) {
       paste0('\n<td>', d, '</td>'), '\n</tr>', collapse = '\n'
     ), '\n</tbody></table>'
   )
-  new_asis(res)
+  new_asis(c(pkg_style(), res))
+}
+
+# format authors, adding URL and ORCID links as appropriate
+pkg_authors = function(desc, role = NULL) {
+  if (is.null(a <- desc[['Authors@R']])) return(desc[['Author']])
+  a = eval(xfun::parse_only(a))
+  a = uapply(a, function(x) {
+    role = if (length(x$role)) {
+      if (length(role) == 0 || role %in% x$role) paste0('[', one_string(x$role, ', '), ']')
+    }
+    name = paste(x$given, x$family)
+    comment = as.list(x$comment)
+    orcid = sprintf(
+      '[![ORCID iD](https://cloud.r-project.org/web/orcid.svg){.orcid}](https://orcid.org/%s)',
+      comment[["ORCID"]]
+    )
+    link = comment[['URL']]
+    if (length(link)) name = sprintf('[%s](%s)', name, link)
+    one_string(c(name, orcid, role), ' ')
+  })
+  a
 }
 
 #' @param path For [pkg_news()], path to the `NEWS.md` file. If empty, [news()]
@@ -354,9 +372,10 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
-  style = gen_tag(jsd_resolve(jsdelivr('css/manual.min.css')))
-  new_asis(c(style, toc, res))
+  new_asis(c(pkg_style(), toc, res))
 }
+
+pkg_style = function() gen_tag(jsd_resolve(jsdelivr('css/manual.min.css')))
 
 run_examples = function(html, config, path) {
   config$dev.path = path = paste0(config$dev.path, path)
