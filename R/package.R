@@ -134,7 +134,7 @@ pkg_desc = function(name = detect_pkg()) {
   names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
-  d[['Author']] = pkg_authors(d)
+  d[['Author']] = one_string(pkg_authors(d), ', ')
   d[['Authors@R']] = NULL
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
