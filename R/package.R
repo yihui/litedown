@@ -144,16 +144,13 @@ pkg_desc = function(name = detect_pkg()) {
       orcid = comment[["ORCID"]]
       if (length(orcid)) {
         orcid = sprintf(
-          r"(<a href="https://orcid.org/%s" target="_top"><img alt="ORCID iD" src="orcid.svg" style="width:16px; height:16px; margin-left:4px; margin-right:4px; vertical-align:middle" /></a>)",
+          r"(<a href="https://orcid.org/%s" target="_top"><img alt="ORCID iD" src="orcid.svg" style="width:16px; height:16px; margin-left:4px; margin-right:4px; vertical-align:middle"/></a> )",
           orcid
         )
-      } else {
-        # handle inconsistency with paste0(a, NULL, b) and paste(a, NULL, b)
-        orcid <- " "
       }
       link = comment[['URL']]
       if (length(link)) name = sprintf('[%s](%s)', name, link)
-      paste0(name, orcid, y)
+      paste0(name, " ", orcid, y)
     }, auth, role)
     d$Author = one_string(d$Author, by = ", ")
   }
