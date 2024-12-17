@@ -8,7 +8,7 @@
 #' Markdown file can provide its own `output` field in YAML to override the
 #' global config). For example:
 #'
-#' ```
+#' ```yaml
 #' ---
 #' site:
 #'   rebuild: "outdated"
@@ -128,7 +128,7 @@ nav_menu = function(info) {
 #' If the output format needs to be customized, the settings should be written
 #' in the config file `_litedown.yml`, e.g.,
 #'
-#' ```
+#' ```yaml
 #' ---
 #' output:
 #'   html:
@@ -142,7 +142,7 @@ nav_menu = function(info) {
 #'
 #' In addition, you can configure the book via the `book` field, e.g.,
 #'
-#' ```
+#' ```yaml
 #' ---
 #' book:
 #'   new_session: true

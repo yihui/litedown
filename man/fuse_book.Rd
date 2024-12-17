@@ -49,7 +49,7 @@ is written to one file, instead of one HTML file per chapter.
 If the output format needs to be customized, the settings should be written
 in the config file \verb{_litedown.yml}, e.g.,
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{---
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
 output:
   html:
     options:
@@ -62,7 +62,7 @@ output:
 
 In addition, you can configure the book via the \code{book} field, e.g.,
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{---
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
 book:
   new_session: true
   subdir: false
