@@ -359,8 +359,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   if (is.character(template)) {
     meta$body = I(ret)
     if (format == 'html') {
-      # clear the internal js/css
-      on.exit(rm(list = intersect(c('js', 'css'), ls(.env)), envir = .env), add = TRUE)
+      # reset the internal js/css stored in .env on exit
+      oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
       # add js/css for math
       if (has_math) set_math(js_math, is_katex)
       # add js/css for syntax highlighting
