@@ -359,15 +359,15 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   if (is.character(template)) {
     meta$body = I(ret)
     if (format == 'html') {
-      # reset the internal js/css stored in .env on exit
-      oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
+      # reset the internal js/css stored in acc_var() on exit
+      on.exit(acc_var(), add = TRUE)
       # add js/css for math
       if (has_math) set_math(js_math, is_katex)
       # add js/css for syntax highlighting
       set_highlight(options, ret)
       # add js for mermaid
       if (has_mermaid && length(grep('mermaid', meta[['js']])) == 0)
-        set_meta(js = '@npm/mermaid/dist/mermaid.min.js')
+        acc_var(js = '@npm/mermaid/dist/mermaid.min.js')
     }
     ret = build_output(
       format, options, template, meta, test = c(if (length(input)) dirname(input), '.')
@@ -422,7 +422,7 @@ build_output = function(format, options, template, meta, ...) {
     )
     for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
     # special handling for css/js "files" that have no extensions
-    for (i in c('css', 'js')) meta[[i]] = resolve_files(c(meta[[i]], .env[[i]]), i)
+    for (i in c('css', 'js')) meta[[i]] = resolve_files(c(meta[[i]], acc_var(i)), i)
   }
   sub_vars(tpl, meta, ...)
 }

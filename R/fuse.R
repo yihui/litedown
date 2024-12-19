@@ -745,7 +745,8 @@ fuse_code = function(x, blocks) {
   l1 = x$code_start  # starting line number of the whole code chunk
   # generate markdown output
   out = lapply(res, function(x) {
-    type = sub('record_', '', class(x)[1])
+    type = grep_sub('^record_', '', class(x))[1]
+    if (is.na(type)) type = 'output'
     if (type == 'source') {
       if (!opts$echo) return()
       l2 = attr(x, 'lines')[1]  # starting line number of a code block
@@ -865,7 +866,10 @@ new_source = function(x) {
 new_output = function(x) xfun::new_record(x, 'output')
 new_warning = function(x) xfun::new_record(x, 'warning')
 new_plot = function(x) xfun::new_record(x, 'plot')
-new_asis = function(x) xfun::new_record(x, 'asis')
+new_asis = function(x, raw = FALSE) {
+  res = xfun::new_record(x, 'asis')
+  if (raw) xfun::raw_string(res) else res
+}
 
 is_plot = function(x) inherits(x, 'record_plot')
 

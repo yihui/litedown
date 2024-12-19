@@ -14,6 +14,8 @@
 
 - Added support for the chunk option `fig.dim`, which is a shortcut for `fig.width` and `fig.height`.
 
+- Added a new function `fuel()` as another way to add CSS/JS assets to HTML output.
+
 - Provided templates and a Github action `yihui/litedown/site` to build package websites. See https://yihui.org/litedown/#sec:pkg-site for details.
 
 - Added an argument `examples` to `pkg_manual()` to run examples and show their output (thanks, @TimTaylor, #54).

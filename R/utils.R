@@ -203,13 +203,71 @@ restore_html = function(x) {
   x
 }
 
+#' Add CSS/JS assets to HTML output
+#'
+#' While CSS/JS assets can be set via the `css`/`js` keys under the `meta` field
+#' of the `html` output format in YAML, this function provides another way to
+#' add them, which can be called in a code chunk to dynamically add assets.
+#' @param feature A character vector of features supported by CSS/JS, e.g.,
+#'   `c('article', 'callout')`. See the row names of `litedown:::assets` for all
+#'   available features. Each feature will be mapped to CSS/JS.
+#' @param css,js Character vectors of CSS/JS assets.
+#' @return A vector of `<link>` (CSS) or `<script>` (JS) tags.
+#' @export
+#' @examples
+#' litedown:::assets[, -1]
+#' # add features
+#' litedown::fuel(c('copy-button', 'tabsets'))
+#' # add css/js directly
+#' litedown::fuel(css = '@tabsets', js = c('@tabsets', '@fold-details'))
+fuel = function(feature = NULL, css = NULL, js = NULL) {
+  if (length(feature)) {
+    a = assets[feature, , drop = FALSE]
+    css = c(a[, 'css'], css); js = c(a[, 'js'], js)
+  }
+  new_asis(c(resolve_files(css, 'css'), resolve_files(js, 'js')), raw = TRUE)
+}
+
+assets = t(data.frame(
+  article = c('side notes, floats, and full-width elements for articles', '@article', '@sidenotes, @appendix'),
+  book = c('cover and chapter pages for books', '@book', NA),
+  callout = c('frames with legends', '@callout', '@callout'),
+  'center-img' = c('center images in paragraphs', NA, '@center-img'),
+  'chapter-toc' = c('add TOC to each chapter', NA, '@chapter-toc'),
+  'copy-button' = c('copy buttons', '@copy-button', '@copy-button'),
+  'external-link' = c('open external links in new windows', NA, '@external-link'),
+  'fold-details' = c('fold elements in `<details>`', NA, '@fold-details'),
+  'heading-anchor' = c('add anchor links to headings', '@heading-anchor', '@heading-anchor'),
+  'key-buttons' = c('style keyboard shortcuts', '@key-buttons', '@key-buttons'),
+  pages = c('paginate HTML for printing', '@pages', '@pages'),
+  'right-quote' = c('right-align quote footers', NA, '@right-quote'),
+  slides = c('snap slides', '@snap', '@snap'),
+  tabsets = c('create tabsets from bullet lists or sections', '@tabsets', '@tabsets'),
+  'toc-highlight' = c('highlight TOC items on scroll', NA, '@toc-highlight'),
+  row.names = c('description', 'css', 'js'), check.names = FALSE
+))
+
+# accumulate variable values
+acc_var = local({
+  db = list()
+  function(...) {
+    v = list(...)
+    if (is.null(nms <- names(v))) {
+      v = unlist(v)
+      switch(length(v) + 1, db <<- list(), db[[v]], db[v])
+    } else {
+      for (i in nms) db[[i]] <<- c(db[[i]], v[[i]])
+    }
+  }
+})
+
 # set js/css variables according to the js_math option
 set_math = function(o, is_katex) {
   if (is_katex) o$js = c(o$js, 'dist/contrib/auto-render.min.js')
   js = js_combine(sprintf('npm/%s%s/%s', o$package, o$version, o$js))
   js = if (is_katex) c(js, '@render-katex') else c('@mathjax-config', js)
   css = sprintf('@npm/%s%s/%s', o$package, o$version, o$css)
-  set_meta(js = js, css = css)
+  acc_var(js = js, css = css)
 }
 
 # use jsdelivr's combine feature
@@ -242,16 +300,11 @@ js_libs = list(
   )
 )
 
-set_meta = function(...) {
-  v = list(...)
-  for (i in names(v)) .env[[i]] = c(.env[[i]], v[[i]])
-}
-
 # set js/css variables according to the js_highlight option
 set_highlight = function(options, html) {
   # if the class .line-numbers is present, add js/css for line numbers
   if (any(grepl('<code class="[^"]*line-numbers', html)))
-    set_meta(js = '@code-line-numbers', css = '@code-line-numbers')
+    acc_var(js = '@code-line-numbers', css = '@code-line-numbers')
 
   r = '(?<=<code class="language-)([^"]+)(?=")'
   if (!any(grepl(r, html, perl = TRUE))) return()
@@ -306,7 +359,7 @@ set_highlight = function(options, html) {
   # embedding faster because each js is a separate URL that has been downloaded)
   js = if (is.null(l)) paste0('@', js) else js_combine(js)
 
-  set_meta(js = js, css = css)
+  acc_var(js = js, css = css)
 }
 
 # figure out which language support files are needed for highlight.js/prism.js
@@ -1106,7 +1159,7 @@ gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALS
 is_https = function(x) grepl('^https?://', x)
 
 # a vectorized version
-gen_tags = function(...) mapply(gen_tag, ...)
+gen_tags = function(...) mapply(gen_tag, ..., USE.NAMES = FALSE)
 
 # read CSS/JS and embed external fonts/background images, etc.
 resolve_external = function(x, web = TRUE, ext = '') {

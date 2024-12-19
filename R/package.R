@@ -149,8 +149,8 @@ pkg_desc = function(name = detect_pkg()) {
       paste0('\n<td>', d, '</td>'), '\n</tr>', collapse = '\n'
     ), '\n</tbody></table>'
   )
-  set_meta(css = '@manual')
-  new_asis(res)
+
+  new_asis(c(res, fuel(css = '@manual')))
 }
 
 # format authors, adding URL and ORCID links as appropriate
@@ -373,8 +373,7 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
-  set_meta(css = '@manual')
-  new_asis(c(toc, res))
+  new_asis(c(toc, res, fuel(css = '@manual')))
 }
 
 run_examples = function(html, config, path) {
