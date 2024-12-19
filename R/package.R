@@ -308,8 +308,6 @@ pkg_manual = function(
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
   links = sub(r, 'https://rdrr.io/r/\\1/', links)
-  r = '^[.][.]/[.][.]/([^/]+)/html/'
-  links = sub(r, 'https://rdrr.io/cran/\\1/man/', links)
 
   db = tools::Rd_db(name)  # all Rd pages
   intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
@@ -343,17 +341,17 @@ pkg_manual = function(
     # remove existing ID and class
     for (a in c('id', 'class')) txt = gsub(sprintf('(<h2[^>]*?) %s="[^"]+"', a), '\\1', txt)
     if (cl != '') txt = sub('<h2', paste0('<h2', cl), txt, fixed = TRUE)
-    sub('<h2', sprintf('<h2 id="sec:man-%s"', alnum_id(al[[i]][1])), txt, fixed = TRUE)
+    sub('<h2', sprintf('<h2 id="sec:man-%s"', sans_ext(i)), txt, fixed = TRUE)
   })
 
   # extract all aliases and put them in the beginning (like a TOC)
   env = asNamespace(name)
-  toc = uapply(al, function(topics) {
+  toc = unlist(.mapply(function(topics, target) {
     fn = uapply(topics, function(x) {
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
-    sprintf('<a href="#sec:man-%s"><code>%s</code></a>', alnum_id(fn[1]), fn)
-  })
+    sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
+  }, list(al, sans_ext(names(al))), list()))
 
   g = toupper(substr(unlist(al), 1, 1))
   g[!g %in% LETTERS] = 'misc'
@@ -363,6 +361,8 @@ pkg_manual = function(
     c('<p>', sprintf('<b>-- <kbd>%s</kbd> --</b>', g), x, '</p>')
   }, toc, names(toc)))
 
+  r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
+  res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
   res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
   res = gsub('<h3>', '<h3 class="unnumbered unlisted">', res, fixed = TRUE)
   res = gsub('<code id="[^"]+">', '<code>', res)
