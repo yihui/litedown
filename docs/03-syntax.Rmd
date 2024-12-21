@@ -24,12 +24,14 @@ it is[^03-syntax-1] by yourself after reading its specifications at
     Norwegian](https://news.ycombinator.com/item?id=36745212) until YAML 1.2.
 
 What we introduce in this section is a significantly trimmed-down version of
-YAML used by **litedown**. For now, let's call it TRACY, a recursive acronym for
-"TRACY Really Ain't Complete YAML" and also in honor of [Tracy
+YAML. Its official name is "TRACY", a recursive acronym for "TRACY Really Ain't
+Complete YAML" and also in honor of [Tracy
 Teal](https://en.wikipedia.org/wiki/Tracy_Teal) since she was once a nice boss
-of mine.
+of mine. However, to follow the naming convention of `*ML`, we use the name
+"TAML" (with apologies for the further recursion) when the audience has some
+software background.
 
-The following example shows all types of data that TRACY supports:
+The following example shows all types of data that TAML supports:
 
 ``` yaml
 a: 1
@@ -52,7 +54,7 @@ i:
 any_character.is-okay: string not quoted
 ```
 
-The TRACY specifications are:
+The TAML specifications are:
 
 1.  Each line should be of the form `field: value`. The `field` name can use any
     character. The `value` cannot span across multiple lines. If a line starts
@@ -85,19 +87,20 @@ The TRACY specifications are:
     multiple chidren indented to the same level, and each child can have its
     children (further indented by $n$ spaces).
 
-[^03-syntax-2]: TRACY is a good friend of Norwegian.
+[^03-syntax-2]: TAML is a good friend of Norwegian.
 
 [^03-syntax-3]: Most people may want to use 2 or 4 spaces. Avoid 8, because that
     has been reserved for a VIP in the R club, [Roger
     Peng](https://simplystatistics.org/posts/2018-07-27-why-i-indent-my-code-8-spaces/).
     You may also choose to use tabs. If you *really* want to, you can mix tabs
     with spaces (then $n$ is the total number of them). If people tell you that
-    you are crazy by mixing up things, don't listen and never follow. TRACY is
+    you are crazy by mixing up things, don't listen and never follow. TAML is
     human-friendly and respects the space right of all human beings. Guess what
     happens if you indent one line by 2 spaces and the next line by 3 spaces
     when you meant to use 4 spaces?
 
-See @sec:yaml-metadata for all possible fields supported in **litedown**.
+TAML is implemented in `xfun::taml_load()` and used by **litedown**. See
+@sec:yaml-metadata for all possible fields supported in **litedown**.
 
 ## Basic Markdown {#sec:markdown-basic}
 

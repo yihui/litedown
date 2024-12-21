@@ -104,6 +104,10 @@ resources are not. This means the output document may not work offline. If you
 have to view the output offline, you need to use the option value `"https"` (or
 `"all"`) and render the document at least once before you go offline.
 
+For `https` resources, after you have embedded them successfully once, they will
+be cached locally (via `xfun::download_cache`) and will not require an Internet
+connection again.
+
 ### `js_highlight`
 
 Specify the JavaScript library to syntax highlight code blocks. Possible values
@@ -466,49 +470,68 @@ templates:
 
 The following variables are for HTML templates:
 
-#### The `css` variable
+#### The `css` variable {#sec:meta-css}
 
-A vector of CSS files to be included in the output. The default value is
-`litedown:::pkg_file('resources', 'default.css')`.
+A vector of CSS files to be included in the output. If the variable is not
+provided, the
+[`default.css`](https://github.com/yihui/lite.js/blob/main/css/default.css) will
+be used.
 
 If you want to use built-in CSS files in this package, you can only specify the
-base name, e.g., `default` means `default.css` in this package.
+base name, e.g., `default` means `default.css` in this package, and `snap` means
+`snap.css`.
 
-You can also use web resources, e.g., `https://example.org/style.css`. One
-special case is [jsdelivr](https://www.jsdelivr.com) resources: if a `css` value
-starts with `@`, it will be recognized as a jsdelivr.com resource. if you are
-not familiar with jsdelivr, you may read its documentation to understand the
-following example URLs. The shorthand syntax is as follows (`CDN` stands for
-`https://cdn.jsdelivr.net`):
+You can also use web resources via a full URL, e.g.,
+`https://example.org/style.css`. One special case is
+[jsdelivr](https://www.jsdelivr.com) resources: if a `css` value starts with
+`@`, it will be treated as a jsdelivr resource. if you are not familiar with
+jsdelivr, you may read its documentation to understand the following example
+URLs. The shorthand syntax is as follows (`*` stands for
+`https://cdn.jsdelivr.net`) and summarized in @tab:at-syntax:
 
 -   `@foo` (without a filename extension) will be converted to
-    `CDN/npm/@xiee/utils/css/foo.min.css`, e.g., `@default` means
-    `CDN/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css`
-    extension over `.min.css`, you can use `@default.css`.
+    `*/npm/@xiee/utils/css/foo.min.css`, e.g., `@default` means
+    `*/npm/@xiee/utils/css/default.min.css`. If you prefer the `.css` extension
+    over `.min.css`, you can use `@default.css`.
 
 -   `@foo@version` (a filename followed by a version number) will be converted
-    to `CDN/npm/@xiee/utils@version/css/foo.min.css`, e.g., `@article@1.12.0`
-    means `CDN/npm/@xiee/utils@1.12.0/css/article.min.css`.
+    to `*/npm/@xiee/utils@version/css/foo.min.css`, e.g., `@article@1.12.0`
+    means `*/npm/@xiee/utils@1.12.0/css/article.min.css`.
 
 -   `@path/to/file` (i.e., a value that contains slashes) will be converted to
-    `CDN/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
-    converted to `CDN/npm/@xiee/utils/js/center-img.min.js`.
+    `*/path/to/file`, e.g., `@npm/@xiee/utils/js/center-img.js` will be
+    converted to `*/npm/@xiee/utils/js/center-img.min.js`.
 
 -   `@path/to/file-1,file-2` (comma-separated values and later values do not
     contain slashes) will be converted to
-    `CDN/combine/path/to/file-1,path/to/file-2` (this can be useful to
+    `*/combine/path/to/file-1,path/to/file-2` (this can be useful to
     [combine](https://www.jsdelivr.com/documentation#id-combine-multiple-files)
     multiple resources and load all at once).
 
 -   `@path-1/to/file-1,path-2/to/file-2` (comma-separated values and later
     values contain slashes) will be converted to
-    `CDN/combine/path-1/to/file-1,path-2/to/file-2`.
+    `*/combine/path-1/to/file-1,path-2/to/file-2`.
+
+:::: {.table .box}
+::: caption
+[ ](#@tab:at-syntax) The `@` syntax for using jsdelivr resources in the `css`
+variable.
+:::
+
+| syntax | actual URL |
+|----|----|
+| `@foo` | `*/npm/@xiee/utils/css/foo.min.css` |
+| `@foo.css` | `*/npm/@xiee/utils/css/foo.css` |
+| `@foo@version` | `*/npm/@xiee/utils@version/css/foo.min.css` |
+| `@path/to/file` | `*/path/to/file` |
+| `@path/to/file-1,file-2` | `*/combine/path/to/file-1,path/to/file-2` |
+| `@path-1/to/file-1,path-2/to/file-2` | `*/combine/path-1/to/file-1,path-2/to/file-2` |
+::::
 
 This provides a way to reduce the output HTML file size by loading CSS from the
 web instead of embedding inside HTML, at the cost of requiring Internet
 connection when viewing the HTML file. If you need the external web resources to
-work after you go offline, you can enable `"https"` in the Markdown option
-`embed_resources` in advance to embed the resources.
+work after you go offline, please see @sec:embed-resources.
 
 #### The `js` variable
 
@@ -568,8 +591,8 @@ output:
 
 ### Other fields in YAML
 
-See the help page `?html` for possible fields in addiction to `meta` and
-`options` that can be specified under the format name, e.g.,
+See the help page `?litedown::html_format` for possible fields in addiction to
+`meta` and `options` that can be specified under the format name, e.g.,
 
 ``` yaml
 output:

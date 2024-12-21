@@ -10,13 +10,12 @@
 :::
 
 The **litedown** package aims at lightweight with a minimal number of features
-at its core, but you can add more features by yourself. In this chapter, we
-introduce some CSS/JS assets from the GitHub repository
+at its core, but you are free to add more features by yourself. In this chapter,
+we introduce some CSS/JS assets from the GitHub repository
 <https://github.com/yihui/lite.js>. You can load arbitrary external JS and CSS
 files via the `js` and `css` meta variables. There are numerous JS libraries and
-CSS frameworks on the web that you can use, and you do not have to use the ones
-mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
-HTML applications.
+CSS frameworks on the web, and you do not have to use the ones mentioned in this
+chapter. You can also write CSS/JS by yourself to enrich your HTML applications.
 
 Remember that the CSS and JS are introduced under the output format `html` in
 YAML metadata, e.g.,
@@ -34,8 +33,8 @@ output:
 For the sake of brevity, we will omit the full YAML fields in examples
 throughout this chapter but only use the `css` and `js` fields. A file name
 `foo.js` denotes the file under the `js/` directory of the aforementioned
-[`yihui/lite.js` repository](https://github.com/yihui/lite.js). Similarly,
-`foo.css` is under the `css/` directory.
+[`lite.js` repository](https://github.com/yihui/lite.js). Similarly, `foo.css`
+is under the `css/` directory.
 
 All these CSS/JS resources can be used offline, and there are two ways to do it.
 One way is to clone the GitHub repo to your working directory, and use the files
@@ -45,34 +44,387 @@ you need, e.g.,
 js: ["repo/path/js/callout.js"]
 ```
 
-Another way is to enable embedding resources:
+Another way is to enable embedding `https` resources (@sec:embed-resources).
 
-``` yaml
-output:
-  html:
-    meta:
-      js: ["@callout"]
-    options:
-      embed_resources: ["https"]
+## A quick reference {#sec:asset-reference}
+
+@tab:assets provides a quick reference of existing CSS/JS assets in the
+`lite.js` repository. See @sec:meta-css for the meaning of the `@` character in
+`css` / `js` names.
+
+```{r}
+#| assets, echo = FALSE, print.args = I(list(limit = Inf)),
+#| tab.env = '.table .box .no-ref-label',
+#| tab.cap = 'A reference of CSS/JS assets in the `lite.js` repository.'
+a = litedown:::assets
+for (i in c('css', 'js')) a[, i] = ifelse(is.na(a[, i]), NA, paste0('`', a[, i], '`'))
+a = cbind(feature = rownames(a), a, section = paste0(' @sec:', rownames(a)))
+rownames(a) = NULL
+a
 ```
 
-After you have embedded CSS/JS resources once when you have Internet access,
-these resources will be cached locally and will not require an Internet
-connection again. This solution works for any online resources, not limited to
-the `yihui/lite.js` repository.
+If the source document is R Markdown instead of Markdown, an alternative way (in
+addition to configuring YAML metadata) to add assets is to call the function
+`litedown::fuel()` in a code chunk. You can either pass vectors of `css` / `js`
+asset names to the `css` / `js` arguments, or the `feature` names in @tab:assets
+to the `feature` argument, e.g.,
 
-## HTML slides
+```` md
+```{r, echo = FALSE}
+# add assets by feature
+litedown::fuel(feature = c('callout', 'copy-button'))
+# or add css/js directly
+litedown::fuel(css = c('@callout', '@book'), js = '@callout')
+```
+````
 
-With `snap.css` and `snap.js`, you can create lightweight HTML slides:
+You can call `fuel()` multiple times in a document to keep adding assets.
+
+## Copy buttons {#sec:copy-button}
+
+Normally you would have to select the text before copying it, and copy buttons
+can save the effort of text selection when you want to copy the text from an
+HTML element. You just click on the button, and the text is automatically
+copied. Copy buttons can be added via CSS/JS:
 
 ``` yaml
-css: ["@default", "@snap"]
-js: ["@snap"]
+css: ["@copy-button"]
+js: ["@copy-button"]
 ```
 
-You can learn more in `vignette('slides', package = 'litedown')`.
+By default, this will add copy buttons to all code blocks (`<code>` in `<pre>`)
+and all elements with the class name `copy-this`. For example, below is a quote
+inside a fenced Div `::: copy-this` and you will see a copy button if you hover
+over it with the cursor:
 
-## HTML articles
+::: {.side .side-right}
+Love like you've never been hurt\
+Dance like nobody's watching\
+Sing like nobody's listening\
+Work like you don't need the money\
+Live like it's heaven on earth
+
+---Alfred D'Souza
+:::
+
+::: copy-this
+> Copy like you understand the code...
+>
+> ---Yihui Xie
+:::
+
+All code blocks in this book also have copy buttons in them.
+
+In fact, you can add the copy button to any element on an HTML page. You may
+read [this post](https://yihui.org/en/2023/09/copy-button/) if you are
+interested in generalizing the copy button to other elements.
+
+## Tabsets {#sec:tabsets}
+
+A tabset provides a compact way to arrange content in tabs, which can save a lot
+of vertical space on the page. To create a tabset, you need to load the
+following assets:
+
+``` yaml
+css: ["@tabsets"]
+js: ["@tabsets"]
+```
+
+There are two ways to create a tabset in Markdown.
+
+### From a bullet list
+
+The first way is to write a bullet inside a fenced Div with the class name
+`tabset`. The first element of each bullet item will become the tab title, and
+the rest of elements will become the tab pane, e.g.,
+
+```{md}
+::: tabset
+- Tab one
+
+  Content: -OOOO0OOO⍥
+  
+  Another paragraph.
+
+- Tab two <!--active-->
+
+  Content: -OOOOOOOO⍥
+  
+  - A normal bullet list.
+:::
+```
+
+By default, the first tab is the active tab initially. To specify a different
+initial active tab, add a comment `<!--active-->` to the bullet item.
+
+You can use the `Left` (Left) and `Right` (Right) Arrows on your keyboard to
+navigate through the tabs when the tabset is on focus (e.g., after you have
+clicked on it once). Now keep pressing the Left or Right Arrow key, and you will
+realize that there is a caterpillar crawling in the example tabset above (and
+also looking at you). It's cute, isn't it?
+
+Since bullet lists can be nested, you can also nest one tabset in another. To do
+that, you just wrap a sub-list in a `tabset` div, e.g.,
+
+``` md
+::: tabset
+- Tab one
+
+  ::: tabset
+  - Child tab one
+  
+  - Child tab two
+  :::
+
+- Tab two
+:::
+```
+
+I'm not sure why anyone would want to create nested tabsets, but it sounds like
+a great way to create a maze. Perhaps you can write a detective story or game
+with it?
+
+Wait a minute. I just came up with an idea! We can use nested tabsets to
+navigate through a recursive list. I have implemented this idea in the function
+`xfun::tabset()`, and felt for the first time of my life that I dare to peruse
+the huge `recordPlot()` list now! That said, I don't want to scare you with
+`recordPlot()`, but let's take a look at the config file of this book as an
+example instead:
+
+```{r}
+cfg = xfun::taml_file('_litedown.yml')
+xfun::tabset(cfg, dput)
+```
+
+I have never loved YAML, but this time, I feel that YAML is adorable.
+
+### From sections
+
+The second way to create a tabset is through section headings. If you add a
+class name `tabset` to a heading, headings of the next (lower) level will be
+used as the tab titles, e.g.,
+
+``` md
+## Demo tabs {.tabset}
+
+### Tab one
+
+Content.
+
+### Tab two {.active}
+
+Content.
+```
+
+If a heading has the `active` class, it will be the active tab initially.
+
+You can also create a tabset by providing an empty fenced Div with the class
+name `tabset`, and subsequent headings will be converted to tabs, e.g.,
+
+``` md
+::: tabset
+:::
+
+## Tab one
+
+Content.
+
+## Tab two
+
+Content.
+```
+
+The tabset will end before it hits a higher-level heading. The tabset in the
+first example above can be ended by a `##` heading, and the second example can
+be ended by a `#` heading.
+
+To explicitly end a tabset without using a higher-level heading, you can insert
+a comment of the form `<!--tabset:ID-->` to the end of the tabset, where `ID` is
+the ID of the starting element of the tabset, e.g.,
+
+``` md
+## Demo tabs {.tabset #foo}
+
+### Tab one
+
+### Tab two
+
+<!--tabset:foo-->
+
+### Not a tab
+```
+
+``` md
+::: {.tabset #foo}
+:::
+
+## Tab one
+
+## Tab two
+
+<!--tabset:foo-->
+
+## Not a tab
+```
+
+When a tabset is created from sections, the tab titles (from section headings)
+will appear in the TOC of the document if TOC is enabled (@sec:toc).
+
+## Code folding {#sec:fold-details}
+
+``` yaml
+js: ["@fold-details"]
+```
+
+You can fold any element with the JS. See [this
+post](https://yihui.org/en/2023/09/code-folding/) for how to configure the
+script.
+
+## Callout blocks {#sec:callout}
+
+A callout block is a fenced Div with the class name `callout-*`. Callouts
+require `callout.css` and `callout.js`:
+
+``` yaml
+css: ["@callout"]
+js: ["@callout"]
+```
+
+For example:
+
+```{md, attr.asis = '.callout-output'}
+::: callout-tip
+This is a tip.
+
+> You can write arbitrary content, such as a blockquote.
+
+You can even _nest another callout_ into this one!
+
+Is that cool?
+:::
+```
+
+### Built-in callouts
+
+The stylesheet `callout.css` supports styling `tip`, `note`, `caution`,
+`warning`, `important`, and `example` callouts. For example:
+
+::: callout-note
+Thank you for your notice! Your notice has been noted.
+:::
+
+::: callout-caution
+Be careful when testing for strict equality of floating point numbers.
+
+```{r}
+seq(0, 1, .2) == c(0, .2, .4, .6, .8, 1)
+```
+:::
+
+::: callout-warning
+Never try to out-stubborn a cat!
+:::
+
+::: callout-important
+For the sake of reproducibility, please remember to render an R Markdown
+document in a *new R session* before publishing or submitting the output
+document.
+:::
+
+::: callout-example
+```{md}
+::: {.callout-example data-legend="Demo"}
+Change the title of this example to "Demo".
+:::
+```
+:::
+
+### Customizing callouts
+
+You do not have to use `callout.css` but can define your own CSS rules, e.g.,
+
+``` css
+.callout-important {
+  background: red;
+  color: yellow;
+}
+```
+
+Under the hood, `callout.js` turns the fenced Div into a `<fieldset>` for the
+form:
+
+``` html
+<fieldset class="callout-*">
+  <legend>Title</legend>
+
+  Content.
+</fieldset>
+```
+
+The content comes from the original fenced Div. The title comes from the class
+name (converted to uppercase) by default. You can provide a custom title via the
+`data-legend` attribute of the Div, e.g.,
+
+``` md
+::: {.callout-tip data-legend="Information"}
+:::
+```
+
+The icons before the callout titles can be defined via CSS, e.g., you can add
+two exclamation marks before the title of `important` callouts:
+
+``` css
+.callout-important legend::before {
+  content: "!! ";
+}
+```
+
+The default icons defined in `callout.css` are essentially [UTF-8
+characters](https://www.w3schools.com/charsets/ref_utf_symbols.asp). In theory,
+there are hundreds of thousands of characters that you can choose from. Each
+character is 1 to 4 bytes. For example, you can define a `music` callout with
+the music note symbol ♫ in the CSS:
+
+``` css
+.callout-music {
+  background: springgreen;
+  border-color: yellow;
+}
+.callout-music legend::before {
+  content: "♫ ";
+}
+```
+
+Then you can insert a `music` callout in your document:
+
+``` md
+::: callout-music
+Please listen to this lovely song.
+:::
+```
+
+Alternatively, if you are using `callout.css`, you can also use CSS variables to
+define the border color, background, and icon of a callout, e.g.,
+
+``` css
+.callout-music {
+  --callout-background: springgreen;
+  --callout-border: yellow;
+  --callout-icon: "♫ ";
+}
+```
+
+## Add anchor links to headings {#sec:heading-anchor}
+
+The CSS is necessary only if you want to hide the anchors by default and reveal
+them on hover.
+
+``` yaml
+css: ["@heading-anchor"]
+js: ["@heading-anchor"]
+```
+
+## HTML articles {#sec:article}
 
 You can style an HTML page in an article format via the following CSS and JS:
 
@@ -258,161 +610,43 @@ mtcars[1:4, 1:8]
 We have embedded a table of the first 4 rows of the `mtcars` data on the right
 margin, which you can see if the browser window is wide enough.
 
-## Tabbed sections
-
-You can load the script `tabsets.js` and CSS `tabsets.css` to create tabsets
-from sections (see [documentation
-here](https://yihui.org/en/2023/10/section-tabsets/)).
+## HTML books {#sec:book}
 
 ``` yaml
-css: ["@tabsets"]
-js: ["@tabsets"]
+css: ["@book"]
 ```
 
-## Code folding
-
-Code folding is supported by `fold-details.js` (see [documentation
-here](https://yihui.org/en/2023/09/code-folding/)).
+## Chapter TOC {#sec:chapter-toc}
 
 ``` yaml
-js: ["@fold-details"]
+js: ["@chapter-toc"]
 ```
 
-## Callout blocks
-
-A callout block is a fenced Div with the class name `callout-*`. Callouts
-require `callout.css` and `callout.js`:
+## Highlight TOC items {#sec:toc-highlight}
 
 ``` yaml
-css: ["@callout"]
-js: ["@callout"]
+js: ["@toc-highlight"]
 ```
 
-For example:
+## Paged HTML {#sec:pages}
 
-```{md, attr.asis = '.callout-output'}
-::: callout-tip
-This is a tip.
-
-> You can write arbitrary content, such as a blockquote.
-
-You can even _nest another callout_ into this one!
-
-Is that cool?
-:::
+``` yaml
+css: ["@pages"]
+js: ["@pages"]
 ```
 
-### Built-in callouts
+## HTML slides {#sec:slides}
 
-The stylesheet `callout.css` supports styling `tip`, `note`, `caution`,
-`warning`, `important`, and `example` callouts. For example:
+With `snap.css` and `snap.js`, you can create lightweight HTML slides:
 
-::: callout-note
-Thank you for your notice! Your notice has been noted.
-:::
-
-::: callout-caution
-Be careful when testing for strict equality of floating point numbers.
-
-```{r}
-seq(0, 1, .2) == c(0, .2, .4, .6, .8, 1)
-```
-:::
-
-::: callout-warning
-Never try to out-stubborn a cat!
-:::
-
-::: callout-important
-For the sake of reproducibility, please remember to render an R Markdown
-document in a *new R session* before publishing or submitting the output
-document.
-:::
-
-::: callout-example
-```{md}
-::: {.callout-example data-legend="Demo"}
-Change the title of this example to "Demo".
-:::
-```
-:::
-
-### Customizing callouts
-
-You do not have to use `callout.css` but can define your own CSS rules, e.g.,
-
-``` css
-.callout-important {
-  background: red;
-  color: yellow;
-}
+``` yaml
+css: ["@default", "@snap"]
+js: ["@snap"]
 ```
 
-Under the hood, `callout.js` turns the fenced Div into a `<fieldset>` for the
-form:
+You can learn more in `vignette('slides', package = 'litedown')`.
 
-``` html
-<fieldset class="callout-*">
-  <legend>Title</legend>
-
-  Content.
-</fieldset>
-```
-
-The content comes from the original fenced Div. The title comes from the class
-name (converted to uppercase) by default. You can provide a custom title via the
-`data-legend` attribute of the Div, e.g.,
-
-``` md
-::: {.callout-tip data-legend="Information"}
-:::
-```
-
-The icons before the callout titles can be defined via CSS, e.g., you can add
-two exclamation marks before the title of `important` callouts:
-
-``` css
-.callout-important legend::before {
-  content: "!! ";
-}
-```
-
-The default icons defined in `callout.css` are essentially [UTF-8
-characters](https://www.w3schools.com/charsets/ref_utf_symbols.asp). In theory,
-there are hundreds of thousands of characters that you can choose from. Each
-character is 1 to 4 bytes. For example, you can define a `music` callout with
-the music note symbol ♫ in the CSS:
-
-``` css
-.callout-music {
-  background: springgreen;
-  border-color: yellow;
-}
-.callout-music legend::before {
-  content: "♫ ";
-}
-```
-
-Then you can insert a `music` callout in your document:
-
-``` md
-::: callout-music
-Please listen to this lovely song.
-:::
-```
-
-Alternatively, if you are using `callout.css`, you can also use CSS variables to
-define the border color, background, and icon of a callout, e.g.,
-
-``` css
-.callout-music {
-  --callout-background: springgreen;
-  --callout-border: yellow;
-  --callout-icon: "♫ ";
-}
-```
-
-## Right-align a quote footer
+## Right-align a quote footer {#sec:right-quote}
 
 You can use the script `right-quote.js` to right-align a blockquote footer if it
 starts with an em-dash (`---`).
@@ -421,17 +655,25 @@ starts with an em-dash (`---`).
 js: ["@right-quote"]
 ```
 
-## Add anchor links to headings
+> Without a little madness, life is not worth living. Let us follow the guidance
+> of our inner voice. Why should we fry each of our actions like a piece of cake
+> on a sensible frying pan?
+>
+> ---Milan Kundera, *Immortal*
 
-The CSS is necessary only if you want to hide the anchors by default and reveal
-them on hover.
+## Center images {#sec:center-img}
 
 ``` yaml
-css: ["@heading-anchor"]
-js: ["@heading-anchor"]
+js: ["@center-img"]
 ```
 
-## Style keyboard shortcuts
+## Open external links in new windows {#sec:external-link}
+
+``` yaml
+js: ["@external-link"]
+```
+
+## Style keyboard shortcuts {#sec:key-buttons}
 
 The script `key-button.js` identifies keys and the CSS styles them, which can be
 useful for [showing keyboard

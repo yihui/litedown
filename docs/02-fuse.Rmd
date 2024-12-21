@@ -382,8 +382,7 @@ Below is an example of using options `attr.chunk`, `attr.source`, and
 
 `{r} .ex(2)`
 
-Here is an example of creating a callout (@sec:callout-blocks) from a code
-chunk:
+Here is an example of creating a callout (@sec:callout) from a code chunk:
 
 `{r} .ex(3)`
 
