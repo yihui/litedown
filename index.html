@@ -3,25 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.11">
+<meta name="generator" content="litedown 0.4.12">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2024-12-16</h3></div>
+<div class="date"><h3>2024-12-21</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -186,7 +187,7 @@
 <li><a href="#sec:top-level-variables"><span class="section-number">4.3.1</span> Top-level variables</a></li>
 <li><a href="#sec:format-specific-variables"><span class="section-number">4.3.2</span> Format-specific variables</a>
 <ul>
-<li><a href="#sec:the-css-variable"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</a></li>
+<li><a href="#sec:meta-css"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</a></li>
 <li><a href="#sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</a></li>
 <li><a href="#sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</a></li>
 <li><a href="#sec:the-classoption-variable"><span class="section-number">4.3.2.4</span> The <code>classoption</code> variable</a></li>
@@ -203,38 +204,51 @@
 </li>
 <li><a href="#chp:assets"><span class="section-number main-number">5</span> CSS/JS assets</a>
 <ul>
-<li><a href="#sec:html-slides"><span class="section-number">5.1</span> HTML slides</a></li>
-<li><a href="#sec:html-articles"><span class="section-number">5.2</span> HTML articles</a>
+<li><a href="#sec:asset-reference"><span class="section-number">5.1</span> A quick reference</a></li>
+<li><a href="#sec:copy-button"><span class="section-number">5.2</span> Copy buttons</a></li>
+<li><a href="#sec:tabsets"><span class="section-number">5.3</span> Tabsets</a>
 <ul>
-<li><a href="#sec:the-overall-style"><span class="section-number">5.2.1</span> The overall style</a></li>
-<li><a href="#sec:side-elements"><span class="section-number">5.2.2</span> Side elements</a>
-<ul>
-<li><a href="#sec:the-toc"><span class="section-number">5.2.2.1</span> The TOC</a></li>
-<li><a href="#sec:footnotes_2"><span class="section-number">5.2.2.2</span> Footnotes</a></li>
-<li><a href="#sec:arbitrary-sidenotes"><span class="section-number">5.2.2.3</span> Arbitrary sidenotes</a></li>
+<li><a href="#sec:from-a-bullet-list"><span class="section-number">5.3.1</span> From a bullet list</a></li>
+<li><a href="#sec:from-sections"><span class="section-number">5.3.2</span> From sections</a></li>
 </ul>
 </li>
-<li><a href="#sec:body-elements"><span class="section-number">5.2.3</span> Body elements</a>
-<ul>
-<li><a href="#sec:full-width-elements"><span class="section-number">5.2.3.1</span> Full-width elements</a></li>
-<li><a href="#sec:left-right-quotes"><span class="section-number">5.2.3.2</span> Left/right quotes</a></li>
-<li><a href="#sec:margin-embedding"><span class="section-number">5.2.3.3</span> Margin embedding</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#sec:tabbed-sections"><span class="section-number">5.3</span> Tabbed sections</a></li>
-<li><a href="#sec:code-folding"><span class="section-number">5.4</span> Code folding</a></li>
-<li><a href="#sec:callout-blocks"><span class="section-number">5.5</span> Callout blocks</a>
+<li><a href="#sec:fold-details"><span class="section-number">5.4</span> Code folding</a></li>
+<li><a href="#sec:callout"><span class="section-number">5.5</span> Callout blocks</a>
 <ul>
 <li><a href="#sec:built-in-callouts"><span class="section-number">5.5.1</span> Built-in callouts</a></li>
 <li><a href="#sec:customizing-callouts"><span class="section-number">5.5.2</span> Customizing callouts</a></li>
 </ul>
 </li>
-<li><a href="#sec:right-align-a-quote-footer"><span class="section-number">5.6</span> Right-align a quote footer</a></li>
-<li><a href="#sec:add-anchor-links-to-headings"><span class="section-number">5.7</span> Add anchor links to headings</a></li>
-<li><a href="#sec:style-keyboard-shortcuts"><span class="section-number">5.8</span> Style keyboard shortcuts</a></li>
-<li><a href="#sec:arbitrary-assets"><span class="section-number">5.9</span> Include arbitrary CSS/JS</a></li>
+<li><a href="#sec:heading-anchor"><span class="section-number">5.6</span> Add anchor links to headings</a></li>
+<li><a href="#sec:article"><span class="section-number">5.7</span> HTML articles</a>
+<ul>
+<li><a href="#sec:the-overall-style"><span class="section-number">5.7.1</span> The overall style</a></li>
+<li><a href="#sec:side-elements"><span class="section-number">5.7.2</span> Side elements</a>
+<ul>
+<li><a href="#sec:the-toc"><span class="section-number">5.7.2.1</span> The TOC</a></li>
+<li><a href="#sec:footnotes_2"><span class="section-number">5.7.2.2</span> Footnotes</a></li>
+<li><a href="#sec:arbitrary-sidenotes"><span class="section-number">5.7.2.3</span> Arbitrary sidenotes</a></li>
+</ul>
+</li>
+<li><a href="#sec:body-elements"><span class="section-number">5.7.3</span> Body elements</a>
+<ul>
+<li><a href="#sec:full-width-elements"><span class="section-number">5.7.3.1</span> Full-width elements</a></li>
+<li><a href="#sec:left-right-quotes"><span class="section-number">5.7.3.2</span> Left/right quotes</a></li>
+<li><a href="#sec:margin-embedding"><span class="section-number">5.7.3.3</span> Margin embedding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec:book"><span class="section-number">5.8</span> HTML books</a></li>
+<li><a href="#sec:chapter-toc"><span class="section-number">5.9</span> Chapter TOC</a></li>
+<li><a href="#sec:toc-highlight"><span class="section-number">5.10</span> Highlight TOC items</a></li>
+<li><a href="#sec:pages"><span class="section-number">5.11</span> Paged HTML</a></li>
+<li><a href="#sec:slides"><span class="section-number">5.12</span> HTML slides</a></li>
+<li><a href="#sec:right-quote"><span class="section-number">5.13</span> Right-align a quote footer</a></li>
+<li><a href="#sec:center-img"><span class="section-number">5.14</span> Center images</a></li>
+<li><a href="#sec:external-link"><span class="section-number">5.15</span> Open external links in new windows</a></li>
+<li><a href="#sec:key-buttons"><span class="section-number">5.16</span> Style keyboard shortcuts</a></li>
+<li><a href="#sec:arbitrary-assets"><span class="section-number">5.17</span> Include arbitrary CSS/JS</a></li>
 </ul>
 </li>
 <li><a href="#chp:authoring"><span class="section-number main-number">6</span> Authoring</a>
@@ -542,7 +556,7 @@ simplicity after other sophisticated packages emerged, such as <strong>reticulat
 and <strong>JuliaCall</strong>. I may revisit the idea in the future.</p>
 <p>HTML widgets are not supported yet, but may be reimagined in the future with
 some minimal support. Meanwhile, you are free to add arbitrary JS libraries to
-your documents (<a class="cross-ref-sec" href="#sec:arbitrary-assets">5.9</a>), so it is entirely possible that you can
+your documents (<a class="cross-ref-sec" href="#sec:arbitrary-assets">5.17</a>), so it is entirely possible that you can
 create HTML widgets on your own.</p>
 <h2 id="sec:highlights">Highlights</h2>
 <h3 id="sec:small-footprint">Small footprint</h3>
@@ -1337,8 +1351,7 @@ Define CSS rules for the classes in the `#example-a` chunk:
 }
 ```
 </code></pre>
-<p>Here is an example of creating a callout (<a class="cross-ref-sec" href="#sec:callout-blocks">5.5</a>) from a code
-chunk:</p>
+<p>Here is an example of creating a callout (<a class="cross-ref-sec" href="#sec:callout">5.5</a>) from a code chunk:</p>
 <pre><code class="language-md" data-file="003.Rmd">---
 title: Create a callout via the option `attr.chunk`
 output:
@@ -2964,11 +2977,13 @@ for the body is introduced in <a class="cross-ref-sec" href="#sec:markdown-basic
 it is<sup class="footnote-ref"><a href="#fn-03-syntax-1" id="fnref-03-syntax-1" data-footnote-ref>6</a></sup> by yourself after reading its specifications at
 <a href="https://yaml.org">https://yaml.org</a>.</p>
 <p>What we introduce in this section is a significantly trimmed-down version of
-YAML used by <strong>litedown</strong>. For now, let’s call it TRACY, a recursive acronym for
-“TRACY Really Ain’t Complete YAML” and also in honor of <a href="https://en.wikipedia.org/wiki/Tracy_Teal">Tracy
+YAML. Its official name is “TRACY”, a recursive acronym for “TRACY Really Ain’t
+Complete YAML” and also in honor of <a href="https://en.wikipedia.org/wiki/Tracy_Teal">Tracy
 Teal</a> since she was once a nice boss
-of mine.</p>
-<p>The following example shows all types of data that TRACY supports:</p>
+of mine. However, to follow the naming convention of <code>*ML</code>, we use the name
+“TAML” (with apologies for the further recursion) when the audience has some
+software background.</p>
+<p>The following example shows all types of data that TAML supports:</p>
 <pre><code class="language-yaml">a: 1
 b: &quot;string&quot;
 c: true
@@ -2988,7 +3003,7 @@ i:
     i31: [true, false, true]
 any_character.is-okay: string not quoted
 </code></pre>
-<p>The TRACY specifications are:</p>
+<p>The TAML specifications are:</p>
 <ol>
 <li>
 <p>Each line should be of the form <code>field: value</code>. The <code>field</code> name can use any
@@ -3033,7 +3048,8 @@ multiple chidren indented to the same level, and each child can have its
 children (further indented by \(n\) spaces).</p>
 </li>
 </ol>
-<p>See <a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a> for all possible fields supported in <strong>litedown</strong>.</p>
+<p>TAML is implemented in <code>xfun::taml_load()</code> and used by <strong>litedown</strong>. See
+<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a> for all possible fields supported in <strong>litedown</strong>.</p>
 <h2 id="sec:markdown-basic"><span class="section-number">3.2</span> Basic Markdown</h2>
 <p>If you cannot learn the basic Markdown in this section (i.e.,
 <a class="cross-ref-sec" href="#sec:markdown-basic">3.2</a>) in a few minutes, please feel free to file <a href="https://github.com/yihui/litedown/issues">a GitHub
@@ -3124,8 +3140,8 @@ ends means the column is center-aligned.</p>
 <strong>litedown</strong> package also supports the following features.</p>
 <h3 id="sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</h3>
 <p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
-names <code>=latex</code> (or <code>=tex</code>) and <code>=html</code>, e.g.,</p>
-<pre><code class="language-markdown">```{=tex}
+names <code>=latex</code> and <code>=html</code>, e.g.,</p>
+<pre><code class="language-markdown">```{=latex}
 This only appears in \LaTeX{} output.
 ```
 </code></pre>
@@ -3705,6 +3721,9 @@ base64-encoded data (images) or raw content (CSS/JS). Possible values are:</p>
 resources are not. This means the output document may not work offline. If you
 have to view the output offline, you need to use the option value <code>&quot;https&quot;</code> (or
 <code>&quot;all&quot;</code>) and render the document at least once before you go offline.</p>
+<p>For <code>https</code> resources, after you have embedded them successfully once, they will
+be cached locally (via <code>xfun::download_cache</code>) and will not require an Internet
+connection again.</p>
 <h3 id="sec:js-highlight"><span class="section-number">4.1.5</span> <code>js_highlight</code></h3>
 <p>Specify the JavaScript library to syntax highlight code blocks. Possible values
 are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
@@ -4034,52 +4053,95 @@ body, or after the body of the output.</li>
 </ul>
 <hr />
 <p>The following variables are for HTML templates:</p>
-<h4 id="sec:the-css-variable"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</h4>
-<p>A vector of CSS files to be included in the output. The default value is
-<code>litedown:::pkg_file('resources', 'default.css')</code>.</p>
+<h4 id="sec:meta-css"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</h4>
+<p>A vector of CSS files to be included in the output. If the variable is not
+provided, the
+<a href="https://github.com/yihui/lite.js/blob/main/css/default.css"><code>default.css</code></a> will
+be used.</p>
 <p>If you want to use built-in CSS files in this package, you can only specify the
-base name, e.g., <code>default</code> means <code>default.css</code> in this package.</p>
-<p>You can also use web resources, e.g., <code>https://example.org/style.css</code>. One
-special case is <a href="https://www.jsdelivr.com">jsdelivr</a> resources: if a <code>css</code> value
-starts with <code>@</code>, it will be recognized as a jsdelivr.com resource. if you are
-not familiar with jsdelivr, you may read its documentation to understand the
-following example URLs. The shorthand syntax is as follows (<code>CDN</code> stands for
-<code>https://cdn.jsdelivr.net</code>):</p>
+base name, e.g., <code>default</code> means <code>default.css</code> in this package, and <code>snap</code> means
+<code>snap.css</code>.</p>
+<p>You can also use web resources via a full URL, e.g.,
+<code>https://example.org/style.css</code>. One special case is
+<a href="https://www.jsdelivr.com">jsdelivr</a> resources: if a <code>css</code> value starts with
+<code>@</code>, it will be treated as a jsdelivr resource. if you are not familiar with
+jsdelivr, you may read its documentation to understand the following example
+URLs. The shorthand syntax is as follows (<code>*</code> stands for
+<code>https://cdn.jsdelivr.net</code>) and summarized in <a class="cross-ref-tab" href="#tab:at-syntax">3</a>:</p>
 <ul>
 <li>
 <p><code>@foo</code> (without a filename extension) will be converted to
-<code>CDN/npm/@xiee/utils/css/foo.min.css</code>, e.g., <code>@default</code> means
-<code>CDN/npm/@xiee/utils/css/default.min.css</code>. If you prefer the <code>.css</code>
-extension over <code>.min.css</code>, you can use <code>@default.css</code>.</p>
+<code>*/npm/@xiee/utils/css/foo.min.css</code>, e.g., <code>@default</code> means
+<code>*/npm/@xiee/utils/css/default.min.css</code>. If you prefer the <code>.css</code> extension
+over <code>.min.css</code>, you can use <code>@default.css</code>.</p>
 </li>
 <li>
 <p><code>@foo@version</code> (a filename followed by a version number) will be converted
-to <code>CDN/npm/@xiee/utils@version/css/foo.min.css</code>, e.g., <code>@article@1.12.0</code>
-means <code>CDN/npm/@xiee/utils@1.12.0/css/article.min.css</code>.</p>
+to <code>*/npm/@xiee/utils@version/css/foo.min.css</code>, e.g., <code>@article@1.12.0</code>
+means <code>*/npm/@xiee/utils@1.12.0/css/article.min.css</code>.</p>
 </li>
 <li>
 <p><code>@path/to/file</code> (i.e., a value that contains slashes) will be converted to
-<code>CDN/path/to/file</code>, e.g., <code>@npm/@xiee/utils/js/center-img.js</code> will be
-converted to <code>CDN/npm/@xiee/utils/js/center-img.min.js</code>.</p>
+<code>*/path/to/file</code>, e.g., <code>@npm/@xiee/utils/js/center-img.js</code> will be
+converted to <code>*/npm/@xiee/utils/js/center-img.min.js</code>.</p>
 </li>
 <li>
 <p><code>@path/to/file-1,file-2</code> (comma-separated values and later values do not
 contain slashes) will be converted to
-<code>CDN/combine/path/to/file-1,path/to/file-2</code> (this can be useful to
+<code>*/combine/path/to/file-1,path/to/file-2</code> (this can be useful to
 <a href="https://www.jsdelivr.com/documentation#id-combine-multiple-files">combine</a>
 multiple resources and load all at once).</p>
 </li>
 <li>
 <p><code>@path-1/to/file-1,path-2/to/file-2</code> (comma-separated values and later
 values contain slashes) will be converted to
-<code>CDN/combine/path-1/to/file-1,path-2/to/file-2</code>.</p>
+<code>*/combine/path-1/to/file-1,path-2/to/file-2</code>.</p>
 </li>
 </ul>
+<div class="table box">
+<div class="caption">
+<p><span class="ref-number-tab">3</span> The <code>@</code> syntax for using jsdelivr resources in the <code>css</code>
+variable.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>syntax</th>
+<th>actual URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@foo</code></td>
+<td><code>*/npm/@xiee/utils/css/foo.min.css</code></td>
+</tr>
+<tr>
+<td><code>@foo.css</code></td>
+<td><code>*/npm/@xiee/utils/css/foo.css</code></td>
+</tr>
+<tr>
+<td><code>@foo@version</code></td>
+<td><code>*/npm/@xiee/utils@version/css/foo.min.css</code></td>
+</tr>
+<tr>
+<td><code>@path/to/file</code></td>
+<td><code>*/path/to/file</code></td>
+</tr>
+<tr>
+<td><code>@path/to/file-1,file-2</code></td>
+<td><code>*/combine/path/to/file-1,path/to/file-2</code></td>
+</tr>
+<tr>
+<td><code>@path-1/to/file-1,path-2/to/file-2</code></td>
+<td><code>*/combine/path-1/to/file-1,path-2/to/file-2</code></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This provides a way to reduce the output HTML file size by loading CSS from the
 web instead of embedding inside HTML, at the cost of requiring Internet
 connection when viewing the HTML file. If you need the external web resources to
-work after you go offline, you can enable <code>&quot;https&quot;</code> in the Markdown option
-<code>embed_resources</code> in advance to embed the resources.</p>
+work after you go offline, please see <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a>.</p>
 <h4 id="sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</h4>
 <p>A vector of JavaScript files to be included in the output. The syntax is the
 same as the <code>css</code> variable, e.g., <code>snap</code> means <code>snap.js</code> in this package,
@@ -4119,8 +4181,8 @@ e.g.,</p>
         languages: [diff, latex]
 </code></pre>
 <h3 id="sec:other-fields-in-yaml"><span class="section-number">4.3.6</span> Other fields in YAML</h3>
-<p>See the help page <code>?html</code> for possible fields in addiction to <code>meta</code> and
-<code>options</code> that can be specified under the format name, e.g.,</p>
+<p>See the help page <code>?litedown::html_format</code> for possible fields in addiction to
+<code>meta</code> and <code>options</code> that can be specified under the format name, e.g.,</p>
 <pre><code class="language-yaml">output:
   latex:
     latex_engine: xelatex
@@ -4145,13 +4207,12 @@ complicated and difficult part of it was only just beginning.</p>
 </blockquote>
 </div>
 <p>The <strong>litedown</strong> package aims at lightweight with a minimal number of features
-at its core, but you can add more features by yourself. In this chapter, we
-introduce some CSS/JS assets from the GitHub repository
+at its core, but you are free to add more features by yourself. In this chapter,
+we introduce some CSS/JS assets from the GitHub repository
 <a href="https://github.com/yihui/lite.js">https://github.com/yihui/lite.js</a>. You can load arbitrary external JS and CSS
 files via the <code>js</code> and <code>css</code> meta variables. There are numerous JS libraries and
-CSS frameworks on the web that you can use, and you do not have to use the ones
-mentioned in this chapter. You can also write CSS/JS by yourself to enhance your
-HTML applications.</p>
+CSS frameworks on the web, and you do not have to use the ones mentioned in this
+chapter. You can also write CSS/JS by yourself to enrich your HTML applications.</p>
 <p>Remember that the CSS and JS are introduced under the output format <code>html</code> in
 YAML metadata, e.g.,</p>
 <pre><code class="language-yaml">---
@@ -4165,240 +4226,400 @@ output:
 <p>For the sake of brevity, we will omit the full YAML fields in examples
 throughout this chapter but only use the <code>css</code> and <code>js</code> fields. A file name
 <code>foo.js</code> denotes the file under the <code>js/</code> directory of the aforementioned
-<a href="https://github.com/yihui/lite.js"><code>yihui/lite.js</code> repository</a>. Similarly,
-<code>foo.css</code> is under the <code>css/</code> directory.</p>
+<a href="https://github.com/yihui/lite.js"><code>lite.js</code> repository</a>. Similarly, <code>foo.css</code>
+is under the <code>css/</code> directory.</p>
 <p>All these CSS/JS resources can be used offline, and there are two ways to do it.
 One way is to clone the GitHub repo to your working directory, and use the files
 you need, e.g.,</p>
 <pre><code class="language-yaml">js: [&quot;repo/path/js/callout.js&quot;]
 </code></pre>
-<p>Another way is to enable embedding resources:</p>
-<pre><code class="language-yaml">output:
-  html:
-    meta:
-      js: [&quot;@callout&quot;]
-    options:
-      embed_resources: [&quot;https&quot;]
-</code></pre>
-<p>After you have embedded CSS/JS resources once when you have Internet access,
-these resources will be cached locally and will not require an Internet
-connection again. This solution works for any online resources, not limited to
-the <code>yihui/lite.js</code> repository.</p>
-<h2 id="sec:html-slides"><span class="section-number">5.1</span> HTML slides</h2>
-<p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
-<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
-js: [&quot;@snap&quot;]
-</code></pre>
-<p>You can learn more in <code>vignette('slides', package = 'litedown')</code>.</p>
-<h2 id="sec:html-articles"><span class="section-number">5.2</span> HTML articles</h2>
-<p>You can style an HTML page in an article format via the following CSS and JS:</p>
-<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;]
-js: [&quot;@sidenotes&quot;, &quot;@appendix&quot;]
-</code></pre>
-<p>The <code>article.css</code> is mainly for styling the article frontmatter, body, and side
-content.</p>
-<ul>
-<li>
-<p>The <code>sidenotes.js</code> is required only if you want to place certain elements on
-the left or right side, such as the table of contents (TOC), footnotes, and
-sidenotes.</p>
-</li>
-<li>
-<p>The <code>appendix.js</code> is required only if you have an appendix in the article.</p>
-</li>
-</ul>
-<p>The web version of this book is also based on the article format, so you know
-what an article format looks like when you read the HTML version of the book.</p>
-<h3 id="sec:the-overall-style"><span class="section-number">5.2.1</span> The overall style</h3>
-<p>The maximum width of the article body is 800px. For larger screens, this means
-there will be extra space in the left/right margin, where we can place auxiliary
-information, such as the TOC and footnotes. On smaller screens, the side content
-will be collapsed into the body.</p>
-<p>The article frontmatter, body, and optionally the appendix are placed in
-separate boxes.</p>
-<p>The default typeface is sans-serif, and you can customize it by supplying an
-external CSS file (via the <code>css</code> meta variable) or just embedding CSS in the
-document body, e.g.,</p>
-<pre><code class="language-md">```{css, echo = FALSE}
-body {
-  font-family: Palatino, &quot;Book Antiqua&quot;, Georgia, serif;
-  font-size: 1em;
-}
-```
-</code></pre>
-<h3 id="sec:side-elements"><span class="section-number">5.2.2</span> Side elements</h3>
-<p>The TOC and footnotes are automatically placed in the margin if space permits.
-You can also write arbitrary content in the margin via a fenced <code>Div</code>.</p>
-<h4 id="sec:the-toc"><span class="section-number">5.2.2.1</span> The TOC</h4>
-<p>The TOC is sticky on the left side as you scroll down the article. If you do not
-like this behavior, you may cancel it via CSS:</p>
-<pre><code class="language-css">#TOC {
-  top: unset;
-}
-</code></pre>
-<h4 id="sec:footnotes_2"><span class="section-number">5.2.2.2</span> Footnotes</h4>
-<p>Footnotes are moved to the right side. When you move your cursor over a footnote
-number in the body, the footnote will be moved next to your cursor. This can be
-convenient when you have multiple footnotes on a line, since you do not need to
-look for a specific footnote in the margin.</p>
-<h4 id="sec:arbitrary-sidenotes"><span class="section-number">5.2.2.3</span> Arbitrary sidenotes</h4>
-<p>You can write anything in the margin by using a fenced <code>Div</code> with the classes
-<code>.side</code> and <code>.side-left</code> or <code>.side-right</code>.</p>
-<div class="side side-left">
-<p><strong>Notice</strong></p>
-<p>Here is a note on the left side. Anything permitted by law is permitted here.
-Math? No problem!</p>
-<p>$$e^{i\theta}=\sin{\theta}+i\cos{\theta}$$</p>
-<p>When you have this sidenote “hammer”, I’m sure you will hit a lot of nails into
-the margin, even if you do not have to.</p>
+<p>Another way is to enable embedding <code>https</code> resources (<a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a>).</p>
+<h2 id="sec:asset-reference"><span class="section-number">5.1</span> A quick reference</h2>
+<p><a class="cross-ref-tab" href="#tab:assets">4</a> provides a quick reference of existing CSS/JS assets in the
+<code>lite.js</code> repository. See <a class="cross-ref-sec" href="#sec:meta-css">4.3.2.1</a> for the meaning of the <code>@</code> character in
+<code>css</code> / <code>js</code> names.</p>
+<div id="tab:assets" class="table box no-ref-label">
+<div class="caption">
+<p><span class="ref-number-tab">4</span>
+A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 </div>
-<pre><code class="language-markdown">::: {.side .side-left}
-**Anything** on the left.
-:::
-</code></pre>
-<pre><code class="language-markdown">::: {.side .side-right}
-_Anything_ on the right.
-:::
-</code></pre>
-<h3 id="sec:body-elements"><span class="section-number">5.2.3</span> Body elements</h3>
-<p>Inside the article body, you can write a few special elements.</p>
-<h4 id="sec:full-width-elements"><span class="section-number">5.2.3.1</span> Full-width elements</h4>
-<p>When an element is wider than the article body, you can show it in its full
-width by enclosing the element in a fenced <code>Div</code> with the class <code>.fullwidth</code>,
-e.g.,</p>
-<pre><code class="language-markdown">::: {.fullwidth}
-![text](path/to/image)
-:::
-</code></pre>
-<div class="fullwidth">
-<p><img src="https://prose.yihui.org/post/2020/11/10/r-markdown-demo/index_files/figure-html/sunspots-1.svg" alt="Sunspots" /></p>
-</div>
-<p>If you use R Markdown, you can generate a wide plot or table from an R code
-chunk, e.g.,</p>
-<pre><code class="language-markdown">::: {.fullwidth}
-```{r}
-#| sunspots, echo = FALSE, fig.dim = c(14, 4),
-#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red')
-grid()
-```
-:::
-</code></pre>
-<p>If you want to show code (<code>echo = TRUE</code>) but do not want the code to be in the
-full-width container, you can apply the <code>.fullwidth</code> class to the plot only,
-e.g.,</p>
-<pre><code class="language-md">```{r}
-#| sunspots, fig.dim = c(14, 4), fig.env = '.fullwidth .figure .box',
-#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
-par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
-plot(sunspots, col = 'red')
-grid()
-```
-</code></pre>
-<h4 id="sec:left-right-quotes"><span class="section-number">5.2.3.2</span> Left/right quotes</h4>
-<div class="quote-right">
-<blockquote>
-<p>Whenever you find that you are on the side of the majority, it is time to
-pause and reflect.</p>
-<p>—<a href="http://www.quotationspage.com/quotes/Mark_Twain/81">Mark Twain</a></p>
-</blockquote>
-</div>
-<p>Sometimes you may want to add a quote but do not want it to take the full width
-in the body. You may use a fenced <code>Div</code> with the class <code>.quote-left</code> or
-<code>.quote-right</code>.</p>
-<p>Despite the class names, the content does not have to be a quote. If you do want
-a quote, just use the blockquote syntax <code>&gt;</code>, e.g.,</p>
-<pre><code class="language-markdown">::: {.quote-right}
-&gt; This is a boring quote.
-&gt;
-&gt; ---Someone
-:::
-</code></pre>
-<h4 id="sec:margin-embedding"><span class="section-number">5.2.3.3</span> Margin embedding</h4>
-<p>You can embed elements on the left or right margin using a fenced <code>Div</code> with the
-class <code>.embed-left</code> or <code>.embed-right</code>. These elements will float to the left or
-right and exceed the margin by about 200px, which can save some space in the
-article body. You can use the extra space to explain the embedded element with
-text.</p>
-<div class="embed-right">
 <table>
 <thead>
 <tr>
-<th></th>
-<th align="right">mpg</th>
-<th align="right">cyl</th>
-<th align="right">disp</th>
-<th align="right">hp</th>
-<th align="right">drat</th>
-<th align="right">wt</th>
-<th align="right">qsec</th>
-<th align="right">vs</th>
+<th>feature</th>
+<th>description</th>
+<th>css</th>
+<th>js</th>
+<th>section</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Mazda RX4</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160</td>
-<td align="right">110</td>
-<td align="right">3.90</td>
-<td align="right">2.620</td>
-<td align="right">16.46</td>
-<td align="right">0</td>
+<td>article</td>
+<td>side notes, floats, and full-width elements for articles</td>
+<td><code>@article</code></td>
+<td><code>@sidenotes, @appendix</code></td>
+<td><a class="cross-ref-sec" href="#sec:article">5.7</a></td>
 </tr>
 <tr>
-<td>Mazda RX4 Wag</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160</td>
-<td align="right">110</td>
-<td align="right">3.90</td>
-<td align="right">2.875</td>
-<td align="right">17.02</td>
-<td align="right">0</td>
+<td>book</td>
+<td>cover and chapter pages for books</td>
+<td><code>@book</code></td>
+<td></td>
+<td><a class="cross-ref-sec" href="#sec:book">5.8</a></td>
 </tr>
 <tr>
-<td>Datsun 710</td>
-<td align="right">22.8</td>
-<td align="right">4</td>
-<td align="right">108</td>
-<td align="right">93</td>
-<td align="right">3.85</td>
-<td align="right">2.320</td>
-<td align="right">18.61</td>
-<td align="right">1</td>
+<td>callout</td>
+<td>frames with legends</td>
+<td><code>@callout</code></td>
+<td><code>@callout</code></td>
+<td><a class="cross-ref-sec" href="#sec:callout">5.5</a></td>
 </tr>
 <tr>
-<td>Hornet 4 Drive</td>
-<td align="right">21.4</td>
-<td align="right">6</td>
-<td align="right">258</td>
-<td align="right">110</td>
-<td align="right">3.08</td>
-<td align="right">3.215</td>
-<td align="right">19.44</td>
-<td align="right">1</td>
+<td>center-img</td>
+<td>center images in paragraphs</td>
+<td></td>
+<td><code>@center-img</code></td>
+<td><a class="cross-ref-sec" href="#sec:center-img">5.14</a></td>
+</tr>
+<tr>
+<td>chapter-toc</td>
+<td>add TOC to each chapter</td>
+<td></td>
+<td><code>@chapter-toc</code></td>
+<td><a class="cross-ref-sec" href="#sec:chapter-toc">5.9</a></td>
+</tr>
+<tr>
+<td>copy-button</td>
+<td>copy buttons</td>
+<td><code>@copy-button</code></td>
+<td><code>@copy-button</code></td>
+<td><a class="cross-ref-sec" href="#sec:copy-button">5.2</a></td>
+</tr>
+<tr>
+<td>external-link</td>
+<td>open external links in new windows</td>
+<td></td>
+<td><code>@external-link</code></td>
+<td><a class="cross-ref-sec" href="#sec:external-link">5.15</a></td>
+</tr>
+<tr>
+<td>fold-details</td>
+<td>fold elements in <code>&lt;details&gt;</code></td>
+<td></td>
+<td><code>@fold-details</code></td>
+<td><a class="cross-ref-sec" href="#sec:fold-details">5.4</a></td>
+</tr>
+<tr>
+<td>heading-anchor</td>
+<td>add anchor links to headings</td>
+<td><code>@heading-anchor</code></td>
+<td><code>@heading-anchor</code></td>
+<td><a class="cross-ref-sec" href="#sec:heading-anchor">5.6</a></td>
+</tr>
+<tr>
+<td>key-buttons</td>
+<td>style keyboard shortcuts</td>
+<td><code>@key-buttons</code></td>
+<td><code>@key-buttons</code></td>
+<td><a class="cross-ref-sec" href="#sec:key-buttons">5.16</a></td>
+</tr>
+<tr>
+<td>pages</td>
+<td>paginate HTML for printing</td>
+<td><code>@pages</code></td>
+<td><code>@pages</code></td>
+<td><a class="cross-ref-sec" href="#sec:pages">5.11</a></td>
+</tr>
+<tr>
+<td>right-quote</td>
+<td>right-align quote footers</td>
+<td></td>
+<td><code>@right-quote</code></td>
+<td><a class="cross-ref-sec" href="#sec:right-quote">5.13</a></td>
+</tr>
+<tr>
+<td>slides</td>
+<td>snap slides</td>
+<td><code>@snap</code></td>
+<td><code>@snap</code></td>
+<td><a class="cross-ref-sec" href="#sec:slides">5.12</a></td>
+</tr>
+<tr>
+<td>tabsets</td>
+<td>create tabsets from bullet lists or sections</td>
+<td><code>@tabsets</code></td>
+<td><code>@tabsets</code></td>
+<td><a class="cross-ref-sec" href="#sec:tabsets">5.3</a></td>
+</tr>
+<tr>
+<td>toc-highlight</td>
+<td>highlight TOC items on scroll</td>
+<td></td>
+<td><code>@toc-highlight</code></td>
+<td><a class="cross-ref-sec" href="#sec:toc-highlight">5.10</a></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>We have embedded a table of the first 4 rows of the <code>mtcars</code> data on the right
-margin, which you can see if the browser window is wide enough.</p>
-<h2 id="sec:tabbed-sections"><span class="section-number">5.3</span> Tabbed sections</h2>
-<p>You can load the script <code>tabsets.js</code> and CSS <code>tabsets.css</code> to create tabsets
-from sections (see <a href="https://yihui.org/en/2023/10/section-tabsets/">documentation
-here</a>).</p>
+<p>If the source document is R Markdown instead of Markdown, an alternative way (in
+addition to configuring YAML metadata) to add assets is to call the function
+<code>litedown::fuel()</code> in a code chunk. You can either pass vectors of <code>css</code> / <code>js</code>
+asset names to the <code>css</code> / <code>js</code> arguments, or the <code>feature</code> names in <a class="cross-ref-tab" href="#tab:assets">4</a>
+to the <code>feature</code> argument, e.g.,</p>
+<pre><code class="language-md">```{r, echo = FALSE}
+# add assets by feature
+litedown::fuel(feature = c('callout', 'copy-button'))
+# or add css/js directly
+litedown::fuel(css = c('@callout', '@book'), js = '@callout')
+```
+</code></pre>
+<p>You can call <code>fuel()</code> multiple times in a document to keep adding assets.</p>
+<h2 id="sec:copy-button"><span class="section-number">5.2</span> Copy buttons</h2>
+<p>Normally you would have to select the text before copying it, and copy buttons
+can save the effort of text selection when you want to copy the text from an
+HTML element. You just click on the button, and the text is automatically
+copied. Copy buttons can be added via CSS/JS:</p>
+<pre><code class="language-yaml">css: [&quot;@copy-button&quot;]
+js: [&quot;@copy-button&quot;]
+</code></pre>
+<p>By default, this will add copy buttons to all code blocks (<code>&lt;code&gt;</code> in <code>&lt;pre&gt;</code>)
+and all elements with the class name <code>copy-this</code>. For example, below is a quote
+inside a fenced Div <code>::: copy-this</code> and you will see a copy button if you hover
+over it with the cursor:</p>
+<div class="side side-right">
+<p>Love like you’ve never been hurt<br />
+Dance like nobody’s watching<br />
+Sing like nobody’s listening<br />
+Work like you don’t need the money<br />
+Live like it’s heaven on earth</p>
+<p>—Alfred D’Souza</p>
+</div>
+<div class="copy-this">
+<blockquote>
+<p>Copy like you understand the code…</p>
+<p>—Yihui Xie</p>
+</blockquote>
+</div>
+<p>All code blocks in this book also have copy buttons in them.</p>
+<p>In fact, you can add the copy button to any element on an HTML page. You may
+read <a href="https://yihui.org/en/2023/09/copy-button/">this post</a> if you are
+interested in generalizing the copy button to other elements.</p>
+<h2 id="sec:tabsets"><span class="section-number">5.3</span> Tabsets</h2>
+<p>A tabset provides a compact way to arrange content in tabs, which can save a lot
+of vertical space on the page. To create a tabset, you need to load the
+following assets:</p>
 <pre><code class="language-yaml">css: [&quot;@tabsets&quot;]
 js: [&quot;@tabsets&quot;]
 </code></pre>
-<h2 id="sec:code-folding"><span class="section-number">5.4</span> Code folding</h2>
-<p>Code folding is supported by <code>fold-details.js</code> (see <a href="https://yihui.org/en/2023/09/code-folding/">documentation
-here</a>).</p>
+<p>There are two ways to create a tabset in Markdown.</p>
+<h3 id="sec:from-a-bullet-list"><span class="section-number">5.3.1</span> From a bullet list</h3>
+<p>The first way is to write a bullet inside a fenced Div with the class name
+<code>tabset</code>. The first element of each bullet item will become the tab title, and
+the rest of elements will become the tab pane, e.g.,</p>
+<pre><code class="language-md">::: tabset
+- Tab one
+
+  Content: -OOOO0OOO⍥
+  
+  Another paragraph.
+
+- Tab two &lt;!--active--&gt;
+
+  Content: -OOOOOOOO⍥
+  
+  - A normal bullet list.
+:::
+</code></pre>
+<div class="tabset">
+<ul>
+<li>
+<p>Tab one</p>
+<p>Content: -OOOO0OOO⍥</p>
+<p>Another paragraph.</p>
+</li>
+<li>
+<p>Tab two <!--active--></p>
+<p>Content: -OOOOOOOO⍥</p>
+<ul>
+<li>A normal bullet list.</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>By default, the first tab is the active tab initially. To specify a different
+initial active tab, add a comment <code>&lt;!--active--&gt;</code> to the bullet item.</p>
+<p>You can use the <code>Left</code> (Left) and <code>Right</code> (Right) Arrows on your keyboard to
+navigate through the tabs when the tabset is on focus (e.g., after you have
+clicked on it once). Now keep pressing the Left or Right Arrow key, and you will
+realize that there is a caterpillar crawling in the example tabset above (and
+also looking at you). It’s cute, isn’t it?</p>
+<p>Since bullet lists can be nested, you can also nest one tabset in another. To do
+that, you just wrap a sub-list in a <code>tabset</code> div, e.g.,</p>
+<pre><code class="language-md">::: tabset
+- Tab one
+
+  ::: tabset
+  - Child tab one
+  
+  - Child tab two
+  :::
+
+- Tab two
+:::
+</code></pre>
+<p>I’m not sure why anyone would want to create nested tabsets, but it sounds like
+a great way to create a maze. Perhaps you can write a detective story or game
+with it?</p>
+<p>Wait a minute. I just came up with an idea! We can use nested tabsets to
+navigate through a recursive list. I have implemented this idea in the function
+<code>xfun::tabset()</code>, and felt for the first time of my life that I dare to peruse
+the huge <code>recordPlot()</code> list now! That said, I don’t want to scare you with
+<code>recordPlot()</code>, but let’s take a look at the config file of this book as an
+example instead:</p>
+<pre><code class="language-r">cfg = xfun::taml_file('_litedown.yml')
+xfun::tabset(cfg, dput)
+</code></pre>
+<div class="tabset">
+<ul>
+<li>
+<p><code>book</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>chapter_before</code></p>
+<pre><code class="language-r">&quot;[Edit this chapter](https://github.com/yihui/litedown/edit/main/$input$) on GitHub&quot;
+</code></pre>
+</li>
+<li>
+<p><code>chapter_after</code></p>
+<pre><code class="language-r">&quot;&quot;
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>output</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>html</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>options</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>toc</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>depth</code></p>
+<pre><code class="language-r">4L
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>meta</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>css</code></p>
+<pre><code class="language-r">c(&quot;@default&quot;, &quot;@article&quot;, &quot;@book&quot;, &quot;@book-litedown&quot;, &quot;@copy-button&quot;, 
+&quot;@heading-anchor&quot;, &quot;@key-buttons&quot;, &quot;@callout&quot;, &quot;@tabsets&quot;, &quot;@pages&quot;
+)
+</code></pre>
+</li>
+<li>
+<p><code>js</code></p>
+<pre><code class="language-r">c(&quot;@sidenotes&quot;, &quot;@appendix&quot;, &quot;@toc-highlight&quot;, &quot;@chapter-toc&quot;, 
+&quot;@copy-button&quot;, &quot;@external-link&quot;, &quot;@heading-anchor&quot;, &quot;@right-quote&quot;, 
+&quot;@key-buttons&quot;, &quot;@callout&quot;, &quot;@tabsets&quot;, &quot;@pages&quot;)
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<p>I have never loved YAML, but this time, I feel that YAML is adorable.</p>
+<h3 id="sec:from-sections"><span class="section-number">5.3.2</span> From sections</h3>
+<p>The second way to create a tabset is through section headings. If you add a
+class name <code>tabset</code> to a heading, headings of the next (lower) level will be
+used as the tab titles, e.g.,</p>
+<pre><code class="language-md">## Demo tabs {.tabset}
+
+### Tab one
+
+Content.
+
+### Tab two {.active}
+
+Content.
+</code></pre>
+<p>If a heading has the <code>active</code> class, it will be the active tab initially.</p>
+<p>You can also create a tabset by providing an empty fenced Div with the class
+name <code>tabset</code>, and subsequent headings will be converted to tabs, e.g.,</p>
+<pre><code class="language-md">::: tabset
+:::
+
+## Tab one
+
+Content.
+
+## Tab two
+
+Content.
+</code></pre>
+<p>The tabset will end before it hits a higher-level heading. The tabset in the
+first example above can be ended by a <code>##</code> heading, and the second example can
+be ended by a <code>#</code> heading.</p>
+<p>To explicitly end a tabset without using a higher-level heading, you can insert
+a comment of the form <code>&lt;!--tabset:ID--&gt;</code> to the end of the tabset, where <code>ID</code> is
+the ID of the starting element of the tabset, e.g.,</p>
+<pre><code class="language-md">## Demo tabs {.tabset #foo}
+
+### Tab one
+
+### Tab two
+
+&lt;!--tabset:foo--&gt;
+
+### Not a tab
+</code></pre>
+<pre><code class="language-md">::: {.tabset #foo}
+:::
+
+## Tab one
+
+## Tab two
+
+&lt;!--tabset:foo--&gt;
+
+## Not a tab
+</code></pre>
+<p>When a tabset is created from sections, the tab titles (from section headings)
+will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-sec" href="#sec:toc">4.1.13</a>).</p>
+<h2 id="sec:fold-details"><span class="section-number">5.4</span> Code folding</h2>
 <pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
 </code></pre>
-<h2 id="sec:callout-blocks"><span class="section-number">5.5</span> Callout blocks</h2>
+<p>You can fold any element with the JS. See <a href="https://yihui.org/en/2023/09/code-folding/">this
+post</a> for how to configure the
+script.</p>
+<h2 id="sec:callout"><span class="section-number">5.5</span> Callout blocks</h2>
 <p>A callout block is a fenced Div with the class name <code>callout-*</code>. Callouts
 require <code>callout.css</code> and <code>callout.js</code>:</p>
 <pre><code class="language-yaml">css: [&quot;@callout&quot;]
@@ -4508,18 +4729,245 @@ define the border color, background, and icon of a callout, e.g.,</p>
   --callout-icon: &quot;♫ &quot;;
 }
 </code></pre>
-<h2 id="sec:right-align-a-quote-footer"><span class="section-number">5.6</span> Right-align a quote footer</h2>
-<p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
-starts with an em-dash (<code>---</code>).</p>
-<pre><code class="language-yaml">js: [&quot;@right-quote&quot;]
-</code></pre>
-<h2 id="sec:add-anchor-links-to-headings"><span class="section-number">5.7</span> Add anchor links to headings</h2>
+<h2 id="sec:heading-anchor"><span class="section-number">5.6</span> Add anchor links to headings</h2>
 <p>The CSS is necessary only if you want to hide the anchors by default and reveal
 them on hover.</p>
 <pre><code class="language-yaml">css: [&quot;@heading-anchor&quot;]
 js: [&quot;@heading-anchor&quot;]
 </code></pre>
-<h2 id="sec:style-keyboard-shortcuts"><span class="section-number">5.8</span> Style keyboard shortcuts</h2>
+<h2 id="sec:article"><span class="section-number">5.7</span> HTML articles</h2>
+<p>You can style an HTML page in an article format via the following CSS and JS:</p>
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;]
+js: [&quot;@sidenotes&quot;, &quot;@appendix&quot;]
+</code></pre>
+<p>The <code>article.css</code> is mainly for styling the article frontmatter, body, and side
+content.</p>
+<ul>
+<li>
+<p>The <code>sidenotes.js</code> is required only if you want to place certain elements on
+the left or right side, such as the table of contents (TOC), footnotes, and
+sidenotes.</p>
+</li>
+<li>
+<p>The <code>appendix.js</code> is required only if you have an appendix in the article.</p>
+</li>
+</ul>
+<p>The web version of this book is also based on the article format, so you know
+what an article format looks like when you read the HTML version of the book.</p>
+<h3 id="sec:the-overall-style"><span class="section-number">5.7.1</span> The overall style</h3>
+<p>The maximum width of the article body is 800px. For larger screens, this means
+there will be extra space in the left/right margin, where we can place auxiliary
+information, such as the TOC and footnotes. On smaller screens, the side content
+will be collapsed into the body.</p>
+<p>The article frontmatter, body, and optionally the appendix are placed in
+separate boxes.</p>
+<p>The default typeface is sans-serif, and you can customize it by supplying an
+external CSS file (via the <code>css</code> meta variable) or just embedding CSS in the
+document body, e.g.,</p>
+<pre><code class="language-md">```{css, echo = FALSE}
+body {
+  font-family: Palatino, &quot;Book Antiqua&quot;, Georgia, serif;
+  font-size: 1em;
+}
+```
+</code></pre>
+<h3 id="sec:side-elements"><span class="section-number">5.7.2</span> Side elements</h3>
+<p>The TOC and footnotes are automatically placed in the margin if space permits.
+You can also write arbitrary content in the margin via a fenced <code>Div</code>.</p>
+<h4 id="sec:the-toc"><span class="section-number">5.7.2.1</span> The TOC</h4>
+<p>The TOC is sticky on the left side as you scroll down the article. If you do not
+like this behavior, you may cancel it via CSS:</p>
+<pre><code class="language-css">#TOC {
+  top: unset;
+}
+</code></pre>
+<h4 id="sec:footnotes_2"><span class="section-number">5.7.2.2</span> Footnotes</h4>
+<p>Footnotes are moved to the right side. When you move your cursor over a footnote
+number in the body, the footnote will be moved next to your cursor. This can be
+convenient when you have multiple footnotes on a line, since you do not need to
+look for a specific footnote in the margin.</p>
+<h4 id="sec:arbitrary-sidenotes"><span class="section-number">5.7.2.3</span> Arbitrary sidenotes</h4>
+<p>You can write anything in the margin by using a fenced <code>Div</code> with the classes
+<code>.side</code> and <code>.side-left</code> or <code>.side-right</code>.</p>
+<div class="side side-left">
+<p><strong>Notice</strong></p>
+<p>Here is a note on the left side. Anything permitted by law is permitted here.
+Math? No problem!</p>
+<p>$$e^{i\theta}=\sin{\theta}+i\cos{\theta}$$</p>
+<p>When you have this sidenote “hammer”, I’m sure you will hit a lot of nails into
+the margin, even if you do not have to.</p>
+</div>
+<pre><code class="language-markdown">::: {.side .side-left}
+**Anything** on the left.
+:::
+</code></pre>
+<pre><code class="language-markdown">::: {.side .side-right}
+_Anything_ on the right.
+:::
+</code></pre>
+<h3 id="sec:body-elements"><span class="section-number">5.7.3</span> Body elements</h3>
+<p>Inside the article body, you can write a few special elements.</p>
+<h4 id="sec:full-width-elements"><span class="section-number">5.7.3.1</span> Full-width elements</h4>
+<p>When an element is wider than the article body, you can show it in its full
+width by enclosing the element in a fenced <code>Div</code> with the class <code>.fullwidth</code>,
+e.g.,</p>
+<pre><code class="language-markdown">::: {.fullwidth}
+![text](path/to/image)
+:::
+</code></pre>
+<div class="fullwidth">
+<p><img src="https://prose.yihui.org/post/2020/11/10/r-markdown-demo/index_files/figure-html/sunspots-1.svg" alt="Sunspots" /></p>
+</div>
+<p>If you use R Markdown, you can generate a wide plot or table from an R code
+chunk, e.g.,</p>
+<pre><code class="language-markdown">::: {.fullwidth}
+```{r}
+#| sunspots, echo = FALSE, fig.dim = c(14, 4),
+#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
+```
+:::
+</code></pre>
+<p>If you want to show code (<code>echo = TRUE</code>) but do not want the code to be in the
+full-width container, you can apply the <code>.fullwidth</code> class to the plot only,
+e.g.,</p>
+<pre><code class="language-md">```{r}
+#| sunspots, fig.dim = c(14, 4), fig.env = '.fullwidth .figure .box',
+#| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
+par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
+plot(sunspots, col = 'red')
+grid()
+```
+</code></pre>
+<h4 id="sec:left-right-quotes"><span class="section-number">5.7.3.2</span> Left/right quotes</h4>
+<div class="quote-right">
+<blockquote>
+<p>Whenever you find that you are on the side of the majority, it is time to
+pause and reflect.</p>
+<p>—<a href="http://www.quotationspage.com/quotes/Mark_Twain/81">Mark Twain</a></p>
+</blockquote>
+</div>
+<p>Sometimes you may want to add a quote but do not want it to take the full width
+in the body. You may use a fenced <code>Div</code> with the class <code>.quote-left</code> or
+<code>.quote-right</code>.</p>
+<p>Despite the class names, the content does not have to be a quote. If you do want
+a quote, just use the blockquote syntax <code>&gt;</code>, e.g.,</p>
+<pre><code class="language-markdown">::: {.quote-right}
+&gt; This is a boring quote.
+&gt;
+&gt; ---Someone
+:::
+</code></pre>
+<h4 id="sec:margin-embedding"><span class="section-number">5.7.3.3</span> Margin embedding</h4>
+<p>You can embed elements on the left or right margin using a fenced <code>Div</code> with the
+class <code>.embed-left</code> or <code>.embed-right</code>. These elements will float to the left or
+right and exceed the margin by about 200px, which can save some space in the
+article body. You can use the extra space to explain the embedded element with
+text.</p>
+<div class="embed-right">
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>We have embedded a table of the first 4 rows of the <code>mtcars</code> data on the right
+margin, which you can see if the browser window is wide enough.</p>
+<h2 id="sec:book"><span class="section-number">5.8</span> HTML books</h2>
+<pre><code class="language-yaml">css: [&quot;@book&quot;]
+</code></pre>
+<h2 id="sec:chapter-toc"><span class="section-number">5.9</span> Chapter TOC</h2>
+<pre><code class="language-yaml">js: [&quot;@chapter-toc&quot;]
+</code></pre>
+<h2 id="sec:toc-highlight"><span class="section-number">5.10</span> Highlight TOC items</h2>
+<pre><code class="language-yaml">js: [&quot;@toc-highlight&quot;]
+</code></pre>
+<h2 id="sec:pages"><span class="section-number">5.11</span> Paged HTML</h2>
+<pre><code class="language-yaml">css: [&quot;@pages&quot;]
+js: [&quot;@pages&quot;]
+</code></pre>
+<h2 id="sec:slides"><span class="section-number">5.12</span> HTML slides</h2>
+<p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
+js: [&quot;@snap&quot;]
+</code></pre>
+<p>You can learn more in <code>vignette('slides', package = 'litedown')</code>.</p>
+<h2 id="sec:right-quote"><span class="section-number">5.13</span> Right-align a quote footer</h2>
+<p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
+starts with an em-dash (<code>---</code>).</p>
+<pre><code class="language-yaml">js: [&quot;@right-quote&quot;]
+</code></pre>
+<blockquote>
+<p>Without a little madness, life is not worth living. Let us follow the guidance
+of our inner voice. Why should we fry each of our actions like a piece of cake
+on a sensible frying pan?</p>
+<p>—Milan Kundera, <em>Immortal</em></p>
+</blockquote>
+<h2 id="sec:center-img"><span class="section-number">5.14</span> Center images</h2>
+<pre><code class="language-yaml">js: [&quot;@center-img&quot;]
+</code></pre>
+<h2 id="sec:external-link"><span class="section-number">5.15</span> Open external links in new windows</h2>
+<pre><code class="language-yaml">js: [&quot;@external-link&quot;]
+</code></pre>
+<h2 id="sec:key-buttons"><span class="section-number">5.16</span> Style keyboard shortcuts</h2>
 <p>The script <code>key-button.js</code> identifies keys and the CSS styles them, which can be
 useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
 shortcuts</a>.</p>
@@ -4528,7 +4976,7 @@ js: [&quot;@key-buttons&quot;]
 </code></pre>
 <p>Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.</p>
-<h2 id="sec:arbitrary-assets"><span class="section-number">5.9</span> Include arbitrary CSS/JS</h2>
+<h2 id="sec:arbitrary-assets"><span class="section-number">5.17</span> Include arbitrary CSS/JS</h2>
 <p>You can include arbitrary CSS frameworks and JS libraries in your documents, not
 limited to aforementioned ones in the GitHub repository <code>yihui/lite.js</code>. Below
 is a quick example of using the DataTables library to create interactive tables:</p>
@@ -4887,7 +5335,7 @@ change this path, please remember to adjust the <code>path</code> option for the
 <p>If the site source directory in your package does not exist or is empty, the
 action will copy <a href="https://github.com/yihui/litedown/tree/main/site">the site
 template</a> from <strong>litedown</strong>,
-which contains the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">3</a>):</p>
+which contains the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">5</a>):</p>
 <pre><code class="language-r">list.files('../site/', '[.]Rmd$')
 </code></pre>
 <pre><code>#&gt; [1] &quot;_footer.Rmd&quot;  &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;index.Rmd&quot;    &quot;manual.Rmd&quot;  
@@ -4895,7 +5343,7 @@ which contains the following <code>.Rmd</code> files (explained in <a class="cro
 </code></pre>
 <div class="table box">
 <div class="caption">
-<p><span class="ref-number-tab">3</span> Explanations of site source files.</p>
+<p><span class="ref-number-tab">5</span> Explanations of site source files.</p>
 </div>
 <table>
 <thead>
@@ -5080,7 +5528,7 @@ for <code>.Rnw</code> and <code>.Rmd</code>. <a href="#fnref-02-fuse-3" class="f
 Norwegian</a> until YAML 1.2. <a href="#fnref-03-syntax-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="6" aria-label="Back to reference 6">↩</a></p>
 </li>
 <li id="fn-03-syntax-2">
-<p>TRACY is a good friend of Norwegian. <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
+<p>TAML is a good friend of Norwegian. <a href="#fnref-03-syntax-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="7" aria-label="Back to reference 7">↩</a></p>
 </li>
 <li id="fn-03-syntax-3">
 <p>Most people may want to use 2 or 4 spaces. Avoid 8, because that
@@ -5088,7 +5536,7 @@ has been reserved for a VIP in the R club, <a href="https://simplystatistics.org
 Peng</a>.
 You may also choose to use tabs. If you <em>really</em> want to, you can mix tabs
 with spaces (then \(n\) is the total number of them). If people tell you that
-you are crazy by mixing up things, don’t listen and never follow. TRACY is
+you are crazy by mixing up things, don’t listen and never follow. TAML is
 human-friendly and respects the space right of all human beings. Guess what
 happens if you indent one line by 2 spaces and the next line by 3 spaces
 when you meant to use 4 spaces? <a href="#fnref-03-syntax-3" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="8" aria-label="Back to reference 8">↩</a></p>
@@ -5108,19 +5556,20 @@ rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footn
 </ol>
 </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.15/dist/katex.min.js,npm/katex@0.16.15/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.57/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.18/dist/katex.min.js,npm/katex@0.16.18/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.59/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
