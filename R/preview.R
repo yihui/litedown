@@ -31,7 +31,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       file.info(list.files(path, full.names = TRUE))[, 'mtime', drop = FALSE]
     } else file.mtime(path)
     t = t1[[path]]; t1[[path]] <<- t2
-    !is.null(t) && !identical(t2, t)
+    !is.null(t) && !(is.null(dim(t2)) && is.na(t2)) && !identical(t2, t)
   }
 
   xfun::new_app('litedown', function(path, query, post, headers) {
@@ -49,6 +49,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     # plain-text error page, which may be hard to understand
     opts = reactor(error = TRUE); on.exit(reactor(opts), add = TRUE)
     query = as.list(query)
+    ext = tolower(file_ext(path))
     # we keep POSTing to the page assets' URLs, and if an asset file has been
     # modified, we return a response telling the browser to update it
     type = if (length(headers)) grep_sub(
@@ -65,9 +66,11 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       )
       return(list(payload = 'done'))
     }
+    # create a new file with selected features
+    if (grepl('^new($|:)', type))
+      return(list(payload = if (type == 'new') feature_form(path) else new_file(path, ext, type)))
     # render Rmd in new R sessions and save to file
     if (type == 'save') {
-      ext = tolower(file_ext(path))
       return(if (is_lite_ext(ext)) {
         # check if the file is for a book or site
         info = proj_info(path)
@@ -309,3 +312,24 @@ btn = function(t, u = '#', a = character()) {
 }
 
 .icons = c(.open = '&#9998;', .run = '&#9205;', .save = '&#8623;')
+
+new_file = function(path, ext, type, css = NULL, js = NULL) {
+  if (file.exists(path)) return(sprintf("The file '%s' already exists.", path))
+  on.exit(xfun:::open_path(path), add = TRUE)
+  if (!is_lite_ext(ext)) return(tolower(file.create(path)))
+  features = strsplit(sub('^new:', '', type), ',')[[1]]
+  a = assets[features, , drop = FALSE]
+  m = list(
+    title = 'Comfortably Untitled',
+    author = tools::toTitleCase(Sys.getenv('USERNAME', Sys.getenv('USER'))),
+    date = format(Sys.Date())
+  )
+  if (nrow(a)) m$output$html = list(meta = list(
+    css = I(na_omit(a[, 'css'])), js = I(na_omit(a[, 'js']))
+  ))
+  taml_save = getFromNamespace('taml_save', 'xfun')  # TODO: remove this hack
+  txt = c('---', taml_save(m), '---', '', 'Relax. I need some information first.')
+  if (ext == 'r') txt = paste("#'", split_lines(txt))
+  write_utf8(txt, path)
+  'view'
+}

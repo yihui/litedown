@@ -7,19 +7,62 @@
     req.send();
     req.onload = callback;
   }
-  function show_dialog(resp) {
+  function new_dialog(text, error, html, action = el => el.close(), callback = (el, b) => {}) {
     let el = d.querySelector('dialog.litedown-dialog');
     if (!el) {
       el = d.createElement('dialog');
       el.className = 'litedown-dialog';
-      el.innerHTML = '<p></p><button>OK</button>';
-      el.querySelector('button').onclick = e => el.close();
+      el.innerHTML = '<div></div><p><button>OK</button></p>';
       d.body.append(el);
     }
-    const p = el.firstElementChild, t = resp.responseText;
-    p.innerText = t.toLowerCase() === 'connection refused' ? (t + '; please re-run litedown::roam()') : t;
-    if (resp.status !== 200) p.className = 'error';
+    const b = el.querySelector('button');
+    b.onclick = e => action(el, b);
+    const p = el.firstElementChild;
+    p[(html && !error) ? 'innerHTML' : 'innerText'] = text.toLowerCase() === 'connection refused' ?
+      (text + '; please re-run litedown::roam()') : text;
+    if (error) p.className = 'error';
+    callback(el, b);
     el.showModal();
+  }
+  function show_dialog(resp) {
+    new_dialog(resp.responseText, resp.status !== 200);
+  }
+  // create a new file
+  function new_file() {
+    new_req(location.href, 'new', e => {
+      new_dialog(e.target.responseText, e.target.status !== 200, true, (el, b) => {
+        const file = el.querySelector('#filename-input').value;
+        if (!file || b.innerText === 'Cancel') return el.close();
+        const o = location.origin, p = location.pathname,
+          u = o + p + (/\/$/.test(p) ? '' : '/../') + file, features = [];
+        el.querySelectorAll('input[type="checkbox"]').forEach(input => {
+          if (input.checked) features.push(input.name);
+        });
+        new_req(u, 'new:' + features.join(','), e => {
+          const text = e.target.responseText;
+          switch (text) {
+            case 'view': location.href = u + '?preview=2'; break;
+            case 'true': break;
+            case 'false': new_dialog('Failed to create the file', true); break;
+            default: new_dialog(text, true);
+          }
+        });
+      }, (el, b) => {
+        b.innerText = 'Cancel';
+        const input = el.querySelector('#filename-input'),
+          options = [...el.querySelector('#file-list').options].map(o => o.value);
+        input.onchange = e => {
+          const v = input.value.trim();
+          if (!/.+\.[a-zA-Z0-9]+$/.test(v)) {
+            input.value = v + '.Rmd'; input.oninput();
+          }
+        };
+        input.oninput = e => {
+          const v = input.value.trim(), X = '❌';
+          b.innerText = (v === '' || v.startsWith(X) || options.includes(v) || options.includes(X + ' ' + v)) ? 'Cancel' : 'OK';
+        };
+      });
+    });
   }
   // remove empty frontmatter
   const fm = d.querySelector('.frontmatter');
@@ -36,7 +79,7 @@
   const nav = d.querySelector('.nav-path, .title h1');
   const btn = nav.querySelector('.buttons') || d.createElement('span');
   btn.className = 'buttons';
-  ['back', 'forward', 'refresh', 'print'].forEach((action, i) => {
+  ['back', 'forward', 'new', 'refresh', 'print'].forEach((action, i) => {
     if (btn.querySelector(`.${action}`)) return;
     const a = d.createElement('a');
     a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1);
@@ -46,7 +89,7 @@
     })[action];
     if (k) a.title += ` (${k})`;
     a.className = action + ' btn-lite';
-    a.innerText = ['←', '→', '⟳', '⎙'][i];
+    a.innerText = ['←', '→', '+', '⟳', '⎙'][i];
     a.onclick = e => btnAction(e, action);
     btn.append(a);
   });
@@ -57,9 +100,13 @@
   function btnAction(e, action) {
     if (!action) return;
     e.preventDefault();
-    action === 'print' ? window.print() : (
-      action === 'refresh' ? location.reload() : history[action]()
-    );
+    switch (action) {
+      case 'back': history.back(); break;
+      case 'forward': history.forward(); break;
+      case 'new': new_file(); break;
+      case 'refresh': location.reload(); break;
+      case 'print': window.print();
+    }
   }
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {

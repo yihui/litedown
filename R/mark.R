@@ -141,7 +141,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
         maths <<- c(maths, set_names(math, tokens))
         tokens
       })
-      if (format == 'html') maths = xfun::html_escape(maths)
+      if (format == 'html') maths = html_escape(maths)
       text = split_lines(text)
     }
   }

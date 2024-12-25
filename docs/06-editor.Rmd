@@ -61,31 +61,34 @@ the computing (e.g., via caching).
 
 There is a button group at the top right of the preview page.
 
--   The `render` button (with the lightning or voltage icon, [↯](){.larger}): It
-    renders a document or project in a new R session and save the output file(s)
+-   The `render` button (with the lightning or voltage icon, [↯](){.larger}):
+    Render a document or project in a new R session and save the output file(s)
     to disk, which is similar to what the `Knit` button does in RStudio.
 
     You can also use the keyboard shortcut `Ctrl + K` (or `Command + K` on
     macOS).
 
--   The `edit` buttons (with a pencil icon, [✎](){.larger}): Clicking on this
-    button will open a plain-text file in your default editor.
+-   The `edit` buttons (with a pencil icon, [✎](){.larger}): Open the source
+    file of the current page in your default editor if possible.
 
 -   The `back`/`forward` buttons (with arrow icons, [←](){.larger} and
-    [→](){.larger}): They are similar to the back/forward buttons on web browser
-    toolbars, and can be used to go back/forward through the browsing history.
+    [→](){.larger}): Go back/forward through the browsing history, similar to
+    the back/forward buttons on web browser toolbars.
 
     You can also use the keyboard shortcuts `Alt + Left` / `Alt + Right`.
 
--   The `refresh` button (with the refresh icon, [⟳](){.larger}): It can be used
-    to refresh the page. If you are previewing an Rmd file, refreshing the page
-    will rebuild it.
+-   The `add` button (with the plus icon, [+](){.larger}): Create a new `.Rmd` /
+    `.md` / `.R` file with selected HTML features.
+
+-   The `refresh` button (with the refresh icon, [⟳](){.larger}): Refresh the
+    page. If you are previewing an `.Rmd` file, refreshing the page will rebuild
+    it.
 
     You can also use the keyboard shortcut `Ctrl + R` (or `Command + R` on
     macOS).
 
--   The `printer` button (with a printer icon, [⎙](){.larger}): It brings up the
-    printer dialog, e.g., you can print the page to PDF.
+-   The `printer` button (with a printer icon, [⎙](){.larger}): Bring up the
+    printer dialog, e.g., to print the page to PDF.
 
 Code blocks in the preview mode will have line numbers automatically added to
 their left. If you click on a line number, it will bring you to that line in the

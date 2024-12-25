@@ -20,6 +20,10 @@ td .pencil {
 .auto-numbers span[data-line-number] {
   cursor: pointer;
 }
+.litedown-dialog {
+  label { display: inline-block; }
+  #filename-input { min-width: 20em; }
+}
 ::backdrop {
   cursor: wait;
   opacity: .5;

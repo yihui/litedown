@@ -6,7 +6,7 @@
 #' \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e., fewer
 #' dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun alnum_id base64_uri csv_options download_cache fenced_block
-#'   fenced_div file_exists file_ext grep_sub in_dir loadable new_record
+#'   fenced_div file_exists file_ext grep_sub html_escape in_dir loadable new_record
 #'   normalize_path prose_index raw_string read_all read_utf8 record_print
 #'   Rscript_call sans_ext split_lines with_ext write_utf8
 '_PACKAGE'
@@ -140,7 +140,7 @@ pkg_desc = function(name = detect_pkg()) {
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
     if (i %in% c('Description', 'URL', 'BugReports', 'Author')) {
       sans_p(commonmark::markdown_html(d[[i]], extensions = 'autolink'))
-    } else xfun::html_escape(d[[i]])
+    } else html_escape(d[[i]])
   }
   d = unlist(d)
   res = paste0(

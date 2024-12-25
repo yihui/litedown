@@ -76,6 +76,8 @@ rarely need to call `fuse()` or `mark()` directly---`litedown::roam()` will call
 `fuse()` and `mark()` for you behind the scenes.
 :::
 
+You can also create new documents with the [+](){.larger} button on the toolbar.
+
 ## A minimal example
 
 To understand what `fuse()` does, we look at a minimal example:

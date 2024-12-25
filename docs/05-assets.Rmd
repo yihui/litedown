@@ -80,6 +80,8 @@ litedown::fuel(css = c('@callout', '@book'), js = '@callout')
 
 You can call `fuel()` multiple times in a document to keep adding assets.
 
+## The default CSS {#sec:default}
+
 ## Copy buttons {#sec:copy-button}
 
 Normally you would have to select the text before copying it, and copy buttons
@@ -635,7 +637,7 @@ css: ["@pages"]
 js: ["@pages"]
 ```
 
-## HTML slides {#sec:slides}
+## HTML slides {#sec:snap}
 
 With `snap.css` and `snap.js`, you can create lightweight HTML slides:
 

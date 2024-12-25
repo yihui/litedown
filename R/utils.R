@@ -235,17 +235,41 @@ assets = t(data.frame(
   'center-img' = c('center images in paragraphs', NA, '@center-img'),
   'chapter-toc' = c('add TOC to each chapter', NA, '@chapter-toc'),
   'copy-button' = c('copy buttons', '@copy-button', '@copy-button'),
+  default = c('default CSS', '@default', NA),
   'external-link' = c('open external links in new windows', NA, '@external-link'),
-  'fold-details' = c('fold elements in `<details>`', NA, '@fold-details'),
+  'fold-details' = c('fold elements (e.g., code blocks)', NA, '@fold-details'),
   'heading-anchor' = c('add anchor links to headings', '@heading-anchor', '@heading-anchor'),
   'key-buttons' = c('style keyboard shortcuts', '@key-buttons', '@key-buttons'),
   pages = c('paginate HTML for printing', '@pages', '@pages'),
   'right-quote' = c('right-align quote footers', NA, '@right-quote'),
-  slides = c('snap slides', '@snap', '@snap'),
+  snap = c('snap slides', '@snap', '@snap'),
   tabsets = c('create tabsets from bullet lists or sections', '@tabsets', '@tabsets'),
   'toc-highlight' = c('highlight TOC items on scroll', NA, '@toc-highlight'),
   row.names = c('description', 'css', 'js'), check.names = FALSE
 ))
+
+# an HTML form for creating new files in roam()
+feature_form = function(path) {
+  nms = rownames(assets)
+  files = list.files(if (dir.exists(path)) path else dirname(path), full.names = TRUE)
+  files = basename(files[file_exists(files)])
+  one_string(c(
+    '<h3>New File</h3>',
+    '<p><label>Filename: <input type="text" id="filename-input" list="file-list" placeholder="enter a new filename (not in the list)" /></label></p>',
+    if (length(files)) c(
+      '<datalist id="file-list">',
+      sprintf('<option value="&#10060; %s">', html_escape(files, TRUE)),
+      '</datalist>'
+    ),
+    '<p><b>Select HTML features</b></p>', '<p style="columns:20em;">',
+    sprintf(
+      '<label><input name="%s" type="checkbox" /> <a href="https://yihui.org/litedown/#sec:%s" target="_blank"><code>%s</code></a>: %s</label>',
+      nms, nms, nms, html_escape(assets[, 'description'])
+    ), '</p>'
+  ))
+}
+
+na_omit = function(x) x[!is.na(x)]
 
 # accumulate variable values
 acc_var = local({
