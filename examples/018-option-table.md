@@ -10,7 +10,7 @@ See @tab:simple.
 head(cars, 3)
 ```
 
-:::: {.table .box #tab:simple}
+:::: {.table #tab:simple}
 
 ::: {.caption}
 [](#@tab:simple)

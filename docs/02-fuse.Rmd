@@ -274,7 +274,7 @@ actual output but for illustration only).
 }
 ```
 
-::::: {#fig:attr-structure .figure .box}
+::::: {#fig:attr-structure .figure}
 ::: {.attr-blocks .fenced-chunk}
 ``` {.md .open-fence .code-fence}
 :::: {.chunk}
@@ -448,7 +448,7 @@ in the input of the hash will lead to a change in the hash value, which in turn
 invalidates the old cache and creates new cache.
 
 ```{mermaid}
-#| flow-cache, echo = FALSE, fig.env = '.figure .box',
+#| flow-cache, echo = FALSE,
 #| fig.cap = 'The cache (in)validation process.'
 
 flowchart TD
@@ -553,7 +553,7 @@ placed below figures, and table captions are placed above tables.
 @tab:tab-bottom shows an example of a table caption at the bottom.
 
 ```{{r}}
-#| tab-bottom, cap.pos = 'bottom', tab.env = '.table .box',
+#| tab-bottom, cap.pos = 'bottom',
 #| tab.cap = 'A table caption at the bottom via `cap.pos = "bottom"`.'
 head(cars, 4)
 ```
@@ -1153,7 +1153,7 @@ Options to control the formatting include:
 To make it easier to read the numbers in the Markdown table above, we render the
 table to @tab:inline-numbers:
 
-:::: {.table .box}
+:::: table
 ::: caption
 [ ](#@tab:inline-numbers) Inline numbers formatted with different `signif` and
 `power` options.
@@ -1200,7 +1200,7 @@ Both `#'` and `#|` comments are optional. If no `#'` or `#|` comments are found
 in the script, the whole script will be treated as a single code chunk.
 
 ```{mermaid}
-#| flow-sieve, echo = FALSE, fig.env = '.figure .box',
+#| flow-sieve, echo = FALSE,
 #| fig.cap = 'An illustration of how scripts are rendered.'
 flowchart TD
   O@{ shape: lin-doc, label: "Input script" }--"sieve()"--> A@{ shape: f-circ } -.-o B[["#' YAML"]]

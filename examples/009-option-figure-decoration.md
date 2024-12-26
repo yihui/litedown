@@ -14,7 +14,7 @@ hist(faithful$eruptions, main = '', border = 'white')
 sunflowerplot(faithful)
 ```
 
-:::: {.figure .box #fig:chunk-a}
+:::: {.figure #fig:chunk-a}
 ![a histogram](<009-option-figure-decoration__files/chunk-a-1.png>){width="45%"}
 ![a sunflower plot](<009-option-figure-decoration__files/chunk-a-2.png>){width="45%"}
 

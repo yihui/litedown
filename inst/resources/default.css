@@ -14,8 +14,8 @@ pre, img { max-width: 100%; }
 pre { white-space: pre-wrap; word-break: break-word; }
 pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
-:not(pre) > code, code[class], .box > .caption { background-color: #f8f8f8; }
-pre > code:is(:not([class]), .language-plain, .language-none), .box { background-color: inherit; border: 1px solid #eee; }
+:not(pre) > code, code[class], div > .caption { background-color: #f8f8f8; }
+pre > code:is(:not([class]), .language-plain, .language-none), .box, .figure, .table { background-color: inherit; border: 1px solid #eee; }
 pre > code {
   &.message { border-color: #9eeaf9; }
   &.warning { background: #fff3cd; border-color: #fff3cd; }
@@ -28,8 +28,8 @@ pre > code {
   border-left: 2px solid;
   &:hover { opacity: inherit; }
 }
-.box, table { margin: 1em auto; }
-.box > .caption { padding: 1px 1em; }
+.box, .figure, .table, table { margin: 1em auto; }
+div > .caption { padding: 1px 1em; }
 .figure { p:has(img), pre:has(svg) { text-align: center; } }
 .flex-col { display: flex; justify-content: space-between; }
 table {

@@ -202,7 +202,7 @@ which contains the following `.Rmd` files (explained in @tab:pkg-site):
 list.files('../site/', '[.]Rmd$')
 ```
 
-:::: {.table .box}
+:::: table
 ::: caption
 [ ](#@tab:pkg-site) Explanations of site source files.
 :::

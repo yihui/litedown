@@ -54,7 +54,7 @@ Another way is to enable embedding `https` resources (@sec:embed-resources).
 
 ```{r}
 #| assets, echo = FALSE, print.args = I(list(limit = Inf)),
-#| tab.env = '.table .box .no-ref-label',
+#| tab.env = '.table .no-ref-label',
 #| tab.cap = 'A reference of CSS/JS assets in the `lite.js` repository.'
 a = litedown:::assets
 for (i in c('css', 'js')) a[, i] = ifelse(is.na(a[, i]), NA, paste0('`', a[, i], '`'))
@@ -81,6 +81,30 @@ litedown::fuel(css = c('@callout', '@book'), js = '@callout')
 You can call `fuel()` multiple times in a document to keep adding assets.
 
 ## The default CSS {#sec:default}
+
+The default stylesheet defines the basic styles of the document body, lists,
+code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
+example, the maximum width for the body is set to 800px. If you want to override
+it, you can provide your own stylesheet, e.g.,
+
+``` css
+body {
+  max-width: 1000px;
+}
+```
+
+The default CSS is included when no `css` is provided in the YAML metadata. You
+can use either `@default` or `default` to apply the default CSS.
+
+``` yaml
+css: ["@default"]
+# or
+css: ["default"]
+```
+
+The former uses the jsdelivr resource and will not be embedded in HTML by
+default. The latter points to the `default.css` shipped with the **litedown**
+package, and will always be embedded.
 
 ## Copy buttons {#sec:copy-button}
 
@@ -563,7 +587,7 @@ e.g.,
 
 ```` md
 ```{r}
-#| sunspots, fig.dim = c(14, 4), fig.env = '.fullwidth .figure .box',
+#| sunspots, fig.dim = c(14, 4), fig.env = '.fullwidth .figure',
 #| fig.cap = 'Monthly mean relative sunspot numbers from 1749 to 1983.'
 par(mar = c(4, 4, .1, .1), bg = 'lightyellow', fg = 'red', las = 1)
 plot(sunspots, col = 'red')

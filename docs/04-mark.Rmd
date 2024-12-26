@@ -512,7 +512,7 @@ URLs. The shorthand syntax is as follows (`*` stands for
     values contain slashes) will be converted to
     `*/combine/path-1/to/file-1,path-2/to/file-2`.
 
-:::: {.table .box}
+:::: table
 ::: caption
 [ ](#@tab:at-syntax) The `@` syntax for using jsdelivr resources in the `css`
 variable.

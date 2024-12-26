@@ -189,7 +189,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 -   $J$ = Lightweight [vanilla JS/CSS](https://github.com/yihui/lite.js)
 
 ```{mermaid}
-#| scope-litedown, echo = FALSE, fig.env = '.figure .box',
+#| scope-litedown, echo = FALSE,
 #| fig.cap = 'A minimal partial re-implementation of the R Markdown ecosystem as **litedown**.'
 classDiagram
   class litedown {
@@ -235,7 +235,7 @@ classDiagram
 ```
 
 ```{mermaid}
-#| scope-rmarkdown, echo = FALSE, fig.env = '.figure .box',
+#| scope-rmarkdown, echo = FALSE,
 #| fig.cap = 'A set of core packages in the R Markdown ecosystem. `R-dep()`
 #|  stands for recursive R package dependencies (with their numbers), `sys-dep`
 #|  stands for system dependencies, and `web-dep` stands for CSS/JS dependencies.'

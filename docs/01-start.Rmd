@@ -16,7 +16,7 @@ For those who are familiar with R Markdown, you can think of the function
 the conversion process from R Markdown to a target format.
 
 ```{mermaid}
-#| fuse-flow, echo = FALSE, fig.env = '.figure .box',
+#| fuse-flow, echo = FALSE,
 #| fig.cap = 'A diagram illustrating how **litedown** converts R Markdown documents to target output formats.'
 
 flowchart LR
@@ -104,7 +104,7 @@ A computational document contains both text narratives and code for computing.
 together.
 
 ```{mermaid}
-#| flow-concepts, echo = FALSE, fig.env = '.figure .box',
+#| flow-concepts, echo = FALSE,
 #| fig.cap = 'An illustration of the structure of a computational document and how its components are split, computed, and merged.'
 flowchart TD
   O@{ shape: lin-doc, label: "Input document" }--"crack()"--> A@{ shape: f-circ } -.-o B[[YAML]]
@@ -156,7 +156,7 @@ After all code has been executed, the output blocks will be merged to a Markdown
 document, which can be further rendered to a target output format such as HTML
 and LaTeX.
 
-:::: {#fig:humpty-dumpty .figure .box}
+:::: {#fig:humpty-dumpty .figure}
 ![Humpty
 Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg)
 

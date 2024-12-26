@@ -7,7 +7,6 @@ See @tab:simple.
 <!-- ... -->
 
 ```{r}
-#| simple, tab.env = '.table .box',
-#| tab.cap = 'First 3 rows of the `cars` data.',
+#| simple, tab.cap = 'First 3 rows of the `cars` data.',
 head(cars, 3)
 ```

@@ -13,7 +13,6 @@ Place two plots side by side via the `width` attribute:
 #| chunk-a, attr.plot = 'width="45%"',
 #| fig.alt = c('a histogram', 'a sunflower plot'),
 #| fig.cap = 'Exploring the faithful dataset.',
-#| fig.env = '.figure .box'
 
 hist(faithful$eruptions, main = '', border = 'white')
 sunflowerplot(faithful)
