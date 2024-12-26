@@ -1140,18 +1140,29 @@ resolve_files = function(x, ext = 'css') {
   x[i] = jsdelivr(x[i], '')
   x[i0] = jsd_resolve(x[i0])
 
-  # built-in resources in this package
   i = dirname(x) == '.' & file_ext(x) == '' & !file_exists(x)
-  x[i & (x == 'slides')] = 'snap'  # alias slides.css -> snap.css
-  files = list.files(pkg_file('resources'), sprintf('[.]%s$', ext), full.names = TRUE)
-  b = sans_ext(basename(files))
-  if (any(!x[i] %in% b)) stop(
-    "Invalid '", ext, "' option: ", paste0("'", setdiff(x[i], b), "'", collapse = ', '),
-    " (possible values are: ", paste0("'", b, "'", collapse = ', '), ")"
-  )
-  x[i] = files[match(x[i], b)]
+  x[i] = map_assets(x[i], ext)
   x = if (ext %in% c('css', 'js')) gen_tags(x, ext) else read_all(x)
   I(x)
+}
+
+map_assets = function(x, ext) {
+  if (length(x) == 0) return(x)
+  x[x == 'slides'] = 'snap'  # alias slides.css -> snap.css
+  # built-in resources in this package
+  b1 = c(if (ext != 'js') 'default', 'snap')
+  i1 = x %in% b1
+  x[i1] = file.path(pkg_file('resources'), sprintf('%s.%s', x[i1], ext))
+  # in case users forgot to type @ for jsdelivr assets
+  b2 = sub('@', '', assets[, ext])
+  i2 = x %in% b2
+  x[i2] = jsdelivr(sprintf('%s/%s.min.%s', ext, x[i2], ext))
+  x[i2] = jsd_resolve(x[i2])
+  if (any(i3 <- !(i1 | i2))) stop(
+    "Invalid '", ext, "' option: ", paste0("'", x[i3], "'", collapse = ', '),
+    " (possible values are: ", paste0("'", unique(c(b1, na.omit(b2))), "'", collapse = ', '), ")"
+  )
+  x
 }
 
 # generate tags for css/js depending on whether they need to be embedded or offline
