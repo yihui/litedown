@@ -75,7 +75,7 @@ fuse_site = function(input = '.') {
     }
     # resolve / to relative paths
     if (!is.na(info$root)) {
-      up = xfun::relative_path(info$root, dirname(x))
+      up = relative_path(info$root, dirname(x))
       if (up == '.') up = ''
       res = match_replace(res, ' (href|src)(=")/', function(z) {
         gsub('/$', up, z)
@@ -207,17 +207,17 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   # inherited in new R sessions, so we attach the timing path to R_LITEDOWN_TIME
   if (is.character(p <- cfg$time)) {
     # treat relative path as a path relative to the first input's cache dir
-    if (xfun::is_rel_path(p))
+    if (is_rel_path(p))
       p = file.path(paste0(sans_ext(normalize_path(input[1])), '__cache'), p)
-    vars = xfun::set_envvar(c(R_LITEDOWN_TIME = p))
-    on.exit(xfun::set_envvar(vars), add = TRUE)
+    vars = set_envvar(c(R_LITEDOWN_TIME = p))
+    on.exit(set_envvar(vars), add = TRUE)
     if (file_exists(p)) {
       # filter out data from input files that do not belong to the book
       d = readRDS(p)
       if (!all(i <- d$source %in% input)) {
         d = d[i, ]; saveRDS(d, p)
       }
-    } else xfun::dir_create(dirname(p))
+    } else dir_create(dirname(p))
   }
 
   res = lapply(preview %|% input, function(x) {
@@ -307,5 +307,5 @@ tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) 
   )
   names(defaults) = nms
   opts = options(defaults)
-  xfun::exit_call(function() options(opts))
+  exit_call(function() options(opts))
 }

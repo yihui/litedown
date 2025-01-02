@@ -5,10 +5,13 @@
 #' output document format. The main differences between this package and
 #' \pkg{rmarkdown} are that it does not use Pandoc or \pkg{knitr} (i.e., fewer
 #' dependencies), and it also has fewer Markdown features.
-#' @importFrom xfun alnum_id base64_uri csv_options download_cache fenced_block
-#'   fenced_div file_exists file_ext grep_sub html_escape in_dir loadable new_record
-#'   normalize_path prose_index raw_string read_all read_utf8 record_print
-#'   Rscript_call sans_ext split_lines with_ext write_utf8
+#' @importFrom xfun alnum_id base64_uri csv_options del_empty_dir dir_create
+#'   divide_chunk download_cache exit_call fenced_block fenced_div file_exists
+#'   file_ext grep_sub html_escape in_dir is_abs_path is_blank is_rel_path
+#'   loadable mime_type new_app new_record normalize_path parse_only prose_index
+#'   raw_string read_all read_utf8 record_print relative_path Rscript_call
+#'   same_path sans_ext set_envvar split_lines try_error try_silent with_ext
+#'   write_utf8
 '_PACKAGE'
 
 # an internal environment to store some intermediate objects
@@ -156,7 +159,7 @@ pkg_desc = function(name = detect_pkg()) {
 # format authors, adding URL and ORCID links as appropriate
 pkg_authors = function(desc, role = NULL, extra = TRUE) {
   if (is.null(a <- desc[['Authors@R']])) return(desc[['Author']])
-  a = eval(xfun::parse_only(a))
+  a = eval(parse_only(a))
   a = uapply(a, function(x) {
     if (length(role) && !any(role %in% x$role)) return()
     role = if (extra && length(x$role)) paste0('[', one_string(x$role, ', '), ']')
@@ -378,7 +381,7 @@ pkg_manual = function(
 
 run_examples = function(html, config, path) {
   config$dev.path = path = paste0(config$dev.path, path)
-  on.exit(xfun::del_empty_dir(dirname(path)), add = TRUE)
+  on.exit(del_empty_dir(dirname(path)), add = TRUE)
   r = '(?s).*?<pre><code[^>]*>(?s)(.+?)</code></pre>'
   match_replace(html, paste0('(?<=<h3>Examples</h3>)', r), function(x) {
     code = gsub(r, '\\1', x, perl = TRUE)
@@ -398,7 +401,7 @@ run_examples = function(html, config, path) {
         i1 = nr[1]; i2 = nr[2]
         new_block = function(i, ...) {
           b = trim_blank(one_string(ri[i]))
-          if (xfun::is_blank(b)) b = character()
+          if (is_blank(b)) b = character()
           list(structure(b, class = c(ci, ...)))
         }
         if (i1 > 1) {

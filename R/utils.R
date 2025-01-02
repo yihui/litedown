@@ -151,7 +151,7 @@ is_output_full = function(x) isTRUE(attr(x, 'full'))
 # test if input is R code or not (this is based on heuristics and may not be robust)
 is_R = function(input, text) {
   if (is_file(input)) grepl('[.][Rrs]$', input) else {
-    !length(grep('^\\s*```+\\{', text)) && !xfun::try_error(xfun::parse_only(text))
+    !length(grep('^\\s*```+\\{', text)) && !try_error(parse_only(text))
   }
 }
 
@@ -178,7 +178,7 @@ output_path = function(input, output) {
 
 # make sure not to overwrite input file inadvertently
 check_output = function(input, output) {
-  if (file_exists(input) && xfun::same_path(input, output))
+  if (file_exists(input) && same_path(input, output))
     stop('The output file path is the same as input: ', input)
   output
 }
@@ -409,7 +409,7 @@ lang_files = function(package, path, langs) {
     # then find their aliases
     a = lapply(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), function(z) {
       z = unlist(strsplit(z, '[",]'))
-      z[!xfun::is_blank(z)]
+      z[!is_blank(z)]
     })
     l = c(l, unlist(a))  # all possible languages that can be highlighted
     l = setdiff(langs, l)  # languages not supported by default
@@ -467,7 +467,7 @@ lang_files = function(package, path, langs) {
 
 # test if a URL can be downloaded
 downloadable = function(u, type = 'text') {
-  !xfun::try_error(download_cache$get(u, type))
+  !try_error(download_cache$get(u, type))
 }
 
 # quote a vector and combine by commas
@@ -481,7 +481,7 @@ get_option = function(name, format, ...) {
 # if a string is a file path found under test dirs, read the file; then concatenate elements by \n
 one_string = function(x, by = '\n', test = NULL) {
   if (length(test) && is_file(x)) {
-    p = if (xfun::is_abs_path(x)) x else xfun::existing_files(file.path(c(test, '.'), x))
+    p = if (is_abs_path(x)) x else xfun::existing_files(file.path(c(test, '.'), x))
     if (length(p)) x = read_utf8(p[1]) else stop("The file '", x, "' is not found")
   }
   paste(x, collapse = by)
@@ -1062,7 +1062,7 @@ jsd_version = local({
   function(pkg, force = FALSE) {
     if (!force && is.character(v <- vers[[pkg]])) return(v)
     x = tryCatch(
-      xfun::read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved')),
+      read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved')),
       error = function(e) ''
     )
     v = grep_sub('.*"version":\\s*"([0-9.]+)".*', '@\\1', x)
@@ -1160,7 +1160,7 @@ map_assets = function(x, ext) {
   x[i2] = jsd_resolve(x[i2])
   if (any(i3 <- !(i1 | i2))) stop(
     "Invalid '", ext, "' option: ", paste0("'", x[i3], "'", collapse = ', '),
-    " (possible values are: ", paste0("'", unique(c(b1, na.omit(b2))), "'", collapse = ', '), ")"
+    " (possible values are: ", paste0("'", unique(c(b1, na_omit(b2))), "'", collapse = ', '), ")"
   )
   x
 }
@@ -1175,7 +1175,7 @@ gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALS
     t2 = c('<script>', '</script>')
   } else stop("The file extension '", ext, "' is not supported.")
   is_web = is_https(x)
-  is_rel = !is_web && xfun::is_rel_path(x)
+  is_rel = !is_web && is_rel_path(x)
   if (is_web && embed_https && xfun::url_filename(x) == 'MathJax.js') {
     warning('MathJax.js cannot be embedded. Please use MathJax v3 instead.')
     embed_https = FALSE

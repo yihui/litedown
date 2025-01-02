@@ -16,7 +16,7 @@
 #' @export
 roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   # a proxy server to return files under inst/resources/
-  s = xfun::new_app('.litedown', function(path, ...) {
+  s = new_app('.litedown', function(path, ...) {
     file_raw(pkg_file('resources', path))
   }, open = FALSE)
   # the URL needs to be translated on RStudio Server
@@ -34,7 +34,7 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
     !is.null(t) && !(is.null(dim(t2)) && is.na(t2)) && !identical(t2, t)
   }
 
-  xfun::new_app('litedown', function(path, query, post, headers) {
+  new_app('litedown', function(path, query, post, headers) {
     # set up proper default options for mark()
     opt = options(
       litedown.html.meta = list(
@@ -204,7 +204,7 @@ is_lite_ext = function(ext = file_ext(file), file) tolower(ext) %in% lite_exts
 # render the path to HTML if possible
 file_resp = function(x, preview) {
   raw = preview == '0'  # 0: send raw response; 1: render verbatim; 2: fuse()/mark()
-  ext = if (raw) '' else tolower(xfun::file_ext(x))
+  ext = if (raw) '' else tolower(file_ext(x))
   if (preview == '2' && is_lite_ext(ext)) {
     # to clean up the __files/ dir if requested (via options()) and the dir
     # didn't exist before
@@ -226,9 +226,9 @@ file_resp = function(x, preview) {
       if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
     ))
   } else {
-    type = xfun::mime_type(x)
+    type = mime_type(x)
     if (!raw && is_text_file(ext, type) &&
-        !inherits(txt <- xfun::try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
+        !inherits(txt <- try_silent(read_utf8(x, error = TRUE)), 'try-error')) {
       list(payload = mark_full(
         fenced_block(txt, lineno_attr(if (ext == '') 'plain' else ext))
       ))
@@ -242,13 +242,13 @@ file_resp = function(x, preview) {
 # partially rendered (in which case we can't resolve refs to other chapters)
 store_book = function(dir, x) {
   .env$current_book = dir; .env$current_file = x
-  xfun::exit_call(function() .env$current_book <- .env$current_file <- NULL)
+  exit_call(function() .env$current_book <- .env$current_file <- NULL)
 }
 
 # detect project type for a directory (_litedown.yml may be in an upper-level dir)
 proj_info = function(x, d = dirname(x)) {
   while (length(yaml <- yml_config(d)) == 0) {
-    if (xfun::same_path(d, d2 <- file.path(d, '..'))) break
+    if (same_path(d, d2 <- file.path(d, '..'))) break
     d = d2
   }
   # use the field 'type' if provided, otherwise look for 'book' or 'site'
@@ -262,7 +262,7 @@ proj_info = function(x, d = dirname(x)) {
   }
   list(
     type = type, root = root, yaml = yaml,
-    index = !is.na(root) && is_index(x) && xfun::same_path(x, file.path(root, basename(x)))
+    index = !is.na(root) && is_index(x) && same_path(x, file.path(root, basename(x)))
   )
 }
 
@@ -271,14 +271,14 @@ full_output = structure('html', full = TRUE)
 mark_full = function(...) mark(..., output = full_output)
 
 # guess if a file is a text file
-is_text_file = function(ext = file_ext(file), type = xfun::mime_type(file), file) {
+is_text_file = function(ext = file_ext(file), type = mime_type(file), file) {
   (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
 is_roaming = function() isTRUE(getOption('litedown.roaming'))
 
 # return a raw file response
-file_raw = function(x, type = xfun::mime_type(x)) {
+file_raw = function(x, type = mime_type(x)) {
   list(file = normalizePath(x), `content-type` = type)
 }
 

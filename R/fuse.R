@@ -137,7 +137,7 @@ crack = function(input, text = NULL) {
       }
       code = code[-c(1, N)]  # remove fences
       save_pos(b$lines)
-      code = xfun::divide_chunk(b$info, code)
+      code = divide_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
       # starting line number of code
       b$code_start = b$lines[1] + 1L + length(b$comments)
@@ -196,7 +196,7 @@ crack = function(input, text = NULL) {
 set_error_handler = function(input) {
   opts = options(xfun.handle_error.loc_fun = get_loc)
   oenv = as.list(.env)
-  xfun::exit_call(function() { options(opts); reset_env(oenv, .env) })
+  exit_call(function() { options(opts); reset_env(oenv, .env) })
   .env$input = input  # store the input name for get_loc()
 }
 
@@ -239,7 +239,7 @@ char_pos = function(x, p) {
 sieve = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   n = length(text)
-  r = run_range(grepl("^#'( .+| *)$", text), xfun::is_blank(text))
+  r = run_range(grepl("^#'( .+| *)$", text), is_blank(text))
   nc = ncol(r)
 
   # no #' or #|: split code into smallest expressions
@@ -262,7 +262,7 @@ sieve = function(input, text = NULL) {
     if (type == 'text_block') {
       el = list(source = one_string(sub("^#' ?", '', x)))
     } else {
-      if (all(i <- xfun::is_blank(x))) return()
+      if (all(i <- is_blank(x))) return()
       # trim blank lines at both ends
       i2 = range(which(!i))  # first and last non-empty lines
       l1 = l1 + (i2[1] - 1)
@@ -278,7 +278,7 @@ sieve = function(input, text = NULL) {
     res[[length(res) + 1]] <<- el
   }
   partition = function(code) {
-    code = xfun::divide_chunk('r', code)
+    code = divide_chunk('r', code)
     set_names(code[c('code', 'options', 'src')], c('source', 'options', 'comments'))
   }
   # detect #| and split a block of code into chunks
@@ -423,7 +423,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
 
   opts = reactor()
   # clean up the figure folder on exit if it's empty
-  on.exit(xfun::del_empty_dir({
+  on.exit(del_empty_dir({
     if (dir.exists(fig.dir <- opts$fig.path)) fig.dir else dirname(fig.dir)
   }), add = TRUE)
 
@@ -454,7 +454,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
     if (is.null(p <- opts[[name]])) p = aux_path(output_base %||% 'litedown', name)
     slash = endsWith(p, '/')
     # make sure path is absolute so it will be immune to setwd() (in code chunks)
-    if (xfun::is_rel_path(p)) {
+    if (is_rel_path(p)) {
       p = file.path(getwd(), p)
       # preserve trailing slash because file.path() removes it on Windows
       if (slash) p = sub('/*$', '/', p)
@@ -716,7 +716,7 @@ fuse_code = function(x, blocks) {
   p3 = unlist(p2)  # vector of plot paths
   # get the relative path of the plot directory
   fig.dir = if (length(p3)) tryCatch(
-    sub('^[.]/', '.', paste0(dirname(xfun::relative_path(p3[1], .env$wd.out)), '/')),
+    sub('^[.]/', '.', paste0(dirname(relative_path(p3[1], .env$wd.out)), '/')),
     error = function(e) NULL
   )
 
@@ -822,7 +822,7 @@ fuse_code = function(x, blocks) {
 # temporarily change the working directory inside a function call
 change_wd = function(dir) {
   if (is.character(dir)) {
-    owd = setwd(dir); xfun::exit_call(function() setwd(owd))
+    owd = setwd(dir); exit_call(function() setwd(owd))
   }
 }
 
@@ -861,14 +861,14 @@ continue_block = function(e1_open, e1_end, e2) {
 
 new_source = function(x) {
   len = length(x)
-  structure(xfun::new_record(x, 'source'), lines = if (len) c(1L, len) else c(0L, 0L))
+  structure(new_record(x, 'source'), lines = if (len) c(1L, len) else c(0L, 0L))
 }
-new_output = function(x) xfun::new_record(x, 'output')
-new_warning = function(x) xfun::new_record(x, 'warning')
-new_plot = function(x) xfun::new_record(x, 'plot')
+new_output = function(x) new_record(x, 'output')
+new_warning = function(x) new_record(x, 'warning')
+new_plot = function(x) new_record(x, 'plot')
 new_asis = function(x, raw = FALSE) {
-  res = xfun::new_record(x, 'asis')
-  if (raw) xfun::raw_string(res) else res
+  res = new_record(x, 'asis')
+  if (raw) raw_string(res) else res
 }
 
 is_plot = function(x) inherits(x, 'record_plot')
@@ -1011,7 +1011,7 @@ reactor(
 eng_r = function(x, inline = FALSE, ...) {
   opts = reactor()
   if (inline) {
-    expr = xfun::parse_only(x$source)
+    expr = parse_only(x$source)
     res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
       eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
     )
