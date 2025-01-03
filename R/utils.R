@@ -1059,13 +1059,39 @@ jsdelivr = function(file, dir = 'npm/@xiee/utils/') {
 # get the latest version of jsdelivr assets
 jsd_version = local({
   vers = list()  # cache versions in current session
-  function(pkg, force = FALSE) {
-    if (!force && is.character(v <- vers[[pkg]])) return(v)
+  # find version from local cache
+  p_cache = function() {
+    d = if (getRversion() >= '4.0') tools::R_user_dir('litedown', 'cache') else {
+      file.path(dirname(tempdir()), 'R', 'cache', 'litedown')
+    }
+    file.path(d, 'jsd_versions.rds')
+  }
+  # cache expires after one week by default
+  v_cache = function(pkg, force, delta = getOption('litedown.jsdelivr.cache', 604800)) {
+    if (!force && file.exists(f <- p_cache())) {
+      info = readRDS(f)[[pkg]]
+      if (!is.null(t <- info$time) && Sys.time() - t <= delta) info$version
+    }
+  }
+  # query version from jsdelivr api
+  v_api = function(pkg) {
     x = tryCatch(
       read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved')),
-      error = function(e) ''
+      error = function(e) v_cache(pkg, FALSE, Inf)  # fall back to local cache
     )
     v = grep_sub('.*"version":\\s*"([0-9.]+)".*', '@\\1', x)
+    if (length(v)) {
+      if (dir_create(dirname(f <- p_cache()))) {
+        info = if (file.exists(f)) readRDS(f) else list()
+        info[[pkg]] = list(version = v[1], time = Sys.time())
+        saveRDS(info, f)
+      }
+      v[1]
+    }
+  }
+  function(pkg, force = FALSE) {
+    if (!force && is.character(v <- vers[[pkg]])) return(v)
+    v = v_cache(pkg, force) %||% v_api(pkg)
     vers[[pkg]] <<- if (length(v)) v[1] else ''
   }
 })
