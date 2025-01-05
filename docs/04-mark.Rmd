@@ -41,7 +41,7 @@ below.
 
 ### `auto_identifiers`
 
-Add automatic IDs to headings, e.g.,
+Whether to add automatic IDs to headings (`true` by default), e.g., convert
 
 ``` markdown
 # Hello world!
@@ -49,7 +49,7 @@ Add automatic IDs to headings, e.g.,
 ## Introduction
 ```
 
-will be converted to
+to
 
 ``` html
 <h1 id="chp:hello-world">Hello world!</h1>
@@ -76,20 +76,22 @@ any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 
 Whether to use the LaTeX package [**cleveref**](https://ctan.org/pkg/cleveref)
 for "clever" cross-references (@sec:cross-references). This option is for LaTeX
-output only. If enabled, **cleveref** will be loaded and references will use the
-command `\cref{}` instead of `\ref{}`, which will automatically add the type of
-reference before the reference number, e.g., `\cref{sec:intro}` may generate
-`Section 1`, so you do not have to write `Section \ref{sec:intro}`.
+output only and `false` by default. If enabled, **cleveref** will be loaded and
+references will use the command `\cref{}` instead of `\ref{}`, which will
+automatically add the type of reference before the reference number, e.g.,
+`\cref{sec:intro}` may generate `Section 1`, so you do not have to write
+`Section \ref{sec:intro}`.
 
 ### `embed_cleanup`
 
 Whether to clean up plot files after they have been embedded in HTML output (see
-@sec:embed-resources).
+@sec:embed-resources). This option is `true` by default.
 
 ### `embed_resources`
 
 Embed resources (images, CSS, and JS) in the HTML output using their
-base64-encoded data (images) or raw content (CSS/JS). Possible values are:
+base64-encoded data (all images except for SVG) or raw content (SVG/CSS/JS).
+Possible values are:
 
 -   `null` or `false`: Do not embed any resources.
 
@@ -107,6 +109,14 @@ have to view the output offline, you need to use the option value `"https"` (or
 For `https` resources, after you have embedded them successfully once, they will
 be cached locally (via `xfun::download_cache`) and will not require an Internet
 connection again.
+
+::: callout-note
+All images are base64 encoded, except for SVG images, of which the raw XML
+content is embedded, which makes it possible to manipulate SVG elements via JS
+or style them via CSS. Without embedding the raw content, SVG images are
+included via the `<img>` tag, and their elements cannot be manipulated or
+styled.
+:::
 
 ### `js_highlight`
 
@@ -206,23 +216,24 @@ other's features.
 
 ### `keep_yaml`
 
-Whether to keep the YAML metadata in the output. When `TRUE`, the original YAML
-in the Markdown input (if exists) will be written to the output. Note that when
-this option is enabled, templates (@sec:templates) will be disabled and `mark()`
-will only generate a document fragment. This option was introduced mainly for
-Hugo websites to use **litedown** instead of Hugo's Markdown engines to render
-pages.
+Whether to keep the YAML metadata in the output (`false` by default). When
+`true`, the original YAML in the Markdown input (if exists) will be written to
+the output. Note that when this option is enabled, templates (@sec:templates)
+will be disabled and `mark()` will only generate a document fragment. This
+option was introduced mainly for Hugo websites to use **litedown** instead of
+Hugo's Markdown engines to render pages.
 
 ### `latex_math`
 
 Whether to identify LaTeX math expressions in pairs of single (`$ $`) or double
 dollar signs (`$$ $$`), and transform them so that they could be correctly
-rendered by MathJax (HTML output) or LaTeX.
+rendered by MathJax (HTML output) or LaTeX. This option is `true` by default.
 
 ### `number_sections`
 
-Whether to number section headings. To skip numbering a specific heading, add a
-class attribute `.unnumbered` (or use the shorthand `-`) to it. For example:
+Whether to number section headings (`false` by default). To skip numbering a
+specific heading, add a class attribute `.unnumbered` (or use the shorthand `-`)
+to it. For example:
 
 ``` md
 ## Preface {.unnumbered}
@@ -233,23 +244,23 @@ class attribute `.unnumbered` (or use the shorthand `-`) to it. For example:
 ### `smartypants`
 
 Whether to translate certain ASCII strings into smart typographic characters
-(see `?litedown::smartypants`).
+(see `?litedown::smartypants`). This option is `false` by default.
 
 ### `superscript`
 
 Whether to translate strings between two carets into superscripts, e.g.,
-`text^foo^` to `text<sup>foo</sup>`.
+`text^foo^` to `text<sup>foo</sup>`. This option is `true` by default.
 
 ### `subscript`
 
 Whether to translate strings between two tildes into subscripts, e.g.,
-`text~foo~` to `text<sub>foo</sub>`.
+`text~foo~` to `text<sub>foo</sub>`. This option is `true` by default.
 
 ### `toc`
 
-Whether to generate a table of contents (TOC) from section headings. If a
-heading has an `id` attribute, the corresponding TOC item will be a link to this
-heading. You can also set a sub-option:
+Whether to generate a table of contents (TOC) from section headings (`false` by
+default). If a heading has an `id` attribute, the corresponding TOC item will be
+a link to this heading. You can also set a sub-option:
 
 -   `depth`: The number of section levels to include in the TOC (`3` by
     default). Setting `toc` to `true` is equivalent to:
@@ -272,6 +283,8 @@ The desired type of the top-level headings in LaTeX output. Possible values are
 `'chapter'` and `'part'`. For example, if `top_level = 'chapter'`, `# heading`
 will be rendered to `\chapter{heading}` instead of the default
 `\section{heading}`.
+
+### Other options
 
 Options not described above can be found on the help pages of **commonmark**,
 e.g., the `hardbreaks` option is for the `hardbreaks` argument of

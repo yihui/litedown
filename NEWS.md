@@ -10,6 +10,8 @@
 
 - Added options `dollar`, `signif`, and `power` to format numbers from inline code. See https://yihui.org/litedown/#sec:inline-code for details.
 
+- When embedding SVG images in HTML output, embed their raw XML content instead of base64 encoding them.
+
 - Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).
 
 - Added support for the chunk option `collapse = TRUE` (thanks, @J-Moravec, #40).

@@ -949,23 +949,33 @@ embed_resources = function(x, options) {
   if (!any(embed)) return(x)
   clean = isTRUE(options[['embed_cleanup']])
 
-  r = '(<img[^>]* src="|<!--#[^>]*? style="background-image: url\\("?)([^"]+?)("|"?\\);)'
-  x = match_replace(x, r, function(z) {
+  # find images in <img> and (for slides only) comments
+  rs = c(
+    '(<img src=")([^"]+)("[^>]*?/>)',
+    '(<!--#[^>]*? style="background-image: url\\("?)([^"]+?)("?\\);)'
+  )
+  for (r in rs) x = match_replace(x, r, function(z) {
     z1 = sub(r, '\\1', z)
     z2 = sub(r, '\\2', z)
     z3 = sub(r, '\\3', z)
     # skip images already base64 encoded
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
-      if (is_https(f <- z2[i])) {
-        if (embed[1]) z2[i] = download_cache$get(f, 'base64')
-      } else if (file_exists(f <- URLdecode(f))) {
-        z2[i] = base64_uri(f)
-        if (clean && normalize_path(f) %in% .env$plot_files) file.remove(f)
-      } else {
-        warning("File '", f, "' not found (hence cannot be embedded).")
+      is_svg = grepl('[.]svg$', f <- z2[i]) && grepl('^<img', z1[i])
+      a = if (is_svg) str_trim(gsub('^"|/>$', '', z3[i])) else ''
+      if (is_https(f)) {
+        if (embed[1]) z2[i] = if (!is_svg) download_cache$get(f, 'base64') else {
+          download_cache$get(f, 'text', function(xml) process_svg(xml, a))
+        }
+      } else if (embed[2]) {
+        if (file_exists(f <- URLdecode(f))) {
+          z2[i] = if (is_svg) process_svg(read_utf8(f), a) else base64_uri(f)
+          if (clean && normalize_path(f) %in% .env$plot_files) file.remove(f)
+        } else {
+          warning("File '", f, "' not found (hence cannot be embedded).")
+        }
       }
     }
-    paste0(z1, z2, z3)
+    ifelse(grepl('<svg', z2), z2, paste0(z1, z2, z3))
   })
 
   # CSS and JS
@@ -999,6 +1009,19 @@ embed_resources = function(x, options) {
     }
   }
   x
+}
+
+# remove the xml/doctype declaration in svg, and add attributes
+process_svg = function(x, attr) {
+  while (length(x) > 0 && !grepl('^\\s*<svg .+', x[1])) x = x[-1]
+  if (length(x) > 0 && !attr %in% c('', 'alt=""')) {
+    x[1] = if (grepl(r <- '\\s*>\\s*$', x[1])) {
+      paste0(gsub(r, ' ', x[1]), attr, '>')
+    } else {
+      paste(x[1], attr)
+    }
+  }
+  one_string(x)
 }
 
 normalize_options = function(x, format = 'html') {

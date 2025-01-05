@@ -119,31 +119,37 @@ js: ["@copy-button"]
 ```
 
 By default, this will add copy buttons to all code blocks (`<code>` in `<pre>`)
-and all elements with the class name `copy-this`. For example, below is a quote
-inside a fenced Div `::: copy-this` and you will see a copy button if you hover
-over it with the cursor:
+and all elements with the class name `copy-this`. For example, below are two
+quotes, and the right quote is inside a fenced Div `::: copy-this`, so you will
+see a copy button in the right quote if you hover over it with the cursor:
 
-::: {.side .side-right}
-Love like you've never been hurt\
-Dance like nobody's watching\
-Sing like nobody's listening\
-Work like you don't need the money\
-Live like it's heaven on earth
-
----Alfred D'Souza
-:::
+:::: flex-col
+> Love like you've never been hurt\
+> Dance like nobody's watching\
+> Sing like nobody's listening\
+> Work like you don't need the money\
+> Live like it's heaven on earth
+>
+> ---Alfred D'Souza
 
 ::: copy-this
-> Copy like you understand the code...
+> Copy like you've never been hurt\
+> Copy like nobody's watching\
+> Copy like nobody's listening\
+> Copy like you don't need the money\
+> Copy like it's heaven on earth
 >
-> ---Yihui Xie
+> ---Yihui (Ode to the [Copy
+> Ninja](https://en.wikipedia.org/wiki/Kakashi_Hatake))
 :::
+::::
 
 All code blocks in this book also have copy buttons in them.
 
 In fact, you can add the copy button to any element on an HTML page. You may
 read [this post](https://yihui.org/en/2023/09/copy-button/) if you are
-interested in generalizing the copy button to other elements.
+interested in generalizing the copy button to other elements (without using the
+`copy-this` class).
 
 ## Tabsets {#sec:tabsets}
 
