@@ -4383,17 +4383,17 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 </div>
 <p>If the source document is R Markdown instead of Markdown, an alternative way (in
 addition to configuring YAML metadata) to add assets is to call the function
-<code>litedown::fuel()</code> in a code chunk. You can either pass vectors of <code>css</code> / <code>js</code>
+<code>litedown::vest()</code> in a code chunk. You can either pass vectors of <code>css</code> / <code>js</code>
 asset names to the <code>css</code> / <code>js</code> arguments, or the <code>feature</code> names in <a class="cross-ref-tab" href="#tab:assets">4</a>
 to the <code>feature</code> argument, e.g.,</p>
 <pre><code class="language-md">```{r, echo = FALSE}
 # add assets by feature
-litedown::fuel(feature = c('callout', 'copy-button'))
+litedown::vest(feature = c('callout', 'copy-button'))
 # or add css/js directly
-litedown::fuel(css = c('@callout', '@book'), js = '@callout')
+litedown::vest(css = c('@callout', '@book'), js = '@callout')
 ```
 </code></pre>
-<p>You can call <code>fuel()</code> multiple times in a document to keep adding assets.</p>
+<p>You can call <code>vest()</code> multiple times in a document to keep adding assets.</p>
 <h2 id="sec:default"><span class="section-number">5.2</span> The default CSS</h2>
 <p>The default stylesheet defines the basic styles of the document body, lists,
 code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
