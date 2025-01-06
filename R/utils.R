@@ -217,10 +217,10 @@ restore_html = function(x) {
 #' @examples
 #' litedown:::assets[, -1]
 #' # add features
-#' litedown::fuel(c('copy-button', 'tabsets'))
+#' litedown::vest(c('copy-button', 'tabsets'))
 #' # add css/js directly
-#' litedown::fuel(css = '@tabsets', js = c('@tabsets', '@fold-details'))
-fuel = function(feature = NULL, css = NULL, js = NULL) {
+#' litedown::vest(css = '@tabsets', js = c('@tabsets', '@fold-details'))
+vest = function(feature = NULL, css = NULL, js = NULL) {
   if (length(feature)) {
     a = assets[feature, , drop = FALSE]
     css = c(a[, 'css'], css); js = c(a[, 'js'], js)

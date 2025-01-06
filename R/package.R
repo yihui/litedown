@@ -153,7 +153,7 @@ pkg_desc = function(name = detect_pkg()) {
     ), '\n</tbody></table>'
   )
 
-  new_asis(c(res, fuel(css = '@manual')))
+  new_asis(c(res, vest(css = '@manual')))
 }
 
 # format authors, adding URL and ORCID links as appropriate
@@ -376,7 +376,7 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
-  new_asis(c(toc, res, fuel(css = '@manual')))
+  new_asis(c(toc, res, vest(css = '@manual')))
 }
 
 run_examples = function(html, config, path) {

@@ -65,20 +65,20 @@ a
 
 If the source document is R Markdown instead of Markdown, an alternative way (in
 addition to configuring YAML metadata) to add assets is to call the function
-`litedown::fuel()` in a code chunk. You can either pass vectors of `css` / `js`
+`litedown::vest()` in a code chunk. You can either pass vectors of `css` / `js`
 asset names to the `css` / `js` arguments, or the `feature` names in @tab:assets
 to the `feature` argument, e.g.,
 
 ```` md
 ```{r, echo = FALSE}
 # add assets by feature
-litedown::fuel(feature = c('callout', 'copy-button'))
+litedown::vest(feature = c('callout', 'copy-button'))
 # or add css/js directly
-litedown::fuel(css = c('@callout', '@book'), js = '@callout')
+litedown::vest(css = c('@callout', '@book'), js = '@callout')
 ```
 ````
 
-You can call `fuel()` multiple times in a document to keep adding assets.
+You can call `vest()` multiple times in a document to keep adding assets.
 
 ## The default CSS {#sec:default}
 
