@@ -162,7 +162,15 @@ You may use GitHub Actions to automatically build and deploy package websites.
 The key is to call `litedown::fuse_site()`. I have provided [a simple GitHub
 action](https://github.com/yihui/litedown/blob/main/site/action.yml) in the
 **litedown** repository, and you can add a step `uses: yihui/litedown/site@HEAD`
-to your GitHub workflow to use it. Below is [the full
+to your GitHub workflow to use it.
+
+::: callout-note
+Remember to enable the deployment of GitHub Pages via GitHub Actions in your
+repository settings (`Settings` → `Pages` → `Build and deployment` → `Source` →
+`GitHub Actions`).
+:::
+
+Below is [the full
 workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/github-pages.yml)
 for building and publishing **litedown**'s site to GitHub Pages:
 
