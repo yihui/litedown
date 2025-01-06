@@ -5320,7 +5320,13 @@ separate <code>.Rmd</code> files, e.g., <code>pkg_desc()</code> in <code>index.R
 The key is to call <code>litedown::fuse_site()</code>. I have provided <a href="https://github.com/yihui/litedown/blob/main/site/action.yml">a simple GitHub
 action</a> in the
 <strong>litedown</strong> repository, and you can add a step <code>uses: yihui/litedown/site@HEAD</code>
-to your GitHub workflow to use it. Below is <a href="https://github.com/yihui/litedown/blob/main/.github/workflows/github-pages.yml">the full
+to your GitHub workflow to use it.</p>
+<div class="callout-note">
+<p>Remember to enable the deployment of GitHub Pages via GitHub Actions in your
+repository settings (<code>Settings</code> → <code>Pages</code> → <code>Build and deployment</code> → <code>Source</code> →
+<code>GitHub Actions</code>).</p>
+</div>
+<p>Below is <a href="https://github.com/yihui/litedown/blob/main/.github/workflows/github-pages.yml">the full
 workflow</a>
 for building and publishing <strong>litedown</strong>’s site to GitHub Pages:</p>
 <pre><code class="language-yaml" data-file="github-pages.yml" data-source="1">name: Build and deploy package site
@@ -5343,6 +5349,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: r-lib/actions/setup-r@HEAD
         with:
           use-public-rspm: true
