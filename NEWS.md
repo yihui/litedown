@@ -1,3 +1,5 @@
+# CHANGES IN litedown VERSION 0.6
+
 # CHANGES IN litedown VERSION 0.5
 
 - Added a wizard in `roam()` to create new `.Rmd`/`.md`/`.R` files with selected HTML features.

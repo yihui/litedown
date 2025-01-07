@@ -230,7 +230,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       }
     }
     # remove YAML in the preview mode since we only need the body
-    if (length(preview)) out = yaml_body(split_lines(out))$body  # TODO: use parse = FALSE
+    if (length(preview)) out = yaml_body(split_lines(out), parse = FALSE)$body
 
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div
@@ -261,8 +261,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
 
 # read the config file _litedown.yml
 yml_config = function(d) {
-  if (file_exists(cfg <- file.path(d, '_litedown.yml')))
-    xfun::yaml_load(read_utf8(cfg), use_yaml = FALSE)
+  if (file_exists(cfg <- file.path(d, '_litedown.yml'))) xfun::taml_file(cfg)
 }
 
 site_pattern = '[.][Rq]?md$'

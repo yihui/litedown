@@ -327,8 +327,7 @@ new_file = function(path, ext, type, css = NULL, js = NULL) {
   if (nrow(a)) m$output$html = list(meta = list(
     css = I(na_omit(a[, 'css'])), js = I(na_omit(a[, 'js']))
   ))
-  taml_save = getFromNamespace('taml_save', 'xfun')  # TODO: remove this hack
-  txt = c('---', taml_save(m), '---', '', 'Relax. I need some information first.')
+  txt = c('---', xfun::taml_save(m), '---', '', 'Relax. I need some information first.')
   if (ext == 'r') txt = paste("#'", split_lines(txt))
   write_utf8(txt, path)
   'view'

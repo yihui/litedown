@@ -101,8 +101,8 @@ map_args = function(
 
 # split YAML and body from text input, and normalize rmarkdown output formats in
 # YAML to litedown's formats
-yaml_body = function(text) {
-  res = xfun::yaml_body(text, use_yaml = FALSE)
+yaml_body = function(text, ...) {
+  res = xfun::yaml_body(text, use_yaml = FALSE, ...)
   if (!length(out <- res$yaml[['output']])) {
     # if the key 'format' is provided, normalize it to 'output'
     if (length(out <- res$yaml[['format']])) res$yaml$format = NULL else return(res)
