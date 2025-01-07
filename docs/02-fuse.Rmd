@@ -62,6 +62,20 @@ For the comma-separated syntax, the option value can be provided via arbitrary R
 code as long as it is syntactically valid. The code will be evaluated when the
 value is needed (i.e., the evaluation is lazy).
 
+::: callout-note
+You can write chunk options in both the chunk header and pipe comments, but
+please note that if you provide the same option in both places, the option in
+pipe comments will override the one in the chunk header, e.g.,
+
+```` md
+```{r, echo = TRUE}
+#| echo = FALSE, fig.height = 6
+```
+````
+
+The option `echo` will be `FALSE` for this chunk.
+:::
+
 Below are examples showing different ways to write chunk options:
 
 -   Options in the chunk header (the chunk label is `foo`, which can also be
