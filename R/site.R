@@ -261,7 +261,11 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
 
 # read the config file _litedown.yml
 yml_config = function(d) {
-  if (file_exists(cfg <- file.path(d, '_litedown.yml'))) xfun::taml_file(cfg)
+  if (file_exists(cfg <- file.path(d, '_litedown.yml'))) {
+    yaml = xfun::taml_file(cfg)
+    if (!is.null(yaml2 <- normalize_yaml(yaml))) yaml = yaml2
+    yaml
+  }
 }
 
 site_pattern = '[.][Rq]?md$'

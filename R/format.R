@@ -99,13 +99,18 @@ map_args = function(
   list(meta = meta, options = opts, ...)
 }
 
-# split YAML and body from text input, and normalize rmarkdown output formats in
-# YAML to litedown's formats
+# split YAML and body from text input
 yaml_body = function(text, ...) {
   res = xfun::yaml_body(text, use_yaml = FALSE, ...)
-  if (!length(out <- res$yaml[['output']])) {
+  if (!is.null(yaml <- normalize_yaml(res$yaml))) res$yaml = yaml
+  res
+}
+
+# normalize (rmarkdown) output formats in YAML to litedown's formats
+normalize_yaml = function(x) {
+  if (!length(out <- x[['output']])) {
     # if the key 'format' is provided, normalize it to 'output'
-    if (length(out <- res$yaml[['format']])) res$yaml$format = NULL else return(res)
+    if (length(out <- x[['format']])) x$format = NULL else return()
   }
   if (is.character(out)) out = set_names(vector('list', length(out)), out)
   if (!is.list(out))
@@ -117,8 +122,8 @@ yaml_body = function(text, ...) {
   }
   # normalize format names `(lite|mark)down::*_format` to `*`
   names(out) = gsub('^(lite|mark)down::+([^_]+)_.*', '\\2', names(out))
-  res$yaml$output = out
-  res
+  x$output = out
+  x
 }
 
 # get metadata from a certain field under an output format
