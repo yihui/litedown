@@ -723,7 +723,9 @@ multiple features.
 
 You can include arbitrary CSS frameworks and JS libraries in your documents, not
 limited to aforementioned ones in the GitHub repository `yihui/lite.js`. Below
-is a quick example of using the DataTables library to create interactive tables:
+is a quick example of using the
+[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library
+to create interactive tables:
 
 ```` md
 ---
@@ -731,8 +733,8 @@ title: Display Tables with the JS Library DataTables
 output:
   html:
     meta:
-      css: ["@default", "@npm/datatables/media/css/jquery.dataTables.min.css"]
-      js: ["@npm/jquery/dist/jquery", "@npm/datatables/media/js/jquery.dataTables.min.js"]
+      css: ["@default", "@npm/simple-datatables/dist/style.min.css"]
+      js: ["@npm/simple-datatables/dist/umd/simple-datatables.min.js"]
 ---
 
 ::: {#mtcars-table}
@@ -743,7 +745,7 @@ I(mtcars)
 
 ```{js}
 window.addEventListener('load', () => {
-  $('#mtcars-table table').DataTable();
+  new simpleDatatables.DataTable('#mtcars-table > table');
 });
 ```
 ````
