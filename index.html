@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.1">
+<meta name="generator" content="litedown 0.5.2">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.61/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.13.61/css/article.min.css">
@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-01-07</h3></div>
+<div class="date"><h3>2025-01-08</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -1054,6 +1054,16 @@ using the comma-separated syntax, you can wrap the comments freely.</p>
 <p>For the comma-separated syntax, the option value can be provided via arbitrary R
 code as long as it is syntactically valid. The code will be evaluated when the
 value is needed (i.e., the evaluation is lazy).</p>
+<div class="callout-note">
+<p>You can write chunk options in both the chunk header and pipe comments, but
+please note that if you provide the same option in both places, the option in
+pipe comments will override the one in the chunk header, e.g.,</p>
+<pre><code class="language-md">```{r, echo = TRUE}
+#| echo = FALSE, fig.height = 6
+```
+</code></pre>
+<p>The option <code>echo</code> will be <code>FALSE</code> for this chunk.</p>
+</div>
 <p>Below are examples showing different ways to write chunk options:</p>
 <ul>
 <li>
@@ -5024,14 +5034,16 @@ multiple features.</p>
 <h2 id="sec:arbitrary-assets"><span class="section-number">5.18</span> Include arbitrary CSS/JS</h2>
 <p>You can include arbitrary CSS frameworks and JS libraries in your documents, not
 limited to aforementioned ones in the GitHub repository <code>yihui/lite.js</code>. Below
-is a quick example of using the DataTables library to create interactive tables:</p>
+is a quick example of using the
+<a href="https://github.com/fiduswriter/simple-datatables/">simple-datatables</a> library
+to create interactive tables:</p>
 <pre><code class="language-md">---
 title: Display Tables with the JS Library DataTables
 output:
   html:
     meta:
-      css: [&quot;@default&quot;, &quot;@npm/datatables/media/css/jquery.dataTables.min.css&quot;]
-      js: [&quot;@npm/jquery/dist/jquery&quot;, &quot;@npm/datatables/media/js/jquery.dataTables.min.js&quot;]
+      css: [&quot;@default&quot;, &quot;@npm/simple-datatables/dist/style.min.css&quot;]
+      js: [&quot;@npm/simple-datatables/dist/umd/simple-datatables.min.js&quot;]
 ---
 
 ::: {#mtcars-table}
@@ -5042,7 +5054,7 @@ I(mtcars)
 
 ```{js}
 window.addEventListener('load', () =&gt; {
-  $('#mtcars-table table').DataTable();
+  new simpleDatatables.DataTable('#mtcars-table &gt; table');
 });
 ```
 </code></pre>
