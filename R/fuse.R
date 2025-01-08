@@ -529,9 +529,9 @@ fiss = function(input, output = '.R', text = NULL) {
     }
   }
   # if error occurs, print error location with a clickable file link
-  k = n - 1  # when exiting, k should be n instead
+  k = 0  # when exiting, k should be n + 1
   on_error = function() {
-    if (k == n) return()  # blocks have been successfully fused
+    if (k > n) return()  # blocks have been successfully fused
     p_bar(p_clr)
     ansi_link(input)
     message('Quitting from ', get_loc(nms[k]))
@@ -557,7 +557,7 @@ fiss = function(input, output = '.R', text = NULL) {
     if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, nms[k])
     p_bar(p_clr)
   }
-  k = n
+  k = n + 1
   res
 }
 
