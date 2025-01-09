@@ -28,14 +28,17 @@ pre > code {
   border-left: 2px solid;
   &:hover { opacity: inherit; }
 }
-.box, .figure, .table, table { margin: 1em auto; }
+.box, .figure, .table { margin: 1em auto; }
 div > .caption { padding: 1px 1em; }
 .figure { p:has(img), pre:has(svg) { text-align: center; } }
 .flex-col { display: flex; justify-content: space-between; }
-table {
+table :is(th, td) { padding: 5px; font-variant-numeric: tabular-nums; }
+table:not([class]) {
+  margin: 1em auto;
   border-top: 1px solid #666;
   thead th { border-bottom: 1px solid #ddd; }
-  th, td { padding: 5px; font-variant-numeric: tabular-nums; }
+}
+table:not([class]), .table-striped {
   thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
 }
 blockquote {
@@ -52,7 +55,7 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
   ul { list-style: none; padding-left: 1em; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
-table, .body h2 { border-bottom: 1px solid #666; }
+table:not([class]), .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
 span[class^="ref-number-"] { font-weight: bold; }
@@ -87,7 +90,7 @@ section.footnotes {
 
 @media print {
   body { max-width: 100%; }
-  tr, img { page-break-inside: avoid; }
+  tr, img { break-inside: avoid; }
 }
 @media only screen and (min-width: 992px) {
   body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
