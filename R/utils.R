@@ -16,7 +16,7 @@ counters = local({
 
 # use PCRE by default (which seems to handle multibyte chars better)
 gregexpr = function(..., perl = TRUE) base::gregexpr(..., perl = perl)
-
+attr = function(...) base::attr(..., exact = TRUE)  # exact attr() please
 `%|%` = function(x, y) if (length(x)) x else y
 if (getRversion() < '4.4.0') `%||%` = function(x, y) if (is.null(x)) y else x
 set_names = function(x, nm) {

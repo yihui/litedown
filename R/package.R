@@ -338,7 +338,10 @@ pkg_manual = function(
     # run examples
     if (is.list(examples)) {
       xfun::pkg_attach(name)
-      default = list(print = NA, dev.path = 'manual/', dev.args = list(width = 9, height = 7))
+      default = list(print = function(x, ...) {
+        if (inherits(x, 'xfun_raw_string')) record_print(x) else
+          xfun:::record_print.default(x)
+      }, dev.path = 'manual/', dev.args = list(width = 9, height = 7))
       txt = run_examples(txt, merge_list(default, examples), sans_ext(i))
     }
     # remove existing ID and class

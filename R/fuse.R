@@ -776,8 +776,13 @@ fuse_code = function(x, blocks) {
       } else {
         if (type == 'message') x = sub('\n$', '', x)
         if (!asis) {
-          x = split_lines(x)
-          x = paste0(opts$comment, x)  # comment out text output
+          opt2 = attr(x, 'opts')
+          cmt = opts$comment %||% opt2$comment %||% '#> '
+          if (cmt != '') {
+            x = split_lines(x)
+            x = paste0(cmt, x)  # comment out text output
+          }
+          if (is.null(a)) if (!is.null(a <- opt2$attr)) a = c(a, '.plain')
         }
       }
       if (asis) {
@@ -992,7 +997,7 @@ new_opts = function() {
 #' ls(opts)  # built-in options
 reactor = new_opts()
 reactor(
-  eval = TRUE, echo = TRUE, results = TRUE, comment = '#> ',
+  eval = TRUE, echo = TRUE, results = TRUE, comment = NULL,
   warning = TRUE, message = TRUE, error = NA, include = TRUE,
   strip.white = TRUE, collapse = FALSE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
@@ -1066,7 +1071,7 @@ eng_embed = function(x, ...) {
     if (length(f) == 0) return()
     s = read_all(f)
   }
-  opts_new = list(comment = NULL)  # don't comment out file content
+  opts_new = list(comment = '')  # don't comment out file content
   # use the filename extension as the default language name
   if (is.null(opts$attr.output) && nchar(lang <- file_ext(f[1])) > 1) {
     lang = sub('^R', '', lang)  # Rmd -> md, Rhtml -> html, etc.
