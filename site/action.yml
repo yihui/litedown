@@ -19,7 +19,7 @@ runs:
     - name: Install R packages
       shell: bash
       run: |
-        Rscript -e "install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')"
+        Rscript -e "install.packages(c('litedown', 'xfun'), repos = setdiff(c('https://yihui.r-universe.dev', 'https://cloud.r-project.org', getOption('repos')), '@CRAN@'))"
         R CMD build "${{ inputs.pkg-root }}"
         R CMD INSTALL *_*.tar.gz
 
