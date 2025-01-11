@@ -84,7 +84,7 @@ jobs:
           Rscript -e 'install.packages("xfun", repos="https://yihui.r-universe.dev")'
           Rscript -e 'litedown::fuse_book("docs")'
           cd docs; cp -r *.html ../gh-pages/; cd ../gh-pages
-          git config user.name "Yihui Xie"
-          git config user.email "xie@yihui.name"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add .
           git commit -m "update docs" && git push && curl -X POST ${{secrets.URL_DEPLOY_DOCS}} || true

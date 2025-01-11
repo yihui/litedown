@@ -1089,11 +1089,21 @@ jsd_version = local({
     }
     file.path(d, 'jsd_versions.rds')
   }
+  # update cache to a specific version
+  u_cache = function(info, pkg, version, file) {
+    info[[pkg]] = list(version = version, time = Sys.time())
+    saveRDS(info, file)
+  }
   # cache expires after one week by default
   v_cache = function(pkg, force, delta = getOption('litedown.jsdelivr.cache', 604800)) {
-    if (!force && file.exists(f <- p_cache())) {
-      info = readRDS(f)[[pkg]]
-      if (!is.null(t <- info$time) && Sys.time() - t <= delta) info$version
+    if (!isTRUE(force) && file.exists(f <- p_cache())) {
+      info = readRDS(f)
+      if (is.character(force)) {
+        u_cache(info, pkg, force, f)
+      } else {
+        info = info[[pkg]]
+        if (!is.null(t <- info$time) && Sys.time() - t <= delta) info$version
+      }
     }
   }
   # query version from jsdelivr api
@@ -1106,16 +1116,16 @@ jsd_version = local({
     if (length(v)) {
       if (dir_create(dirname(f <- p_cache()))) {
         info = if (file.exists(f)) readRDS(f) else list()
-        info[[pkg]] = list(version = v[1], time = Sys.time())
-        saveRDS(info, f)
+        u_cache(info, pkg, v[1], f)
       }
       v[1]
     }
   }
+  # force can be TRUE/FALSE/version number
   function(pkg, force = FALSE) {
-    if (!force && is.character(v <- vers[[pkg]])) return(v)
+    if (isFALSE(force) && is.character(v <- vers[[pkg]])) return(v)
     v = v_cache(pkg, force) %||% v_api(pkg)
-    vers[[pkg]] <<- if (length(v)) v[1] else ''
+    (vers[[pkg]] <<- if (length(v)) v[1] else '')
   }
 })
 
