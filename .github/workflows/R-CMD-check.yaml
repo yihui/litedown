@@ -51,11 +51,15 @@ jobs:
         run: |
           brew install --cask xquartz
 
+      - name: Whether to use codecov
+        run: |
+          echo "USE_R_CODECOV=${{ (runner.os == 'Linux' && matrix.config.r == 'release') && true || false }}" >> $GITHUB_ENV
+
       - uses: r-lib/actions/setup-r-dependencies@HEAD
         if: matrix.config.r >= '4.0'
         with:
           # install the package itself as we register vignette engine
-          extra-packages: any::rcmdcheck, local::.
+          extra-packages: any::rcmdcheck, local::. ${{ env.USE_R_CODECOV == 'true' && ', any::covr, any::xml2' || '' }}
           needs: check
 
       - uses: r-lib/actions/check-r-package@HEAD
@@ -71,6 +75,26 @@ jobs:
           cd ..
           R CMD build litedown
           R CMD check --as-cran --no-manual litedown_*.tar.gz
+
+      - name: Test coverage
+        if: success() && env.USE_R_CODECOV == 'true'
+        run: |
+          cov = covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          covr::to_cobertura(cov)
+          xfun::file_string('./cobertura.xml')
+        shell: Rscript {0}
+
+      - uses: codecov/codecov-action@v5
+        if: env.USE_R_CODECOV == 'true'
+        with:
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' }}
+          files: ./cobertura.xml
+          plugins: noop
+          disable_search: true
 
       - uses: actions/checkout@HEAD
         if: runner.os == 'macOS'
