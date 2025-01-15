@@ -1091,8 +1091,10 @@ jsd_version = local({
   }
   # update cache to a specific version
   u_cache = function(info, pkg, version, file) {
+    if (!grepl('^@', version)) version = paste0('@', version)
     info[[pkg]] = list(version = version, time = Sys.time())
     saveRDS(info, file)
+    version
   }
   # cache expires after one week by default
   v_cache = function(pkg, force, delta = getOption('litedown.jsdelivr.cache', 604800)) {
