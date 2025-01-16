@@ -51,8 +51,8 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
 .frontmatter { text-align: center; }
 #TOC {
   a { text-decoration: none; }
-  & > ul { padding: 0; }
   ul { list-style: none; padding-left: 1em; }
+  & > ul { padding: 0; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
 table:not([class]), .body h2 { border-bottom: 1px solid #666; }

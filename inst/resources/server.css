@@ -28,6 +28,11 @@ td .pencil {
   cursor: wait;
   opacity: .5;
 }
+@media screen {
+  .pagesjs .nav-path {
+    display: block;
+  }
+}
 @media print {
   .nav-path, .auto-numbers span[data-line-number] {
     display: none;
