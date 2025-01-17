@@ -7,8 +7,16 @@ pkg_name = litedown:::detect_pkg()
 res = tools::getVignetteInfo(pkg_name)
 res = if (nrow(res)) {
   file.copy(system.file('doc', package = pkg_name), './', recursive = TRUE)
+  vigs = res[, 'PDF']
+  # redirect doc/index.html to article.html
+  if (!'index.html' %in% vigs) writeLines(
+    "<script>location.href = location.href.replace(/\\/[^\\/]*$/, '') + '/../articles.html';</script>", 'doc/index.html'
+  )
+  # clean up .R files
+  file.remove(file.path('doc', setdiff(res[, 'R'], '')))
+  src = res[, 'File']
   # TODO: show excerpts of vignettes if possible
-  sprintf('- [%s](doc/%s)\n', res[, 'Title'], res[, 'PDF'])
+  sprintf('- [%s](doc/%s) (source: [%s](doc/%s))\n', res[, 'Title'], vigs, src, src)
 } else 'This package has no vignettes.'
 xfun::raw_string(res)
 ```
