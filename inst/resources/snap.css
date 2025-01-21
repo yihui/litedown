@@ -14,7 +14,7 @@ body {
   padding: 0;
 }
 a { color: #eb4a47; }
-:not(pre) > code { background-color: #fdfded; }
+:not(pre) > code { background: #fdfded; }
 #TOC { columns: 2; }
 #TOC::before {
   font-size: 1.3em;
@@ -32,13 +32,13 @@ a { color: #eb4a47; }
   font: .7em monospace;
 }
 .inverse {
-  background-color: #eee;
+  background: #eee;
   filter: invert(1);
 }
 .center { text-align: center; }
 .slide-container h2 .section-number {
   display: inline-block;
-  background-color: #666;
+  background: #666;
   color: white;
   padding: 0 .1em;
   margin-right: .3em;
@@ -70,7 +70,7 @@ html:fullscreen {
   }
   .slide-mode {
     font-size: 2em;
-    background-color: #d7d8d2;
+    background: #d7d8d2;
     scale: var(--slide-scale);
     margin-top: var(--slide-top);
   }
@@ -79,7 +79,7 @@ html:fullscreen {
     width: calc(100vh / var(--slide-ratio) / var(--slide-scale));
     box-shadow: 0 0 2em #888;
     clip-path: inset(0 -2em 0 -2em);
-    background-color: white;
+    background: white;
     scroll-snap-align: start;
   }
   li li { font-size: .9em; }
