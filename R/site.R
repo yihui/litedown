@@ -28,7 +28,7 @@
 #' - `newfile`: Build an input file if it does not have a `.html` output file.
 #'
 #' - `outdated`: Rebuild an input file if the modification time of its `.html`
-#' output file is newer than the input.
+#' output file is older than the input.
 #' @param input The root directory of the site, or a vector of input file paths.
 #' @return Output file paths (invisibly).
 #' @export
