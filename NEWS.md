@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.6
 
+- Added a function `get_input()` to get the input file path to `fuse()` (thanks, @MichaelChirico, #67).
+
 - Fixed a bug that `fuse()` fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, @kevinushey, yihui/knitr#2387).
 
 # CHANGES IN litedown VERSION 0.5

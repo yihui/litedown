@@ -341,12 +341,21 @@ convert_knitr = function(input) {
   write_utf8(x, input)
 }
 
+#' Get the input file path of `fuse()`
+#'
+#' A helper function to return the input file path of [fuse()] when called
+#' inside a code chunk.
+#' @return A character string, or `NULL` if the input is not a file (e.g., when
+#'   using the `text` argument of `fuse()`).
+#' @export
+get_input = function() .env$input
+
 # return a string to indicate the error location
 get_loc = function(label) {
   l = .env$source_pos; n = length(l)
   if (n == 4) l = sprintf('#%d:%d-%d:%d', l[1], l[2], l[3], l[4])  # row1:col1-row2:col2
   if (n == 2) l = sprintf('#%d-%d', l[1], l[2])  # row1-row2
-  paste0(.env$input, l, if (label != '') paste0(' [', label, ']'))
+  paste0(.env$input2 %|% .env$input, l, if (label != '') paste0(' [', label, ']'))
 }
 
 # save line numbers in .env to be used in error messages
@@ -564,7 +573,7 @@ fiss = function(input, output = '.R', text = NULL) {
 # add ANSI link on input path if supported
 ansi_link = function(x) {
   if (length(x) && isTRUE(as.logical(Sys.getenv('RSTUDIO_CLI_HYPERLINKS'))))
-    .env$input = sprintf(
+    .env$input2 = sprintf(
       '\033]8;%s;file://%s\a%s\033]8;;\a', link_pos(), normalize_path(x), x
     )
 }
