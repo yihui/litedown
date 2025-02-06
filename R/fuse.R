@@ -890,6 +890,26 @@ new_asis = function(x, raw = FALSE) {
   if (raw) raw_string(res) else res
 }
 
+#' Mark a character vector as raw output
+#'
+#' This function should be called inside a code chunk, and its effect is the
+#' same as the chunk option `results = "asis"`. The input character vector will
+#' be written verbatim to the output (and interpreted as Markdown).
+#' @param x A character vector (each element will be treated as a line).
+#' @param format An output format name, e.g., `html` or `latex`. If provided,
+#'   `x` will be wrapped in a fenced code block, e.g., ```` ```{=html}````.
+#' @return A character vector with a special class to indicate that it should be
+#'   treated as raw output.
+#' @export
+#' @examples
+#' litedown::raw_text(c('**This**', '_is_', '[Markdown](#).'))
+#' litedown::raw_text('<b>Bold</b>', 'html')
+#' litedown::raw_text('\\textbf{Bold}', 'latex')
+raw_text = function(x, format = NULL) {
+  if (length(fmt <- sprintf('=%s', format)) == 1) x = fenced_block(x, fmt)
+  new_asis(x, TRUE)
+}
+
 is_plot = function(x) inherits(x, 'record_plot')
 
 fuse_text = function(x) {

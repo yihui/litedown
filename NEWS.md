@@ -2,6 +2,8 @@
 
 - Added a function `get_context()` to query the `fuse()` context such as the input file path or the output format (thanks, @MichaelChirico #67, @vincentarelbundock #70).
 
+- Added a function `raw_text()` to output raw text content in a code chunk (thanks, @vincentarelbundock, #69).
+
 - Fixed a bug that `fuse()` fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, @kevinushey, yihui/knitr#2387).
 
 # CHANGES IN litedown VERSION 0.5
