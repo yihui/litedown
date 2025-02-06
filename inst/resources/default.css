@@ -28,18 +28,19 @@ pre > code {
   border-left: 2px solid;
   &:hover { opacity: inherit; }
 }
-.box, .figure, .table { margin: 1em auto; }
+.box, .figure, .table, table { margin: 1em auto; }
 div > .caption { padding: 1px 1em; }
 .figure { p:has(img), pre:has(svg) { text-align: center; } }
 .flex-col { display: flex; justify-content: space-between; }
-table :is(th, td) { padding: 5px; font-variant-numeric: tabular-nums; }
-table:not([class]) {
-  margin: 1em auto;
-  border-top: 1px solid #666;
-  thead th { border-bottom: 1px solid #ddd; }
-}
-table:not([class]), .table-striped {
+table {
+  &:only-child:not(.table > *) { margin: auto; }
+  th, td { padding: 5px; font-variant-numeric: tabular-nums; }
   thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+  thead th { border-bottom: 1px solid #ddd; }
+  &:not(.datatable-table) {
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
+  }
 }
 blockquote {
   color: #666;
@@ -55,7 +56,7 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
   & > ul { padding: 0; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
-table:not([class]), .body h2 { border-bottom: 1px solid #666; }
+.body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
 span[class^="ref-number-"] { font-weight: bold; }

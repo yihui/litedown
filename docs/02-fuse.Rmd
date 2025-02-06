@@ -1300,7 +1300,7 @@ The `mermaid` engine can be used to draw diagrams with
 
 ```` md
 ```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
-flowchart TD;
+flowchart TD
     A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
     A --> C[CWEB]
     D --> F[litedown]

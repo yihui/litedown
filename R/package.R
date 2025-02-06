@@ -147,7 +147,7 @@ pkg_desc = function(name = detect_pkg()) {
   }
   d = unlist(d)
   res = paste0(
-    '<table class="table-full table-striped"><tbody>\n', paste0(
+    '<table class="table-full"><tbody>\n', paste0(
       '<tr>', paste0('\n<td>', names(d), '</td>'),
       paste0('\n<td>', d, '</td>'), '\n</tr>', collapse = '\n'
     ), '\n</tbody></table>'
@@ -378,7 +378,7 @@ pkg_manual = function(
   res = gsub('<div class="sourceCode ([^"]+)"><pre>(.+?)</pre></div>', '<pre><code class="language-\\1">\\2</code></pre>', res)
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
-  res = gsub('<table>', '<table class="table-full table-striped">', res, fixed = TRUE)
+  res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
   new_asis(c(toc, res, vest(css = '@manual')))
 }
 
