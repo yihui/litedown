@@ -341,14 +341,19 @@ convert_knitr = function(input) {
   write_utf8(x, input)
 }
 
-#' Get the input file path of `fuse()`
+#' Get the `fuse()` context
 #'
-#' A helper function to return the input file path of [fuse()] when called
-#' inside a code chunk.
-#' @return A character string, or `NULL` if the input is not a file (e.g., when
-#'   using the `text` argument of `fuse()`).
+#' A helper function to query the [fuse()] context (such as the input file path
+#' or the output format name) when called inside a code chunk.
+#' @param item The name of the context item.
+#' @return If the `item` is provided, return its value in the context. If
+#'   `NULL`, the whole context (an environment) is returned.
 #' @export
-get_input = function() .env$input
+#' @examples
+#' litedown::get_context('input')
+#' litedown::get_context('format')
+#' names(litedown::get_context())  # all available items
+get_context = function(item = NULL) if (is.null(item)) .env else .env[[item]]
 
 # return a string to indicate the error location
 get_loc = function(label) {
@@ -449,8 +454,8 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
       if (is.character(.env$wd.out)) .env$wd.out else '.'
     } else dirname(output_base)
   )
-  # store the environment
-  .env$global = envir
+  # store the environment and output format
+  .env$global = envir; .env$format = format
 
   # set default device to 'cairo_pdf' for LaTeX output, and 'png' for other formats
   if (is.null(opts$dev)) {
