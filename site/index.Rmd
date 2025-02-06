@@ -8,6 +8,12 @@ litedown::reactor(echo = FALSE)
 # package description
 pkg_name = litedown:::detect_pkg()
 pkg_path = attr(pkg_name, 'path')
+# if man/figures exists and used, copy it to current dir
+fig = file.path(pkg_path, 'man/figures')
+if (!xfun::same_path('.', pkg_path) && dir.exists(fig)) {
+  xfun::dir_create('man')
+  file.copy(fig, 'man', recursive = TRUE)
+}
 litedown::pkg_desc(pkg_name)
 ```
 
@@ -18,12 +24,6 @@ if (file.exists(readme <- file.path(pkg_path, 'README.md'))) {
   i = which(x == '<!-- badges: start -->')
   # remove lines before badges since they usually contain duplicated info (e.g., title)
   if (length(i)) x = x[-seq_len(i[1] - 1)]
-  # if man/figures exists and used, copy it to current dir
-  fig = file.path(pkg_path, fig_man <- 'man/figures')
-  if (any(grepl(fig_man, x)) && dir.exists(fig)) {
-    xfun::dir_create('man')
-    file.copy(fig, 'man', recursive = TRUE)
-  }
   xfun::raw_string(x)
 }
 ```
@@ -33,5 +33,5 @@ if (file.exists(readme <- file.path(pkg_path, 'README.md'))) {
 To cite the package **`{r} pkg_name`** in publications, please use:
 
 ```{r, warning = FALSE}
-litedown::pkg_citation()
+litedown::pkg_citation(pkg_name)
 ```

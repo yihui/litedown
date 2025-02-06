@@ -371,6 +371,7 @@ pkg_manual = function(
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
   res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
   res = gsub('<h3>', '<h3 class="unnumbered unlisted">', res, fixed = TRUE)
+  res = gsub('<code style="[^"]+">', '<code>', res)
   res = gsub('<code id="[^"]+">', '<code>', res)
   res = gsub('(<code[^>]*>)\\s+', '\\1', res)
   res = gsub('\\s+(</code>)', '\\1', res)
@@ -378,6 +379,7 @@ pkg_manual = function(
   res = gsub('<div class="sourceCode ([^"]+)"><pre>(.+?)</pre></div>', '<pre><code class="language-\\1">\\2</code></pre>', res)
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
+  res = gsub('<img src="../help/figures/', '<img src="man/figures/', res, fixed = TRUE)
   res = gsub('<table>', '<table class="table-full">', res, fixed = TRUE)
   new_asis(c(toc, res, vest(css = '@manual')))
 }
