@@ -3,7 +3,7 @@ title: "`{r} pkg_name`: `{r} packageDescription(pkg_name, fields = 'Title')`"
 date: "`{r} Sys.Date()`"
 ---
 
-```{r, order = 0}
+```{r, order = 0, include = FALSE}
 litedown::reactor(echo = FALSE)
 # package description
 pkg_name = litedown:::detect_pkg()
@@ -14,6 +14,9 @@ if (!xfun::same_path('.', pkg_path) && dir.exists(fig)) {
   xfun::dir_create('man')
   file.copy(fig, 'man', recursive = TRUE)
 }
+```
+
+```{r}
 litedown::pkg_desc(pkg_name)
 ```
 
