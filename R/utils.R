@@ -158,7 +158,13 @@ is_R = function(input, text) {
 # make an output filename with the format and input name
 auto_output = function(input, output, format = NULL) {
   # change NULL to a filename extension
-  if (is.null(output) && !is.null(format)) output = md_formats[format]
+  if (is.null(output) && !is.null(format)) {
+    output = md_formats[format]
+    if (is.na(output)) stop(
+      "The output format '", format, "' is not supported (must be ",
+      xfun::join_words(names(md_formats), and = ' or ', before = "'"), ")."
+    )
+  }
   # non-character `output` means the output shouldn't be written to a file
   if (is.character(output)) {
     if (startsWith(output, 'markdown:')) output = 'markdown'
