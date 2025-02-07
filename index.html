@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.8">
+<meta name="generator" content="litedown 0.5.9">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.3/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.3/css/article.min.css">
@@ -87,13 +87,13 @@
 <li><a href="#sec:option-error"><span class="section-number">2.1.5.10</span> <code>error</code>: error behavior</a></li>
 <li><a href="#sec:option-eval"><span class="section-number">2.1.5.11</span> <code>eval</code>: code evaluation</a></li>
 <li><a href="#sec:option-fig"><span class="section-number">2.1.5.12</span> <code>fig.*</code>: figure options</a></li>
-<li><a href="#sec:option-include"><span class="section-number">2.1.5.13</span> <code>include</code>: visibility of whole code chunk</a></li>
-<li><a href="#sec:option-label"><span class="section-number">2.1.5.14</span> <code>label</code>: chunk label</a></li>
-<li><a href="#sec:option-message"><span class="section-number">2.1.5.15</span> <code>message</code>: message behavior</a></li>
-<li><a href="#sec:option-order"><span class="section-number">2.1.5.16</span> <code>order</code>: order of execution</a></li>
-<li><a href="#sec:option-print"><span class="section-number">2.1.5.17</span> <code>print</code>: printing function</a></li>
-<li><a href="#sec:option-purl"><span class="section-number">2.1.5.18</span> <code>purl</code>: code extraction</a></li>
-<li><a href="#sec:option-ref-label"><span class="section-number">2.1.5.19</span> <code>ref.label</code>: chunk references</a></li>
+<li><a href="#sec:option-fill"><span class="section-number">2.1.5.13</span> <code>fill</code>: code interpolation and inline chunk references</a></li>
+<li><a href="#sec:option-include"><span class="section-number">2.1.5.14</span> <code>include</code>: visibility of whole code chunk</a></li>
+<li><a href="#sec:option-label"><span class="section-number">2.1.5.15</span> <code>label</code>: chunk label</a></li>
+<li><a href="#sec:option-message"><span class="section-number">2.1.5.16</span> <code>message</code>: message behavior</a></li>
+<li><a href="#sec:option-order"><span class="section-number">2.1.5.17</span> <code>order</code>: order of execution</a></li>
+<li><a href="#sec:option-print"><span class="section-number">2.1.5.18</span> <code>print</code>: printing function</a></li>
+<li><a href="#sec:option-purl"><span class="section-number">2.1.5.19</span> <code>purl</code>: code extraction</a></li>
 <li><a href="#sec:option-results"><span class="section-number">2.1.5.20</span> <code>results</code>: text output behavior</a></li>
 <li><a href="#sec:option-strip-white"><span class="section-number">2.1.5.21</span> <code>strip.white</code>: leading / trailing blank lines in code</a></li>
 <li><a href="#sec:option-tab"><span class="section-number">2.1.5.22</span> <code>tab.*</code>: table options</a></li>
@@ -681,7 +681,7 @@ because environments in R are mutable. I cannot explain how awkward <strong>knit
 <h3 id="sec:non-linear-order-of-execution">Non-linear order of execution</h3>
 <p>A document does not have to be compiled in the linear order. With the chunk
 option <code>order</code>, you can specify code chunks and inline code expressions to be
-executed in an arbitrary order (<a class="cross-ref-sec" href="#sec:option-order">2.1.5.16</a>). For example, if you have an
+executed in an arbitrary order (<a class="cross-ref-sec" href="#sec:option-order">2.1.5.17</a>). For example, if you have an
 abstract in the beginning of a document, and the abstract needs to use a number
 calculated at the end of the document, you can let the abstract be compiled in
 the end, although it appears earlier in the document.</p>
@@ -953,7 +953,7 @@ that it can also contain code to be evaluated, such as the variable <code>who</c
 the function call <code>Sys.Date()</code>.</p>
 <p>The document has two code chunks in triple-backtick (<code>```</code>) fences. The
 first code chunk contains a chunk option <code>order = 0</code> (you may see
-<a class="cross-ref-sec" href="#sec:option-order">2.1.5.16</a> for its meaning later). You can do any computing in code
+<a class="cross-ref-sec" href="#sec:option-order">2.1.5.17</a> for its meaning later). You can do any computing in code
 chunks and generate text results or graphics.</p>
 <p>There are two text chunks: one between the two code chunks, and one after the
 second code chunk. These text chunks contain inline R code expressions in
@@ -1950,14 +1950,149 @@ Write plot files to a different folder:
 plot(cars)
 ```
 </code></pre>
-<h4 id="sec:option-include"><span class="section-number">2.1.5.13</span> <code>include</code>: visibility of whole code chunk</h4>
+<h4 id="sec:option-fill"><span class="section-number">2.1.5.13</span> <code>fill</code>: code interpolation and inline chunk references</h4>
+<p>The source code in a chunk can be dynamically constructed via interpolation. Two
+types of placeholders are supported, which will be filled out by the character
+strings associated with them if the chunk option <code>fill = TRUE</code> (the default):</p>
+<ol>
+<li>
+<p><code>`&lt;label&gt;`</code>: embed the source code of another chunk into the current
+chunk via the label of that chunk.</p>
+</li>
+<li>
+<p><code>`{code}`</code>: run R code to return a string to be inserted into the
+current code chunk.</p>
+</li>
+</ol>
+<p>Inline chunk references via <code>`&lt;label&gt;`</code> make it possible to avoid copying
+code from one chunk to another manually. You can compose code freely from other
+chunks. Generating code dynamically via <code>`{code}`</code> offers even more
+flexibility, since the code does not have to come from other code chunks but can
+be from anything. It is similar to the chunk option <code>code</code> (<a class="cross-ref-sec" href="#sec:option-code">2.1.5.5</a>),
+but the placeholder syntax may make the chunk source more readable in the source
+document.</p>
+<p>These placeholders can be used anywhere in a code chunk. For <code>`&lt;label&gt;`</code>, if
+it is on a line that is indented, and the referred chunk has multiple lines, all
+subsequent lines will be indented by the same amount of white spaces. For
+example, suppose that we have a chunk with the label <code>chunk-a</code>:</p>
+<pre><code class="language-md">```{r, chunk-a}
+{
+  cat('x is positive')
+}
+```
+</code></pre>
+<p>and we embed it in another chunk (the line is indented by four spaces):</p>
+<pre><code class="language-md">```{r, chunk-b}
+f = function(x) {
+    if (x &gt; 0) `&lt;chunk-a&gt;`
+}
+```
+</code></pre>
+<p>The source code of this chunk will be resolved to:</p>
+<pre><code class="language-r">f = function(x) {
+    if (x &gt; 0) {
+      cat('x is positive')
+    }
+}
+</code></pre>
+<p>Note that the whole function body above has been indented by four spaces.</p>
+<p>Inline chunk references can be recursive. For example, <code>chunk-a</code> may embed
+<code>chunk-b</code> while <code>chunk-b</code> contains more references to other chunks. Of course,
+the recursion must be finite (e.g., a chunk cannot reference itself).</p>
+<p>The <code>`{code}`</code> placeholder can be useful when you want to run or present the
+code differently according to different scenarios.</p>
+<pre><code class="language-md" data-file="015.Rmd">---
+title: &quot;Fill out references in code chunks&quot;
+---
+
+Define `chunk-a` that includes a reference to `chunk-b`:
+
+```{r, chunk-a, eval = FALSE, echo = FALSE}
+x = runif(1); y = runif(1)
+`&lt;chunk-b&gt;`
+```
+
+```{r, chunk-b, eval = FALSE, echo = FALSE}
+if (x^2 + y^2 &lt;= 1) {
+  n = n + 1
+}
+```
+
+```{r, echo = FALSE}
+N = 10000
+```
+
+Embed `chunk-a` in a function body:
+
+```{r}
+f = function() {
+  n = 0
+  for (i in 1:`{N}`) {
+    `&lt;chunk-a&gt;`
+  }
+  n/`{N}` * 4
+}
+abs(f() - pi) &lt;= 0.1  # is it close to pi?
+```
+
+We can generate code dynamically in any code chunk, not limited to R chunks, e.g.,
+
+```{js, eval = FALSE}
+const data = `{ xfun::tojson(iris[1:5, 1:2]) }`;
+Object.keys(data);  // column names
+```
+</code></pre>
+<pre><code class="language-md" data-file="015.md">.
+.
+.
+Embed `chunk-a` in a function body:
+
+``` {.r}
+f = function() {
+  n = 0
+  for (i in 1:10000) {
+    x = runif(1); y = runif(1)
+    if (x^2 + y^2 &lt;= 1) {
+      n = n + 1
+    }
+  }
+  n/10000 * 4
+}
+abs(f() - pi) &lt;= 0.1  # is it close to pi?
+```
+
+```
+#&gt; [1] TRUE
+```
+
+We can generate code dynamically in any code chunk, not limited to R chunks, e.g.,
+
+``` {.js}
+const data = {
+  &quot;Sepal.Length&quot;: [5.1, 4.9, 4.7, 4.6, 5],
+  &quot;Sepal.Width&quot;: [3.5, 3, 3.2, 3.1, 3.6]
+};
+Object.keys(data);  // column names
+```
+</code></pre>
+<p>In the above example, we are simulating the value of \(\pi\), but the number of
+simulations <code>N</code> is dynamic. We can generate different copies of code by changing
+the value of <code>N</code> (note that <code>N</code> can be defined outside the document before you
+run <code>litedown::fuse()</code>). For example, if you are an R package developer and you
+have a package vignette that involves time-consuming simulations, you may want
+to reduce the number of simulations during <code>R CMD check</code> via:</p>
+<pre><code class="language-r">N = if (xfun::is_R_CMD_check()) 10 else 100000
+</code></pre>
+<p>The above example also showed the possibility of passing R data to a JavaScript
+code chunk.</p>
+<h4 id="sec:option-include"><span class="section-number">2.1.5.14</span> <code>include</code>: visibility of whole code chunk</h4>
 <p>When you want to hide the full output of a code chunk, you can use the option
 <code>include = FALSE</code>, instead of trying to hide elements individually like
 <code>echo = FALSE</code> (source), <code>results = 'hide'</code> (text output), <code>message = FALSE</code>,
 and <code>warning = FALSE</code>, etc.</p>
 <p>Note that even with <code>include = FALSE</code>, the code is still executed, unless you
 also set <code>eval = FALSE</code>.</p>
-<h4 id="sec:option-label"><span class="section-number">2.1.5.14</span> <code>label</code>: chunk label</h4>
+<h4 id="sec:option-label"><span class="section-number">2.1.5.15</span> <code>label</code>: chunk label</h4>
 <p>The chunk label is an identifier of a code chunk. It is used in plot/cache
 filenames and figure/table cross-references. If two code chunks have the same
 label, their plots and cache will overwrite each other, which may lead to
@@ -2013,7 +2148,7 @@ example, the labels for the following code chunks will be <code>chunk-a</code>, 
 ```{mermaid, label = 'project-flowchart'}
 ```
 </code></pre>
-<h4 id="sec:option-message"><span class="section-number">2.1.5.15</span> <code>message</code>: message behavior</h4>
+<h4 id="sec:option-message"><span class="section-number">2.1.5.16</span> <code>message</code>: message behavior</h4>
 <p>The <code>message</code> option is similar to the <code>error</code> option (<a class="cross-ref-sec" href="#sec:option-error">2.1.5.10</a>) but is
 for handling <code>message()</code>. Possible values are:</p>
 <ul>
@@ -2028,7 +2163,7 @@ default).</p>
 <p><code>FALSE</code>: Suppress messages.</p>
 </li>
 </ul>
-<h4 id="sec:option-order"><span class="section-number">2.1.5.16</span> <code>order</code>: order of execution</h4>
+<h4 id="sec:option-order"><span class="section-number">2.1.5.17</span> <code>order</code>: order of execution</h4>
 <p>Code chunks and inline code expressions do not have to be executed sequentially.
 The chunk option <code>order</code> can be used to customize the order of execution. It
 takes a numeric value and defaults to the chunk number (e.g., <code>3</code> for the 3rd
@@ -2103,7 +2238,7 @@ m = mean(x$mpg)
 </code></pre>
 <p>You can change the value of <code>n_cyl</code> to 4 or 6, re-run the example, and get a new
 report of cars with 4 or 6 cylinders.</p>
-<h4 id="sec:option-print"><span class="section-number">2.1.5.17</span> <code>print</code>: printing function</h4>
+<h4 id="sec:option-print"><span class="section-number">2.1.5.18</span> <code>print</code>: printing function</h4>
 <p>In a code chunk, if the value of an expression is visible, it will be printed.
 You may read the help pages <code>?invisible</code> and <code>?withVisible</code> to learn more about
 the visibility of values.</p>
@@ -2181,7 +2316,7 @@ the above example. However, please note that this “universal” argument list 
 not work for all print functions or methods—some arguments may be ignored, and
 some may cause errors if the print function does not have certain arguments. It
 is often better to define <code>print.args</code> by class names.</p>
-<h4 id="sec:option-purl"><span class="section-number">2.1.5.18</span> <code>purl</code>: code extraction</h4>
+<h4 id="sec:option-purl"><span class="section-number">2.1.5.19</span> <code>purl</code>: code extraction</h4>
 <p>When using <code>litedown::fiss()</code> to extract code from a document, all code chunks
 are extracted by default. To skip a code chunk, set <code>purl = FALSE</code> for that
 chunk.</p>
@@ -2205,58 +2340,6 @@ if (TRUE) {
 </code></pre>
 <p>You can see that the <code>setup</code> chunk with the option <code>purl = FALSE</code> was omitted in
 the R script output (generated by <code>fiss()</code>).</p>
-<h4 id="sec:option-ref-label"><span class="section-number">2.1.5.19</span> <code>ref.label</code>: chunk references</h4>
-<p>A code chunk can reuse code from other code chunks via the option <code>ref.label</code>.
-It takes a vector of chunk labels, and will copy code from these chunks.</p>
-<p>Using chunk references makes it possible to avoid copying code from one chunk to
-another manually. You can also compose code freely from other chunks.</p>
-<pre><code class="language-md" data-file="015.Rmd">---
-title: Reference chunks by labels
----
-
-We define a function `abs2()`:
-
-```{r, chunk-a, eval = FALSE}
-abs2 = function(x)
-```
-
-Return `x` if `x &gt;= 0`, otherwise return `-x`:
-
-```{r, chunk-b, eval=FALSE}
-  ifelse(x &gt;= 0, x, -x)
-```
-
-The full function (combining `chunk-a` and `chunk-b`):
-
-```{r, ref.label = c('chunk-a', 'chunk-b')}
-```
-
-See if it works:
-
-```{r}
-abs2(c(1, -2, 0, -100))
-```
-</code></pre>
-<pre><code class="language-md" data-file="015.md">.
-.
-.
-The full function (combining `chunk-a` and `chunk-b`):
-
-``` {.r}
-abs2 = function(x)
-  ifelse(x &gt;= 0, x, -x)
-```
-
-See if it works:
-
-``` {.r}
-abs2(c(1, -2, 0, -100))
-```
-
-```
-#&gt; [1]   1   2   0 100
-```
-</code></pre>
 <h4 id="sec:option-results"><span class="section-number">2.1.5.20</span> <code>results</code>: text output behavior</h4>
 <p>Text output from code chunks can be shown verbatim, hidden, or just written out
 as is. The behavior is controlled by the option <code>results</code>, with possible values:</p>
@@ -2354,7 +2437,7 @@ Keep blank lines at the beginning/end:
 ```
 </code></pre>
 <h4 id="sec:option-tab"><span class="section-number">2.1.5.22</span> <code>tab.*</code>: table options</h4>
-<p>Unless the default <code>print</code> option (<a class="cross-ref-sec" href="#sec:option-print">2.1.5.17</a>) is changed, common
+<p>Unless the default <code>print</code> option (<a class="cross-ref-sec" href="#sec:option-print">2.1.5.18</a>) is changed, common
 rectangular data objects are printed to Markdown tables through
 <code>xfun::record_print()</code>, and tables are generated by a simple function
 <code>xfun::md_table()</code>, which is even much simpler than <code>knitr::kable()</code>.</p>
@@ -2473,7 +2556,7 @@ most 4 rows and 6 columns:</p>
 you may set <code>options(xfun.md_table.limit = Inf)</code> or <code>limit = Inf</code> in
 <code>print.args</code> or wrap the data object in <code>I()</code>.</p>
 <p>Please read the help page <code>?xfun::md_table</code> to learn the possible arguments, and
-also see <a class="cross-ref-sec" href="#sec:option-print">2.1.5.17</a> to learn how the chunk option <code>print.args</code> works.</p>
+also see <a class="cross-ref-sec" href="#sec:option-print">2.1.5.18</a> to learn how the chunk option <code>print.args</code> works.</p>
 <h4 id="sec:option-time"><span class="section-number">2.1.5.23</span> <code>time</code>: code timing</h4>
 <p>When the chunk option <code>time</code> is set to <code>TRUE</code>, the execution time of the chunk
 will be recorded. You can print out <code>litedown::timing_data()</code> at the end of a
@@ -2483,7 +2566,7 @@ quickly know which code chunks are slow.</p>
 chunks in the document by setting <code>litedown::reactor(time = TRUE)</code> in the first
 code chunk.</p>
 <h4 id="sec:option-verbose"><span class="section-number">2.1.5.24</span> <code>verbose</code>: printing verbosity</h4>
-<p>By default, invisible values are not printed (<a class="cross-ref-sec" href="#sec:option-print">2.1.5.17</a>). However, you
+<p>By default, invisible values are not printed (<a class="cross-ref-sec" href="#sec:option-print">2.1.5.18</a>). However, you
 can use the chunk option <code>verbose</code> to change this behavior. Its possible values
 are:</p>
 <ul>
@@ -2916,7 +2999,7 @@ multiple choices for this device). I hate the
 devices later. This feature is not worth the effort due to the daunting
 complexity of implementation, not to mention that it doesn’t always work. If
 you need multiple file formats for the same plot in <strong>litedown</strong>, you should
-start a new chunk with the same code (<a class="cross-ref-sec" href="#sec:option-ref-label">2.1.5.19</a>) and a different
+start a new chunk with the same code (<a href="#sec:option-ref-label">@sec:option-ref-label</a>) and a different
 <code>dev</code> option instead.</p>
 </li>
 <li>
@@ -2944,12 +3027,12 @@ out code (<a class="cross-ref-sec" href="#sec:skipped-chunks">2.1.3</a>).</p>
 <li>
 <p>All code chunks in <strong>knitr</strong> are executed in the linear order, and
 <strong>litedown</strong> can execute code in an arbitrary custom order
-(<a class="cross-ref-sec" href="#sec:option-order">2.1.5.16</a>).</p>
+(<a class="cross-ref-sec" href="#sec:option-order">2.1.5.17</a>).</p>
 </li>
 <li>
 <p><strong>knitr</strong> supports chunk hooks and output hooks; <strong>litedown</strong> doesn’t
 support hooks but the <code>attr.*</code> (<a class="cross-ref-sec" href="#sec:option-attr">2.1.5.1</a>) and <code>print</code>
-(<a class="cross-ref-sec" href="#sec:option-print">2.1.5.17</a>) options have provided some flexibility in customizing
+(<a class="cross-ref-sec" href="#sec:option-print">2.1.5.18</a>) options have provided some flexibility in customizing
 the chunk output.</p>
 </li>
 <li>
@@ -5512,6 +5595,10 @@ options include:
 <p>To build package vignettes with <strong>litedown</strong>, first add this to the package
 <code>DESCRIPTION</code> file:</p>
 <pre><code class="language-yaml">VignetteBuilder: litedown
+</code></pre>
+<p>If your package does not require <strong>litedown</strong> as a hard dependency (specified in
+<code>Depends</code> or <code>Imports</code>), you will need to add it to <code>Suggests</code> in <code>DESCRIPTION</code>:</p>
+<pre><code class="language-yaml">Suggests: litedown
 </code></pre>
 <p>Then use the vignette engine <code>litedown::vignette</code> in the YAML metadata of a
 <code>.Rmd</code> or <code>.md</code> vignette file:</p>
