@@ -16,7 +16,7 @@ options(width = 80)
 .ex = function(n, ext = '.Rmd', last = NA, verbatim = TRUE) {
   f = Sys.glob(sprintf('../examples/%03d*', n))
   f = f[endsWith(f, ext)]
-  if (length(f) != 1) stop('cannot find the example ', n)
+  if (length(f) != 1) stop('found ', length(f), ' example(s) with number ', n)
   x = xfun::read_utf8(f)
   i = which(x == '<!-- ... -->')[1]
   if (ext == '.Rmd') {

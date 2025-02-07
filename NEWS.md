@@ -4,6 +4,8 @@
 
 - Added a function `raw_text()` to output raw text content in a code chunk (thanks, @vincentarelbundock, #69).
 
+- Dropped the chunk option `ref.label` and added a new chunk option `fill`, which is more general (`ref.label = "LABEL"` can be achieved by `` `<LABEL>` `` inside a chunk). See https://yihui.org/litedown/#sec:option-fill for more information.
+
 - Fixed a bug that `fuse()` fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, @kevinushey, yihui/knitr#2387).
 
 # CHANGES IN litedown VERSION 0.5

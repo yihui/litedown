@@ -187,9 +187,6 @@ crack = function(input, text = NULL) {
     b$pos = b$col = NULL  # positions not useful anymore
     res[[j]] = b
   }
-  # TODO: should we support inline chunk references? If we do, I'd prefer a new
-  # syntax, e.g., `${label}`, instead of knitr's <<label>> syntax
-
   res
 }
 
@@ -681,7 +678,7 @@ fuse_code = function(x, blocks) {
 
   lab = opts$label; lang = opts$engine
 
-  # the source code could be from these chunk options: file, code, or ref.label
+  # the source code could be from chunk options 'file' or 'code'
   test_source = function(name) {
     if (length(opts[[name]]) == 0) return(FALSE)
     if (cond <- length(x$source) > 0) warning(
@@ -695,12 +692,13 @@ fuse_code = function(x, blocks) {
   } else if (test_source('code')) {
     x$source = opts$code
   } else {
-    labs = if (test_source('ref.label')) opts$ref.label else {
-      # use code from other chunks of the same label
-      if (length(x$source) == 0) which(names(blocks) == lab)
-    }
+    # use code from other chunks of the same label
+    labs = if (length(x$source) == 0) which(names(blocks) == lab)
     if (length(labs)) x$source = uapply(blocks[labs], `[[`, 'source')
   }
+
+  # resolve inline chunk references and do code interpolation
+  if (opts$fill) x$source = fill_source(x$source, blocks)
 
   res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
@@ -836,6 +834,41 @@ fuse_code = function(x, blocks) {
   # add prefix (possibly indentation and > quote chars)
   if (!is.null(x$prefix)) out = gsub('^|(?<=\n)', x$prefix, out, perl = TRUE)
   out
+}
+
+# resolve `<label>` to chunk source, and evaluate `{code}` to string (to
+# interpolate original source)
+fill_source = function(x, blocks) {
+  x = fill_label(x, blocks)
+  fill_code(x)
+}
+
+fill_label = function(x, blocks) {
+  r = '`<(.+?)>`'
+  for (i in grep(r, x)) {
+    ind = sub('^(\\s*).*', '\\1', x[i])  # possible indent
+    x[i] = match_replace(x[i], r, function(z) {
+      labs = sub(r, '\\1', z)  # chunk label
+      j = labs %in% names(blocks)
+      if (any(j)) z[j] = uapply(blocks[labs[j]], function(b) {
+        s = b$source
+        if ((n <- length(s)) > 0) {
+          paste0(c('', rep(ind, n - 1)), s, collapse = '\n')
+        } else ''
+      })
+      z
+    })
+  }
+  # recursion for possible more `<label>` markers
+  if (is.null(i)) x else fill_label(split_lines(x), blocks)
+}
+
+fill_code = function(x) {
+  r = '`\\{(.+?)}`'
+  match_replace(x, r, function(z) {
+    code = sub(r, '\\1', z)
+    uapply(code, function(s) one_string(eng_r(list(source = s), inline = TRUE)))
+  })
 }
 
 # temporarily change the working directory inside a function call
@@ -1031,7 +1064,7 @@ new_opts = function() {
 #' ls(opts)  # built-in options
 reactor = new_opts()
 reactor(
-  eval = TRUE, echo = TRUE, results = TRUE, comment = NULL,
+  eval = TRUE, echo = TRUE, fill = TRUE, results = TRUE, comment = NULL,
   warning = TRUE, message = TRUE, error = NA, include = TRUE,
   strip.white = TRUE, collapse = FALSE, order = 0,
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
@@ -1041,7 +1074,7 @@ reactor(
   fig.width = 7, fig.height = 7, fig.dim = NULL, fig.cap = NULL, fig.alt = NULL, fig.env = '.figure',
   tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
-  code = NULL, file = NULL, ref.label = NULL, child = NULL, purl = TRUE,
+  code = NULL, file = NULL, child = NULL, purl = TRUE,
   wd = NULL,
   signif = 3, power = 6, dollar = NA
 )
