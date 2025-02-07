@@ -158,7 +158,7 @@ and LaTeX.
 
 :::: {#fig:humpty-dumpty .figure}
 ![Humpty
-Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg)
+Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg){width="250px"}
 
 ::: caption
 [ ](#@fig:humpty-dumpty) After raising two kids for a few years, I have been so

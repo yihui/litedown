@@ -52,8 +52,7 @@ fuse_site = function(input = '.') {
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
-    css = c("@default", "@article", '@site', "@copy-button", "@heading-anchor"),
-    js = c("@sidenotes", "@appendix", "@toc-highlight", "@copy-button", "@heading-anchor"),
+    css = c(site_css, '@site'), js = site_js,
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
@@ -87,6 +86,10 @@ fuse_site = function(input = '.') {
     if (i) out[[1]] else xfun::file_string(output)
   } else invisible(output)
 }
+
+# common css/js for sites/books
+site_css = c('@default', '@article', '@copy-button', '@heading-anchor', '@pages')
+site_js = c('@sidenotes', '@appendix', '@toc-highlight', '@copy-button', '@heading-anchor', '@pages')
 
 # set global options litedown.html.[meta|options] read from _litedown.yml
 set_site_options = function(opts, input, root, extra = NULL) {
@@ -252,9 +255,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '',
-    css = c("@default", "@article", "@book", "@copy-button", "@heading-anchor"),
-    js = c("@sidenotes", "@appendix", "@toc-highlight", "@copy-button", "@heading-anchor")
+    body_class = '', css = c(site_css, '@book'), js = site_js
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }
