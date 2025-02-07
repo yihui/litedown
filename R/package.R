@@ -429,7 +429,16 @@ run_examples = function(html, config, path) {
   })
 }
 
-detect_pkg = function(error = TRUE) {
+# detect package name and root path from current and upper dirs
+detect_pkg = local({
+  res = NULL  # cache the detection
+  function(...) {
+    if (is.null(res) || !same_path('.', attr(res, 'wd'))) res <<- .detect_pkg(...)
+    res
+  }
+})
+
+.detect_pkg = function(error = TRUE) {
   ds = if (xfun::is_R_CMD_check()) {
     # R CMD check's working directory is PKG_NAME.Rcheck by default
     name = grep_sub('[.]Rcheck$', '', basename(getwd()))
@@ -454,7 +463,7 @@ detect_pkg = function(error = TRUE) {
     desc = read_utf8(file.path(root, 'DESCRIPTION'))
     name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
   }
-  structure(name, path = root)
+  structure(name, path = root, wd = getwd())
 }
 
 detect_news = function(name) {
