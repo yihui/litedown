@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.9">
+<meta name="generator" content="litedown 0.5.10">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.3/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.3/css/article.min.css">
@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-02-07</h3></div>
+<div class="date"><h3>2025-02-11</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -174,12 +174,13 @@
 <li><a href="#sec:keep-yaml"><span class="section-number">4.1.7</span> <code>keep_yaml</code></a></li>
 <li><a href="#sec:latex-math_2"><span class="section-number">4.1.8</span> <code>latex_math</code></a></li>
 <li><a href="#sec:number-sections"><span class="section-number">4.1.9</span> <code>number_sections</code></a></li>
-<li><a href="#sec:smartypants"><span class="section-number">4.1.10</span> <code>smartypants</code></a></li>
-<li><a href="#sec:superscript"><span class="section-number">4.1.11</span> <code>superscript</code></a></li>
-<li><a href="#sec:subscript"><span class="section-number">4.1.12</span> <code>subscript</code></a></li>
-<li><a href="#sec:toc"><span class="section-number">4.1.13</span> <code>toc</code></a></li>
-<li><a href="#sec:top-level"><span class="section-number">4.1.14</span> <code>top_level</code></a></li>
-<li><a href="#sec:other-options"><span class="section-number">4.1.15</span> Other options</a></li>
+<li><a href="#sec:offline"><span class="section-number">4.1.10</span> <code>offline</code></a></li>
+<li><a href="#sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></a></li>
+<li><a href="#sec:superscript"><span class="section-number">4.1.12</span> <code>superscript</code></a></li>
+<li><a href="#sec:subscript"><span class="section-number">4.1.13</span> <code>subscript</code></a></li>
+<li><a href="#sec:toc"><span class="section-number">4.1.14</span> <code>toc</code></a></li>
+<li><a href="#sec:top-level"><span class="section-number">4.1.15</span> <code>top_level</code></a></li>
+<li><a href="#sec:other-options"><span class="section-number">4.1.16</span> Other options</a></li>
 </ul>
 </li>
 <li><a href="#sec:templates"><span class="section-number">4.2</span> Templates</a></li>
@@ -1644,9 +1645,7 @@ We run regressions on three variables one by one:
 ```{r, code = sprintf(tpl, x_vars)}
 ```
 </code></pre>
-<pre><code class="language-md" data-file="005.md">.
-.
-.
+<pre><code class="language-md" data-file="005.md">... ... ...
 ``` {.r}
 lm(mpg ~ cyl, data = mtcars) |&gt; summary() |&gt; coef()
 ```
@@ -2042,9 +2041,7 @@ const data = `{ xfun::tojson(iris[1:5, 1:2]) }`;
 Object.keys(data);  // column names
 ```
 </code></pre>
-<pre><code class="language-md" data-file="015.md">.
-.
-.
+<pre><code class="language-md" data-file="015.md">... ... ...
 Embed `chunk-a` in a function body:
 
 ``` {.r}
@@ -2288,9 +2285,7 @@ Y  # factor
 table(X, Y)  # table
 ```
 </code></pre>
-<pre><code class="language-md" data-file="013.md">.
-.
-.
+<pre><code class="language-md" data-file="013.md">... ... ...
 ```
 #&gt; [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;
 #&gt; 5 Levels: &quot;A&quot; &quot;B&quot; ... &quot;E&quot;
@@ -2418,9 +2413,7 @@ Keep blank lines at the beginning/end:
 
 ```
 </code></pre>
-<pre><code class="language-md" data-file="017.md">.
-.
-.
+<pre><code class="language-md" data-file="017.md">... ... ...
 ``` {.r}
 
 # a blank line above
@@ -2457,9 +2450,7 @@ See @tab:simple.
 head(cars, 3)
 ```
 </code></pre>
-<pre><code class="language-md" data-file="018.md">.
-.
-.
+<pre><code class="language-md" data-file="018.md">... ... ...
 ``` {.r}
 head(cars, 3)
 ```
@@ -3816,8 +3807,9 @@ Possible values are:</p>
 </ul>
 <p>The default is <code>&quot;local&quot;</code>, i.e., local resources are embedded, whereas <code>https</code>
 resources are not. This means the output document may not work offline. If you
-have to view the output offline, you need to use the option value <code>&quot;https&quot;</code> (or
-<code>&quot;all&quot;</code>) and render the document at least once before you go offline.</p>
+have to view the output offline, you may either use the option value <code>&quot;https&quot;</code>
+(or <code>&quot;all&quot;</code>) or set the option <code>offline</code> (<a class="cross-ref-sec" href="#sec:offline">4.1.10</a>) to <code>true</code>, and render
+the document at least once before you go offline.</p>
 <p>For <code>https</code> resources, after you have embedded them successfully once, they will
 be cached locally (via <code>xfun::download_cache</code>) and will not require an Internet
 connection again.</p>
@@ -3932,16 +3924,34 @@ to it. For example:</p>
 
 ## About the author {-}
 </code></pre>
-<h3 id="sec:smartypants"><span class="section-number">4.1.10</span> <code>smartypants</code></h3>
+<h3 id="sec:offline"><span class="section-number">4.1.10</span> <code>offline</code></h3>
+<p>Whether to download web resources (e.g., images and CSS/JS files) used in the
+HTML output so that the HTML file can be viewed offline. This option is <code>false</code>
+by default. If enabled, resources are downloaded to the directory <code>assets/</code>. If
+you want to use a different directory name, you can set the option
+<code>litedown.offline.dir</code>, e.g.,</p>
+<pre><code class="language-r">options(litedown.offline.dir = 'resources')
+</code></pre>
+<p>The resources will not be downloaded again unless you have deleted them.</p>
+<p>The <code>offline</code> option can also be useful for those who do have Internet
+connection but the connection forbids access to external web resources (e.g., in
+certain corporate environments). In this case, you can ship the resources
+together with the HTML output so it will not rely on external resources.</p>
+<p>The option <code>embed_resources</code> in <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a> provides another way to
+download and cache resources locally. The difference between these two options
+is that the <code>offline</code> option downloads resources but do not embed their content
+into the HTML file, so the HTML file is not self-contained (e.g., JS resources
+are included via <code>&lt;script src=&quot;assets/*.js&quot;&gt;</code>).</p>
+<h3 id="sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>). This option is <code>false</code> by default.</p>
-<h3 id="sec:superscript"><span class="section-number">4.1.11</span> <code>superscript</code></h3>
+<h3 id="sec:superscript"><span class="section-number">4.1.12</span> <code>superscript</code></h3>
 <p>Whether to translate strings between two carets into superscripts, e.g.,
 <code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>. This option is <code>true</code> by default.</p>
-<h3 id="sec:subscript"><span class="section-number">4.1.12</span> <code>subscript</code></h3>
+<h3 id="sec:subscript"><span class="section-number">4.1.13</span> <code>subscript</code></h3>
 <p>Whether to translate strings between two tildes into subscripts, e.g.,
 <code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>. This option is <code>true</code> by default.</p>
-<h3 id="sec:toc"><span class="section-number">4.1.13</span> <code>toc</code></h3>
+<h3 id="sec:toc"><span class="section-number">4.1.14</span> <code>toc</code></h3>
 <p>Whether to generate a table of contents (TOC) from section headings (<code>false</code> by
 default). If a heading has an <code>id</code> attribute, the corresponding TOC item will be
 a link to this heading. You can also set a sub-option:</p>
@@ -3958,24 +3968,24 @@ default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
 For example:</p>
 <pre><code class="language-md">## Acknowledgments {.unlisted}
 </code></pre>
-<h3 id="sec:top-level"><span class="section-number">4.1.14</span> <code>top_level</code></h3>
+<h3 id="sec:top-level"><span class="section-number">4.1.15</span> <code>top_level</code></h3>
 <p>The desired type of the top-level headings in LaTeX output. Possible values are
 <code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
 will be rendered to <code>\chapter{heading}</code> instead of the default
 <code>\section{heading}</code>.</p>
-<h3 id="sec:other-options"><span class="section-number">4.1.15</span> Other options</h3>
+<h3 id="sec:other-options"><span class="section-number">4.1.16</span> Other options</h3>
 <p>Options not described above can be found on the help pages of <strong>commonmark</strong>,
 e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argument of
 <code>commonmark::markdown_*()</code> functions, and the <code>table</code> option is for the <code>table</code>
 extension in <strong>commonmark</strong>’s extensions.</p>
 <pre><code class="language-r">litedown::markdown_options()
 #&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
-#&gt;  [4] &quot;-smartypants&quot;      &quot;-tagfilter&quot;        &quot;-toc&quot;             
-#&gt;  [7] &quot;+auto_identifiers&quot; &quot;+autolink&quot;         &quot;+cross_refs&quot;      
-#&gt; [10] &quot;+embed_cleanup&quot;    &quot;+embed_resources&quot;  &quot;+js_highlight&quot;    
-#&gt; [13] &quot;+js_math&quot;          &quot;+latex_math&quot;       &quot;+smart&quot;           
-#&gt; [16] &quot;+strikethrough&quot;    &quot;+subscript&quot;        &quot;+superscript&quot;     
-#&gt; [19] &quot;+table&quot;            &quot;+tasklist&quot;        
+#&gt;  [4] &quot;-offline&quot;          &quot;-smartypants&quot;      &quot;-tagfilter&quot;       
+#&gt;  [7] &quot;-toc&quot;              &quot;+auto_identifiers&quot; &quot;+autolink&quot;        
+#&gt; [10] &quot;+cross_refs&quot;       &quot;+embed_cleanup&quot;    &quot;+embed_resources&quot; 
+#&gt; [13] &quot;+js_highlight&quot;     &quot;+js_math&quot;          &quot;+latex_math&quot;      
+#&gt; [16] &quot;+smart&quot;            &quot;+strikethrough&quot;    &quot;+subscript&quot;       
+#&gt; [19] &quot;+superscript&quot;      &quot;+table&quot;            &quot;+tasklist&quot;        
 # commonmark's arguments
 opts = formals(commonmark::markdown_html)
 opts = opts[setdiff(names(opts), c('text', 'extensions'))]
@@ -4334,12 +4344,12 @@ throughout this chapter but only use the <code>css</code> and <code>js</code> fi
 <code>foo.js</code> denotes the file under the <code>js/</code> directory of the aforementioned
 <a href="https://github.com/yihui/lite.js"><code>lite.js</code> repository</a>. Similarly, <code>foo.css</code>
 is under the <code>css/</code> directory.</p>
-<p>All these CSS/JS resources can be used offline, and there are two ways to do it.
-One way is to clone the GitHub repo to your working directory, and use the files
-you need, e.g.,</p>
+<p>All these CSS/JS resources can be used offline, and there are several ways to do
+it. One way is to clone the GitHub repo to your working directory, and use the
+files you need, e.g.,</p>
 <pre><code class="language-yaml">js: [&quot;repo/path/js/callout.js&quot;]
 </code></pre>
-<p>Another way is to enable embedding <code>https</code> resources (<a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a>).</p>
+<p>You may also see <a class="cross-ref-sec" href="#sec:offline">4.1.10</a> and <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a> for other ways.</p>
 <h2 id="sec:asset-reference"><span class="section-number">5.1</span> A quick reference</h2>
 <p><a class="cross-ref-tab" href="#tab:assets">4</a> provides a quick reference of existing CSS/JS assets in the
 <code>lite.js</code> repository. See <a class="cross-ref-sec" href="#sec:meta-css">4.3.2.1</a> for the meaning of the <code>@</code> character in
@@ -4751,7 +4761,7 @@ the ID of the starting element of the tabset, e.g.,</p>
 ## Not a tab
 </code></pre>
 <p>When a tabset is created from sections, the tab titles (from section headings)
-will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-sec" href="#sec:toc">4.1.13</a>).</p>
+will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-sec" href="#sec:toc">4.1.14</a>).</p>
 <h2 id="sec:fold-details"><span class="section-number">5.5</span> Code folding</h2>
 <pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
 </code></pre>
