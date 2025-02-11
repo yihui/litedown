@@ -34,6 +34,7 @@ sans_sq = function(x) gsub("(^|\\W)'([^']+)'(\\W|$)", '\\1\\2\\3', x)
 is_lang = function(x) is.symbol(x) || is.language(x)
 
 uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)
+.mapply = function(fun, ...) base::.mapply(fun, list(...), NULL)
 
 #' Convert some ASCII strings to HTML entities
 #'

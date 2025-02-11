@@ -248,7 +248,7 @@ sieve = function(input, text = NULL) {
         source = c(code), type = 'code_chunk', lines = l, code_start = l[1],
         options = list(engine = 'r', label = label)
       )
-    }, list(res, sprintf('chunk-%d', seq_along(res))), NULL)
+    }, res, sprintf('chunk-%d', seq_along(res)))
     return(res)
   }
 
@@ -304,7 +304,7 @@ sieve = function(input, text = NULL) {
   res[i] = .mapply(function(x, label) {
     if (is.null(x$options$label)) x$options$label = label
     x
-  }, list(res[i], sprintf('chunk-%d', seq_len(sum(i)))), NULL)
+  }, res[i], sprintf('chunk-%d', seq_len(sum(i))))
   res
 }
 

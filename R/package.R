@@ -357,7 +357,7 @@ pkg_manual = function(
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
     sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
-  }, list(al, sans_ext(names(al))), list()))
+  }, al, sans_ext(names(al))))
 
   g = toupper(substr(unlist(al), 1, 1))
   g[!g %in% LETTERS] = 'misc'
