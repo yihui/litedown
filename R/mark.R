@@ -470,6 +470,9 @@ markdown_options = function() {
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )
   # options disabled by default
-  x2 = c('toc', 'hardbreaks', 'tagfilter', 'number_sections', 'cleveref', 'smartypants')
+  x2 = c(
+    'toc', 'hardbreaks', 'tagfilter', 'number_sections', 'cleveref', 'offline',
+    'smartypants'
+  )
   sort(c(paste0('+', x1), paste0('-', x2)))
 }

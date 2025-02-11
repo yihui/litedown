@@ -103,8 +103,9 @@ Possible values are:
 
 The default is `"local"`, i.e., local resources are embedded, whereas `https`
 resources are not. This means the output document may not work offline. If you
-have to view the output offline, you need to use the option value `"https"` (or
-`"all"`) and render the document at least once before you go offline.
+have to view the output offline, you may either use the option value `"https"`
+(or `"all"`) or set the option `offline` (@sec:offline) to `true`, and render
+the document at least once before you go offline.
 
 For `https` resources, after you have embedded them successfully once, they will
 be cached locally (via `xfun::download_cache`) and will not require an Internet
@@ -240,6 +241,31 @@ to it. For example:
 
 ## About the author {-}
 ```
+
+### `offline`
+
+Whether to download web resources (e.g., images and CSS/JS files) used in the
+HTML output so that the HTML file can be viewed offline. This option is `false`
+by default. If enabled, resources are downloaded to the directory `assets/`. If
+you want to use a different directory name, you can set the option
+`litedown.offline.dir`, e.g.,
+
+``` r
+options(litedown.offline.dir = 'resources')
+```
+
+The resources will not be downloaded again unless you have deleted them.
+
+The `offline` option can also be useful for those who do have Internet
+connection but the connection forbids access to external web resources (e.g., in
+certain corporate environments). In this case, you can ship the resources
+together with the HTML output so it will not rely on external resources.
+
+The option `embed_resources` in @sec:embed-resources provides another way to
+download and cache resources locally. The difference between these two options
+is that the `offline` option downloads resources but do not embed their content
+into the HTML file, so the HTML file is not self-contained (e.g., JS resources
+are included via `<script src="assets/*.js">`).
 
 ### `smartypants`
 

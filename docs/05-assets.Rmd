@@ -36,15 +36,15 @@ throughout this chapter but only use the `css` and `js` fields. A file name
 [`lite.js` repository](https://github.com/yihui/lite.js). Similarly, `foo.css`
 is under the `css/` directory.
 
-All these CSS/JS resources can be used offline, and there are two ways to do it.
-One way is to clone the GitHub repo to your working directory, and use the files
-you need, e.g.,
+All these CSS/JS resources can be used offline, and there are several ways to do
+it. One way is to clone the GitHub repo to your working directory, and use the
+files you need, e.g.,
 
 ``` yaml
 js: ["repo/path/js/callout.js"]
 ```
 
-Another way is to enable embedding `https` resources (@sec:embed-resources).
+You may also see @sec:offline and @sec:embed-resources for other ways.
 
 ## A quick reference {#sec:asset-reference}
 

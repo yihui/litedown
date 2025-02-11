@@ -356,7 +356,7 @@ set_highlight = function(options, html) {
 
   # if resources need to be embedded, we need to work harder to figure out which
   # js files to embed (this is quite tricky and may not be robust)
-  embed = 'https' %in% options[['embed_resources']]
+  embed = ('https' %in% options[['embed_resources']]) || options[['offline']]
 
   # style -> css
   css = c(if (is.null(s <- o$style)) {
@@ -953,8 +953,9 @@ latex_refs = function(x, r, clever = FALSE) {
 embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% options[['embed_resources']]
-  if (!any(embed)) return(x)
-  clean = isTRUE(options[['embed_cleanup']])
+  offline = options[['offline']]
+  if (!any(embed, offline)) return(x)
+  clean = options[['embed_cleanup']]
 
   # find images in <img> and (for slides only) comments
   rs = c(
@@ -969,6 +970,7 @@ embed_resources = function(x, options) {
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
       is_svg = grepl('[.]svg$', f <- z2[i]) && grepl('^<img', z1[i])
       a = if (is_svg) str_trim(gsub('^"|/>$', '', z3[i])) else ''
+      if (offline && is_https(f)) f = download_url(f)
       if (is_https(f)) {
         if (embed[1]) z2[i] = if (!is_svg) download_cache$get(f, 'base64') else {
           download_cache$get(f, 'text', function(xml) process_svg(xml, a))
@@ -988,17 +990,20 @@ embed_resources = function(x, options) {
   # CSS and JS
   r = paste0(
     '<link[^>]* rel="stylesheet" href="([^"]+)"[^>]*>|',
-    '<script[^>]* src="([^"]+)"[^>]*>\\s*</script>'
+    '<script([^>]*) src="([^"]+)"([^>]*)>\\s*</script>'
   )
   x2 = NULL  # to be appended to x
   x = match_replace(x, r, function(z) {
     z1 = sub(r, '\\1', z)  # css
-    z2 = sub(r, '\\2', z)  # js
+    z2 = sub(r, '\\3', z)  # js
     js = z2 != ''
     z3 = paste0(z1, z2)
     # skip resources already base64 encoded
     i1 = !grepl('^data:.+;base64,.+', z3)
-    z3[i1] = gen_tags(z3[i1], ifelse(js[i1], 'js', 'css'), embed[1], embed[2])
+    z3[i1] = gen_tags(
+      z3[i1], ifelse(js[i1], 'js', 'css'), embed[1], embed[2], offline,
+      sub(r, '\\2\\4', z)  # attributes for js
+    )
     # for <script>s with defer/async, move them to the end of </body>
     i2 = grepl(' (defer|async)(>| )', z) & js
     x2 <<- c(x2, z3[i2])
@@ -1234,12 +1239,15 @@ map_assets = function(x, ext) {
 }
 
 # generate tags for css/js depending on whether they need to be embedded or offline
-gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALSE) {
+gen_tag = function(
+  x, ext = file_ext(x), embed_https = FALSE, embed_local = FALSE,
+  offline = FALSE, attr = ' defer'
+) {
   if (ext == 'css') {
     t1 = '<link rel="stylesheet" href="%s">'
     t2 = c('<style type="text/css">', '</style>')
   } else if (ext == 'js') {
-    t1 = '<script src="%s" defer></script>'
+    t1 = paste0('<script src="%s"', attr, '></script>')
     t2 = c('<script>', '</script>')
   } else stop("The file extension '", ext, "' is not supported.")
   is_web = is_https(x)
@@ -1248,9 +1256,14 @@ gen_tag = function(x, ext = file_ext(x), embed_https = FALSE, embed_local = FALS
     warning('MathJax.js cannot be embedded. Please use MathJax v3 instead.')
     embed_https = FALSE
   }
-  if ((is_rel && !embed_local) || (is_web && !embed_https)) {
-    # linking for 1) local rel paths that don't need to be embedded, or 2) web
-    # resources that don't need to be accessed offline
+  # linking for 1) local rel paths that don't need to be embedded, or 2) web
+  # resources that don't need to be accessed offline
+  link1 = is_rel && !embed_local
+  link2 = is_web && !embed_https
+  if (link1 || link2) {
+    if (offline && link2 && !grepl('^http://127.0.0.1', x)) x = download_url(
+      x, handler = function(code) resolve_url(x, code, ext, FALSE)
+    )
     sprintf(t1, x)
   } else {
     # embedding for other cases
@@ -1274,16 +1287,16 @@ resolve_external = function(x, web = TRUE, ext = '') {
         '^/[*][*]\n( [*][^\n]*\n)+ [*]/\n|\n/[*/]# sourceMappingURL=.+[.]map( [*]/)?$',
         '', one_string(code)
       )
-      code = base64_url(x, code, ext)
+      code = resolve_url(x, code, ext)
     }
     code
   }) else {
-    base64_url(x, read_utf8(x), ext)
+    resolve_url(x, read_utf8(x), ext)
   }
 }
 
-# find url("path") in JS/CSS and base64 encode the resources
-base64_url = function(url, code, ext) {
+# find url("path") in JS/CSS and base64 encode or download the resources
+resolve_url = function(url, code, ext, encode = TRUE) {
   d = dirname(url)
   # embed fonts in mathjax's js
   if (grepl('^https://cdn[.]jsdelivr[.]net/npm/mathjax.+[.]js$', url)) {
@@ -1291,8 +1304,14 @@ base64_url = function(url, code, ext) {
     p = grep_sub(r, '\\1', code)
     if (length(p) == 1) code = match_replace(
       code, '(?<=src:\'url\\(")(%%URL%%/[^"]+)(?="\\))', function(u) {
-        u = sub('%%URL%%', paste(d, p, sep = '/'), u, fixed = TRUE)
-        uapply(u, function(x) download_cache$get(x, 'base64'))
+        f = sub('%%URL%%/', '', u, fixed = TRUE)
+        u2 = paste(d, p, f, sep = '/')
+        if (encode) {
+          uapply(u2, download_cache$get, 'base64')
+        } else {
+          .mapply(function(u, f) download_url(u, p, f), u2, f)
+          u
+        }
       }
     ) else warning(
       'Unable to determine the font path in MathJax. Please report an issue to ',
@@ -1306,15 +1325,37 @@ base64_url = function(url, code, ext) {
       z1 = gsub(r, '\\1', z)
       z2 = gsub(r, '\\2', z)
       z3 = gsub(r, '\\3', z)
-      i = !is_https(z2)
-      z2[i] = paste(d, z2[i], sep = '/')
-      z2 = uapply(z2, function(x) {
-        if (is_https(x)) download_cache$get(x, 'base64') else base64_uri(x)
+      i = is_https(z2)
+      u = ifelse(i, z2, sprintf('%s/%s', d, z2))
+      z2 = unlist(if (encode) {
+        lapply(u, function(x) {
+          if (is_https(x)) download_cache$get(x, 'base64') else base64_uri(x)
+        })
+      } else {
+        .mapply(function(u, i, f) download_url(u, '.', if (!i) f), u, i, z2)
       })
       paste0(z1, z2, z3)
     })
   }
   code
+}
+
+# download a file to a local dir if the local file doesn't exist
+download_url = function(
+  url, dir = getOption('litedown.offline.dir', 'assets'), file = NULL, handler = NULL
+) {
+  f = file %||% gsub('^https?://|[?#].*$', '', url)
+  p = URLdecode(f)
+  if (dir != '.') p = file.path(dir, p)
+  if (!file_exists(p)) {
+    dir_create(dirname(p))  # TODO: xfun 0.51 will create dir
+    xfun::download_file(url, p)
+    if (is.function(handler)) xfun::process_file(p, function(x) {
+      x  # force eval before changing wd
+      in_dir(dirname(p), handler(x))
+    })
+  }
+  URLencode(p)
 }
 
 # compact HTML code

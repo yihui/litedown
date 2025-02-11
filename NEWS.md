@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.6
 
+- Added a Markdown rendering option `offline` to download web resources when this option is set to true, so that the HTML output can be viewed offline (thanks, @TimTaylor, #73). See https://yihui.org/litedown/#sec:offline for more info.
+
 - Added a function `get_context()` to query the `fuse()` context such as the input file path or the output format (thanks, @MichaelChirico #67, @vincentarelbundock #70).
 
 - Added a function `raw_text()` to output raw text content in a code chunk (thanks, @vincentarelbundock, #69).
