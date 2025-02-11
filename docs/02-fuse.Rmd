@@ -251,11 +251,11 @@ which can be useful for telling readers the full source of a chunk, e.g.,
 ```
 :::
 
-### All chunk options {#sec:chunk-options}
+## Chunk options {#sec:chunk-options}
 
 All supported chunk options are listed alphabetically below.
 
-#### `attr.*`: attributes for output elements {#sec:option-attr}
+### `attr.*`: attributes for output elements {#sec:option-attr}
 
 The `attr.*` options can be used to customize different types of output
 elements, such as source code blocks, messages, and plots, etc. To understand
@@ -400,7 +400,7 @@ Here is an example of creating a callout (@sec:callout) from a code chunk:
 
 `{r} .ex(3)`
 
-#### `cache`: speed up the computing {#sec:option-cache}
+### `cache`: speed up the computing {#sec:option-cache}
 
 > There are only two hard things in Computer Science: cache invalidation and
 > naming things.
@@ -560,7 +560,7 @@ computational results when the old cache should have been invalidated. Please
 make sure you understand what you are doing before freezing the cache.
 :::
 
-#### `cap.pos`: caption position {#sec:option-cap-pos}
+### `cap.pos`: caption position {#sec:option-cap-pos}
 
 Possible values are `'top'` and `'bottom'`. By default, figure captions are
 placed below figures, and table captions are placed above tables.
@@ -577,13 +577,13 @@ example.
 
 `{r} .ex(4)`
 
-#### `child`: child documents {#sec:option-child}
+### `child`: child documents {#sec:option-child}
 
 The `child` option can take a vector of file paths to other `.Rmd` files, which
 will be compiled and included as the output the current chunk. This offers a way
 to organize a large R Markdown report as smaller child documents.
 
-#### `code` and `file`: alternative ways to provide code {#sec:option-code}
+### `code` and `file`: alternative ways to provide code {#sec:option-code}
 
 While you can write source code directly in a code chunk, there are two more
 ways to provide the code through the chunk options:
@@ -600,7 +600,7 @@ They can be used in any code chunks (not necessarily R code chunks).
 
 `{r} c(.ex(5), .ex(5, '.md'))`
 
-#### `collapse`: collapse source code and text output {#sec:option-collapse}
+### `collapse`: collapse source code and text output {#sec:option-collapse}
 
 When the option `collapse = TRUE` (it is `FALSE` by default), adjacent source
 code blocks and verbatim text output blocks will be merged, which can make the
@@ -616,7 +616,7 @@ Note that if a source block and an output block are not adjacent to each other,
 they will not be merged, e.g., when there is a warning block between the source
 and text output.
 
-#### `comment`: comment out text output {#sec:option-comment}
+### `comment`: comment out text output {#sec:option-comment}
 
 By default, verbatim text output is commented out with a prefix `#>`. This
 comment prefix can be set via the chunk option `comment`, e.g.,
@@ -636,7 +636,7 @@ The reason to use comments is that readers will be able to copy multiple code
 blocks from the chunk output in one go and directly run the copied text as code
 elsewhere when desired (all text output will be ignored as comments).
 
-#### `dev`: graphics device {#sec:option-dev}
+### `dev`: graphics device {#sec:option-dev}
 
 For a code chunk to generate graphics output, it will need a graphics device to
 record the plots. The device can be set via the `dev` option. The value can be a
@@ -666,13 +666,13 @@ learn the possible arguments that you can use.
 
 `{r} .ex(8)`
 
-#### `echo`: visibility of source code {#sec:option-echo}
+### `echo`: visibility of source code {#sec:option-echo}
 
 By default, the source code blocks are displayed in the output with the chunk
 option `echo = TRUE`. To suppress source code blocks, you can use
 `echo = FALSE`.
 
-#### `error`: error behavior {#sec:option-error}
+### `error`: error behavior {#sec:option-error}
 
 You can specify how errors in a code chunk should be handled with the `error`
 option. Its possible values are:
@@ -695,12 +695,12 @@ source code can also be captured, e.g.,
 x = 1 + 2 +
 ```
 
-#### `eval`: code evaluation {#sec:option-eval}
+### `eval`: code evaluation {#sec:option-eval}
 
 If you do not want to evaluate a certain code chunk, you can use the chunk
 option `eval = FALSE`, which is `TRUE` by default.
 
-#### `fig.*`: figure options {#sec:option-fig}
+### `fig.*`: figure options {#sec:option-fig}
 
 The `fig.*` options fall into two categories: one for decorating the images in
 the output, and the other for customizing the plot files. Chunk options for
@@ -791,7 +791,7 @@ Chunk options for plot files include:
 
 `{r} .ex(10)`
 
-#### `fill`: code interpolation and inline chunk references {#sec:option-fill}
+### `fill`: code interpolation and inline chunk references {#sec:option-fill}
 
 The source code in a chunk can be dynamically constructed via interpolation. Two
 types of placeholders are supported, which will be filled out by the character
@@ -869,7 +869,7 @@ N = if (xfun::is_R_CMD_check()) 10 else 100000
 The above example also showed the possibility of passing R data to a JavaScript
 code chunk.
 
-#### `include`: visibility of whole code chunk {#sec:option-include}
+### `include`: visibility of whole code chunk {#sec:option-include}
 
 When you want to hide the full output of a code chunk, you can use the option
 `include = FALSE`, instead of trying to hide elements individually like
@@ -879,7 +879,7 @@ and `warning = FALSE`, etc.
 Note that even with `include = FALSE`, the code is still executed, unless you
 also set `eval = FALSE`.
 
-#### `label`: chunk label {#sec:option-label}
+### `label`: chunk label {#sec:option-label}
 
 The chunk label is an identifier of a code chunk. It is used in plot/cache
 filenames and figure/table cross-references. If two code chunks have the same
@@ -912,7 +912,7 @@ example, the labels for the following code chunks will be `chunk-a`, `chunk-2`,
 ```
 ````
 
-#### `message`: message behavior {#sec:option-message}
+### `message`: message behavior {#sec:option-message}
 
 The `message` option is similar to the `error` option (@sec:option-error) but is
 for handling `message()`. Possible values are:
@@ -924,7 +924,7 @@ for handling `message()`. Possible values are:
 
 -   `FALSE`: Suppress messages.
 
-#### `order`: order of execution {#sec:option-order}
+### `order`: order of execution {#sec:option-order}
 
 Code chunks and inline code expressions do not have to be executed sequentially.
 The chunk option `order` can be used to customize the order of execution. It
@@ -974,7 +974,7 @@ found) or use wrong values of these variables (from elsewhere in the session).
 You can change the value of `n_cyl` to 4 or 6, re-run the example, and get a new
 report of cars with 4 or 6 cylinders.
 
-#### `print`: printing function {#sec:option-print}
+### `print`: printing function {#sec:option-print}
 
 In a code chunk, if the value of an expression is visible, it will be printed.
 You may read the help pages `?invisible` and `?withVisible` to learn more about
@@ -1020,7 +1020,7 @@ not work for all print functions or methods---some arguments may be ignored, and
 some may cause errors if the print function does not have certain arguments. It
 is often better to define `print.args` by class names.
 
-#### `purl`: code extraction {#sec:option-purl}
+### `purl`: code extraction {#sec:option-purl}
 
 When using `litedown::fiss()` to extract code from a document, all code chunks
 are extracted by default. To skip a code chunk, set `purl = FALSE` for that
@@ -1031,7 +1031,7 @@ chunk.
 You can see that the `setup` chunk with the option `purl = FALSE` was omitted in
 the R script output (generated by `fiss()`).
 
-#### `results`: text output behavior {#sec:option-results}
+### `results`: text output behavior {#sec:option-results}
 
 Text output from code chunks can be shown verbatim, hidden, or just written out
 as is. The behavior is controlled by the option `results`, with possible values:
@@ -1044,14 +1044,14 @@ as is. The behavior is controlled by the option `results`, with possible values:
 
 `{r} c(.ex(16), .ex(16, '.md'))`
 
-#### `strip.white`: leading / trailing blank lines in code {#sec:option-strip-white}
+### `strip.white`: leading / trailing blank lines in code {#sec:option-strip-white}
 
 By default, blank lines at the beginning and end of a source code block are
 removed. To keep them, you can use the chunk option `strip.white = FALSE`.
 
 `{r} c(.ex(17), .ex(17, '.md'))`
 
-#### `tab.*`: table options {#sec:option-tab}
+### `tab.*`: table options {#sec:option-tab}
 
 Unless the default `print` option (@sec:option-print) is changed, common
 rectangular data objects are printed to Markdown tables through
@@ -1085,7 +1085,7 @@ you may set `options(xfun.md_table.limit = Inf)` or `limit = Inf` in
 Please read the help page `?xfun::md_table` to learn the possible arguments, and
 also see @sec:option-print to learn how the chunk option `print.args` works.
 
-#### `time`: code timing {#sec:option-time}
+### `time`: code timing {#sec:option-time}
 
 When the chunk option `time` is set to `TRUE`, the execution time of the chunk
 will be recorded. You can print out `litedown::timing_data()` at the end of a
@@ -1096,7 +1096,7 @@ You can time specific code chunks by applying `time = TRUE` to them, or time all
 chunks in the document by setting `litedown::reactor(time = TRUE)` in the first
 code chunk.
 
-#### `verbose`: printing verbosity {#sec:option-verbose}
+### `verbose`: printing verbosity {#sec:option-verbose}
 
 By default, invisible values are not printed (@sec:option-print). However, you
 can use the chunk option `verbose` to change this behavior. Its possible values
@@ -1135,7 +1135,7 @@ x  # print x explicitly
 (x = 1 + 1)  # or the () trick
 ```
 
-#### `warning`: warning behavior {#sec:option-warning}
+### `warning`: warning behavior {#sec:option-warning}
 
 The `warning` option is similar to the `error` option (@sec:option-error) but is
 for handling `warning()`. Possible values are:
@@ -1149,7 +1149,7 @@ for handling `warning()`. Possible values are:
     make sure the warnings can be safely suppressed before using
     `warning = FALSE`.
 
-#### `wd`: working directory {#sec:option-wd}
+### `wd`: working directory {#sec:option-wd}
 
 The working directory when evaluating code chunks and inline code will be
 temporarily changed to the directory of the input file to `fuse()`. If the input
