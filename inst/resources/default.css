@@ -14,7 +14,7 @@ pre, img { max-width: 100%; }
 pre { white-space: pre-wrap; word-break: break-word; }
 pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
-:not(pre) > code, code[class], div > .caption { background: #f8f8f8; }
+:not(pre, th) > code, code[class], div > .caption { background: #f8f8f8; }
 pre > code:is(:not([class]), .language-plain, .language-none, .plain), .box, .figure, .table { background: inherit; border: 1px solid #eee; }
 pre > code {
   &.message { border-color: #9eeaf9; }

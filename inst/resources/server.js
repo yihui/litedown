@@ -110,7 +110,7 @@
   }
   // add classes and events to edit buttons
   d.querySelectorAll('a[href]').forEach(a => {
-    if (a.innerText !== '✎' || a.classList.contains('pencil')) return;
+    if (a.innerText !== '✎' || a.onclick) return;
     a.classList.add('pencil'); if (!a.title) a.title = 'Open';
     a.onclick = e => {
       e.preventDefault();
