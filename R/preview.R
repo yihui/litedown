@@ -162,7 +162,7 @@ dir_page = function(dir = '.') {
   }
   i1 = is_lite_ext(file = files)
   # order first by folder, then by .Rmd/.R, and other files go to the end
-  res = lapply(files[i1][order(grepl('^[_.]', files[i1]))], function(f) {
+  res = lapply(files[i1][order(grepl('^[_.]', basename(files[i1])))], function(f) {
     b = basename(f)
     fenced_div(c(
       fenced_div(c(
