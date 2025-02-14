@@ -952,6 +952,27 @@ latex_refs = function(x, r, clever = FALSE) {
 
 embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
+  r = '\n<link[^>]*? rel="stylesheet" [^>]*>|\n<script[^>]*? src="[^"]+"[^>]*>\\s*</script>'
+  x2 = NULL  # to be appended to <head>
+  x = match_replace(x, r, function(z) {
+    # de-dup assets (e.g., when vest() is called multiple times on the same asset)
+    z[duplicated(z)] = ''
+    i = grep(' defer(>| ).*</script>$', z)
+    x2 <<- c(x2, z[i])
+    z[i] = ''
+    z
+  })
+  # move deferred scripts to the end of <head>
+  if (length(x2)) {
+    x = if (length(grep('</head>', x)) != 1) {
+      one_string(c(x2, x))
+    } else {
+      match_replace(x, '</head>', fixed = TRUE, perl = FALSE, function(z) {
+        one_string(c(x2, z))
+      })
+    }
+  }
+
   embed = c('https', 'local') %in% options[['embed_resources']]
   offline = options[['offline']]
   if (!any(embed, is.character(offline))) return(x)
@@ -989,11 +1010,10 @@ embed_resources = function(x, options) {
 
   # CSS and JS
   r = paste0(
-    '<link[^>]* rel="stylesheet" href="([^"]+)"[^>]*>|',
-    '<script([^>]*) src="([^"]+)"([^>]*)>\\s*</script>'
+    '<link[^>]*? rel="stylesheet" href="([^"]+)"[^>]*>|',
+    '<script([^>]*?) src="([^"]+)"([^>]*)>\\s*</script>'
   )
-  x2 = NULL  # to be appended to x
-  x = match_replace(x, r, function(z) {
+  match_replace(x, r, function(z) {
     z1 = sub(r, '\\1', z)  # css
     z2 = sub(r, '\\3', z)  # js
     js = z2 != ''
@@ -1004,23 +1024,8 @@ embed_resources = function(x, options) {
       z3[i1], ifelse(js[i1], 'js', 'css'), embed[1], embed[2], offline,
       sub(r, '\\2\\4', z)  # attributes for js
     )
-    # for <script>s with defer/async, move them to the end of </body>
-    i2 = grepl(' (defer|async)(>| )', z) & js
-    x2 <<- c(x2, z3[i2])
-    z3[i2] = ''
     z3
   })
-  # move defer/async js to the end of <body>
-  if (length(x2)) {
-    x = if (length(grep('</body>', x)) != 1) {
-      one_string(c(x, x2))
-    } else {
-      match_replace(x, '</body>', fixed = TRUE, perl = FALSE, function(z) {
-        one_string(c(x2, z))
-      })
-    }
-  }
-  x
 }
 
 # remove the xml/doctype declaration in svg, and add attributes

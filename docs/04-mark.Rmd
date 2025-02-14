@@ -269,6 +269,7 @@ are:
 1.  The `offline` option downloads resources but does not embed their content
     into the HTML file, so the HTML file is not self-contained (e.g., JS
     resources are included via `<script src="assets/*.js">`).
+
 2.  The `offline` option downloads (and caches) resources to the directory of
     the HTML file, whereas the `embed_resources` option downloads them to a
     system cache directory. For the `offline` option, the cached resources are
