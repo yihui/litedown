@@ -356,7 +356,7 @@ set_highlight = function(options, html) {
 
   # if resources need to be embedded, we need to work harder to figure out which
   # js files to embed (this is quite tricky and may not be robust)
-  embed = ('https' %in% options[['embed_resources']]) || options[['offline']]
+  embed = ('https' %in% options[['embed_resources']]) || is.character(options[['offline']])
 
   # style -> css
   css = c(if (is.null(s <- o$style)) {
@@ -954,9 +954,7 @@ embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% options[['embed_resources']]
   offline = options[['offline']]
-  if (isTRUE(offline)) offline = 'assets'
-  if (!is.character(offline)) offline = FALSE
-  if (!any(embed) && isFALSE(offline)) return(x)
+  if (!any(embed, is.character(offline))) return(x)
   clean = options[['embed_cleanup']]
 
   # find images in <img> and (for slides only) comments
@@ -1048,6 +1046,9 @@ normalize_options = function(x, format = 'html') {
   d[names(g)] = g  # merge global options() into default options
   d[n] = x  # then merge user-provided options
   if (!is.character(d[['top_level']])) d$top_level = 'section'
+  if (isTRUE(o <- d[['offline']])) o = 'assets'
+  if (!is.character(o)) o = FALSE
+  d$offline = o
   d = normalize_embed(d)
   # TODO: fully enable footnotes https://github.com/github/cmark-gfm/issues/314
   if (format == 'html' && !is.logical(d[['footnotes']])) d$footnotes = TRUE

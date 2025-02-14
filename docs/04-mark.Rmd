@@ -254,7 +254,8 @@ this option to a character value, e.g.,
 offline: "resources"
 ```
 
-The resources will not be downloaded again unless you have deleted them.
+The resources will not be downloaded again unless you have deleted them on
+purpose.
 
 The `offline` option can also be useful for those who do have Internet
 connection but the connection forbids access to external web resources (e.g., in
@@ -262,10 +263,19 @@ certain corporate environments). In this case, you can ship the resources
 together with the HTML output so it will not rely on external resources.
 
 The option `embed_resources` in @sec:embed-resources provides another way to
-download and cache resources locally. The difference between these two options
-is that the `offline` option downloads resources but do not embed their content
-into the HTML file, so the HTML file is not self-contained (e.g., JS resources
-are included via `<script src="assets/*.js">`).
+download and cache resources locally. The differences between these two options
+are:
+
+1.  The `offline` option downloads resources but does not embed their content
+    into the HTML file, so the HTML file is not self-contained (e.g., JS
+    resources are included via `<script src="assets/*.js">`).
+2.  The `offline` option downloads (and caches) resources to the directory of
+    the HTML file, whereas the `embed_resources` option downloads them to a
+    system cache directory. For the `offline` option, the cached resources are
+    tied to a specific output directory, and cannot be shared or reused by HTML
+    files in other directories. For `embed_resources`, the cache can be shared
+    among any documents to be rendered via `fuse()` or `mark()` in the same
+    system.
 
 ### `smartypants`
 
