@@ -1348,6 +1348,11 @@ download_url = function(url, dir = '.', file = NULL, handler = NULL) {
     return(url)
   f = file %||% gsub('^https?://|[?#].*$', '', url)
   p = URLdecode(f)
+  # see if a previous version of the jsd asset exists
+  if (dir.exists(dir) && startsWith(p, 'cdn.jsdelivr.net/')) in_dir(dir, {
+    p2 = sub('@[0-9.]+/', '@*/', p)
+    if (n <- length(p2 <- Sys.glob(p2))) p = p2[n]
+  })
   if (dir != '.') p = file.path(dir, p)
   if (!file_exists(p)) {
     dir_create(dirname(p))  # TODO: xfun 0.51 will create dir
