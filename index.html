@@ -3932,16 +3932,27 @@ directory <code>assets/</code>. If you want to use a different directory name, y
 this option to a character value, e.g.,</p>
 <pre><code class="language-yaml">offline: &quot;resources&quot;
 </code></pre>
-<p>The resources will not be downloaded again unless you have deleted them.</p>
+<p>The resources will not be downloaded again unless you have deleted them on
+purpose.</p>
 <p>The <code>offline</code> option can also be useful for those who do have Internet
 connection but the connection forbids access to external web resources (e.g., in
 certain corporate environments). In this case, you can ship the resources
 together with the HTML output so it will not rely on external resources.</p>
 <p>The option <code>embed_resources</code> in <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a> provides another way to
-download and cache resources locally. The difference between these two options
-is that the <code>offline</code> option downloads resources but do not embed their content
-into the HTML file, so the HTML file is not self-contained (e.g., JS resources
-are included via <code>&lt;script src=&quot;assets/*.js&quot;&gt;</code>).</p>
+download and cache resources locally. The differences between these two options
+are:</p>
+<ol>
+<li>The <code>offline</code> option downloads resources but does not embed their content
+into the HTML file, so the HTML file is not self-contained (e.g., JS
+resources are included via <code>&lt;script src=&quot;assets/*.js&quot;&gt;</code>).</li>
+<li>The <code>offline</code> option downloads (and caches) resources to the directory of
+the HTML file, whereas the <code>embed_resources</code> option downloads them to a
+system cache directory. For the <code>offline</code> option, the cached resources are
+tied to a specific output directory, and cannot be shared or reused by HTML
+files in other directories. For <code>embed_resources</code>, the cache can be shared
+among any documents to be rendered via <code>fuse()</code> or <code>mark()</code> in the same
+system.</li>
+</ol>
 <h3 id="sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>). This option is <code>false</code> by default.</p>
