@@ -245,13 +245,13 @@ to it. For example:
 ### `offline`
 
 Whether to download web resources (e.g., images and CSS/JS files) used in the
-HTML output so that the HTML file can be viewed offline. This option is `false`
-by default. If enabled, resources are downloaded to the directory `assets/`. If
-you want to use a different directory name, you can set the option
-`litedown.offline.dir`, e.g.,
+HTML output so that the HTML file can be viewed offline later. This option is
+`false` by default. If enabled (`true`), resources are downloaded to the
+directory `assets/`. If you want to use a different directory name, you can set
+this option to a character value, e.g.,
 
-``` r
-options(litedown.offline.dir = 'resources')
+``` yaml
+offline: "resources"
 ```
 
 The resources will not be downloaded again unless you have deleted them.

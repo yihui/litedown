@@ -954,7 +954,9 @@ embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
   embed = c('https', 'local') %in% options[['embed_resources']]
   offline = options[['offline']]
-  if (!any(embed, offline)) return(x)
+  if (isTRUE(offline)) offline = 'assets'
+  if (!is.character(offline)) offline = FALSE
+  if (!any(embed) && isFALSE(offline)) return(x)
   clean = options[['embed_cleanup']]
 
   # find images in <img> and (for slides only) comments
@@ -970,7 +972,7 @@ embed_resources = function(x, options) {
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
       is_svg = grepl('[.]svg$', f <- z2[i]) && grepl('^<img', z1[i])
       a = if (is_svg) str_trim(gsub('^"|/>$', '', z3[i])) else ''
-      if (offline && is_https(f)) f = download_url(f)
+      f = download_url(f, offline)
       if (is_https(f)) {
         if (embed[1]) z2[i] = if (!is_svg) download_cache$get(f, 'base64') else {
           download_cache$get(f, 'text', function(xml) process_svg(xml, a))
@@ -1261,8 +1263,8 @@ gen_tag = function(
   link1 = is_rel && !embed_local
   link2 = is_web && !embed_https
   if (link1 || link2) {
-    if (offline && link2 && !grepl('^http://127.0.0.1', x)) x = download_url(
-      x, handler = function(code) resolve_url(x, code, ext, FALSE)
+    if (link2) x = download_url(
+      x, offline, handler = function(code) resolve_url(x, code, ext, FALSE)
     )
     sprintf(t1, x)
   } else {
@@ -1341,9 +1343,9 @@ resolve_url = function(url, code, ext, encode = TRUE) {
 }
 
 # download a file to a local dir if the local file doesn't exist
-download_url = function(
-  url, dir = getOption('litedown.offline.dir', 'assets'), file = NULL, handler = NULL
-) {
+download_url = function(url, dir = '.', file = NULL, handler = NULL) {
+  if (!is.character(dir) || !is_https(url) || grepl('^http://127.0.0.1', x))
+    return(url)
   f = file %||% gsub('^https?://|[?#].*$', '', url)
   p = URLdecode(f)
   if (dir != '.') p = file.path(dir, p)
