@@ -867,7 +867,7 @@ fill_code = function(x) {
   r = '`\\{(.+?)}`'
   match_replace(x, r, function(z) {
     code = sub(r, '\\1', z)
-    uapply(code, function(s) one_string(eng_r(list(source = s), inline = TRUE)))
+    uapply(code, function(s) one_string(eval_code(s)))
   })
 }
 
@@ -1079,14 +1079,18 @@ reactor(
   signif = 3, power = 6, dollar = NA
 )
 
+eval_code = function(code, error = NA) {
+  expr = parse_only(code)
+  if (is.na(error)) eval(expr, fuse_env()) else tryCatch(
+    eval(expr, fuse_env()), error = function(e) if (error) e$message else ''
+  )
+}
+
 # the R engine
 eng_r = function(x, inline = FALSE, ...) {
   opts = reactor()
   if (inline) {
-    expr = parse_only(x$source)
-    res = if (is.na(opts$error)) eval(expr, fuse_env()) else tryCatch(
-      eval(expr, fuse_env()), error = function(e) if (opts$error) e$message else ''
-    )
+    res = eval_code(x$source, opts$error)
     return(fmt_inline(res, x$math))
   }
   args = reactor(
