@@ -7,11 +7,11 @@
 #' dependencies), and it also has fewer Markdown features.
 #' @importFrom xfun alnum_id base64_uri csv_options del_empty_dir dir_create
 #'   divide_chunk download_cache exit_call fenced_block fenced_div file_exists
-#'   file_ext grep_sub html_escape in_dir is_abs_path is_blank is_rel_path
-#'   loadable mime_type new_app new_record normalize_path parse_only prose_index
-#'   raw_string read_all read_utf8 record_print relative_path Rscript_call
-#'   same_path sans_ext set_envvar split_lines try_error try_silent with_ext
-#'   write_utf8
+#'   file_ext grep_sub html_escape html_tag html_value in_dir is_abs_path
+#'   is_blank is_rel_path loadable mime_type new_app new_record normalize_path
+#'   parse_only prose_index raw_string read_all read_utf8 record_print
+#'   relative_path Rscript_call same_path sans_ext set_envvar split_lines
+#'   try_error try_silent with_ext write_utf8
 '_PACKAGE'
 
 # an internal environment to store some intermediate objects

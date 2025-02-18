@@ -1363,6 +1363,38 @@ document.body.classList.add('dark');
 ```
 ````
 
+The `css` engine will output its content in the `<style>` tag. The `js` engine
+will output its content in the `<script>` tag. If the chunk option `type` is
+present, it will be included as an attribute of the `<script>` tag. For example,
+`type = "module"` indicates that the script should be treated as a [JS
+module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules).
+
+By default, the chunk source is also displayed verbatim in the output. In most
+cases, you may want to hide the source via the chunk option `echo = FALSE`
+(@sec:option-echo).
+
+The `css` engine can also accept the chunk option `href` to include a stylesheet
+via the `<link>` tag, e.g.,
+
+```` md
+```{css, href="https://unpkg.com/mvp.css"}
+```
+````
+
+The `js` engine can also include external scripts via the chunk option `src`,
+e.g.,
+
+```` md
+```{js, src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.js"}
+```
+````
+
+By default, external scripts are
+[deferred](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer)
+(i.e., they will not run until the full document has been parsed). If you want
+to run an external script immediately, you may set the chunk option
+`defer = FALSE`.
+
 ### The Mermaid engine
 
 The `mermaid` engine can be used to draw diagrams with

@@ -1157,6 +1157,34 @@ eng_embed = function(x, ...) {
   structure(list(new_output(s)), options = opts_new)
 }
 
+eng_html = function(x, inline = FALSE, html = NULL) {
+  out = fenced_block(html, '=html')
+  if (inline) one_string(c(out, '')) else list(new_source(x$source), new_asis(out))
+}
+
+eng_css = function(x, inline = FALSE, ...) {
+  if (is.character(h <- reactor('href'))) {
+    res = sprintf('<link rel="stylesheet" href="%s">', h)
+    if (inline) one_string(res) else list(new_asis(res))
+  } else {
+    eng_html(x, inline, c('<style type="text/css">', x$source, '</style>'))
+  }
+}
+
+eng_js = function(x, inline = FALSE, ...) {
+  opts = reactor()
+  a = list(type = opts$type, src = opts$src)
+  for (i in c('type', 'src')) a[[i]] = a[[i]]  # remove NULL
+  if (is.character(s <- a$src)) {
+    if (!isFALSE(opts$defer)) a['defer'] = list(NULL)
+    res = html_tag('script', NULL, a)
+    if (inline) one_string(res) else list(new_asis(res))
+  } else {
+    if (identical(a$type, 'module')) a$defer = NULL
+    eng_html(x, inline, html_tag('script', html_value(x$source), a))
+  }
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -1181,14 +1209,8 @@ eng_embed = function(x, ...) {
 engines = new_opts()
 engines(
   r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
-  css = function(x, ...) eng_html(x, '<style type="text/css">', '</style>', ...),
-  js = function(x, ...) eng_html(x, '<script>', '</script>', ...)
+  css = eng_css, js = eng_js
 )
-
-eng_html = function(x, before = NULL, after = NULL, inline = FALSE) {
-  out = fenced_block(c(before, x$source, after), '=html')
-  if (inline) one_string(c(out, '')) else list(new_source(x$source), new_asis(out))
-}
 
 #' @export
 print.litedown_env = function(x, ...) {
