@@ -1158,10 +1158,11 @@ jsd_resolve = function(x) {
   rs = paste0(c(
     '((?<=https://cdn.jsdelivr.net/combine/)|(?<=,))',
     '(?<=https://cdn.jsdelivr.net/)(?!combine/)'
-  ), '([^/]+/(@[^/]+/)?[^/@]+)(?=/)')
+  ), '([^/]+/(@[^/]+/)?[^/@]+)((?=/)|(?=@latest$)|$)')
   for (r in rs) x = match_replace(x, r, function(z) {
     paste0(z, jsd_versions(z))
   })
+  x = sub('@latest$', '', x)
   x
 }
 
@@ -1174,9 +1175,13 @@ resolve_dups = function(x) {
   x
 }
 
-# add filename extensions to paths without extensions
+# add filename extensions to paths without extensions: the path should contain
+# no slashes (@xiee/utils assets) or at least 2 slashes when the npm package
+# name doesn't start with @ (otherwise the path should contain >= 3 slashes),
+# e.g. don't add ext for npm/simple-datatables
 add_ext = function(x, ext) {
-  i = file_ext(x) == ''
+  n = vapply(strsplit(x, ''), function(z) sum(z == '/'), 0)
+  i = file_ext(x) == '' & (n == 0 | n > grepl('^[^/]+/@', x) + 2)
   x[i] = paste0(x[i], ext)
   x
 }
