@@ -698,7 +698,7 @@ fuse_code = function(x, blocks) {
   }
 
   # resolve inline chunk references and do code interpolation
-  if (opts$fill) x$source = fill_source(x$source, blocks)
+  x$source = fill_source(x$source, opts$fill, blocks)
 
   res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
@@ -838,9 +838,10 @@ fuse_code = function(x, blocks) {
 
 # resolve `<label>` to chunk source, and evaluate `{code}` to string (to
 # interpolate original source)
-fill_source = function(x, blocks) {
+fill_source = function(x, fill, blocks) {
+  if (isFALSE(fill)) return(x)
   x = fill_label(x, blocks)
-  fill_code(x)
+  fill_code(x, fill)
 }
 
 fill_label = function(x, blocks) {
@@ -863,11 +864,15 @@ fill_label = function(x, blocks) {
   if (is.null(i)) x else fill_label(split_lines(x), blocks)
 }
 
-fill_code = function(x) {
+fill_code = function(x, fill) {
   r = '`\\{(.+?)}`'
   match_replace(x, r, function(z) {
     code = sub(r, '\\1', z)
-    uapply(code, function(s) one_string(eval_code(s)))
+    uapply(code, function(s) {
+      v = eval_code(s)
+      if (is.function(fill)) v = fill(v)
+      one_string(v)
+    })
   })
 }
 

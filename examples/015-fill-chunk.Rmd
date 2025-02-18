@@ -36,7 +36,7 @@ abs(f() - pi) <= 0.1  # is it close to pi?
 
 We can generate code dynamically in any code chunk, not limited to R chunks, e.g.,
 
-```{js, eval = FALSE}
-const data = `{ xfun::tojson(iris[1:5, 1:2]) }`;
+```{js, eval = FALSE, fill = xfun::tojson}
+const data = `{ iris[1:5, 1:2] }`;
 Object.keys(data);  // column names
 ```

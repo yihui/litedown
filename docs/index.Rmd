@@ -26,7 +26,7 @@ options(width = 80)
     if (!is.na(last)) x = tail(x, last) else {
       if (!is.na(i)) x = x[-(1 + 0:i)] else partial = FALSE
     }
-    if (partial) x = c('... ... ...', x)
+    if (partial) x = c('... ... ...', '', x)
   }
   if (!verbatim) return(x)
   x = litedown:::trim_blank(paste(x, collapse = '\n'))

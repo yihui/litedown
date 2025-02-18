@@ -791,7 +791,7 @@ Chunk options for plot files include:
 
 `{r} .ex(10)`
 
-### `fill`: code interpolation and inline chunk references {#sec:option-fill}
+### `fill`: code interpolation {#sec:option-fill}
 
 The source code in a chunk can be dynamically constructed via interpolation. Two
 types of placeholders are supported, which will be filled out by the character
@@ -851,7 +851,8 @@ Inline chunk references can be recursive. For example, `chunk-a` may embed
 the recursion must be finite (e.g., a chunk cannot reference itself).
 
 The `` `{code}` `` placeholder can be useful when you want to run or present the
-code differently according to different scenarios.
+code differently according to different scenarios. The chunk option `fill` can
+also take a function to convert the value returned by the code.
 
 `{r} c(.ex(15), .ex(15, '.md'))`
 
@@ -866,8 +867,9 @@ to reduce the number of simulations during `R CMD check` via:
 N = if (xfun::is_R_CMD_check()) 10 else 100000
 ```
 
-The above example also showed the possibility of passing R data to a JavaScript
-code chunk.
+The above example also showed the possibility of passing R data to a JS code
+chunk—we set `fill = xfun::tojson` so that the data frame is converted to JSON
+and embedded into the JS code.
 
 ### `include`: visibility of whole code chunk {#sec:option-include}
 
