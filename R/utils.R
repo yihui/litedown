@@ -1155,6 +1155,7 @@ jsd_versions = function(pkgs) uapply(pkgs, jsd_version)
 
 # resolve the implicit latest version to current latest version
 jsd_resolve = function(x) {
+  if (!getOption('litedown.jsd_resolve', TRUE)) return(x)
   rs = paste0(c(
     '((?<=https://cdn.jsdelivr.net/combine/)|(?<=,))',
     '(?<=https://cdn.jsdelivr.net/)(?!combine/)'

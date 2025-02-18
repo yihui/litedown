@@ -1046,7 +1046,7 @@ as is. The behavior is controlled by the option `results`, with possible values:
 
 `{r} c(.ex(16), .ex(16, '.md'))`
 
-### `strip.white`: leading / trailing blank lines in code {#sec:option-strip-white}
+### `strip.white`: trim blank lines in code {#sec:option-strip-white}
 
 By default, blank lines at the beginning and end of a source code block are
 removed. To keep them, you can use the chunk option `strip.white = FALSE`.
