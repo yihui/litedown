@@ -638,9 +638,9 @@ move_attrs = function(x, format = 'html') {
       paste0(z1, z3, z24)
     })
     # links
-    x = convert_attrs(x, '(<a[^>]+)(>.+?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
-      z1 = sub(r, '\\1', z)
-      z2 = sub(r, '\\2', z)
+    x = convert_attrs(x, '(<a[^>]+)(>(?s).+?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
+      z1 = sub(r, '\\1', z, perl = TRUE)
+      z2 = sub(r, '\\2', z, perl = TRUE)
       z3 = str_trim(z3)
       paste0(z1, ifelse(z3 == '', '', ' '), z3, z2)
     })
@@ -722,7 +722,7 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
       z = gsub("''( |\\\\})", '"\\1', z)
       z = gsub('\\\\([#%])', '\\1', z)
     }
-    z2 = f2(sub(r, s, z))
+    z2 = f2(sub(r, s, z, perl = TRUE))
     # {-} is a shorthand of {.unnumbered}
     z2[z2 == '-'] = '.unnumbered'
     # convert #id to id="" and .class to class=""

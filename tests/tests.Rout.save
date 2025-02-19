@@ -127,6 +127,13 @@ Content Cell  | Content Cell</p>
 > mark("https://www.r-project.org/", options = "-autolink")
 <p>https://www.r-project.org/</p>
 
+> mark("[a b](#){.red}")
+<p><a href="#" class="red">a b</a></p>
+
+> mark("[a\nb](){.red}")
+<p><span class="red">a
+b</span></p>
+
 > mark("~~awesome~~")
 <p><del>awesome</del></p>
 
@@ -176,7 +183,7 @@ Content Cell  | Content Cell</p>
 > mark("```{=html}\n<p>raw HTML</p>\n```")
 <p>raw HTML</p>
 
-> mark("```{=latex}\n<p>raw HTML</p>\n```")
+> mark("```{=latex}\n\\textbf{raw LaTeX}\n```")
 
 
 > mkd = "<style>a {}</style><script type=\"text/javascript\">console.log(\"No!\");</script>\n[Hello](#)"

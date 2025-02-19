@@ -75,6 +75,10 @@ Content Cell  | Content Cell
 mark("https://www.r-project.org/")
 mark("https://www.r-project.org/", options = "-autolink")
 
+# links and spans
+mark('[a b](#){.red}')
+mark('[a\nb](){.red}')
+
 # strikethrough example
 mark("~~awesome~~")
 mark("~~awesome~~", options = "-strikethrough")
@@ -95,7 +99,7 @@ mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````')
 
 # raw blocks
 mark('```{=html}\n<p>raw HTML</p>\n```')
-mark('```{=latex}\n<p>raw HTML</p>\n```')
+mark('```{=latex}\n\\\\textbf{raw LaTeX}\n```')
 
 # filter out HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
