@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.12">
+<meta name="generator" content="litedown 0.5.13">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/article.min.css">
@@ -442,7 +442,7 @@ package sites, and <strong>pagedown</strong> for paged HTML documents.</p>
 <li>
 <p>\(R\) = <strong>knitr</strong> + <strong>evaluate</strong> + <strong>rmarkdown</strong> + <strong>bookdown</strong> +
 <strong>blogdown</strong> + <strong>pagedown</strong> + <strong>pkgdown</strong> + <strong>xaringan</strong> + <strong>tufte</strong> +
-<strong>distill</strong></p>
+<strong>distill</strong> + <strong>htmlwidgets</strong></p>
 </li>
 <li>
 <p>\(D_i\) = (internal dependencies) <strong>commonmark</strong> + <strong>xfun</strong></p>
@@ -821,7 +821,7 @@ the conversion process from R Markdown to a target format.</p>
 A diagram illustrating how <strong>litedown</strong> converts R Markdown documents to target output formats.</p>
 </div>
 </div>
-<p>The function <code>fuse()</code> “fuses” program code with narratives, i.e., it executes
+<p>The function <code>fuse()</code> "fuses" program code with narratives, i.e., it executes
 all code in the source document and interweaves results with narratives in the
 output document; <code>fiss()</code> splits the document and extracts the code. Similar to
 <strong>knitr</strong>, <strong>litedown</strong> supports code chunks (<a class="cross-ref-sec" href="#sec:code-chunks">2.1</a>) and inline code
