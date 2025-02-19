@@ -1367,7 +1367,6 @@ download_url = function(url, dir = '.', file = NULL, handler = NULL) {
   })
   if (dir != '.') p = file.path(dir, p)
   if (!file_exists(p)) {
-    dir_create(dirname(p))  # TODO: xfun 0.51 will create dir
     xfun::download_file(url, p)
     if (is.function(handler)) xfun::process_file(p, function(x) {
       x  # force eval before changing wd

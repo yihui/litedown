@@ -409,7 +409,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # for RStudio to capture the output path when previewing the output
     if (is_rmd_preview()) message('\nOutput created: ', output)
     if (is_pdf) invisible(output) else write_utf8(ret, output)
-  } else raw_string(ret)  # TODO: (lang = format) with xfun 0.51
+  } else raw_string(ret, lang = format)
 }
 
 # insert body and meta variables into a template
