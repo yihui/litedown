@@ -519,7 +519,15 @@ add_citation = function(x, bib, format = 'html') {
     })
     ifelse(is.na(z2), z, z2)
   })
-  if (is_html) x = one_string(c(x, '<div id="refs">', bib_html(bib, cited), '</div>'))
+  if (is_html) {
+    b = bib_html(bib, cited)
+    d = '<div id="refs">'
+    if (any(grepl(d, x, fixed = TRUE))) {
+      x = sub(d, paste0(d, one_string(b)), x, fixed = TRUE)
+    } else {
+      x = one_string(c(x, d, b, '</div>'))
+    }
+  }
   x
 }
 

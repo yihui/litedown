@@ -705,7 +705,10 @@ include multiple keywords in `[ ]` separated by semicolons.
 
 For HTML output, the citation uses the author-year style. The syntax
 `[@keyword]` generates the citation in parentheses (e.g., `(Author, 2024)`), and
-`@keyword` only puts the year in parentheses (e.g., `Author (2024)`).
+`@keyword` only puts the year in parentheses (e.g., `Author (2024)`). All
+references will be put in a Div with the id `refs`, i.e.,
+`<div id="refs"></div>`. This Div will appear at the end of the document by
+default. If you want it to appear elsewhere, you can provide an empty Div there.
 
 For LaTeX output, the citation style depends on the LaTeX package, which you can
 set via the `citation_package` option of the output format in YAML metadata,
