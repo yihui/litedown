@@ -1,0 +1,40 @@
+---
+title: "Leaflet"
+---
+
+Add the CSS/JS assets from the [leaflet](https://leafletjs.com) library:
+
+```{r}
+litedown::vest(css = '@npm/leaflet/dist/leaflet', js = '@npm/leaflet')
+```
+
+```{r}
+loc = c(41.2542491, -95.9728748)
+theta = (1:12)/6 * pi
+circles = data.frame(Lat = loc[1] + sin(theta)/1000, Lng = loc[2] + cos(theta)/1000)
+```
+
+Provide a fenced Div with the ID `unmc` as the map container, and create the map:
+
+::: {#unmc style="height: 500px;"}
+:::
+
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+const map = L.map('unmc').setView(`{ loc }`, 17);
+
+// add a tile layer
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 21,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+// add a marker and bind a popup to it
+const marker = L.marker(`{ loc }`).addTo(map);
+marker.bindPopup("<b>UNMC</b><p>You can play badminton here.</p>");
+
+// draw a circle of circles (lat/long from the data frame `circles`)
+`{ unname(circles) }`.forEach(row => L.circle(row, {
+  color: 'orangered', radius: 30,
+  fillColor: 'lightskyblue', fillOpacity: 0.5
+}).addTo(map));
+```

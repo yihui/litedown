@@ -1,0 +1,40 @@
+---
+title: "Simple DataTables"
+---
+
+Add the CSS/JS assets from the [simple-datatables](https://github.com/fiduswriter/simple-datatables/) library:
+
+```{r}
+litedown::vest(css = '@npm/simple-datatables/dist/style', js = '@npm/simple-datatables')
+```
+
+There are two ways to render a table using the library. You can either pass the data as a JSON object:
+
+<table id="table-iris"></table>
+
+```{js, type = 'module', echo = FALSE, fill = xfun::tojson}
+new simpleDatatables.DataTable('#table-iris', {
+  data: {
+    headings: `{ names(iris) }`,
+    data: `{ unname(iris)[1:20, ] }`
+  },
+  perPage: 5
+})
+```
+
+or generate the data to an HTML table first:
+
+::: {#mtcars}
+```{r, echo = FALSE}
+I(mtcars[1:10, 1:5])
+```
+:::
+
+and then initialize a simple data table.
+
+```{js, type = 'module', echo = FALSE}
+new simpleDatatables.DataTable('#mtcars > table', {
+  perPage: 1,
+  perPageSelect: [1, 2, 4, 8, ['All', 0]]
+})
+```

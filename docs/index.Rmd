@@ -198,7 +198,13 @@ classDiagram
     R-dep (xfun, commonmark)
     web-dep (lite.js)
   }
-  class rmarkdown {
+  class pkgdown {
+    +[ * ]
+  }
+  class xaringan {
+    +[ * ]
+  }
+  class tufte {
     +[ * ]
   }
   class bookdown {
@@ -210,16 +216,13 @@ classDiagram
   class pagedown {
     +[ * ]
   }
-  class pkgdown {
-    +[ * ]
-  }
-  class xaringan {
-    +[ * ]
-  }
-  class tufte {
-    +[ * ]
-  }
   class distill {
+    +[ * ]
+  }
+  class htmlwidgets {
+    +[ * ]
+  }
+  class rmarkdown {
     +[ * ]
   }
   litedown *-- rmarkdown
@@ -230,6 +233,14 @@ classDiagram
   litedown *-- xaringan
   litedown *-- tufte
   litedown *-- distill
+  litedown *-- htmlwidgets
+  rmarkdown <|-- bookdown
+  rmarkdown <|-- pkgdown
+  rmarkdown <|-- xaringan
+  rmarkdown <|-- tufte
+  bookdown <|-- blogdown
+  bookdown <|-- pagedown
+  bookdown <|-- distill
   classDef default fill:none
   style litedown fill:lightcyan
 ```
@@ -242,6 +253,11 @@ classDiagram
 
 classDiagram
   direction BT
+  class htmlwidgets {
+    +JS apps
+    R-dep (26)
+    web-dep (*.js/.css)
+  }
   class rmarkdown {
     +HTML/LaTeX
     +RTF/Word/PowerPoint/EPub/...
@@ -249,12 +265,6 @@ classDiagram
     sys-dep (Pandoc)
     web-dep (Bootstrap/jQuery/...)
   }
-  class bookdown {
-    +Books
-    R-dep (26)
-    web-dep (GitBook...)
-  }
-  bookdown --|> rmarkdown
   class blogdown {
     +Websites
     R-dep (33)
@@ -291,6 +301,12 @@ classDiagram
     web-dep (tufte.css)
   }
   tufte --|> rmarkdown
+  class bookdown {
+    +Books
+    R-dep (26)
+    web-dep (GitBook...)
+  }
+  bookdown --|> rmarkdown
   classDef default fill:none
   style rmarkdown fill:lightskyblue
 ```
@@ -320,10 +336,8 @@ the [**runr**](https://github.com/yihui/runr) package. However, I forsook
 simplicity after other sophisticated packages emerged, such as **reticulate**
 and **JuliaCall**. I may revisit the idea in the future.
 
-HTML widgets are not supported yet, but may be reimagined in the future with
-some minimal support. Meanwhile, you are free to add arbitrary JS libraries to
-your documents (@sec:arbitrary-assets), so it is entirely possible that you can
-create HTML widgets on your own.
+The support for HTML widgets is minimal. The method requires basic knowledge of
+JavaScript, yet it is quite flexible (@chp:widgets).
 
 ## Highlights
 

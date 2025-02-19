@@ -1,0 +1,13 @@
+# HTML Widgets {#chp:widgets}
+
+## Simple DataTables {#sec:simple-dt}
+
+`{r} .ex(21)`
+
+## Dygraphs
+
+`{r} .ex(22)`
+
+## Leaflet
+
+`{r} .ex(23)`

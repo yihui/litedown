@@ -1,0 +1,55 @@
+---
+title: "Dygraphs"
+---
+
+Add the CSS/JS assets from the [dygraphs](https://github.com/danvk/dygraphs) library:
+
+```{r}
+litedown::vest(css = '@npm/dygraphs/dist/dygraph', js = '@npm/dygraphs/dist/dygraph')
+```
+
+Show the yearly sunspots data (with a range selector):
+
+```{r}
+sunspot = cbind(Year = time(sunspot.year), Sunspots = sunspot.year)
+```
+
+::: {#graph-sunspot style="width: 100%;"}
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+const g = new Dygraph(
+  document.getElementById('graph-sunspot'),
+  `{ unname(sunspot) }`,
+  {
+    labels: `{ colnames(sunspot) }`,
+    showRangeSelector: true
+  }
+);
+// annotate the maximum
+g.ready(() => g.setAnnotations([
+  {
+    series: `{ colnames(sunspot)[2] }`,
+    x: `{ sunspot[which.max(sunspot[, 2]), 1] }`,
+    shortText: "M",
+    text: "Maximum number"
+  }
+]));
+```
+:::
+
+Show two time series:
+
+```{r}
+deaths = cbind(Time = round(time(mdeaths), 2), Male = mdeaths, Female = fdeaths)
+```
+
+::: {#graph-deaths style="width: 100%;"}
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+new Dygraph(
+  document.getElementById('graph-deaths'),
+  `{ unname(deaths) }`,
+  {
+    labels: `{ colnames(deaths) }`
+  }
+);
+```
+:::

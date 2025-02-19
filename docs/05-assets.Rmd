@@ -733,8 +733,8 @@ title: Display Tables with the JS Library DataTables
 output:
   html:
     meta:
-      css: ["@default", "@npm/simple-datatables/dist/style.min.css"]
-      js: ["@npm/simple-datatables/dist/umd/simple-datatables.min.js"]
+      css: ["@default", "@npm/simple-datatables/dist/style"]
+      js: ["@npm/simple-datatables"]
 ---
 
 ::: {#mtcars-table}
@@ -743,9 +743,9 @@ I(mtcars)
 ```
 :::
 
-```{js}
-window.addEventListener('load', () => {
-  new simpleDatatables.DataTable('#mtcars-table > table');
-});
+```{js, type = "module"}
+new simpleDatatables.DataTable('#mtcars-table > table');
 ```
 ````
+
+See @sec:simple-dt for more ways to create this type of table.
