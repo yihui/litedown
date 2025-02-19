@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.11">
+<meta name="generator" content="litedown 0.5.12">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/article.min.css">
@@ -17,12 +17,29 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/pages.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/prism-xcode.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.21/dist/katex.min.js,npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-02-14</h3></div>
+<div class="date"><h3>2025-02-19</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -89,7 +106,7 @@
 <li><a href="#sec:option-error"><span class="section-number">2.2.10</span> <code>error</code>: error behavior</a></li>
 <li><a href="#sec:option-eval"><span class="section-number">2.2.11</span> <code>eval</code>: code evaluation</a></li>
 <li><a href="#sec:option-fig"><span class="section-number">2.2.12</span> <code>fig.*</code>: figure options</a></li>
-<li><a href="#sec:option-fill"><span class="section-number">2.2.13</span> <code>fill</code>: code interpolation and inline chunk references</a></li>
+<li><a href="#sec:option-fill"><span class="section-number">2.2.13</span> <code>fill</code>: code interpolation</a></li>
 <li><a href="#sec:option-include"><span class="section-number">2.2.14</span> <code>include</code>: visibility of whole code chunk</a></li>
 <li><a href="#sec:option-label"><span class="section-number">2.2.15</span> <code>label</code>: chunk label</a></li>
 <li><a href="#sec:option-message"><span class="section-number">2.2.16</span> <code>message</code>: message behavior</a></li>
@@ -97,7 +114,7 @@
 <li><a href="#sec:option-print"><span class="section-number">2.2.18</span> <code>print</code>: printing function</a></li>
 <li><a href="#sec:option-purl"><span class="section-number">2.2.19</span> <code>purl</code>: code extraction</a></li>
 <li><a href="#sec:option-results"><span class="section-number">2.2.20</span> <code>results</code>: text output behavior</a></li>
-<li><a href="#sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: leading / trailing blank lines in code</a></li>
+<li><a href="#sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: trim blank lines in code</a></li>
 <li><a href="#sec:option-tab"><span class="section-number">2.2.22</span> <code>tab.*</code>: table options</a></li>
 <li><a href="#sec:option-time"><span class="section-number">2.2.23</span> <code>time</code>: code timing</a></li>
 <li><a href="#sec:option-verbose"><span class="section-number">2.2.24</span> <code>verbose</code>: printing verbosity</a></li>
@@ -254,32 +271,39 @@
 <li><a href="#sec:arbitrary-assets"><span class="section-number">5.18</span> Include arbitrary CSS/JS</a></li>
 </ul>
 </li>
-<li><a href="#chp:authoring"><span class="section-number main-number">6</span> Authoring</a>
+<li><a href="#chp:widgets"><span class="section-number main-number">6</span> HTML Widgets</a>
 <ul>
-<li><a href="#sec:live-preview"><span class="section-number">6.1</span> Live preview</a>
-<ul>
-<li><a href="#sec:live-reload"><span class="section-number">6.1.1</span> Live reload</a></li>
-<li><a href="#sec:the-file-listing"><span class="section-number">6.1.2</span> The file listing</a></li>
-<li><a href="#sec:the-buttons"><span class="section-number">6.1.3</span> The buttons</a></li>
-<li><a href="#sec:cleaning-up"><span class="section-number">6.1.4</span> Cleaning up</a></li>
+<li><a href="#sec:simple-dt"><span class="section-number">6.1</span> Simple DataTables</a></li>
+<li><a href="#sec:dygraphs"><span class="section-number">6.2</span> Dygraphs</a></li>
+<li><a href="#sec:leaflet"><span class="section-number">6.3</span> Leaflet</a></li>
 </ul>
 </li>
-<li><a href="#sec:visual-editor"><span class="section-number">6.2</span> Visual editor</a></li>
-<li><a href="#sec:knit-button"><span class="section-number">6.3</span> The <code>Knit</code> button</a></li>
+<li><a href="#chp:authoring"><span class="section-number main-number">7</span> Authoring</a>
+<ul>
+<li><a href="#sec:live-preview"><span class="section-number">7.1</span> Live preview</a>
+<ul>
+<li><a href="#sec:live-reload"><span class="section-number">7.1.1</span> Live reload</a></li>
+<li><a href="#sec:the-file-listing"><span class="section-number">7.1.2</span> The file listing</a></li>
+<li><a href="#sec:the-buttons"><span class="section-number">7.1.3</span> The buttons</a></li>
+<li><a href="#sec:cleaning-up"><span class="section-number">7.1.4</span> Cleaning up</a></li>
 </ul>
 </li>
-<li><a href="#chp:sites"><span class="section-number main-number">7</span> Books and Websites</a>
-<ul>
-<li><a href="#sec:books"><span class="section-number">7.1</span> Books</a>
-<ul>
-<li><a href="#sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</a></li>
+<li><a href="#sec:visual-editor"><span class="section-number">7.2</span> Visual editor</a></li>
+<li><a href="#sec:knit-button"><span class="section-number">7.3</span> The <code>Knit</code> button</a></li>
 </ul>
 </li>
-<li><a href="#sec:websites"><span class="section-number">7.2</span> Websites</a></li>
-<li><a href="#sec:pkg-site"><span class="section-number">7.3</span> R package documentation</a>
+<li><a href="#chp:sites"><span class="section-number main-number">8</span> Books and Websites</a>
 <ul>
-<li><a href="#sec:the-pkg-helper-functions"><span class="section-number">7.3.1</span> The <code>pkg_*()</code> helper functions</a></li>
-<li><a href="#sec:package-sites-via-github-action"><span class="section-number">7.3.2</span> Package sites via GitHub Action</a></li>
+<li><a href="#sec:books"><span class="section-number">8.1</span> Books</a>
+<ul>
+<li><a href="#sec:previewing-a-single-chapter"><span class="section-number">8.1.1</span> Previewing a single chapter</a></li>
+</ul>
+</li>
+<li><a href="#sec:websites"><span class="section-number">8.2</span> Websites</a></li>
+<li><a href="#sec:pkg-site"><span class="section-number">8.3</span> R package documentation</a>
+<ul>
+<li><a href="#sec:the-pkg-helper-functions"><span class="section-number">8.3.1</span> The <code>pkg_*()</code> helper functions</a></li>
+<li><a href="#sec:package-sites-via-github-action"><span class="section-number">8.3.2</span> Package sites via GitHub Action</a></li>
 </ul>
 </li>
 </ul>
@@ -439,7 +463,13 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
     R-dep (xfun, commonmark)
     web-dep (lite.js)
   }
-  class rmarkdown {
+  class pkgdown {
+    +[ * ]
+  }
+  class xaringan {
+    +[ * ]
+  }
+  class tufte {
     +[ * ]
   }
   class bookdown {
@@ -451,16 +481,13 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
   class pagedown {
     +[ * ]
   }
-  class pkgdown {
-    +[ * ]
-  }
-  class xaringan {
-    +[ * ]
-  }
-  class tufte {
-    +[ * ]
-  }
   class distill {
+    +[ * ]
+  }
+  class htmlwidgets {
+    +[ * ]
+  }
+  class rmarkdown {
     +[ * ]
   }
   litedown *-- rmarkdown
@@ -471,6 +498,14 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
   litedown *-- xaringan
   litedown *-- tufte
   litedown *-- distill
+  litedown *-- htmlwidgets
+  rmarkdown &lt;|-- bookdown
+  rmarkdown &lt;|-- pkgdown
+  rmarkdown &lt;|-- xaringan
+  rmarkdown &lt;|-- tufte
+  bookdown &lt;|-- blogdown
+  bookdown &lt;|-- pagedown
+  bookdown &lt;|-- distill
   classDef default fill:none
   style litedown fill:lightcyan
 </pre>
@@ -482,6 +517,11 @@ A minimal partial re-implementation of the R Markdown ecosystem as <strong>lited
 <div id="fig:scope-rmarkdown" class="figure">
 <pre class="mermaid">classDiagram
   direction BT
+  class htmlwidgets {
+    +JS apps
+    R-dep (26)
+    web-dep (*.js/.css)
+  }
   class rmarkdown {
     +HTML/LaTeX
     +RTF/Word/PowerPoint/EPub/...
@@ -489,12 +529,6 @@ A minimal partial re-implementation of the R Markdown ecosystem as <strong>lited
     sys-dep (Pandoc)
     web-dep (Bootstrap/jQuery/...)
   }
-  class bookdown {
-    +Books
-    R-dep (26)
-    web-dep (GitBook...)
-  }
-  bookdown --|&gt; rmarkdown
   class blogdown {
     +Websites
     R-dep (33)
@@ -531,6 +565,12 @@ A minimal partial re-implementation of the R Markdown ecosystem as <strong>lited
     web-dep (tufte.css)
   }
   tufte --|&gt; rmarkdown
+  class bookdown {
+    +Books
+    R-dep (26)
+    web-dep (GitBook...)
+  }
+  bookdown --|&gt; rmarkdown
   classDef default fill:none
   style rmarkdown fill:lightskyblue
 </pre>
@@ -557,10 +597,8 @@ with a simple idea to run program code in other languages, and the outcome was
 the <a href="https://github.com/yihui/runr"><strong>runr</strong></a> package. However, I forsook
 simplicity after other sophisticated packages emerged, such as <strong>reticulate</strong>
 and <strong>JuliaCall</strong>. I may revisit the idea in the future.</p>
-<p>HTML widgets are not supported yet, but may be reimagined in the future with
-some minimal support. Meanwhile, you are free to add arbitrary JS libraries to
-your documents (<a class="cross-ref-sec" href="#sec:arbitrary-assets">5.18</a>), so it is entirely possible that you can
-create HTML widgets on your own.</p>
+<p>The support for HTML widgets is minimal. The method requires basic knowledge of
+JavaScript, yet it is quite flexible (<a class="cross-ref-chp" href="#chp:widgets">6</a>).</p>
 <h2 id="sec:highlights">Highlights</h2>
 <h3 id="sec:small-footprint">Small footprint</h3>
 <p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
@@ -609,7 +647,7 @@ tables, and equations.</p>
 </li>
 <li>
 <p>Create single-file reports/slides, or multiple-file books/websites
-(<a class="cross-ref-chp" href="#chp:sites">7</a>).</p>
+(<a class="cross-ref-chp" href="#chp:sites">8</a>).</p>
 </li>
 </ul>
 <p>If you load additional JS/CSS assets, you can create more types of elements,
@@ -618,7 +656,7 @@ blocks (<a class="cross-ref-chp" href="#chp:assets">5</a>).</p>
 <h3 id="sec:live-preview-everything">Live preview everything</h3>
 <p>To get started, run <code>litedown::roam()</code> and it will launch a file browser to let
 you preview everything that can be rendered to HTML, such as <code>.md</code>, <code>.Rmd</code>, and
-<code>.R</code> files (<a class="cross-ref-sec" href="#sec:live-preview">6.1</a>).</p>
+<code>.R</code> files (<a class="cross-ref-sec" href="#sec:live-preview">7.1</a>).</p>
 <p>The rendering takes place in memory, which means it will not render <code>.html</code>
 files on your disk, unless you request so. The page will be automatically
 updated as you edit and save a file. This update-on-save feature can be turned
@@ -808,9 +846,9 @@ the following mouse-clicking exercise (but try not to be addicted):</p>
 </div>
 <p>If the <code>Knit</code> button still sticks to your mind after you have practiced for a
 few hundred times, I’d like to thank you for your loyalty to <strong>knitr</strong>, and
-please see <a class="cross-ref-sec" href="#sec:knit-button">6.3</a> for how to continue to use the <code>Knit</code> button with
+please see <a class="cross-ref-sec" href="#sec:knit-button">7.3</a> for how to continue to use the <code>Knit</code> button with
 <strong>litedown</strong>.</p>
-<p>You can learn more about the <code>Render</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">6.1</a>.
+<p>You can learn more about the <code>Render</code> and <code>Run</code> buttons in <a class="cross-ref-sec" href="#sec:live-preview">7.1</a>.
 Basically, the <code>Render</code> button renders a document to an output file, whereas the
 <code>Run</code> button renders a document in memory without writing to disk.</p>
 <div class="callout-tip">
@@ -1646,6 +1684,7 @@ We run regressions on three variables one by one:
 ```
 </code></pre>
 <pre><code class="language-md" data-file="005.md">... ... ...
+
 ``` {.r}
 lm(mpg ~ cyl, data = mtcars) |&gt; summary() |&gt; coef()
 ```
@@ -1949,7 +1988,7 @@ Write plot files to a different folder:
 plot(cars)
 ```
 </code></pre>
-<h3 id="sec:option-fill"><span class="section-number">2.2.13</span> <code>fill</code>: code interpolation and inline chunk references</h3>
+<h3 id="sec:option-fill"><span class="section-number">2.2.13</span> <code>fill</code>: code interpolation</h3>
 <p>The source code in a chunk can be dynamically constructed via interpolation. Two
 types of placeholders are supported, which will be filled out by the character
 strings associated with them if the chunk option <code>fill = TRUE</code> (the default):</p>
@@ -1999,7 +2038,8 @@ f = function(x) {
 <code>chunk-b</code> while <code>chunk-b</code> contains more references to other chunks. Of course,
 the recursion must be finite (e.g., a chunk cannot reference itself).</p>
 <p>The <code>`{code}`</code> placeholder can be useful when you want to run or present the
-code differently according to different scenarios.</p>
+code differently according to different scenarios. The chunk option <code>fill</code> can
+also take a function to convert the value returned by the code.</p>
 <pre><code class="language-md" data-file="015.Rmd">---
 title: &quot;Fill out references in code chunks&quot;
 ---
@@ -2036,12 +2076,13 @@ abs(f() - pi) &lt;= 0.1  # is it close to pi?
 
 We can generate code dynamically in any code chunk, not limited to R chunks, e.g.,
 
-```{js, eval = FALSE}
-const data = `{ xfun::tojson(iris[1:5, 1:2]) }`;
+```{js, eval = FALSE, fill = xfun::tojson}
+const data = `{ iris[1:5, 1:2] }`;
 Object.keys(data);  // column names
 ```
 </code></pre>
 <pre><code class="language-md" data-file="015.md">... ... ...
+
 Embed `chunk-a` in a function body:
 
 ``` {.r}
@@ -2080,8 +2121,9 @@ have a package vignette that involves time-consuming simulations, you may want
 to reduce the number of simulations during <code>R CMD check</code> via:</p>
 <pre><code class="language-r">N = if (xfun::is_R_CMD_check()) 10 else 100000
 </code></pre>
-<p>The above example also showed the possibility of passing R data to a JavaScript
-code chunk.</p>
+<p>The above example also showed the possibility of passing R data to a JS code
+chunk—we set <code>fill = xfun::tojson</code> so that the data frame is converted to JSON
+and embedded into the JS code.</p>
 <h3 id="sec:option-include"><span class="section-number">2.2.14</span> <code>include</code>: visibility of whole code chunk</h3>
 <p>When you want to hide the full output of a code chunk, you can use the option
 <code>include = FALSE</code>, instead of trying to hide elements individually like
@@ -2286,6 +2328,7 @@ table(X, Y)  # table
 ```
 </code></pre>
 <pre><code class="language-md" data-file="013.md">... ... ...
+
 ```
 #&gt; [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;
 #&gt; 5 Levels: &quot;A&quot; &quot;B&quot; ... &quot;E&quot;
@@ -2396,7 +2439,7 @@ cat('Hello _world_!\n')
 ```
 Hello _world_!
 </code></pre>
-<h3 id="sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: leading / trailing blank lines in code</h3>
+<h3 id="sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: trim blank lines in code</h3>
 <p>By default, blank lines at the beginning and end of a source code block are
 removed. To keep them, you can use the chunk option <code>strip.white = FALSE</code>.</p>
 <pre><code class="language-md" data-file="017.Rmd">---
@@ -2414,6 +2457,7 @@ Keep blank lines at the beginning/end:
 ```
 </code></pre>
 <pre><code class="language-md" data-file="017.md">... ... ...
+
 ``` {.r}
 
 # a blank line above
@@ -2451,6 +2495,7 @@ head(cars, 3)
 ```
 </code></pre>
 <pre><code class="language-md" data-file="018.md">... ... ...
+
 ``` {.r}
 head(cars, 3)
 ```
@@ -2906,6 +2951,29 @@ a {
 document.body.classList.add('dark');
 ```
 </code></pre>
+<p>The <code>css</code> engine will output its content in the <code>&lt;style&gt;</code> tag. The <code>js</code> engine
+will output its content in the <code>&lt;script&gt;</code> tag. If the chunk option <code>type</code> is
+present, it will be included as an attribute of the <code>&lt;script&gt;</code> tag. For example,
+<code>type = &quot;module&quot;</code> indicates that the script should be treated as a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules">JS
+module</a>.</p>
+<p>By default, the chunk source is also displayed verbatim in the output. In most
+cases, you may want to hide the source via the chunk option <code>echo = FALSE</code>
+(<a class="cross-ref-sec" href="#sec:option-echo">2.2.9</a>).</p>
+<p>The <code>css</code> engine can also accept the chunk option <code>href</code> to include a stylesheet
+via the <code>&lt;link&gt;</code> tag, e.g.,</p>
+<pre><code class="language-md">```{css, href=&quot;https://unpkg.com/mvp.css&quot;}
+```
+</code></pre>
+<p>The <code>js</code> engine can also include external scripts via the chunk option <code>src</code>,
+e.g.,</p>
+<pre><code class="language-md">```{js, src=&quot;https://cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.js&quot;}
+```
+</code></pre>
+<p>By default, external scripts are
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer">deferred</a>
+(i.e., they will not run until the full document has been parsed). If you want
+to run an external script immediately, you may set the chunk option
+<code>defer = FALSE</code>.</p>
 <h3 id="sec:the-mermaid-engine"><span class="section-number">2.5.3</span> The Mermaid engine</h3>
 <p>The <code>mermaid</code> engine can be used to draw diagrams with
 <a href="https://mermaid.js.org">mermaid.js</a>, e.g.,</p>
@@ -3942,16 +4010,20 @@ together with the HTML output so it will not rely on external resources.</p>
 download and cache resources locally. The differences between these two options
 are:</p>
 <ol>
-<li>The <code>offline</code> option downloads resources but does not embed their content
+<li>
+<p>The <code>offline</code> option downloads resources but does not embed their content
 into the HTML file, so the HTML file is not self-contained (e.g., JS
-resources are included via <code>&lt;script src=&quot;assets/*.js&quot;&gt;</code>).</li>
-<li>The <code>offline</code> option downloads (and caches) resources to the directory of
+resources are included via <code>&lt;script src=&quot;assets/*.js&quot;&gt;</code>).</p>
+</li>
+<li>
+<p>The <code>offline</code> option downloads (and caches) resources to the directory of
 the HTML file, whereas the <code>embed_resources</code> option downloads them to a
 system cache directory. For the <code>offline</code> option, the cached resources are
 tied to a specific output directory, and cannot be shared or reused by HTML
 files in other directories. For <code>embed_resources</code>, the cache can be shared
 among any documents to be rendered via <code>fuse()</code> or <code>mark()</code> in the same
-system.</li>
+system.</p>
+</li>
 </ol>
 <h3 id="sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
@@ -5147,8 +5219,8 @@ title: Display Tables with the JS Library DataTables
 output:
   html:
     meta:
-      css: [&quot;@default&quot;, &quot;@npm/simple-datatables/dist/style.min.css&quot;]
-      js: [&quot;@npm/simple-datatables/dist/umd/simple-datatables.min.js&quot;]
+      css: [&quot;@default&quot;, &quot;@npm/simple-datatables/dist/style&quot;]
+      js: [&quot;@npm/simple-datatables&quot;]
 ---
 
 ::: {#mtcars-table}
@@ -5157,20 +5229,168 @@ I(mtcars)
 ```
 :::
 
-```{js}
-window.addEventListener('load', () =&gt; {
-  new simpleDatatables.DataTable('#mtcars-table &gt; table');
-});
+```{js, type = &quot;module&quot;}
+new simpleDatatables.DataTable('#mtcars-table &gt; table');
+```
+</code></pre>
+<p>See <a class="cross-ref-sec" href="#sec:simple-dt">6.1</a> for more ways to create this type of table.</p>
+<div class="chapter-after side side-right">
+</div>
+</div>
+<div class="chapter body" data-source="docs/06-widgets.Rmd">
+<div class="chapter-before side side-right">
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/06-widgets.Rmd">Edit this chapter</a> on GitHub</p>
+</div>
+<h1 id="chp:widgets"><span class="section-number main-number">6</span> HTML Widgets</h1>
+<h2 id="sec:simple-dt"><span class="section-number">6.1</span> Simple DataTables</h2>
+<pre><code class="language-md" data-file="021.Rmd">---
+title: &quot;Simple DataTables&quot;
+---
+
+Add the CSS/JS assets from the [simple-datatables](https://github.com/fiduswriter/simple-datatables/) library:
+
+```{r}
+litedown::vest(css = '@npm/simple-datatables/dist/style', js = '@npm/simple-datatables')
+```
+
+There are two ways to render a table using the library. You can either pass the data as a JSON object:
+
+&lt;table id=&quot;table-iris&quot;&gt;&lt;/table&gt;
+
+```{js, type = 'module', echo = FALSE, fill = xfun::tojson}
+new simpleDatatables.DataTable('#table-iris', {
+  data: {
+    headings: `{ names(iris) }`,
+    data: `{ unname(iris)[1:20, ] }`
+  },
+  perPage: 5
+})
+```
+
+or generate the data to an HTML table first:
+
+::: {#mtcars}
+```{r, echo = FALSE}
+I(mtcars[1:10, 1:5])
+```
+:::
+
+and then initialize a simple data table.
+
+```{js, type = 'module', echo = FALSE}
+new simpleDatatables.DataTable('#mtcars &gt; table', {
+  perPage: 1,
+  perPageSelect: [1, 2, 4, 8, ['All', 0]]
+})
+```
+</code></pre>
+<h2 id="sec:dygraphs"><span class="section-number">6.2</span> Dygraphs</h2>
+<pre><code class="language-md" data-file="022.Rmd">---
+title: &quot;Dygraphs&quot;
+---
+
+Add the CSS/JS assets from the [dygraphs](https://github.com/danvk/dygraphs) library:
+
+```{r}
+litedown::vest(css = '@npm/dygraphs/dist/dygraph', js = '@npm/dygraphs/dist/dygraph')
+```
+
+Show the yearly sunspots data (with a range selector):
+
+```{r}
+sunspot = cbind(Year = time(sunspot.year), Sunspots = sunspot.year)
+```
+
+::: {#graph-sunspot style=&quot;width: 100%;&quot;}
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+const g = new Dygraph(
+  document.getElementById('graph-sunspot'),
+  `{ unname(sunspot) }`,
+  {
+    labels: `{ colnames(sunspot) }`,
+    showRangeSelector: true
+  }
+);
+// annotate the maximum
+g.ready(() =&gt; g.setAnnotations([
+  {
+    series: `{ colnames(sunspot)[2] }`,
+    x: `{ sunspot[which.max(sunspot[, 2]), 1] }`,
+    shortText: &quot;M&quot;,
+    text: &quot;Maximum number&quot;
+  }
+]));
+```
+:::
+
+Show two time series:
+
+```{r}
+deaths = cbind(Time = round(time(mdeaths), 2), Male = mdeaths, Female = fdeaths)
+```
+
+::: {#graph-deaths style=&quot;width: 100%;&quot;}
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+new Dygraph(
+  document.getElementById('graph-deaths'),
+  `{ unname(deaths) }`,
+  {
+    labels: `{ colnames(deaths) }`
+  }
+);
+```
+:::
+</code></pre>
+<h2 id="sec:leaflet"><span class="section-number">6.3</span> Leaflet</h2>
+<pre><code class="language-md" data-file="023.Rmd">---
+title: &quot;Leaflet&quot;
+---
+
+Add the CSS/JS assets from the [leaflet](https://leafletjs.com) library:
+
+```{r}
+litedown::vest(css = '@npm/leaflet/dist/leaflet', js = '@npm/leaflet')
+```
+
+```{r}
+loc = c(41.2542491, -95.9728748)
+theta = (1:12)/6 * pi
+circles = data.frame(Lat = loc[1] + sin(theta)/1000, Lng = loc[2] + cos(theta)/1000)
+```
+
+Provide a fenced Div with the ID `unmc` as the map container, and create the map:
+
+::: {#unmc style=&quot;height: 500px;&quot;}
+:::
+
+```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+const map = L.map('unmc').setView(`{ loc }`, 17);
+
+// add a tile layer
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 21,
+    attribution: '&amp;copy; &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+}).addTo(map);
+
+// add a marker and bind a popup to it
+const marker = L.marker(`{ loc }`).addTo(map);
+marker.bindPopup(&quot;&lt;b&gt;UNMC&lt;/b&gt;&lt;p&gt;You can play badminton here.&lt;/p&gt;&quot;);
+
+// draw a circle of circles (lat/long from the data frame `circles`)
+`{ unname(circles) }`.forEach(row =&gt; L.circle(row, {
+  color: 'orangered', radius: 30,
+  fillColor: 'lightskyblue', fillOpacity: 0.5
+}).addTo(map));
 ```
 </code></pre>
 <div class="chapter-after side side-right">
 </div>
 </div>
-<div class="chapter body" data-source="docs/06-editor.Rmd">
+<div class="chapter body" data-source="docs/07-editor.Rmd">
 <div class="chapter-before side side-right">
-<p><a href="https://github.com/yihui/litedown/edit/main/docs/06-editor.Rmd">Edit this chapter</a> on GitHub</p>
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/07-editor.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="chp:authoring"><span class="section-number main-number">6</span> Authoring</h1>
+<h1 id="chp:authoring"><span class="section-number main-number">7</span> Authoring</h1>
 <div class="epigraph">
 <blockquote>
 <p>I don’t hide from you that I don’t detest the countryside—having been brought
@@ -5181,20 +5401,20 @@ when will I do the starry sky, then, that painting that’s always on my mind?</
 Letters</em></a></p>
 </blockquote>
 </div>
-<h2 id="sec:live-preview"><span class="section-number">6.1</span> Live preview</h2>
+<h2 id="sec:live-preview"><span class="section-number">7.1</span> Live preview</h2>
 <p>Unless it has become your muscle memory to click on the <code>Knit</code> button in
 RStudio, you may try to switch to <code>litedown::roam()</code> to preview your HTML output
 by clicking on the <code>run</code> buttons in the user interface. Note that the preview
 takes place <em>in memory only</em>. Although you see an HTML page rendered from a file
 in the preview, the page is not rendered to disk, unless you click on the
-<code>render</code> button (<a class="cross-ref-sec" href="#sec:the-buttons">6.1.3</a>), or call <code>litedown::fuse()</code> (<a class="cross-ref-chp" href="#chp:fuse">2</a>) or
+<code>render</code> button (<a class="cross-ref-sec" href="#sec:the-buttons">7.1.3</a>), or call <code>litedown::fuse()</code> (<a class="cross-ref-chp" href="#chp:fuse">2</a>) or
 <code>mark()</code> (<a class="cross-ref-chp" href="#chp:mark">4</a>) on the file.</p>
-<h3 id="sec:live-reload"><span class="section-number">6.1.1</span> Live reload</h3>
+<h3 id="sec:live-reload"><span class="section-number">7.1.1</span> Live reload</h3>
 <p>By default, the preview will automatically refresh the content after you edit
 and save a file. If you prefer building the document only when you want to, you
 can turn off the live preview via <code>litedown::roam(live = FALSE)</code>. In this case,
 the document will be rebuilt only when you refresh the page by yourself.</p>
-<h3 id="sec:the-file-listing"><span class="section-number">6.1.2</span> The file listing</h3>
+<h3 id="sec:the-file-listing"><span class="section-number">7.1.2</span> The file listing</h3>
 <p>After launching the preview via <code>litedown::roam()</code>, a file listing will be
 displayed, which shows the first few lines of <code>*.R</code>, <code>*.Rmd</code>, and <code>*.md</code> files
 in boxes, followed by the list of other files.</p>
@@ -5217,7 +5437,7 @@ them will be executed. If the R code involves intensive computing, it may not be
 a good idea to run the whole file, unless you have taken measures to speed up
 the computing (e.g., via caching).</p>
 </div>
-<h3 id="sec:the-buttons"><span class="section-number">6.1.3</span> The buttons</h3>
+<h3 id="sec:the-buttons"><span class="section-number">7.1.3</span> The buttons</h3>
 <p>There is a button group at the top right of the preview page.</p>
 <ul>
 <li>
@@ -5260,7 +5480,7 @@ source document.</p>
 before they can take effect. This is important when you are viewing a page
 inside RStudio or other IDEs, because the viewer may not gain focus
 automatically, and you will have to explicitly click on it.</p>
-<h3 id="sec:cleaning-up"><span class="section-number">6.1.4</span> Cleaning up</h3>
+<h3 id="sec:cleaning-up"><span class="section-number">7.1.4</span> Cleaning up</h3>
 <p>Previewing <code>.Rmd</code> and <code>.R</code> files that generate plots will leave <code>*__files/</code>
 directories (containing plot files) on disk by default. If you want to clean up
 such directories when closing or navigating away from the preview page, you may
@@ -5277,12 +5497,12 @@ preview the file again.</p>
 <code>cache = TRUE</code>) in the file being previewed, the <code>*__files/</code> directory will not
 be cleaned up, because when a code chunk is cached, it will not be re-evaluated
 or re-generate plots next time (unless the cache is invalidated).</p>
-<h2 id="sec:visual-editor"><span class="section-number">6.2</span> Visual editor</h2>
+<h2 id="sec:visual-editor"><span class="section-number">7.2</span> Visual editor</h2>
 <p>Since the Markdown syntax of <strong>litedown</strong> can be viewed as a subset of Pandoc’s
 Markdown, you can use RStudio’s visual Markdown editor to author documents.
 Please bear in mind that most common, but not all, Markdown features are
 supported.</p>
-<h2 id="sec:knit-button"><span class="section-number">6.3</span> The <code>Knit</code> button</h2>
+<h2 id="sec:knit-button"><span class="section-number">7.3</span> The <code>Knit</code> button</h2>
 <p>If you use the RStudio IDE, the <code>Knit</code> button can render R Markdown to a
 <strong>litedown</strong> output format specified in YAML (e.g., <code>html</code> or <code>latex</code>). Please
 also remember to add a top-level setting <code>knit: litedown:::knit</code> in YAML,
@@ -5297,11 +5517,11 @@ knit: litedown:::knit
 <div class="chapter-after side side-right">
 </div>
 </div>
-<div class="chapter body" data-source="docs/07-site.Rmd">
+<div class="chapter body" data-source="docs/08-site.Rmd">
 <div class="chapter-before side side-right">
-<p><a href="https://github.com/yihui/litedown/edit/main/docs/07-site.Rmd">Edit this chapter</a> on GitHub</p>
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/08-site.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
-<h1 id="chp:sites"><span class="section-number main-number">7</span> Books and Websites</h1>
+<h1 id="chp:sites"><span class="section-number main-number">8</span> Books and Websites</h1>
 <div class="epigraph">
 <blockquote>
 <p>I can at least listen without indignation to the critic who is of the opinion
@@ -5326,7 +5546,7 @@ it in <code>_litedown.yml</code>, e.g.,</p>
     meta:
       documentclass: &quot;book&quot;
 </code></pre>
-<h2 id="sec:books"><span class="section-number">7.1</span> Books</h2>
+<h2 id="sec:books"><span class="section-number">8.1</span> Books</h2>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>book</code>, which
 currently supports these options:</p>
 <pre><code class="language-yaml">book:
@@ -5341,7 +5561,7 @@ search subdirectories for input files, the types of input files (e.g., you can
 use <code>.md</code> or <code>.R</code> files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
-<h3 id="sec:previewing-a-single-chapter"><span class="section-number">7.1.1</span> Previewing a single chapter</h3>
+<h3 id="sec:previewing-a-single-chapter"><span class="section-number">8.1.1</span> Previewing a single chapter</h3>
 <p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-07-site-1" id="fnref-07-site-1" data-footnote-ref>10</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with <code>litedown::roam()</code>:</p>
@@ -5370,7 +5590,7 @@ updated without being reloaded. This method lets you preview changes in one
 chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.</p>
-<h2 id="sec:websites"><span class="section-number">7.2</span> Websites</h2>
+<h2 id="sec:websites"><span class="section-number">8.2</span> Websites</h2>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>site</code>, and you
 are likely to customize the <code>meta</code> variables <code>css</code>, <code>include_before</code>, and
 <code>include_after</code> for the <code>html</code> format, e.g.,</p>
@@ -5387,10 +5607,10 @@ output:
 </code></pre>
 <p>Basically, <code>include_before</code> can take a file or text input that will be used as
 the header of each web page, and <code>include_after</code> will be the footer.</p>
-<h2 id="sec:pkg-site"><span class="section-number">7.3</span> R package documentation</h2>
+<h2 id="sec:pkg-site"><span class="section-number">8.3</span> R package documentation</h2>
 <p>R package developers can build the full package documentation as either a book
 or a website.</p>
-<h3 id="sec:the-pkg-helper-functions"><span class="section-number">7.3.1</span> The <code>pkg_*()</code> helper functions</h3>
+<h3 id="sec:the-pkg-helper-functions"><span class="section-number">8.3.1</span> The <code>pkg_*()</code> helper functions</h3>
 <p>A series of helper functions have been provided in <strong>litedown</strong> to get various
 information about the package, such as the package description (<code>pkg_desc()</code>),
 news (<code>pkg_news()</code>), citation (<code>pkg_citation()</code>), source code (<code>pkg_code()</code>),
@@ -5432,7 +5652,7 @@ litedown::pkg_code()
 <p>Alternatively, you can build a package website by calling these functions in
 separate <code>.Rmd</code> files, e.g., <code>pkg_desc()</code> in <code>index.Rmd</code>, <code>pkg_news()</code> in
 <code>news.Rmd</code>, and so on.</p>
-<h3 id="sec:package-sites-via-github-action"><span class="section-number">7.3.2</span> Package sites via GitHub Action</h3>
+<h3 id="sec:package-sites-via-github-action"><span class="section-number">8.3.2</span> Package sites via GitHub Action</h3>
 <p>You may use GitHub Actions to automatically build and deploy package websites.
 The key is to call <code>litedown::fuse_site()</code>. I have provided <a href="https://github.com/yihui/litedown/blob/main/site/action.yml">a simple GitHub
 action</a> in the
@@ -5734,22 +5954,5 @@ rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footn
 </ol>
 </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.21/dist/katex.min.js,npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/render-katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
 </body>
 </html>
