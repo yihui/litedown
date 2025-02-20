@@ -646,10 +646,9 @@ move_attrs = function(x, format = 'html') {
       paste0(z1, z3, z24)
     })
     # links
-    x = convert_attrs(x, '(<a[^>]+)(>(?s).+?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
+    x = convert_attrs(x, '(<a[^>]+)(>(?s).*?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
       z1 = sub(r, '\\1', z, perl = TRUE)
       z2 = sub(r, '\\2', z, perl = TRUE)
-      z3 = str_trim(z3)
       paste0(z1, ifelse(z3 == '', '', ' '), z3, z2)
     })
     # fenced Div's
@@ -723,14 +722,15 @@ move_attrs = function(x, format = 'html') {
 convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
   r2 = '(?<=^| )[.#]([-:[:alnum:]]+)(?= |$)'  # should we allow other chars in ID/class?
   match_replace(x, r, function(y) {
+    z = sub(r, s, y, perl = TRUE)
     if (format == 'html') {
-      z = gsub('[\U201c\U201d]', '"', y)
+      z = gsub('[\U201c\U201d]', '"', z)
     } else {
-      z = gsub('=``', '="', y, fixed = TRUE)
+      z = gsub('=``', '="', z, fixed = TRUE)
       z = gsub("''( |\\\\})", '"\\1', z)
       z = gsub('\\\\([#%])', '\\1', z)
     }
-    z2 = f2(sub(r, s, z, perl = TRUE))
+    z2 = f2(z)
     # {-} is a shorthand of {.unnumbered}
     z2[z2 == '-'] = '.unnumbered'
     # convert #id to id="" and .class to class=""
@@ -750,7 +750,7 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
     })
     # remove spaces after class="..." (caused by merging multiple classes)
     z2 = sub('(^| )(class="[^"]+")  +', '\\1\\2 ', z2)
-    f(r, z, str_trim(z2))
+    f(r, y, str_trim(z2))
   })
 }
 
