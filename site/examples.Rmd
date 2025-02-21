@@ -7,11 +7,14 @@ litedown::vest(css = 'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/
 ```
 
 ```{css, echo = FALSE}
-.box pre > code {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background: none;
-  &:not(:hover) {
+.box pre {
+  & > code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: none;
+  }
+  &:not(:focus) code {
+    cursor: pointer;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 10;

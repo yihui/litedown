@@ -190,7 +190,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
 ```{mermaid}
 #| scope-litedown, echo = FALSE,
-#| fig.cap = 'A minimal partial re-implementation of the R Markdown ecosystem as **litedown**.'
+#| fig.cap = 'A minimal partial re-implementation of the R Markdown ecosystem as **litedown**, via [Chibaku Tensei](https://naruto.fandom.com/wiki/Chibaku_Tensei) (to [seal the nine tailed beasts](https://youtu.be/IqAD4np1g1s)).'
 classDiagram
   class litedown {
     +HTML/LaTeX

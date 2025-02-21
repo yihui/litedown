@@ -52,7 +52,7 @@ fuse_site = function(input = '.') {
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
-    css = c(site_css, '@site'), js = site_js,
+    css2 = c(site_css, '@site'), js2 = site_js,
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
@@ -255,7 +255,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '', css = c(site_css, '@book'), js = site_js
+    body_class = '', css2 = c(site_css, '@book'), js2 = site_js
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }
