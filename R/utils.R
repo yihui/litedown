@@ -1364,7 +1364,7 @@ resolve_url = function(url, code, ext, encode = TRUE) {
 
 # download a file to a local dir if the local file doesn't exist
 download_url = function(url, dir = '.', file = NULL, handler = NULL) {
-  if (!is.character(dir) || !is_https(url) || grepl('^http://127.0.0.1', x))
+  if (!is.character(dir) || !is_https(url) || grepl('^http://127.0.0.1', url))
     return(url)
   f = file %||% gsub('^https?://|[?#].*$', '', url)
   p = URLdecode(f)
