@@ -198,6 +198,9 @@ classDiagram
     R-dep (xfun, commonmark)
     web-dep (lite.js)
   }
+  class rmarkdown {
+    +[ * ]
+  }
   class pkgdown {
     +[ * ]
   }
@@ -205,9 +208,6 @@ classDiagram
     +[ * ]
   }
   class tufte {
-    +[ * ]
-  }
-  class bookdown {
     +[ * ]
   }
   class blogdown {
@@ -222,22 +222,23 @@ classDiagram
   class htmlwidgets {
     +[ * ]
   }
-  class rmarkdown {
+  class bookdown {
     +[ * ]
   }
   litedown *-- rmarkdown
   litedown *-- bookdown
-  litedown *-- blogdown
-  litedown *-- pagedown
   litedown *-- pkgdown
   litedown *-- xaringan
   litedown *-- tufte
-  litedown *-- distill
   litedown *-- htmlwidgets
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- distill
   rmarkdown <|-- bookdown
   rmarkdown <|-- pkgdown
   rmarkdown <|-- xaringan
   rmarkdown <|-- tufte
+  rmarkdown <|-- htmlwidgets
   bookdown <|-- blogdown
   bookdown <|-- pagedown
   bookdown <|-- distill

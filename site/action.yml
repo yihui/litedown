@@ -30,6 +30,13 @@ runs:
         mkdir -p "${{ inputs.site-dir }}"
         cd "${{ inputs.site-dir }}"
         [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}"/* ./
+        [ -d "$OLDPWD/vignettes" ] || rm -f articles.Rmd
+        [ -f "$OLDPWD/NEWS.md" ] || [ -f "$OLDPWD/inst/NEWS.Rd" ] || rm -f news.Rmd
+        if [ -d "$OLDPWD/examples" ]; then
+          cp -r "$OLDPWD/examples" ./
+        else
+          rm -f examples.Rmd
+        fi
         [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
         rm -f ${{ inputs.exclude }}
         Rscript -e "litedown::fuse_site()"

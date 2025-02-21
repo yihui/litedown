@@ -35,6 +35,7 @@ currently supports these options:
 
 ``` yaml
 book:
+  input: null
   new_session: false
   subdir: false
   pattern: "[.]R?md$"
@@ -50,11 +51,11 @@ before/after each chapter, in which you can use some variables such as
 
 ### Previewing a single chapter
 
-Rendering a whole book may be time-consuming[^07-site-1] and unnecessary when
+Rendering a whole book may be time-consuming[^08-site-1] and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with `litedown::roam()`:
 
-[^07-site-1]: Remember that you can cache time-consuming code chunks to make the
+[^08-site-1]: Remember that you can cache time-consuming code chunks to make the
     rendering faster.
 
 -   If you run the index file (e.g., `index.Rmd`), the whole book will be
@@ -220,6 +221,7 @@ list.files('../site/', '[.]Rmd$')
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
 | `articles` | package vignettes | the `doc/` folder of the installed package |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
+| `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
 | `news` | news | `pkg_news()` |
 | `_footer` | page footer | package authors |
@@ -230,9 +232,20 @@ modify, add, or delete files), and add the folder to your repository. Then the
 action will use your custom template to build the site.
 
 The `exclude` option allows you to exclude certain pages from the site. By
-default, `code.Rmd` is excluded. You can exclude more pages. For example, if
-your package does not have vignettes, you can specify
-`exclude: 'code.Rmd articles.Rmd'` (if you do not want `code.Rmd`, either).
+default, `code.Rmd` is excluded, and
+
+-   `articles.Rmd` is excluded if the package does not have the `vignettes/`
+    directory;
+
+-   `examples.Rmd` is excluded if the package does not have the `examples/`
+    directory;
+
+-   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
+    the package.
+
+You can exclude any page via the `exclude` option. For example, if don't want to
+include the news, you can specify `exclude: 'code.Rmd news.Rmd'` (if you do not
+want `code.Rmd`, either).
 
 The `cleanup` option allows you to run a command before publishing the site,
 e.g., you can delete the `.Rmd` source and `.yml` config files.

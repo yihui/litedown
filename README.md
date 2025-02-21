@@ -68,7 +68,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
 -   $R$ = **knitr** + **evaluate** + **rmarkdown** + **bookdown** +
     **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
-    **distill**
+    **distill** + **htmlwidgets**
 
 -   $D_i$ = (internal dependencies) **commonmark** + **xfun**
 

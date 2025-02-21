@@ -41,9 +41,9 @@ li {
   display: inline-block;
   margin-right: 2em;
 }
-em, code {
+em, pre code {
   font-size: .8em;
 }
-em:not(:hover), code:not(:hover) {
+em:not(:hover), pre code:not(:hover) {
   opacity: .7;
 }

@@ -1502,7 +1502,7 @@ Major differences between **knitr** and **litedown** include:
     devices later. This feature is not worth the effort due to the daunting
     complexity of implementation, not to mention that it doesn't always work. If
     you need multiple file formats for the same plot in **litedown**, you should
-    start a new chunk with the same code (@sec:option-ref-label) and a different
+    start a new chunk with the same code (@sec:option-fill) and a different
     `dev` option instead.
 
 -   **knitr** may output images in Markdown (`![]()`) or raw HTML (`<img>`) /

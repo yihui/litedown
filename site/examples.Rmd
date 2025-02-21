@@ -1,0 +1,50 @@
+---
+title: Examples
+---
+
+```{r, echo = FALSE}
+litedown::vest(css = 'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/listing.css')
+```
+
+```{css, echo = FALSE}
+.box pre > code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: none;
+  &:not(:hover) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+  }
+}
+pre:hover {
+  white-space: pre-wrap;
+}
+.box a {
+  text-decoration: none;
+}
+```
+
+```{r, echo = FALSE, results = 'asis'}
+res = if (dir.exists('examples')) {
+  lapply(litedown:::find_input('examples'), function(f) {
+    h = xfun::with_ext(f, 'html'); b = basename(f)
+    x = xfun::read_utf8(f)
+    # get title
+    t = xfun::grep_sub('^title: ["\']?(.+?)["\']?\\s*$', '\\1', x)
+    t = if (length(t)) t[1] else basename(h)
+    # get example number
+    i = xfun::grep_sub('^([0-9]+).*', '\\1', b)
+    i = if (length(i)) paste0(i, '\\. ') else ''
+    # put example source in a box
+    xfun::fenced_div(c(
+      xfun::fenced_div(
+        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, f, h),
+        '.caption .name'
+      ),
+      xfun::fenced_block(x, '.md')
+    ), '.box')
+  })
+} else "The 'examples/' directory does not exist."
+xfun::raw_string(unlist(res))
+```
