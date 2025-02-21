@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.13">
+<meta name="generator" content="litedown 0.5.14">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/article.min.css">
@@ -39,7 +39,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-02-19</h3></div>
+<div class="date"><h3>2025-02-21</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -463,6 +463,9 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
     R-dep (xfun, commonmark)
     web-dep (lite.js)
   }
+  class rmarkdown {
+    +[ * ]
+  }
   class pkgdown {
     +[ * ]
   }
@@ -470,9 +473,6 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
     +[ * ]
   }
   class tufte {
-    +[ * ]
-  }
-  class bookdown {
     +[ * ]
   }
   class blogdown {
@@ -487,22 +487,23 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
   class htmlwidgets {
     +[ * ]
   }
-  class rmarkdown {
+  class bookdown {
     +[ * ]
   }
   litedown *-- rmarkdown
   litedown *-- bookdown
-  litedown *-- blogdown
-  litedown *-- pagedown
   litedown *-- pkgdown
   litedown *-- xaringan
   litedown *-- tufte
-  litedown *-- distill
   litedown *-- htmlwidgets
+  litedown *-- blogdown
+  litedown *-- pagedown
+  litedown *-- distill
   rmarkdown &lt;|-- bookdown
   rmarkdown &lt;|-- pkgdown
   rmarkdown &lt;|-- xaringan
   rmarkdown &lt;|-- tufte
+  rmarkdown &lt;|-- htmlwidgets
   bookdown &lt;|-- blogdown
   bookdown &lt;|-- pagedown
   bookdown &lt;|-- distill
@@ -821,7 +822,7 @@ the conversion process from R Markdown to a target format.</p>
 A diagram illustrating how <strong>litedown</strong> converts R Markdown documents to target output formats.</p>
 </div>
 </div>
-<p>The function <code>fuse()</code> "fuses" program code with narratives, i.e., it executes
+<p>The function <code>fuse()</code> “fuses” program code with narratives, i.e., it executes
 all code in the source document and interweaves results with narratives in the
 output document; <code>fiss()</code> splits the document and extracts the code. Similar to
 <strong>knitr</strong>, <strong>litedown</strong> supports code chunks (<a class="cross-ref-sec" href="#sec:code-chunks">2.1</a>) and inline code
@@ -3058,7 +3059,7 @@ multiple choices for this device). I hate the
 devices later. This feature is not worth the effort due to the daunting
 complexity of implementation, not to mention that it doesn’t always work. If
 you need multiple file formats for the same plot in <strong>litedown</strong>, you should
-start a new chunk with the same code (<a href="#sec:option-ref-label">@sec:option-ref-label</a>) and a different
+start a new chunk with the same code (<a class="cross-ref-sec" href="#sec:option-fill">2.2.13</a>) and a different
 <code>dev</code> option instead.</p>
 </li>
 <li>
@@ -3699,7 +3700,10 @@ consist of only alphanumeric characters (<code>a-z</code>, <code>A-Z</code>, <co
 include multiple keywords in <code>[ ]</code> separated by semicolons.</p>
 <p>For HTML output, the citation uses the author-year style. The syntax
 <code>[@keyword]</code> generates the citation in parentheses (e.g., <code>(Author, 2024)</code>), and
-<code>@keyword</code> only puts the year in parentheses (e.g., <code>Author (2024)</code>).</p>
+<code>@keyword</code> only puts the year in parentheses (e.g., <code>Author (2024)</code>). All
+references will be put in a Div with the id <code>refs</code>, i.e.,
+<code>&lt;div id=&quot;refs&quot;&gt;&lt;/div&gt;</code>. This Div will appear at the end of the document by
+default. If you want it to appear elsewhere, you can provide an empty Div there.</p>
 <p>For LaTeX output, the citation style depends on the LaTeX package, which you can
 set via the <code>citation_package</code> option of the output format in YAML metadata,
 e.g.,</p>
@@ -5550,6 +5554,7 @@ it in <code>_litedown.yml</code>, e.g.,</p>
 <p>The <code>_litedown.yml</code> file should contain a top-level field named <code>book</code>, which
 currently supports these options:</p>
 <pre><code class="language-yaml">book:
+  input: null
   new_session: false
   subdir: false
   pattern: &quot;[.]R?md$&quot;
@@ -5562,7 +5567,7 @@ use <code>.md</code> or <code>.R</code> files if you want), and additional infor
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
 <h3 id="sec:previewing-a-single-chapter"><span class="section-number">8.1.1</span> Previewing a single chapter</h3>
-<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-07-site-1" id="fnref-07-site-1" data-footnote-ref>10</a></sup> and unnecessary when
+<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-08-site-1" id="fnref-08-site-1" data-footnote-ref>10</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with <code>litedown::roam()</code>:</p>
 <ul>
@@ -5732,8 +5737,8 @@ template</a> from <strong>litedown</strong>,
 which contains the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">5</a>):</p>
 <pre><code class="language-r">list.files('../site/', '[.]Rmd$')
 </code></pre>
-<pre><code>#&gt; [1] &quot;_footer.Rmd&quot;  &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;index.Rmd&quot;    &quot;manual.Rmd&quot;  
-#&gt; [6] &quot;news.Rmd&quot;    
+<pre><code>#&gt; [1] &quot;_footer.Rmd&quot;  &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;examples.Rmd&quot; &quot;index.Rmd&quot;   
+#&gt; [6] &quot;manual.Rmd&quot;   &quot;news.Rmd&quot;    
 </code></pre>
 <div class="table">
 <div class="caption">
@@ -5764,6 +5769,11 @@ which contains the following <code>.Rmd</code> files (explained in <a class="cro
 <td><code>pkg_code()</code></td>
 </tr>
 <tr>
+<td><code>examples</code></td>
+<td>examples</td>
+<td>the <code>examples/</code> folder in the package root directory</td>
+</tr>
+<tr>
 <td><code>manual</code></td>
 <td>help pages</td>
 <td><code>pkg_manual()</code></td>
@@ -5785,9 +5795,24 @@ which contains the following <code>.Rmd</code> files (explained in <a class="cro
 modify, add, or delete files), and add the folder to your repository. Then the
 action will use your custom template to build the site.</p>
 <p>The <code>exclude</code> option allows you to exclude certain pages from the site. By
-default, <code>code.Rmd</code> is excluded. You can exclude more pages. For example, if
-your package does not have vignettes, you can specify
-<code>exclude: 'code.Rmd articles.Rmd'</code> (if you do not want <code>code.Rmd</code>, either).</p>
+default, <code>code.Rmd</code> is excluded, and</p>
+<ul>
+<li>
+<p><code>articles.Rmd</code> is excluded if the package does not have the <code>vignettes/</code>
+directory;</p>
+</li>
+<li>
+<p><code>examples.Rmd</code> is excluded if the package does not have the <code>examples/</code>
+directory;</p>
+</li>
+<li>
+<p><code>news.Rmd</code> is excluded if neither <code>NEWS.md</code> nor <code>inst/NEWS.Rd</code> is found in
+the package.</p>
+</li>
+</ul>
+<p>You can exclude any page via the <code>exclude</code> option. For example, if don’t want to
+include the news, you can specify <code>exclude: 'code.Rmd news.Rmd'</code> (if you do not
+want <code>code.Rmd</code>, either).</p>
 <p>The <code>cleanup</code> option allows you to run a command before publishing the site,
 e.g., you can delete the <code>.Rmd</code> source and <code>.yml</code> config files.</p>
 <div class="chapter-after side side-right">
@@ -5947,9 +5972,9 @@ and <code>[2]</code>. If you use the RStudio visual editor to edit Markdown docu
 the footnote numbers will be automatically generated and updated when new
 footnotes are inserted before existing footnotes. <a href="#fnref-03-syntax-4" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
 </li>
-<li id="fn-07-site-1">
+<li id="fn-08-site-1">
 <p>Remember that you can cache time-consuming code chunks to make the
-rendering faster. <a href="#fnref-07-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
+rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
 </li>
 </ol>
 </section>
