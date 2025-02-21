@@ -3,32 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.14">
+<meta name="generator" content="litedown 0.5.15">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/book-litedown.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/copy-button.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/book-litedown.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/pages.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/css/prism-xcode.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/appendix.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/chapter-toc.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/external-link.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/external-link.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/right-quote.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/pages.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.21/dist/katex.min.js,npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.6/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
@@ -512,7 +512,7 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 </pre>
 <div class="caption">
 <p><span class="ref-number-fig">1</span>
-A minimal partial re-implementation of the R Markdown ecosystem as <strong>litedown</strong>.</p>
+A minimal partial re-implementation of the R Markdown ecosystem as <strong>litedown</strong>, via <a href="https://naruto.fandom.com/wiki/Chibaku_Tensei">Chibaku Tensei</a> (to <a href="https://youtu.be/IqAD4np1g1s">seal the nine tailed beasts</a>).</p>
 </div>
 </div>
 <div id="fig:scope-rmarkdown" class="figure">
@@ -4768,16 +4768,13 @@ xfun::tabset(cfg, dput)
 <ul>
 <li>
 <p><code>css</code></p>
-<pre><code class="language-r">c(&quot;@default&quot;, &quot;@article&quot;, &quot;@book&quot;, &quot;@book-litedown&quot;, &quot;@copy-button&quot;, 
-&quot;@heading-anchor&quot;, &quot;@key-buttons&quot;, &quot;@callout&quot;, &quot;@tabsets&quot;, &quot;@pages&quot;
-)
+<pre><code class="language-r">c(&quot;@book-litedown&quot;, &quot;@key-buttons&quot;, &quot;@callout&quot;, &quot;@tabsets&quot;)
 </code></pre>
 </li>
 <li>
 <p><code>js</code></p>
-<pre><code class="language-r">c(&quot;@sidenotes&quot;, &quot;@appendix&quot;, &quot;@toc-highlight&quot;, &quot;@chapter-toc&quot;, 
-&quot;@copy-button&quot;, &quot;@external-link&quot;, &quot;@heading-anchor&quot;, &quot;@right-quote&quot;, 
-&quot;@key-buttons&quot;, &quot;@callout&quot;, &quot;@tabsets&quot;, &quot;@pages&quot;)
+<pre><code class="language-r">c(&quot;@chapter-toc&quot;, &quot;@external-link&quot;, &quot;@right-quote&quot;, &quot;@key-buttons&quot;, 
+&quot;@callout&quot;, &quot;@tabsets&quot;)
 </code></pre>
 </li>
 </ul>
