@@ -31,7 +31,8 @@ options(width = 80)
   if (!verbatim) return(x)
   x = litedown:::trim_blank(paste(x, collapse = '\n'))
   xfun::fenced_block(x, c(
-    sub('^([.])R(.+)', '\\1\\2', ext), sprintf('data-file="%03d%s"', n, ext)
+    sub('^([.])R(.+)', '\\1\\2', ext), sprintf('data-file="%03d%s"', n, ext),
+    sprintf('data-output="%s"', xfun::with_ext(basename(f), '.html'))
   ))
 }
 # source and output in the same div
@@ -40,6 +41,15 @@ options(width = 80)
   x2 = .ex(n, ext[2], ...)
   xfun::fenced_div(c(x1, x2), '.flex-col')
 }
+```
+
+```{js, echo = FALSE, type = 'module'}
+document.querySelectorAll('pre > code[data-output]').forEach(el => {
+  const a = document.createElement('a');
+  a.innerHTML = '&#9205;'; a.className = 'ex-out';
+  a.href = `https://git.yihui.org/litedown/examples/${el.dataset.output}`;
+  el.after(a);
+});
 ```
 
 # Preface {.unnumbered}
