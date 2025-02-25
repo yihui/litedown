@@ -1,5 +1,147 @@
 # HTML Widgets {#chp:widgets}
 
+::: epigraph
+> A well-managed factory is boring. Nothing exciting happens in it because the
+> crises have been anticipated and have been converted into routine.
+>
+> ---Peter Drucker, *The Effective Executive*
+>
+> Plain oatmeal is a bowl of sadness.
+>
+> ---Jamie Michalak, *Frank and Bean: Food Truck Fiasco*
+:::
+
+[I was excited](https://youtu.be/dV4gtARPvu8) about HTML widgets when Ramnath
+came up with the idea [in
+2014](https://github.com/ramnathv/htmlwidgets/graphs/contributors). I often find
+it hard to resist playing with things that are interactive. Although it feels a
+little embarassing to confess, I have clicked the buttons in @sec:new-road for
+more than 20 times, knowing clearly what will happen every time but still...
+There is certainly a lot more fun interacting with HTML widgets.
+
+## The dilemma
+
+The existing [HTML widgets](https://www.htmlwidgets.org) framework is very
+friendly and convenient to R users, since it doesn't require knowledge about
+JavaScript. A lot of boring details about the JS libraries have been hidden
+under the carpet. Users are not exposed to the JS APIs directly but can simply
+call high-level R functions, which will call the proper underlying JS APIs.
+
+Existing R packages for HTML widgets also took the "batteries included"
+approach. That is, the JS libraries are embedded in the R packages, and usually
+only one version of a JS library is embedded and supported. JS libraries often
+evolve and are sometimes
+[complicated](https://github.com/user-attachments/assets/e31ec920-0080-43aa-ae71-071ce2cedb87).
+That means the JS libraries shipped within the R packages could become outdated,
+and users might be tied to the old versions. For example, as of today:
+
+-   [**dygraphs**](https://github.com/rstudio/dygraphs/issues/241) v1.1.1.6 is
+    still using [dygraphs.js
+    v1.1.1](https://github.com/danvk/dygraphs/releases/tag/v1.1.1) from 2015
+
+-   [**leaflet**](https://github.com/rstudio/leaflet) v2.2.2 is using
+    [leaflet.js v1.3.1](https://github.com/Leaflet/Leaflet/releases/tag/v1.3.1)
+    from 2018
+
+-   [**DiagrameR**](https://github.com/rich-iannone/DiagrammeR/issues/475)
+    v1.0.11 is using [mermaid.js
+    v0.5.8](https://github.com/mermaid-js/mermaid/releases/tag/0.5.8) from 2016
+
+-   [**DT**](https://github.com/rstudio/DT/pull/1147) v0.33 is a little better
+    (since I was the maintainer and cared a lot about this problem) and is using
+    [DataTables.js
+    v1.13.6](https://github.com/DataTables/DataTablesSrc/releases/tag/1.13.6)
+    from 2023
+
+All these JS libraries are still actively developed today, and much more recent
+releases are available. If you want new features or bug fixes in more recent
+versions, you can't just replace the "batteries" (i.e., download new versions of
+JS libraries and override the old embedded versions) and expect the new
+batteries to work seamlessly.
+
+In **litedown**, I provide a different approach and let users decide which
+version they want to use (by default, the latest versions are used), which
+means:
+
+1.  Users can enjoy stability if desired, by pinning to a specific version of
+    the library;
+
+2.  Users are not locked to a version chosen by R package authors.
+
+Despite the flexibility, this approach has a major downside that most R users
+may dislike: you can't avoid JS. In fact, you will primarily write JS to render
+the widgets. The only help you receive from **litedown** is that you can
+interpolate your JS code with R code (@sec:option-fill). For example, you can
+pass R objects to JS as JSON objects, and then I wish you good luck with your JS
+adventure:
+
+```` md
+```{js, type = 'module', fill = xfun::tojson}
+// R objects serialized to JSON via xfun::tojson
+const iris = `{ iris }`, euro = `{ euro }`;
+
+console.log('The iris data has', Object.keys(iris).length, 'columns.')
+const euro10 = euro.map(x => Math.log10(x));
+```
+````
+
+This approach solves one pain point that I have had with HTML widgets for a long
+time: most of the time, the APIs at the R level look nice and do a great job of
+converting R objects to JS, but sometimes it's hard or impossible to express
+certain things with native R code, such as JS events. [The
+solution](https://github.com/ramnathv/htmlwidgets/pull/32) in HTML widgets was
+to write raw JS code in an R character string, mark the string with a special
+class, and `eval()` the string on the JS side. Although [it works
+fine](https://rstudio.github.io/DT/002-rowdetails.html), such "special strings"
+still feel like square pegs in round holes, and the scary `eval()` will make
+them fit.[^06-widgets-1] The **litedown** approach makes you write (nearly) pure
+JS, and you can do whatever JS allows you to do.
+
+[^06-widgets-1]: See
+    [rstudio/DT#1080](https://github.com/rstudio/DT/issues/1080) for a funny
+    story about `eval()`. Speaking of square pegs, perhaps we can rename `eval`
+    to `oval` (`const oval = eval;`)? Oval pegs should fit round holes better.
+
+However, I need to warn you that you may have to write a lot more boilerplate
+code with this approach. This problem could be solved by providing R helper
+functions (to generate the boilerplate code for you), but the convenience means
+that you have to sacrifice some flexibility, e.g., it will be hard for the
+helper functions to deal with every version of the JS libraries.
+
+This is essentially problem about trade-offs and I don't think there is a
+perfect solution. It's fine to tie yourself to potentially very old versions of
+dependencies if these old versions work perfectly and you are able to give up
+new features or bug fixes in newer versions.
+
+The following sections will give basic examples of some popular JS libraries. If
+you want to pin their versions, you may specify the version number at the end of
+the JS package name, e.g.,
+
+``` r
+litedown::vest(css = '@npm/leaflet@1.9.3/dist/leaflet', js = '@npm/leaflet@1.9.3')
+```
+
+For the `js` code chunks, you may want to use the chunk option `echo = FALSE`
+(@sec:option-echo) to hide the JS source in the output. The chunk option
+`type = 'module'` (@sec:engine-css) means the JS code is generated to
+`<script type="module">`, which has two nice benefits:
+
+1.  JS modules are deferred, i.e., they will not execute until all elements on
+    the page have been loaded;
+
+2.  Variables in the modules are local and will not pollute the global
+    namespace, so you don't need to worry about one widget overriding another
+    widget's variables by accident.
+
+With that in mind, let's start looking at the boring way to generate HTML
+widgets. Plain oatmeal is a bowl of sadness.[^06-widgets-2] So is this chapter
+(of plain JS).
+
+[^06-widgets-2]: My younger son kept repeating this sentence from his audio book
+    last year. I asked him why plain oatmeal is a bowl of sadness, but he never
+    told me. As a lazy dad, I'm counting on my 9-month old daughter to tell me
+    someday.
+
 ## Simple DataTables {#sec:simple-dt}
 
 `{r} .ex(21)`
@@ -11,3 +153,7 @@
 ## Leaflet
 
 `{r} .ex(23)`
+
+## Chart.js
+
+`{r} .ex(24)`

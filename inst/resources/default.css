@@ -30,7 +30,7 @@ pre > code {
 }
 .box, .figure, .table, table { margin: 1em auto; }
 div > .caption { padding: 1px 1em; }
-.figure { p:has(img), pre:has(svg) { text-align: center; } }
+.figure { p:has(img, svg), pre:has(svg) { text-align: center; } }
 .flex-col { display: flex; justify-content: space-between; }
 table {
   &:only-child:not(.table > *) { margin: auto; }

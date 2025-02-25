@@ -43,7 +43,7 @@ If you do not do computing in Markdown, you do not need to learn
 `fuse()`---`mark()` will be enough.
 :::
 
-## A new road to `roam()`
+## A new road to `roam()` {#sec:new-road}
 
 Before entering the **litedown** world, I suggest you forget the `Knit` button
 if it has become your muscle memory to click on that button to view results

@@ -12,7 +12,36 @@ litedown::vest(css = '@npm/simple-datatables/dist/style', js = '@npm/simple-data
 
 There are two ways to render a table using the library. You can either pass the data as a JSON object:
 
-<table id="table-iris"></table>
+```` {.js}
+new simpleDatatables.DataTable('#table-iris', {
+  data: {
+    headings: ["Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species"],
+    data: [
+  [5.1, 3.5, 1.4, 0.2, "setosa"],
+  [4.9, 3, 1.4, 0.2, "setosa"],
+  [4.7, 3.2, 1.3, 0.2, "setosa"],
+  [4.6, 3.1, 1.5, 0.2, "setosa"],
+  [5, 3.6, 1.4, 0.2, "setosa"],
+  [5.4, 3.9, 1.7, 0.4, "setosa"],
+  [4.6, 3.4, 1.4, 0.3, "setosa"],
+  [5, 3.4, 1.5, 0.2, "setosa"],
+  [4.4, 2.9, 1.4, 0.2, "setosa"],
+  [4.9, 3.1, 1.5, 0.1, "setosa"],
+  [5.4, 3.7, 1.5, 0.2, "setosa"],
+  [4.8, 3.4, 1.6, 0.2, "setosa"],
+  [4.8, 3, 1.4, 0.1, "setosa"],
+  [4.3, 3, 1.1, 0.1, "setosa"],
+  [5.8, 4, 1.2, 0.2, "setosa"],
+  [5.7, 4.4, 1.5, 0.4, "setosa"],
+  [5.4, 3.9, 1.3, 0.4, "setosa"],
+  [5.1, 3.5, 1.4, 0.3, "setosa"],
+  [5.7, 3.8, 1.7, 0.3, "setosa"],
+  [5.1, 3.8, 1.5, 0.3, "setosa"]
+]
+  },
+  perPage: 5
+});
+````
 
 ``` {=html}
 <script type="module">new simpleDatatables.DataTable('#table-iris', {
@@ -42,8 +71,10 @@ There are two ways to render a table using the library. You can either pass the 
 ]
   },
   perPage: 5
-})</script>
+});</script>
 ```
+
+<table id="table-iris"></table>
 
 or generate the data to an HTML table first:
 
@@ -65,9 +96,16 @@ or generate the data to an HTML table first:
 
 and then initialize a simple data table.
 
+```` {.js}
+new simpleDatatables.DataTable('#mtcars > table', {
+  perPage: 1,
+  perPageSelect: [1, 2, 4, 8, ['All', 0]]
+});
+````
+
 ``` {=html}
 <script type="module">new simpleDatatables.DataTable('#mtcars > table', {
   perPage: 1,
   perPageSelect: [1, 2, 4, 8, ['All', 0]]
-})</script>
+});</script>
 ```

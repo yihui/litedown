@@ -14,8 +14,7 @@ Show the yearly sunspots data (with a range selector):
 sunspot = cbind(Year = time(sunspot.year), Sunspots = sunspot.year)
 ```
 
-::: {#graph-sunspot style="width: 100%;"}
-```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+```{js, type = 'module', fill = xfun::tojson}
 const g = new Dygraph(
   document.getElementById('graph-sunspot'),
   `{ unname(sunspot) }`,
@@ -34,6 +33,8 @@ g.ready(() => g.setAnnotations([
   }
 ]));
 ```
+
+::: {#graph-sunspot style="width: 100%;"}
 :::
 
 Show two time series:
@@ -42,8 +43,7 @@ Show two time series:
 deaths = cbind(Time = round(time(mdeaths), 2), Male = mdeaths, Female = fdeaths)
 ```
 
-::: {#graph-deaths style="width: 100%;"}
-```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+```{js, type = 'module', fill = xfun::tojson}
 new Dygraph(
   document.getElementById('graph-deaths'),
   `{ unname(deaths) }`,
@@ -52,4 +52,6 @@ new Dygraph(
   }
 );
 ```
+
+::: {#graph-deaths style="width: 100%;"}
 :::

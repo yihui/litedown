@@ -19,7 +19,7 @@ Provide a fenced Div with the ID `unmc` as the map container, and create the map
 ::: {#unmc style="height: 500px;"}
 :::
 
-```{js, echo = FALSE, type = 'module', fill = xfun::tojson}
+```{js, type = 'module', fill = xfun::tojson}
 const map = L.map('unmc').setView(`{ loc }`, 17);
 
 // add a tile layer
