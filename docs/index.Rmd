@@ -2,14 +2,10 @@
 title: "litedown: R Markdown Reimagined"
 author: "Yihui Xie"
 date: "`{r} Sys.Date()`"
+bibliography: ["packages.bib"]
 ---
 
 ```{r, include = FALSE}
-if (packageVersion('xfun') < '0.49.7') stop(
-  'package versions too low; please install newer versions:\n',
-  "install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')"
-)
-
 options(width = 80)
 
 # return an example file in fenced Div
@@ -41,6 +37,8 @@ options(width = 80)
   x2 = .ex(n, ext[2], ...)
   xfun::fenced_div(c(x1, x2), '.flex-col')
 }
+
+xfun::pkg_bib(c('litedown', 'commonmark', 'xfun', 'rbibutils'), 'packages.bib')
 ```
 
 ```{js, echo = FALSE, type = 'module'}
@@ -152,16 +150,16 @@ just want to make the HTML world a little bit better.
 
 ## Overview
 
-The **litedown** package is an attempt to reimagine R Markdown with one primary
-goal—do HTML, and do it well, with the minimalism principle. Before LaTeX fans
-walk away in disappointment, let me quickly clarify that LaTeX output is also
-supported, but please do not expect anything fancy before you learn to customize
-LaTeX templates. Most other output formats are not supported. No Word, RTF,
-PowerPoint, or EPUB.
+The **litedown** package [@R-litedown] is an attempt to reimagine R Markdown
+with one primary goal—do HTML, and do it well, with the minimalism principle.
+Before LaTeX fans walk away in disappointment, let me quickly clarify that LaTeX
+output is also supported, but please do not expect anything fancy before you
+learn to customize LaTeX templates. Most other output formats are not supported.
+No Word, RTF, PowerPoint, or EPUB.
 
 R Markdown is rendered via `litedown::fuse()`, which is similar to
 `rmarkdown::render()` and `knitr::knit()`. Markdown is rendered via
-`litedown::mark()`, which uses **commonmark** instead of Pandoc.
+`litedown::mark()`, which uses **commonmark** [@R-commonmark] instead of Pandoc.
 
 The **commonmark** package follows the GFM (GitHub Flavored Markdown) spec,
 which can be seen as a subset of Pandoc's Markdown. Therefore the **litedown**
@@ -355,7 +353,8 @@ JavaScript, yet it is quite flexible (@chp:widgets).
 ### Small footprint
 
 Almost everything in **litedown** was written from scratch. The package is very
-lightweight, with only two R package dependencies: **commonmark** and **xfun**.
+lightweight, with only two R package dependencies: **commonmark** and **xfun**
+[@R-xfun].
 
 It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions `mark()` and

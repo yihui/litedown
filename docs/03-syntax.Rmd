@@ -671,8 +671,8 @@ the number and reference of the block above:
 
 ### Citations
 
-This feature requires the R package **rbibutils**. Please make sure it is
-installed before using citations.
+This feature requires the R package **rbibutils** [@R-rbibutils]. Please make
+sure it is installed before using citations.
 
 ``` r
 xfun::pkg_load2("rbibutils")

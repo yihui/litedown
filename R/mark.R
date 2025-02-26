@@ -324,6 +324,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   pkg_cite = yaml_field(yaml, format, 'citation_package')
   if (length(pkg_cite) != 1) pkg_cite = 'natbib'
   bib = yaml[['bibliography']]
+  # temporarily save the bib values when previewing a book because bib may only
+  # be specified in index.Rmd but not other chapters
+  if (is.character(b <- .env$current_book)) {
+    if (length(bib)) .env$bib[[b]] = bib else bib = .env$bib[[b]]
+  }
   if (length(bib) == 1 && grepl(',', bib)) bib = strsplit(bib, ',\\s*')[[1]]
   # add [@citation] (.bib files are assumed to be under output dir)
   if (length(bib)) {

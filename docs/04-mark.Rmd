@@ -119,6 +119,17 @@ included via the `<img>` tag, and their elements cannot be manipulated or
 styled.
 :::
 
+When embedding `https` resources, only these elements are considered:
+
+``` html
+<img src="..." />
+<link rel="stylesheet" href="...">
+<script src="..."></script>
+```
+
+If an external CSS file contains `url()` resources, these resources will also be
+downloaded and embedded.
+
 ### `js_highlight`
 
 Specify the JavaScript library to syntax highlight code blocks. Possible values
