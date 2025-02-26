@@ -539,7 +539,11 @@ add_citation = function(x, bib, format = 'html') {
 }
 
 # fall back to given name if family name is empty
-author_name = function(x) paste(x$family %|% x$given, collapse = ' ')
+author_name = function(x) {
+  a = paste(x$family %|% x$given, collapse = ' ')
+  a = gsub('\\{\\\\(.)}', '\\1', a)  # un-escape special latex chars
+  html_escape(a)
+}
 
 # mimic natbib's author-year citation style for HTML output
 cite_html = function(keys, bib, bracket = TRUE) {
