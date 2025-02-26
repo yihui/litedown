@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.5.15">
+<meta name="generator" content="litedown 0.5.16">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.7/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.7/css/article.min.css">
@@ -39,7 +39,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-02-25</h3></div>
+<div class="date"><h3>2025-02-26</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -133,7 +133,7 @@
 <li><a href="#sec:engines"><span class="section-number">2.5</span> Language engines</a>
 <ul>
 <li><a href="#sec:the-markdown-engine"><span class="section-number">2.5.1</span> The Markdown engine</a></li>
-<li><a href="#engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</a></li>
+<li><a href="#sec:engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</a></li>
 <li><a href="#sec:the-mermaid-engine"><span class="section-number">2.5.3</span> The Mermaid engine</a></li>
 <li><a href="#sec:the-embed-engine"><span class="section-number">2.5.4</span> The embed engine</a></li>
 </ul>
@@ -313,12 +313,6 @@
 <li><a href="#chp:appendix">Appendix</a></li>
 <li><a href="#chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
 <li><a href="#chp:vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
-<li><a href="#chp:notes"><span class="section-number main-number">C</span> Technical Notes</a>
-<ul>
-<li><a href="#sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</a></li>
-<li><a href="#sec:css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</a></li>
-</ul>
-</li>
 </ul>
 </div>
 <div class="chapter body" data-source="docs/index.Rmd">
@@ -418,15 +412,15 @@ full advantage of its power.<sup class="footnote-ref"><a href="#fn-1" id="fnref-
 <p>In other words, I do not expect that “the (software) world will live as one”. I
 just want to make the HTML world a little bit better.</p>
 <h2 id="sec:overview">Overview</h2>
-<p>The <strong>litedown</strong> package is an attempt to reimagine R Markdown with one primary
-goal—do HTML, and do it well, with the minimalism principle. Before LaTeX fans
-walk away in disappointment, let me quickly clarify that LaTeX output is also
-supported, but please do not expect anything fancy before you learn to customize
-LaTeX templates. Most other output formats are not supported. No Word, RTF,
-PowerPoint, or EPUB.</p>
+<p>The <strong>litedown</strong> package <a href="#ref-R-litedown" class="citation ref-paren-open ref-paren-close">Xie 2025</a> is an attempt to reimagine R Markdown
+with one primary goal—do HTML, and do it well, with the minimalism principle.
+Before LaTeX fans walk away in disappointment, let me quickly clarify that LaTeX
+output is also supported, but please do not expect anything fancy before you
+learn to customize LaTeX templates. Most other output formats are not supported.
+No Word, RTF, PowerPoint, or EPUB.</p>
 <p>R Markdown is rendered via <code>litedown::fuse()</code>, which is similar to
 <code>rmarkdown::render()</code> and <code>knitr::knit()</code>. Markdown is rendered via
-<code>litedown::mark()</code>, which uses <strong>commonmark</strong> instead of Pandoc.</p>
+<code>litedown::mark()</code>, which uses <strong>commonmark</strong> <a href="#ref-R-commonmark" class="citation ref-paren-open ref-paren-close">Ooms 2024</a> instead of Pandoc.</p>
 <p>The <strong>commonmark</strong> package follows the GFM (GitHub Flavored Markdown) spec,
 which can be seen as a subset of Pandoc’s Markdown. Therefore the <strong>litedown</strong>
 package can be viewed as a small subset of the existing R Markdown ecosystem
@@ -611,7 +605,8 @@ JavaScript, yet it is quite flexible (<a class="cross-ref-chp" href="#chp:widget
 <h2 id="sec:highlights">Highlights</h2>
 <h3 id="sec:small-footprint">Small footprint</h3>
 <p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
-lightweight, with only two R package dependencies: <strong>commonmark</strong> and <strong>xfun</strong>.</p>
+lightweight, with only two R package dependencies: <strong>commonmark</strong> and <strong>xfun</strong>
+<a href="#ref-R-xfun" class="citation ref-paren-open ref-paren-close">Xie 2025</a>.</p>
 <p>It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions <code>mark()</code> and
 <code>fuse()</code> can be viewed as significantly trimmed-down versions of Pandoc and
@@ -2948,7 +2943,7 @@ this `md` chunk.
 
 You can also use `{md} the engine **inline**`.
 </code></pre>
-<h3 id="engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</h3>
+<h3 id="sec:engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</h3>
 <p>You can insert CSS/JS to the output via the <code>css</code>/<code>js</code> engines, e.g.,</p>
 <pre><code class="language-md">```{css}
 a {
@@ -3684,8 +3679,8 @@ the number and reference of the block above:</p>
 }
 </style>
 <h3 id="sec:citations"><span class="section-number">3.3.9</span> Citations</h3>
-<p>This feature requires the R package <strong>rbibutils</strong>. Please make sure it is
-installed before using citations.</p>
+<p>This feature requires the R package <strong>rbibutils</strong> <a href="#ref-R-rbibutils" class="citation ref-paren-open ref-paren-close">Boshnakov<span class="ref-and"></span>Putman 2024</a>. Please make
+sure it is installed before using citations.</p>
 <pre><code class="language-r">xfun::pkg_load2(&quot;rbibutils&quot;)
 </code></pre>
 <p>To insert citations, you have to first declare one or multiple bibliography
@@ -3900,6 +3895,13 @@ or style them via CSS. Without embedding the raw content, SVG images are
 included via the <code>&lt;img&gt;</code> tag, and their elements cannot be manipulated or
 styled.</p>
 </div>
+<p>When embedding <code>https</code> resources, only these elements are considered:</p>
+<pre><code class="language-html">&lt;img src=&quot;...&quot; /&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot;&gt;
+&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>If an external CSS file contains <code>url()</code> resources, these resources will also be
+downloaded and embedded.</p>
 <h3 id="sec:js-highlight"><span class="section-number">4.1.5</span> <code>js_highlight</code></h3>
 <p>Specify the JavaScript library to syntax highlight code blocks. Possible values
 are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
@@ -5046,6 +5048,21 @@ the margin, even if you do not have to.</p>
 _Anything_ on the right.
 :::
 </code></pre>
+<p>In case you are interested in the technical detail, it’s quite simple to move an
+element into the margin using CSS. For example, the <code>.side-right</code> class above is
+roughly defined as:</p>
+<pre><code class="language-css">.side-right {
+  width: 200px;
+  float: right;
+  margin-right: -200px
+}
+</code></pre>
+<p>That basically means the width of the element is 200px and it floats to the
+right. Now its right side will touch the right margin of its parent element (the
+article body). What we need to do next is move it further to the right by 200px
+(i.e., its width), which is done by the <code>-200px</code> right margin. Remember, a
+positive right margin in CSS moves an element to the left, and a negative right
+margin moves it to the right.</p>
 <h3 id="sec:body-elements"><span class="section-number">5.8.3</span> Body elements</h3>
 <p>Inside the article body, you can write a few special elements.</p>
 <h4 id="sec:full-width-elements"><span class="section-number">5.8.3.1</span> Full-width elements</h4>
@@ -5362,7 +5379,7 @@ the JS package name, e.g.,</p>
 </code></pre>
 <p>For the <code>js</code> code chunks, you may want to use the chunk option <code>echo = FALSE</code>
 (<a class="cross-ref-sec" href="#sec:option-echo">2.2.9</a>) to hide the JS source in the output. The chunk option
-<code>type = 'module'</code> (<a href="#sec:engine-css">@sec:engine-css</a>) means the JS code is generated to
+<code>type = 'module'</code> (<a class="cross-ref-sec" href="#sec:engine-css">2.5.2</a>) means the JS code is generated to
 <code>&lt;script type=&quot;module&quot;&gt;</code>, which has two nice benefits:</p>
 <ol>
 <li>
@@ -6061,39 +6078,6 @@ their output files will overwrite each other.</p>
 <div class="chapter-after side side-right">
 </div>
 </div>
-<div class="chapter body" data-source="docs/C-notes.Rmd">
-<div class="chapter-before side side-right">
-<p><a href="https://github.com/yihui/litedown/edit/main/docs/C-notes.Rmd">Edit this chapter</a> on GitHub</p>
-</div>
-<h1 id="chp:notes"><span class="section-number main-number">C</span> Technical Notes</h1>
-<h2 id="sec:embedding-resources"><span class="section-number">C.1</span> Embedding resources</h2>
-<p>When <code>https</code> resources needs to be embedded (via the <code>embed_resources</code> option),
-only these elements are considered:</p>
-<pre><code class="language-html">&lt;img src=&quot;...&quot; /&gt;
-&lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot;&gt;
-&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;
-</code></pre>
-<p>Background images set in the attribute <code>style=&quot;background-image: url(...)&quot;</code> are
-also considered. If an external CSS file contains <code>url()</code> resources, these
-resources will also be downloaded and embedded.</p>
-<h2 id="sec:css-for-margin-content"><span class="section-number">C.2</span> CSS for margin content</h2>
-<p>It’s quite simple to move an element into the margin using CSS. For example, the
-<code>.side-right</code> class in this article is roughly defined as:</p>
-<pre><code class="language-css">.side-right {
-  width: 200px;
-  float: right;
-  margin-right: -200px
-}
-</code></pre>
-<p>That basically means the width of the element is 200px and it floats to the
-right. Now its right side will touch the right margin of its parent element (the
-article body). What we need to do next is move it further to the right by 200px
-(i.e., its width), which is done by the <code>-200px</code> right margin. Remember, a
-positive right margin in CSS moves an element to the left, and a negative right
-margin moves it to the right.</p>
-<div class="chapter-after side side-right">
-</div>
-</div>
 <section class="footnotes" data-footnotes>
 <ol>
 <li id="fn-1">
@@ -6168,6 +6152,24 @@ rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footn
 </li>
 </ol>
 </section>
+<div id="refs">
+<p id="ref-R-rbibutils">Boshnakov GN, Putman C (2024).
+<em>rbibutils: Read Bibtex Files and Convert Between Bibliography Formats</em>.
+R package version 2.3, <a href="https://geobosh.github.io/rbibutils/">https://geobosh.github.io/rbibutils/</a>. 
+</p>
+<p id="ref-R-commonmark">Ooms J (2024).
+<em>commonmark: High Performance CommonMark and Github Markdown Rendering in R</em>.
+R package version 1.9.2, <a href="https://docs.ropensci.org/commonmark/">https://docs.ropensci.org/commonmark/</a>. 
+</p>
+<p id="ref-R-litedown">Xie Y (2025).
+<em>litedown: A Lightweight Version of R Markdown</em>.
+R package version 0.5.16, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+</p>
+<p id="ref-R-xfun">Xie Y (2025).
+<em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
+R package version 0.51.2, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+</p>
+</div>
 </div>
 </body>
 </html>
