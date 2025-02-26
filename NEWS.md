@@ -10,6 +10,8 @@
 
 - Fixed a bug that `fuse()` fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, @kevinushey, yihui/knitr#2387).
 
+- `fuse_book()` will ignore YAML headers in book chapters except for the index chapter.
+
 # CHANGES IN litedown VERSION 0.5
 
 - Added a wizard in `roam()` to create new `.Rmd`/`.md`/`.R` files with selected HTML features.

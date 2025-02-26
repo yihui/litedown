@@ -31,6 +31,13 @@ sans_p = function(x) gsub('^<p[^>]*>|(</p>)?\n$', '', x)
 # remove ugly single quotes, e.g., 'LaTeX' -> LaTeX
 sans_sq = function(x) gsub("(^|\\W)'([^']+)'(\\W|$)", '\\1\\2\\3', x)
 
+# remove YAML header
+sans_yaml = function(x) {
+  if (length(x) && grepl('^---\\s*?($|\n)', x[1]))
+    x = xfun::yaml_body(split_lines(x), parse = FALSE)$body
+  x
+}
+
 is_lang = function(x) is.symbol(x) || is.language(x)
 
 uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)

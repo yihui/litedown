@@ -219,7 +219,7 @@ file_resp = function(x, preview) {
     list(payload = switch(
       info$type,
       book = {
-        store_book(info$root, x)
+        store_book(info$root, x, info$index)
         fuse_book(if (info$index) info$root else x, full_output, globalenv())
       },
       site = fuse_site(x),
@@ -240,9 +240,13 @@ file_resp = function(x, preview) {
 
 # store book dir for books to resolve number_refs() because the book may be
 # partially rendered (in which case we can't resolve refs to other chapters)
-store_book = function(dir, x) {
-  .env$current_book = dir; .env$current_file = x
-  exit_call(function() .env$current_book <- .env$current_file <- NULL)
+store_book = function(dir, x, index = FALSE) {
+  f = function(...) .mapply(
+    function(n, v) .env[[paste0('current_', n)]] = v,
+    c('book', 'file', 'index'), list(...)
+  )
+  f(dir, x, index)
+  exit_call(function() f(NULL))
 }
 
 # detect project type for a directory (_litedown.yml may be in an upper-level dir)

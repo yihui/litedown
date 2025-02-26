@@ -232,8 +232,9 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
         fuse(x, fmt, NULL, envir)
       }
     }
-    # remove YAML in the preview mode since we only need the body
-    if (length(preview)) out = xfun::yaml_body(split_lines(out), parse = FALSE)$body
+    # remove YAML in the preview mode or for non-index chapters since we only need the body
+    if (length(preview) || isFALSE(.env$current_index) || x != input[1])
+      out = sans_yaml(out)
 
     if (format != 'html') return(out)
     # add input filenames to the end for HTML output and wrap each file in a div
