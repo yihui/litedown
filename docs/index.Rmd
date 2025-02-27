@@ -44,7 +44,7 @@ xfun::pkg_bib(c('litedown', 'commonmark', 'xfun', 'rbibutils'), 'packages.bib')
 ```{js, echo = FALSE, type = 'module'}
 document.querySelectorAll('pre > code[data-output]').forEach(el => {
   const a = document.createElement('a');
-  a.innerHTML = '&#9205;'; a.className = 'ex-out';
+  a.className = 'ex-out';
   a.href = `https://git.yihui.org/litedown/examples/${el.dataset.output}`;
   el.after(a);
 });
@@ -374,7 +374,7 @@ to *uncompressed* software and source code as of today):
     [paged.js](https://cdn.jsdelivr.net/npm/pagedjs/) has 33,000+ lines of code,
     and my naive implementation,
     [pages.js](https://github.com/yihui/lite.js/blob/main/js/pages.js), has
-    about 400 lines (200 lines of JS and 200 lines of CSS).
+    about 600 lines (400 lines of JS and 200 lines of CSS).
 
 Admittedly, pursuing lightweight requires sacrifice in features and quality
 (e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
