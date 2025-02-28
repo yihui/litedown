@@ -1150,7 +1150,7 @@ jsd_version = local({
   # query version from jsdelivr api
   v_api = function(pkg) {
     x = tryCatch(
-      read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved')),
+      read_utf8(paste0('https://data.jsdelivr.com/v1/packages/', pkg, '/resolved?specifier=latest')),
       error = function(e) v_cache(pkg, FALSE, Inf)  # fall back to local cache
     )
     v = grep_sub('.*"version":\\s*"([0-9.]+)".*', '@\\1', x)
