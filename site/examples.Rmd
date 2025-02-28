@@ -20,7 +20,7 @@ litedown::vest(css = 'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/
     -webkit-line-clamp: 10;
   }
 }
-pre:hover {
+pre, pre:hover {
   white-space: pre-wrap;
 }
 .box a {
