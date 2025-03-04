@@ -38,6 +38,12 @@ sans_yaml = function(x) {
   x
 }
 
+# TODO: remove `if` after xfun 0.52
+split_chunk = function(...) {
+  if ('...' %in% names(formals(xfun::divide_chunk)))
+    divide_chunk(..., use_yaml = FALSE) else divide_chunk(...)
+}
+
 is_lang = function(x) is.symbol(x) || is.language(x)
 
 uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)

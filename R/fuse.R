@@ -137,7 +137,7 @@ crack = function(input, text = NULL) {
       }
       code = code[-c(1, N)]  # remove fences
       save_pos(b$lines)
-      code = divide_chunk(b$info, code)
+      code = split_chunk(b$info, code)
       b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
       # starting line number of code
       b$code_start = b$lines[1] + 1L + length(b$comments)
@@ -275,7 +275,7 @@ sieve = function(input, text = NULL) {
     res[[length(res) + 1]] <<- el
   }
   partition = function(code) {
-    code = divide_chunk('r', code)
+    code = split_chunk('r', code)
     set_names(code[c('code', 'options', 'src')], c('source', 'options', 'comments'))
   }
   # detect #| and split a block of code into chunks
