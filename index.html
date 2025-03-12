@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.6.1">
+<meta name="generator" content="litedown 0.6.2">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.10/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.10/css/article.min.css">
@@ -39,7 +39,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-02-28</h3></div>
+<div class="date"><h3>2025-03-12</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -3165,9 +3165,9 @@ any_character.is-okay: string not quoted
 <ol>
 <li>
 <p>Each line should be of the form <code>field: value</code>. The <code>field</code> name can use any
-character. The <code>value</code> cannot span across multiple lines. If a line starts
-with <code>#</code>, it will be ignored (i.e., it is treated as a comment). Any line
-that is not of the form <code>field: value</code> or a comment are ignored.</p>
+character (except a leading <code>#</code> or a colon followed by a space). The <code>value</code>
+cannot span across multiple lines. A line starting with <code>#</code> is treated as a
+comment. Any line not of the form <code>field: value</code> is ignored.</p>
 </li>
 <li>
 <p>Values must be character, numeric, logical, expressions, null, or vectors.</p>
@@ -3202,7 +3202,7 @@ recognized, such as <code>yes</code>, <code>YES</code>, <code>no</code>, <code>N
 <p>If <code>value</code> is empty, and the next line is of the form <code>field: value</code>
 indented by \(n\) white spaces (\(n \geq 1\)),<sup class="footnote-ref"><a href="#fn-03-syntax-3" id="fnref-03-syntax-3" data-footnote-ref>8</a></sup> the next line will
 be treated as a child member of the current line. One field can have
-multiple chidren indented to the same level, and each child can have its
+multiple children indented to the same level, and each child can have its
 children (further indented by \(n\) spaces).</p>
 </li>
 </ol>
@@ -6163,11 +6163,11 @@ R package version 1.9.2, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.6.1, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.6.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.51.2, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.51.3, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
