@@ -322,6 +322,8 @@ pkg_manual = function(
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
   r2 = sprintf('<p[^>]*>\\s*%s\\s*</p>', r1)  # display math
   res = uapply(names(db), function(i) {
+    kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
+    if ('internal' %in% kwd) return()
     txt = ''
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
     tryCatch(

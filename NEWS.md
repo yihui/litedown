@@ -1,3 +1,7 @@
+# CHANGES IN litedown VERSION 0.7
+
+- `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
+
 # CHANGES IN litedown VERSION 0.6
 
 - Added a Markdown rendering option `offline` to download web resources when this option is set to true, so that the HTML output can be viewed offline (thanks, @TimTaylor, #73). See https://yihui.org/litedown/#sec:offline for more info.
