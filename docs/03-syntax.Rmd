@@ -57,9 +57,9 @@ any_character.is-okay: string not quoted
 The TAML specifications are:
 
 1.  Each line should be of the form `field: value`. The `field` name can use any
-    character. The `value` cannot span across multiple lines. If a line starts
-    with `#`, it will be ignored (i.e., it is treated as a comment). Any line
-    that is not of the form `field: value` or a comment are ignored.
+    character (except a leading `#` or a colon followed by a space). The `value`
+    cannot span across multiple lines. A line starting with `#` is treated as a
+    comment. Any line not of the form `field: value` is ignored.
 
 2.  Values must be character, numeric, logical, expressions, null, or vectors.
 
@@ -84,7 +84,7 @@ The TAML specifications are:
 3.  If `value` is empty, and the next line is of the form `field: value`
     indented by $n$ white spaces ($n \geq 1$),[^03-syntax-3] the next line will
     be treated as a child member of the current line. One field can have
-    multiple chidren indented to the same level, and each child can have its
+    multiple children indented to the same level, and each child can have its
     children (further indented by $n$ spaces).
 
 [^03-syntax-2]: TAML is a good friend of Norwegian.

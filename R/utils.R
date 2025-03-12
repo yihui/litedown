@@ -31,10 +31,12 @@ sans_p = function(x) gsub('^<p[^>]*>|(</p>)?\n$', '', x)
 # remove ugly single quotes, e.g., 'LaTeX' -> LaTeX
 sans_sq = function(x) gsub("(^|\\W)'([^']+)'(\\W|$)", '\\1\\2\\3', x)
 
-# remove YAML header
+# remove YAML header (if title exists, convert it to h1)
 sans_yaml = function(x) {
-  if (length(x) && grepl('^---\\s*?($|\n)', x[1]))
-    x = xfun::yaml_body(split_lines(x), parse = FALSE)$body
+  if (length(x) && grepl('^---\\s*?($|\n)', x[1])) {
+    res = xfun::yaml_body(split_lines(x))
+    x = c(if (is.character(t <- res$yaml$title)) paste('#', t), res$body)
+  }
   x
 }
 
