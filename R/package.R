@@ -301,7 +301,7 @@ tweak_citation = function(x) {
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
-  examples = list()
+  examples = list(), internal = TRUE
 ) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
@@ -314,8 +314,14 @@ pkg_manual = function(
 
   db = tools::Rd_db(name)  # all Rd pages
   intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
-  entries = setdiff(names(db), intro)
+  if (isFALSE(internal)) {
+    idx = uapply(db, function(x) isTRUE(tools:::.Rd_get_metadata(x, "keyword") == "internal"))
+    entries = setdiff(names(db), names(db[idx]))
+  } else {
+    entries = setdiff(names(db), intro)
+  }
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
+
   al = lapply(db, Rd_aliases)
 
   cl = header_class(toc, number_sections, FALSE)
