@@ -1,0 +1,29 @@
+---
+title: "Test inline expressions"
+---
+
+A normal inline expression: `{r} pi`.
+
+The knitr-style inline expressions are ignored by default: `r pi`.
+
+An expression that spans multiple lines: `{r} pi +
+1 -
+1`.
+
+When a line has leading spaces that are not meaningful,
+ it should still work: `{r} pi`.
+
+<!-- doesn't work when the next line has leading spaces, e.g., `{r} pi +
+ 1` -->
+
+- An item.
+
+  `{r} pi` (leading spaces are meaningful here)
+  
+  hi `{r} pi > 1 & FALSE`
+   hi `{r} pi`
+  
+  <!-- doesn't work: hi `{r} pi +
+  1` -->
+
+      hi `{r} pi` (four spaces: this is a plain code block)

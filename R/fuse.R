@@ -75,6 +75,8 @@ crack = function(input, text = NULL) {
 
   if (!length(m)) return(res)
 
+  set_error_handler(input)
+
   m = m[, m[2, ] == 'code', drop = FALSE]
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
@@ -91,6 +93,24 @@ crack = function(input, text = NULL) {
     # column position is based on bytes instead of chars; needs to be adjusted to the latter
     pos = char_pos(text, as.integer(m[3:6, i]))
     i1 = pos[1]; i2 = pos[3]
+    # commonmark::markdown_xml(sourcepos = TRUE) gives wrong column info when
+    # the line has leading spaces (which are ignored), so doublecheck here (in
+    # theory we also need to consider the case i1 != i2 but that's a little too
+    # complicated and may be rare, too)
+    if (i1 == i2 && grepl('^\\s+', ti <- text[i1])) {
+      mi = restore_html(m[9, i])
+      if (substring(ti, pos[2], pos[4]) != mi) {
+        p = base::gregexpr(mi, ti, fixed = TRUE)[[1]]
+        if (length(p) > 1 || p < 1) {
+          save_pos(c(i1, i2)); stop(
+            'Unable to locate the inline code expression ', mi,
+            '. Please file an issue to https://github.com/yihui/litedown/issues ',
+            'with a minimal reproducible example.'
+          )
+        }
+        pos[2] = p; pos[4] = p + attr(p, 'match.length') - 1
+      }
+    }
     s = nchar(b$source)
     # calculate new position of code after we concatenate all lines of this block by \n
     b$col = c(b$col, c(
@@ -100,8 +120,6 @@ crack = function(input, text = NULL) {
     b$pos = c(b$pos, pos)
     res[[j[i]]] = b
   }
-
-  set_error_handler(input)
 
   i1 = 0  # code chunk index
   # remove code fences, and extract code in text blocks
