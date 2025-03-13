@@ -315,6 +315,10 @@ pkg_manual = function(
   db = tools::Rd_db(name)  # all Rd pages
   intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
   entries = setdiff(names(db), intro)
+  entries = entries[!vapply(entries, function(i) {
+    kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
+    'internal' %in% kwd
+  }, logical(1))]
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
 
@@ -322,8 +326,6 @@ pkg_manual = function(
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
   r2 = sprintf('<p[^>]*>\\s*%s\\s*</p>', r1)  # display math
   res = uapply(names(db), function(i) {
-    kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
-    if ('internal' %in% kwd) return()
     txt = ''
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
     tryCatch(
