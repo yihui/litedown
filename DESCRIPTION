@@ -1,7 +1,7 @@
 Package: litedown
 Type: Package
 Title: A Lightweight Version of R Markdown
-Version: 0.6.3
+Version: 0.6.4
 Authors@R: c(
     person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666", URL = "https://yihui.org")),
     person("Tim", "Taylor", role = "ctb", comment = c(ORCID = "0000-0002-8587-7113")),
@@ -21,7 +21,7 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
 Depends: R (>= 3.2.0)
 Imports:
     utils,
-    commonmark (>= 1.9.1),
+    commonmark (>= 1.9.5),
     xfun (>= 0.51)
 Suggests:
     rbibutils,
