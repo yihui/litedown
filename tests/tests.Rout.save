@@ -186,6 +186,16 @@ b</span></p>
 > mark("```{=latex}\n\\textbf{raw LaTeX}\n```")
 
 
+> mark("::: foo\nasdf\n:::")
+<div class="foo">
+<p>asdf</p>
+</div>
+
+> mark("::: {.foo .bar #baz style=\"color: red;\"}\nasdf\n:::")
+<div id="baz" class="foo bar" style="color: red;">
+<p>asdf</p>
+</div>
+
 > mkd = "<style>a {}</style><script type=\"text/javascript\">console.log(\"No!\");</script>\n[Hello](#)"
 
 > mark(mkd)

@@ -178,6 +178,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       sprintf('!%s!', x)
     })
   }
+  find_prose()
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks
   text[p] = sub('^([ >]*:::+ )([^ {]+)$', '\\1{.\\2}', text[p]) # ::: foo -> ::: {.foo}

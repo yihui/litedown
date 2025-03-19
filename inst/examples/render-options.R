@@ -77,6 +77,10 @@ mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````')
 mark('```{=html}\n<p>raw HTML</p>\n```')
 mark('```{=latex}\n\\textbf{raw LaTeX}\n```')
 
+# fenced Divs
+mark('::: foo\nasdf\n:::')
+mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
+
 # filter out HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
 mark(mkd)
