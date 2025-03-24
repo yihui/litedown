@@ -438,15 +438,62 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   text = read_input(input, text); input = attr(text, 'input')
   # determine if the input is R or R Markdown
   if (r_input <- is_R(input, text)) {
-    blocks = sieve(input, text)
-    yaml = yaml_body(blocks[[1]]$source)$yaml
+    # remove markdown comment to parse YAML in R input
+    ysrc = gsub("^#' ", "", text[startsWith(text, "#' ")])
+    .fun = sieve
   } else {
-    blocks = crack(input, text)
-    yaml = yaml_body(text)$yaml
+    ysrc = text
+    .fun = crack
   }
+
+  # extract YAML header and body
+  ybdy = yaml_body(ysrc)
+
+  # determine output format
+  format = detect_format(output, ybdy$yaml)
+
+  # extract output file name from YAML (if specified)
+  output_file = yaml_field(ybdy$yaml, format, 'output_file')
+
+  # keep the YAML header in output?
+  keep_yaml = yaml_field(ybdy$yaml, format, 'keep_yaml')
+
+  # keep the md output?
+  keep_md = yaml_field(ybdy$yaml, format, 'keep_md')
+
+  ylns = NULL
+  if (length(ybdy$lines) == 2) {
+    # extract start and end lines of YAML header
+    ylns = seq(from = ybdy$lines[1], to = ybdy$lines[2])
+  }
+
+  # default YAML preservation behavior for various formats
+  if (is.null(keep_yaml)) {
+    if (format == "commonmark") {
+      keep_yaml = FALSE
+    }
+  }
+
+  # if we have YAML
+  if (!is.null(ylns)) {
+    if (isFALSE(keep_yaml)) {
+      # omit YAML from block parsing
+      text = text[-ylns]
+    } else if (r_input) {
+      # put markdown comment back into R input
+      text[ylns] <- paste0("#' ", ysrc[ylns])
+    }
+  }
+
+  # .fun: either sieve() or crack()
+  blocks = .fun(input, text)
+
   full = is_output_full(output)
-  format = detect_format(output, yaml)
   output = auto_output(input, output, format)
+  if (!is.null(output_file)) {
+    # override output if output_file specified in YAML
+    output = output_file
+  }
   if (!is.null(output_base <- output_path(input, output)))
     output_base = sans_ext(output_base)
 
@@ -499,7 +546,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   timing_data()
 
   # keep the markdown output if keep_md = TRUE is set in YAML output format
-  if (is_output_file(output) && isTRUE(yaml_field(yaml, format, 'keep_md'))) {
+  if (is_output_file(output) && isTRUE(keep_md)) {
     write_utf8(res, with_ext(output, '.md'))
   }
   fuse_output(input, output, res, full)
