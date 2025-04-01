@@ -2,6 +2,8 @@
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
 
+- Allow `,` and `.` in superscripts and subscripts (thanks, @janlisec, #81).
+
 - Fixed a bug that inline code expressions (`` `{lang} expr` ``) cannot be correctly located when the line has leading spaces that are not meaningful.
 
 # CHANGES IN litedown VERSION 0.6

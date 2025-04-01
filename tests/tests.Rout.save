@@ -140,17 +140,20 @@ b</span></p>
 > mark("~~awesome~~", options = "-strikethrough")
 <p>~~awesome~~</p>
 
-> mark("2^10^")
-<p>2<sup>10</sup></p>
+> mark("2^10.5^")
+<p>2<sup>10.5</sup></p>
 
-> mark("2^10^", options = "-superscript")
-<p>2^10^</p>
+> mark("2^10.5^", options = "-superscript")
+<p>2^10.5^</p>
 
 > mark("H~2~O")
 <p>H<sub>2</sub>O</p>
 
 > mark("H~2~O", options = "-subscript")
 <p>H~2~O</p>
+
+> mark("X~i,j~")
+<p>X<sub>i,j</sub></p>
 
 > mark("```r\n1 + 1;\n```")
 <pre><code class="language-r">1 + 1;

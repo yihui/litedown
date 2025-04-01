@@ -60,10 +60,11 @@ mark("~~awesome~~")
 mark("~~awesome~~", options = "-strikethrough")
 
 # superscript and subscript examples
-mark("2^10^")
-mark("2^10^", options = "-superscript")
+mark("2^10.5^")
+mark("2^10.5^", options = "-superscript")
 mark("H~2~O")
 mark("H~2~O", options = "-subscript")
+mark("X~i,j~")
 
 # code blocks
 mark('```r\n1 + 1;\n```')

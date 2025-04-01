@@ -158,7 +158,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   })
   # superscript and subscript; for now, we allow only characters alnum|*|(|) for
   # script text but can consider changing this rule upon users' request
-  r2 = '(?<!`)\\^([[:alnum:]*()]+?)\\^(?!`)'
+  r2 = '(?<!`)\\^([[:alnum:]*(),.]+?)\\^(?!`)'
   if (has_sup <- test_feature('superscript', r2)) {
     id2 = id_string(text)
     find_prose()
@@ -168,7 +168,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       sprintf('!%s!', x)
     })
   }
-  r3 = '(?<![~`[:space:]])~([[:alnum:]*()]+?)~(?!`)'
+  r3 = '(?<![~`[:space:]])~([[:alnum:]*(),.]+?)~(?!`)'
   if (has_sub <- test_feature('subscript', r3)) {
     id3 = id_string(text)
     find_prose()
