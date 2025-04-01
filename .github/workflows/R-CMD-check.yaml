@@ -76,6 +76,12 @@ jobs:
           R CMD build litedown
           R CMD check --as-cran --no-manual litedown_*.tar.gz
 
+      - name: Run examples
+        working-directory: examples
+        run: |
+          Rscript _run.R
+          [ -z "$(git diff)" ] || (git diff && echo "Examples output changed" 1>&2 && exit 1)
+
       - name: Test coverage
         if: success() && env.USE_R_CODECOV == 'true'
         run: |
