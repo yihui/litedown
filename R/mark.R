@@ -416,7 +416,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # for RStudio to capture the output path when previewing the output
     if (is_rmd_preview()) message('\nOutput created: ', output)
     if (is_pdf) invisible(output) else write_utf8(ret, output)
-  } else raw_string(ret, lang = format)
+  } else raw_string(ret, lang = paste0('.', format))
 }
 
 # insert body and meta variables into a template
@@ -470,8 +470,6 @@ yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2
 #' @examples
 #' # all available options
 #' litedown::markdown_options()
-#'
-#' @example inst/examples/render-options.R
 markdown_options = function() {
   # options enabled by default
   x1 = c(
