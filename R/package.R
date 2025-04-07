@@ -216,6 +216,16 @@ pkg_news = function(
     for (i in 2:1) res = sub(sprintf('^(#{%d} .+)', i), paste0('#\\1', a), res)
     # shorten headings
     res = gsub('^## CHANGES IN ([^ ]+) VERSION( .+)', '## \\1\\2', res)
+    # link Github @username and #issue
+    if (length(u <- github_link(dirname(path)))) {
+      r1 = '([[:alnum:]-]+)'; r2 = '([0-9]+)'
+      res = gsub(paste0(' @', r1), ' [@\\1](https://github.com/\\1)', res)
+      res = gsub(paste0(' #', r2), sprintf(' [#\\1](%sissues/\\1)', u), res)
+      res = gsub(
+        sprintf(' %s/%s#%s', r1, r1, r2),
+        ' [\\1/\\2#\\3](https://github.com/\\1/\\2/issues/\\3)', res
+      )
+    }
   }
   new_asis(res)
 }
@@ -247,11 +257,7 @@ pkg_code = function(
 ) {
   if (!isTRUE(dir.exists(path))) return()
   a = header_class(toc, number_sections)
-  if (isTRUE(link)) {
-    u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
-    u = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1blob/HEAD/%s', u)
-    if (length(u)) link = u
-  }
+  if (isTRUE(link) && length(u <- github_link(path))) link = paste0(u, 'blob/HEAD/%s')
   ds = c('R', 'src')
   ds = ds[ds %in% list.dirs(path, FALSE, FALSE)]
   flat = length(ds) == 1  # if only one dir exists, list files in a flat structure
@@ -268,6 +274,12 @@ pkg_code = function(
     c(if (!flat) paste0('## ', paste0('`*.', e, '`', collapse = ' / '), a), '', x)
   }))
   new_asis(unlist(code))
+}
+
+# retrieve Github repo link from DESCRIPTION
+github_link = function(path) {
+  u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
+  grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
 }
 
 #' @return `pkg_citation()` returns the package citation in both the plain-text

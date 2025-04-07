@@ -2,6 +2,8 @@
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
 
+- `pkg_news()` will add links to Github users and issue numbers if the package is hosted on Github.
+
 - Allow `,` and `.` in superscripts and subscripts (thanks, @janlisec, #81).
 
 - Fixed a bug that inline code expressions (`` `{lang} expr` ``) cannot be correctly located when the line has leading spaces that are not meaningful.
