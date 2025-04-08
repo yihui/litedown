@@ -40,11 +40,7 @@ sans_yaml = function(x) {
   x
 }
 
-# TODO: remove `if` after xfun 0.52
-split_chunk = function(...) {
-  f = xfun::divide_chunk
-  if ('...' %in% names(formals(f))) f(..., use_yaml = FALSE) else f(...)
-}
+split_chunk = function(...) xfun::divide_chunk(..., use_yaml = FALSE)
 
 is_lang = function(x) is.symbol(x) || is.language(x)
 

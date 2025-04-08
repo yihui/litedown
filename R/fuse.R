@@ -464,9 +464,9 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   if (is_file(input) && is.null(opts$wd)) opts$wd = dirname(normalizePath(input))
 
   # store output dir so we can calculate relative paths for plot files later
-  .env$wd.out = normalize_path(
+  .env$wd_out = normalize_path(
     if (is.null(output_base)) {
-      if (is.character(.env$wd.out)) .env$wd.out else '.'
+      if (is.character(.env$wd_out)) .env$wd_out else '.'
     } else dirname(output_base)
   )
   # store the environment and output format
@@ -746,7 +746,7 @@ fuse_code = function(x, blocks) {
   p3 = unlist(p2)  # vector of plot paths
   # get the relative path of the plot directory
   fig.dir = if (length(p3)) tryCatch(
-    sub('^[.]/', '.', paste0(dirname(relative_path(p3[1], .env$wd.out)), '/')),
+    sub('^[.]/', '.', paste0(dirname(relative_path(p3[1], .env$wd_out)), '/')),
     error = function(e) NULL
   )
 
