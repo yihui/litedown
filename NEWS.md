@@ -6,6 +6,8 @@
 
 - Allow `,` and `.` in superscripts and subscripts (thanks, @janlisec, #81).
 
+- Special characters in bibliography entries such as `{\"u}` can be correctly read now (thanks, @bastistician).
+
 - Fixed a bug that inline code expressions (`` `{lang} expr` ``) cannot be correctly located when the line has leading spaces that are not meaningful.
 
 - Deleted vignettes `markdown-examples` and `markdown-output`. They are rendered on the package site now: https://git.yihui.org/litedown/examples/test-options.html

@@ -512,7 +512,7 @@ one_string = function(x, by = '\n', test = NULL) {
 # find @citation and resolve references
 add_citation = function(x, bib, format = 'html') {
   if (!format %in% c('html', 'latex')) return(x)
-  bib = do.call(c, lapply(bib, rbibutils::readBib, texChars = 'convert'))
+  bib = do.call(c, lapply(bib, rbibutils::readBib, direct = TRUE, texChars = 'convert'))
   if (length(bib) == 0) return(x)
   cited = NULL
   is_html = format == 'html'
