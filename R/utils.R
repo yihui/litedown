@@ -1289,6 +1289,7 @@ gen_tag = function(
   } else stop("The file extension '", ext, "' is not supported.")
   is_web = is_https(x)
   is_rel = !is_web && is_rel_path(x)
+  is_abs = !is_web && is_abs_path(x)
   if (is_web && embed_https && xfun::url_filename(x) == 'MathJax.js') {
     warning('MathJax.js cannot be embedded. Please use MathJax v3 instead.')
     embed_https = FALSE
@@ -1302,6 +1303,8 @@ gen_tag = function(
       x, offline, handler = function(code) resolve_url(x, code, ext, FALSE)
     )
     sprintf(t1, x)
+  } else if (is_abs) {
+    one_string(c(t2[1], read_utf8(x), t2[2]))
   } else {
     # embedding for other cases
     one_string(c(t2[1], resolve_external(x, is_web, ext), t2[2]))
