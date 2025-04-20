@@ -1,4 +1,4 @@
-# CHANGES IN litedown VERSION 0.7
+# CHANGES IN litedown VERSION 0.7.1
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
 
@@ -11,6 +11,10 @@
 - Fixed a bug that inline code expressions (`` `{lang} expr` ``) cannot be correctly located when the line has leading spaces that are not meaningful.
 
 - Deleted vignettes `markdown-examples` and `markdown-output`. They are rendered on the package site now: https://git.yihui.org/litedown/examples/test-options.html
+
+- Allows absolute paths in filename dependencies in `vest()`.
+
+- Allows `meta` to be specified in chunk options.
 
 # CHANGES IN litedown VERSION 0.6
 
