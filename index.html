@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.7">
+<meta name="generator" content="litedown 0.7.1">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/article.min.css">
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/prism-xcode.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/appendix.min.js" defer></script>
@@ -29,7 +29,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.21/dist/katex.min.js,npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.22/dist/katex.min.js,npm/katex@0.16.22/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
@@ -39,7 +39,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-04-08</h3></div>
+<div class="date"><h3>2025-04-26</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -2290,10 +2290,12 @@ provided via the chunk option <code>print</code>, which defaults to the S3 gener
 <code>xfun::record_print()</code>, with the following methods:</p>
 <pre><code class="language-r">methods(xfun::record_print)
 </code></pre>
-<pre><code>#&gt; [1] record_print.data.frame*      record_print.default*        
-#&gt; [3] record_print.knitr_kable*     record_print.matrix*         
-#&gt; [5] record_print.record_asis*     record_print.tbl_df*         
-#&gt; [7] record_print.xfun_raw_string*
+<pre><code class="language-plain message">#&gt; some methods may be unavailable outside of their namespace
+</code></pre>
+<pre><code>#&gt; [1] record_print.data.frame*     record_print.default        
+#&gt; [3] record_print.knitr_kable*    record_print.matrix*        
+#&gt; [5] record_print.record_asis     record_print.tbl_df*        
+#&gt; [7] record_print.xfun_raw_string
 #&gt; see '?methods' for accessing help and source code
 </code></pre>
 <p>These methods are mainly for generating tables from rectangular data objects,
@@ -6163,7 +6165,7 @@ R package version 1.9.5, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.7, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.7.1, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
