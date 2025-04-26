@@ -820,9 +820,12 @@ fuse_code = function(x, blocks) {
       } else fenced_block(x, a, fence)
     }
   })
+  out = dropNULL(out)
 
   # collapse a code block without attributes into previous adjacent code block
-  if (isTRUE(opts$collapse) && (n <- length(res)) > 1) {
+  # (also try to collapse for results = 'hide')
+  collapse = isTRUE(opts$collapse) || res_show == 'hide'
+  if (collapse && (n <- length(out)) > 1) {
     i1 = 1; k = NULL  # indices of elements to be removed from `out`
     for (i in 2:n) {
       if (i - i1 > 1) i1 = i - 1  # make sure blocks are adjacent

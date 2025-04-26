@@ -1,3 +1,7 @@
+# CHANGES IN litedown VERSION 0.8
+
+- The chunk option `results = 'hide'` will imply `collapse = TRUE`, i.e., when text output is hidden, the source blocks will be merged (thanks, @jangorecki, #87). 
+
 # CHANGES IN litedown VERSION 0.7
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
