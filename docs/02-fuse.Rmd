@@ -986,7 +986,7 @@ To print a value, a print function needs to be called. The function can be
 provided via the chunk option `print`, which defaults to the S3 generic function
 `xfun::record_print()`, with the following methods:
 
-```{r}
+```{r, message = FALSE}
 methods(xfun::record_print)
 ```
 
