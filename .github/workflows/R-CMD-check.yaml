@@ -17,6 +17,7 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: '4.4'}
           - {os: ubuntu-latest, r: '4.3'}
           - {os: ubuntu-latest, r: '4.2'}
           - {os: ubuntu-latest, r: '4.1'}

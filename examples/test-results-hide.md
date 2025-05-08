@@ -6,6 +6,15 @@ ncol(iris)
 iris
 ```
 
+Keep the blank line:
+
+``` {.r}
+nrow(iris)
+ncol(iris)
+
+iris
+```
+
 Other types of output (such as messages) will interrupt the collapsed block:
 
 ``` {.r}

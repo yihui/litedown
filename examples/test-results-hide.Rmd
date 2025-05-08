@@ -1,9 +1,15 @@
 `results = 'hide'` should try to collapse output, e.g., merge the source blocks below:
 
-```{r, results = 'hide'}
+```{r, chunk-a, results = 'hide'}
 nrow(iris)
 ncol(iris)
+
 iris
+```
+
+Keep the blank line:
+
+```{r, chunk-a, results = 'hide', strip.white = FALSE}
 ```
 
 Other types of output (such as messages) will interrupt the collapsed block:

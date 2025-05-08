@@ -8,7 +8,7 @@ Keep blank lines at the beginning/end:
 
 ``` {.r}
 
-# a blank line above
+# a blank line before this expression
 1 + 1
 ```
 
@@ -17,6 +17,9 @@ Keep blank lines at the beginning/end:
 ```
 
 ``` {.r}
-# and a blank line below
+
+# blank lines before and after this expression
+for (i in 1:10) {
+}
 
 ```
