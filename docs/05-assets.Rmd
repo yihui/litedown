@@ -189,6 +189,19 @@ the rest of elements will become the tab pane, e.g.,
 By default, the first tab is the active tab initially. To specify a different
 initial active tab, add a comment `<!--active-->` to the bullet item.
 
+Note that all content within the respective tabset needs to be indented,
+including any code blocks, e.g.,:
+
+````{md}
+::: tabset
+- Iris
+
+  ```{r}
+  plot(iris)
+  ```
+:::
+````
+
 You can use the `Left` (Left) and `Right` (Right) Arrows on your keyboard to
 navigate through the tabs when the tabset is on focus (e.g., after you have
 clicked on it once). Now keep pressing the Left or Right Arrow key, and you will
@@ -301,6 +314,53 @@ the ID of the starting element of the tabset, e.g.,
 
 When a tabset is created from sections, the tab titles (from section headings)
 will appear in the TOC of the document if TOC is enabled (@sec:toc).
+
+### Code generated
+
+Tabsets are especially useful when presenting multiple images or tables.
+In these cases, it might be desired to generate tabsets programatically.
+
+This can be achieved by using the `results = asis` and generating the required format:
+
+````{md}
+::: tabset
+```{r, results = "asis", echo = "FALSE"}
+for(letter in letters){
+  cat("*", letter, "\n\n")
+  cat("  ", letter, "\n")
+  cat("  ", "or other content\n\n")
+}
+```
+:::
+````
+
+Using these technique, almost any content bar figures can be generated
+and embedded within tabsets.
+
+Figures are automatically placed at the end of code block, which means they would be placed
+after the tabset.
+To circumvent this, you need to pregenerate images either manually (using `png()`, `pdf()` or other device) using named code chunk, and then link them by constructing link with
+the known name.
+
+````{md}
+```{r, mtcars_hist, include = FALSE}
+# Generate images
+Map(
+    f = hist,
+    mtcars,
+    xlab = names(mtcars),
+    main = sprintf("Histogram of \"%s\"", names(mtcars))
+)
+```
+
+```{r, echo = FALSE, results = "asis"}
+for(i in seq_along(mtcars)){
+  cat(sprintf("* %s (%d)\n", names(mtcars)[i], i))
+  fig_name = paste0(reactor("fig.path"), "mtcars_hist-", i, ".png")
+  cat(sprintf("  ![](%s)\n\n", fig_name))
+}
+```
+````
 
 ## Code folding {#sec:fold-details}
 
