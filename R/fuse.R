@@ -749,6 +749,7 @@ fuse_code = function(x, blocks) {
     sub('^[.]/', '.', paste0(dirname(relative_path(p3[1], .env$wd_out)), '/')),
     error = function(e) NULL
   )
+  fig.dir[fig.dir == "."] = ""
 
   # record plot paths so they can be cleaned up if option embed_cleanup = true;
   # however, when cache = true, we shouldn't clean up plots since they won't be
