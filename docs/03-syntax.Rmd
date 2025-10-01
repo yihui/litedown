@@ -245,7 +245,7 @@ output formats. Similarly, raw HTML blocks will only appear in HTML output. One
 exception is raw LaTeX blocks that are LaTeX math environments, which also work
 for HTML output (see the next section).
 
-### LaTeX math
+### LaTeX math {#math}
 
 You can write both `$inline$` and `$$display$$` LaTeX math, e.g.,
 $\sin^{2}(\theta)+\cos^{2}(\theta) = 1$.

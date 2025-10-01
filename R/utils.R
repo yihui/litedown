@@ -163,7 +163,9 @@ is_output_full = function(x) isTRUE(attr(x, 'full'))
 # test if input is R code or not (this is based on heuristics and may not be robust)
 is_R = function(input, text) {
   if (is_file(input)) grepl('[.][Rrs]$', input) else {
-    !length(grep('^\\s*```+\\{', text)) && !try_error(parse_only(text))
+    # if R code, it must not contain ```{, be syntactically valid, and contain
+    # at least one expression (i.e., not all comments)
+    !length(grep('^\\s*```+\\{', text)) && !try_error(res <- parse_only(text)) && length(res)
   }
 }
 

@@ -516,7 +516,7 @@ like this behavior, you may cancel it via CSS:
 }
 ```
 
-#### Footnotes
+#### Footnotes on the side
 
 Footnotes are moved to the right side. When you move your cursor over a footnote
 number in the body, the footnote will be moved next to your cursor. This can be

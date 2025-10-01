@@ -239,7 +239,8 @@ Hugo's Markdown engines to render pages.
 
 Whether to identify LaTeX math expressions in pairs of single (`$ $`) or double
 dollar signs (`$$ $$`), and transform them so that they could be correctly
-rendered by MathJax (HTML output) or LaTeX. This option is `true` by default.
+rendered by MathJax/KaTeX (HTML output) or LaTeX. This option is `true` by
+default.
 
 ### `number_sections`
 
