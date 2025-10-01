@@ -1,18 +1,24 @@
-local({
-    opts = options("litedown.html.options" = list("embed_resources" = FALSE))
-    on.exit(options(opts), add = TRUE)
+src = '
+---
+output:
+  html:
+    options:
+      embed_resources: false
+---
 
-    react = litedown::reactor(fig.path = "foo")
-    on.exit(litedown::reactor(react), add = TRUE)
+```{r}
+plot(1)
+```
+'
 
-    text = litedown::fuse(text = "```{r}\nplot(1)\n```", output = "markdown")
-    link = strsplit(text, "\n")[[1]][4]
-    stopifnot(identical("![](<foochunk-1-1.png>)", link))
-    unlink("foochunk-1-1.png")
+old = litedown::reactor(fig.path = 'foo')
+out = litedown::fuse(text = src, output = 'markdown')
+stopifnot('![](<foochunk-1-1.png>' %in% strsplit(out, '\n')[[1]])
+unlink('foochunk-1-1.png')
 
-    litedown::reactor(fig.path = "foo/bar")
-    text = litedown::fuse(text = "```{r}\nplot(1)\n```", output = "markdown")
-    link = strsplit(text, "\n")[[1]][4]
-    stopifnot(identical("![](<foo/barchunk-1-1.png>)", link))
-    unlink("foo", recursive = TRUE)
-})
+litedown::reactor(fig.path = 'foo/bar')
+out = litedown::fuse(text = src, output = 'markdown')
+stopifnot('![](<foo/barchunk-1-1.png>)' %in% strsplit(out, '\n')[[1]])
+unlink('foo', recursive = TRUE)
+
+litedown::reactor(old)
