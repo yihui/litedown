@@ -2,6 +2,8 @@
 
 - The chunk option `results = 'hide'` will imply `collapse = TRUE`, i.e., when text output is hidden, the source blocks will be merged (thanks, @jangorecki, #87). 
 
+- `fuse(text = '# text')` will be treated as Markdown input instead of R code input (thanks, @chuxinyuan, #102).
+
 # CHANGES IN litedown VERSION 0.7
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).
