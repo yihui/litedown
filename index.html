@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.7.1">
+<meta name="generator" content="litedown 0.7.2">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/css/article.min.css">
@@ -33,13 +33,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.14/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.min.js" defer></script>
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-05-08</h3></div>
+<div class="date"><h3>2025-10-01</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -158,9 +158,9 @@
 <li><a href="#sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</a>
 <ul>
 <li><a href="#sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</a></li>
-<li><a href="#sec:latex-math_1"><span class="section-number">3.3.2</span> LaTeX math</a></li>
+<li><a href="#math"><span class="section-number">3.3.2</span> LaTeX math</a></li>
 <li><a href="#sec:superscripts-and-subscripts"><span class="section-number">3.3.3</span> Superscripts and subscripts</a></li>
-<li><a href="#sec:footnotes_1"><span class="section-number">3.3.4</span> Footnotes</a></li>
+<li><a href="#sec:footnotes"><span class="section-number">3.3.4</span> Footnotes</a></li>
 <li><a href="#sec:attributes"><span class="section-number">3.3.5</span> Attributes</a></li>
 <li><a href="#sec:appendices"><span class="section-number">3.3.6</span> Appendices</a></li>
 <li><a href="#sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</a></li>
@@ -189,7 +189,7 @@
 <li><a href="#sec:js-highlight"><span class="section-number">4.1.5</span> <code>js_highlight</code></a></li>
 <li><a href="#sec:js-math"><span class="section-number">4.1.6</span> <code>js_math</code></a></li>
 <li><a href="#sec:keep-yaml"><span class="section-number">4.1.7</span> <code>keep_yaml</code></a></li>
-<li><a href="#sec:latex-math_2"><span class="section-number">4.1.8</span> <code>latex_math</code></a></li>
+<li><a href="#sec:latex-math"><span class="section-number">4.1.8</span> <code>latex_math</code></a></li>
 <li><a href="#sec:number-sections"><span class="section-number">4.1.9</span> <code>number_sections</code></a></li>
 <li><a href="#sec:offline"><span class="section-number">4.1.10</span> <code>offline</code></a></li>
 <li><a href="#sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></a></li>
@@ -246,7 +246,7 @@
 <li><a href="#sec:side-elements"><span class="section-number">5.8.2</span> Side elements</a>
 <ul>
 <li><a href="#sec:the-toc"><span class="section-number">5.8.2.1</span> The TOC</a></li>
-<li><a href="#sec:footnotes_2"><span class="section-number">5.8.2.2</span> Footnotes</a></li>
+<li><a href="#sec:footnotes-on-the-side"><span class="section-number">5.8.2.2</span> Footnotes on the side</a></li>
 <li><a href="#sec:arbitrary-sidenotes"><span class="section-number">5.8.2.3</span> Arbitrary sidenotes</a></li>
 </ul>
 </li>
@@ -3314,7 +3314,7 @@ This only appears in \LaTeX{} output.
 output formats. Similarly, raw HTML blocks will only appear in HTML output. One
 exception is raw LaTeX blocks that are LaTeX math environments, which also work
 for HTML output (see the next section).</p>
-<h3 id="sec:latex-math_1"><span class="section-number">3.3.2</span> LaTeX math</h3>
+<h3 id="math"><span class="section-number">3.3.2</span> LaTeX math</h3>
 <p>You can write both <code>$inline$</code> and <code>$$display$$</code> LaTeX math, e.g.,
 \(\sin^{2}(\theta)+\cos^{2}(\theta) = 1\).</p>
 <p>$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$</p>
@@ -3406,7 +3406,7 @@ will not be recognized as a superscript (because the space is not allowed). Note
 that GFM supports striking out text via <code>~text~</code>, but this feature has been
 disabled and replaced by the feature of subscripts in <strong>litedown</strong>. To strike
 out text, you must use a pair of <em>double</em> tildes.</p>
-<h3 id="sec:footnotes_1"><span class="section-number">3.3.4</span> Footnotes</h3>
+<h3 id="sec:footnotes"><span class="section-number">3.3.4</span> Footnotes</h3>
 <p>Insert footnotes via <code>[^n]</code>, where <code>n</code> is a footnote number (a unique
 identifier). The footnote content should be defined in a separate block starting
 with <code>[^n]:</code>. For example:</p>
@@ -4001,10 +4001,11 @@ the output. Note that when this option is enabled, templates (<a class="cross-re
 will be disabled and <code>mark()</code> will only generate a document fragment. This
 option was introduced mainly for Hugo websites to use <strong>litedown</strong> instead of
 Hugo’s Markdown engines to render pages.</p>
-<h3 id="sec:latex-math_2"><span class="section-number">4.1.8</span> <code>latex_math</code></h3>
+<h3 id="sec:latex-math"><span class="section-number">4.1.8</span> <code>latex_math</code></h3>
 <p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
 dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
-rendered by MathJax (HTML output) or LaTeX. This option is <code>true</code> by default.</p>
+rendered by MathJax/KaTeX (HTML output) or LaTeX. This option is <code>true</code> by
+default.</p>
 <h3 id="sec:number-sections"><span class="section-number">4.1.9</span> <code>number_sections</code></h3>
 <p>Whether to number section headings (<code>false</code> by default). To skip numbering a
 specific heading, add a class attribute <code>.unnumbered</code> (or use the shorthand <code>-</code>)
@@ -5031,7 +5032,7 @@ like this behavior, you may cancel it via CSS:</p>
   top: unset;
 }
 </code></pre>
-<h4 id="sec:footnotes_2"><span class="section-number">5.8.2.2</span> Footnotes</h4>
+<h4 id="sec:footnotes-on-the-side"><span class="section-number">5.8.2.2</span> Footnotes on the side</h4>
 <p>Footnotes are moved to the right side. When you move your cursor over a footnote
 number in the body, the footnote will be moved next to your cursor. This can be
 convenient when you have multiple footnotes on a line, since you do not need to
@@ -6166,15 +6167,15 @@ R package version 2.3, <a href="https://geobosh.github.io/rbibutils/">https://ge
 </p>
 <p id="ref-R-commonmark">Ooms J (2025).
 <em>commonmark: High Performance CommonMark and Github Markdown Rendering in R</em>.
-R package version 1.9.5, <a href="https://docs.ropensci.org/commonmark/">https://docs.ropensci.org/commonmark/</a>. 
+R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https://docs.ropensci.org/commonmark/</a>. 
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.7.1, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.7.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.52.2, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.53.1, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
