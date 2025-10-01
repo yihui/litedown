@@ -4,6 +4,8 @@
 
 - `fuse(text = '# text')` will be treated as Markdown input instead of R code input (thanks, @chuxinyuan, #102).
 
+- Fixed the bug that the chunk option `fig.path` does not work when it does not contain `/` (thanks, @J-Moravec, #88).
+
 # CHANGES IN litedown VERSION 0.7
 
 - `pkg_manual()` will exclude help pages with the keyword `internal` (thanks, @TimTaylor, #78).

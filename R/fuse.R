@@ -746,7 +746,7 @@ fuse_code = function(x, blocks) {
   p3 = unlist(p2)  # vector of plot paths
   # get the relative path of the plot directory
   fig.dir = if (length(p3)) tryCatch(
-    sub('^[.]/', '.', paste0(dirname(relative_path(p3[1], .env$wd_out)), '/')),
+    sub('^[.]/', '', paste0(dirname(relative_path(p3[1], .env$wd_out)), '/')),
     error = function(e) NULL
   )
 
