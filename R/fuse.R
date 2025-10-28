@@ -493,6 +493,7 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   set_path('fig.path'); set_path('cache.path')
 
   .env$input = input
+  if (is_file(input)) .env$full_input = normalizePath(input)
   res = .fuse(blocks, input, quiet)
 
   # save timing data if necessary
