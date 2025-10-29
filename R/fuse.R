@@ -868,9 +868,7 @@ fill_source = function(x, fill, blocks) {
 
 fill_label = function(x, blocks) {
   r = '`<(.+?)>`'
-  idx = grep(r, x)
-  if (length(idx) == 0) return(x)
-  for (i in idx) {
+  for (i in grep(r, x)) {
     ind = sub('^(\\s*).*', '\\1', x[i])  # possible indent
     x[i] = match_replace(x[i], r, function(z) {
       labs = sub(r, '\\1', z)  # chunk label
@@ -885,7 +883,7 @@ fill_label = function(x, blocks) {
     })
   }
   # recursion for possible more `<label>` markers
-  fill_label(split_lines(x), blocks)
+  if (is.null(i)) x else fill_label(split_lines(x), blocks)
 }
 
 fill_code = function(x, fill) {
