@@ -84,12 +84,13 @@ pants = c(fracs, c('(c)' = '&copy;', '(r)' = '&reg;', '(tm)' = '&trade;'))
 # merge a later list in arguments into a former one by name
 merge_list = function(...) {
   dots = list(...)
-  res  = dots[[1]]
-  for (i in seq_along(dots) - 1L) {
-    if (i == 0) next
-    x = dots[[i + 1]]
-    if (!is.list(x)) next
-    res[names(x)] = x
+  n = length(dots)
+  if (n == 0) return(list())
+  if (n == 1) return(dots[[1]])
+  res = dots[[1]]
+  for (i in 2:n) {
+    x = dots[[i]]
+    if (is.list(x)) res[names(x)] = x
   }
   res
 }
@@ -98,10 +99,12 @@ CHARS = c(letters, LETTERS, 0:9, '!', ',', '/', ':', ';', '=', '@')
 
 # generate a random string that is not present in provided text
 id_string = function(text, lens = c(5:10, 20), times = 20) {
+  # Combine text once for faster searching
+  text_combined = paste(text, collapse = '\n')
   for (i in lens) {
     for (j in seq_len(times)) {
       id = paste(sample(CHARS, i, replace = TRUE), collapse = '')
-      if (length(grep(id, text, fixed = TRUE)) == 0) return(id)
+      if (!grepl(id, text_combined, fixed = TRUE)) return(id)
     }
   }
   # failure should be very rare
@@ -1012,9 +1015,11 @@ embed_resources = function(x, options) {
     z1 = sub(r, '\\1', z)
     z2 = sub(r, '\\2', z)
     z3 = sub(r, '\\3', z)
-    # skip images already base64 encoded
-    for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
-      is_svg = grepl('[.]svg$', f <- z2[i]) && grepl('^<img', z1[i])
+    # skip images already base64 encoded (vectorized check)
+    not_encoded = !grepl('^data:.+;base64,.+', z2)
+    for (i in which(not_encoded)) {
+      f = z2[i]
+      is_svg = grepl('[.]svg$', f) && grepl('^<img', z1[i])
       a = if (is_svg) str_trim(gsub('^"|/>$', '', z3[i])) else ''
       f = download_url(f, offline)
       if (is_https(f)) {
@@ -1195,10 +1200,13 @@ jsd_resolve = function(x) {
 # if both @foo and foo are present, remove foo
 resolve_dups = function(x) {
   x = unique(x)
-  for (i in grep('^@', x, value = TRUE)) {
-    x = x[x != sub('^@', '', i)]
-  }
-  x
+  has_at = startsWith(x, '@')
+  if (!any(has_at)) return(x)
+  # Get versions without @ prefix
+  at_items = x[has_at]
+  without_at = sub('^@', '', at_items)
+  # Remove plain versions if @ version exists
+  x[!(!has_at & x %in% without_at)]
 }
 
 # add filename extensions to paths without extensions: the path should contain
