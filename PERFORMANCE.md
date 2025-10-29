@@ -98,13 +98,15 @@ has_at = startsWith(x, '@')
 if (!any(has_at)) return(x)
 at_items = x[has_at]
 without_at = sub('^@', '', at_items)
-x[!(!has_at & x %in% without_at)]
+# Keep items with @ or items that don't have an @ version
+x[has_at | !(x %in% without_at)]
 ```
 
 **Impact:**
 - Eliminates loop with repeated vector operations
 - Single vectorized operation instead of iterative subsetting
 - More efficient memory usage
+- Clearer logical expression
 
 ## Performance Testing
 

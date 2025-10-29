@@ -1205,8 +1205,8 @@ resolve_dups = function(x) {
   # Get versions without @ prefix
   at_items = x[has_at]
   without_at = sub('^@', '', at_items)
-  # Remove plain versions if @ version exists
-  x[!(!has_at & x %in% without_at)]
+  # Keep items with @ or items that don't have an @ version
+  x[has_at | !(x %in% without_at)]
 }
 
 # add filename extensions to paths without extensions: the path should contain

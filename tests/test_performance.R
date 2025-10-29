@@ -14,7 +14,8 @@ cat("2. Testing id_string...\n")
 text = c("Hello world", "This is test text", "No special strings here")
 id1 = litedown:::id_string(text)
 stopifnot(is.character(id1) && length(id1) == 1)
-stopifnot(!grepl(id1, paste(text, collapse = '\n'), fixed = TRUE))
+# Verify the ID is not present in any of the text elements
+stopifnot(!any(vapply(text, function(t) grepl(id1, t, fixed = TRUE), logical(1))))
 cat("   ✓ id_string generates unique IDs\n\n")
 
 # Test 3: resolve_dups
