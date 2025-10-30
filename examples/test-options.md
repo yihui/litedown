@@ -378,7 +378,7 @@ mark(mkd, options = '+smartypants')
 `````
 
 ````` {.r}
-# filter out HTML tags
+# filter HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
 mark(mkd)
 `````
@@ -389,8 +389,12 @@ mark(mkd)
 `````
 
 ````` {.r}
-# tagfiler doesn't work: https://github.com/r-lib/commonmark/issues/15
-# mark(mkd, options = 'tagfilter')
+mark(mkd, options = 'tagfilter')
+`````
+
+````` {.html .plain}
+&lt;style>a {}&lt;/style>&lt;script type="text/javascript">console.log("No!");&lt;/script>
+<p><a href="#">Hello</a></p>
 `````
 
 ## The HTML output of above examples
@@ -677,7 +681,7 @@ mark(mkd, options = '+smartypants')
 <p>½ ⅓ ⅔ ¼ ¾ ⅕ ⅖ ⅗ ⅘ ⅙ ⅚ ⅛ ⅜ ⅝ ⅞ ⅐ ⅑ ⅒ © ® ™</p>
 
 ````` {.r}
-# filter out HTML tags
+# filter HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
 mark(mkd)
 `````
@@ -685,6 +689,7 @@ mark(mkd)
 <p><a href="#">Hello</a></p>
 
 ````` {.r}
-# tagfiler doesn't work: https://github.com/r-lib/commonmark/issues/15
-# mark(mkd, options = 'tagfilter')
+mark(mkd, options = 'tagfilter')
 `````
+&lt;style>a {}&lt;/style>&lt;script type="text/javascript">console.log("No!");&lt;/script>
+<p><a href="#">Hello</a></p>

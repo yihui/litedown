@@ -91,11 +91,10 @@ mark('1/2 (c)', options = '+smartypants')
 mkd <- paste(names(litedown:::pants), collapse = ' ')
 mark(mkd, options = '+smartypants')
 
-# filter out HTML tags
+# filter HTML tags
 mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
 mark(mkd)
-# tagfiler doesn't work: https://github.com/r-lib/commonmark/issues/15
-# mark(mkd, options = 'tagfilter')
+mark(mkd, options = 'tagfilter')
 ```
 
 ## The HTML output of above examples
