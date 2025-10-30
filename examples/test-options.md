@@ -1,8 +1,10 @@
 ## Test Markdown options
 
-````` {.r}
+``` {.r}
 library(litedown)
+```
 
+````` {.r}
 # toc example
 mkd <- c('# Header 1', 'p1', '## Header 2', 'p2')
 
@@ -397,11 +399,9 @@ mark(mkd, options = 'tagfilter')
 <p><a href="#">Hello</a></p>
 `````
 
-## The HTML output of above examples
+## HTML output of above examples
 
 ````` {.r}
-library(litedown)
-
 # toc example
 mkd <- c('# Header 1', 'p1', '## Header 2', 'p2')
 
@@ -693,3 +693,399 @@ mark(mkd, options = 'tagfilter')
 `````
 &lt;style>a {}&lt;/style>&lt;script type="text/javascript">console.log("No!");&lt;/script>
 <p><a href="#">Hello</a></p>
+
+## LaTeX output of above examples
+
+````` {.r}
+# temporarily override mark()
+mark = function(...) litedown::mark(..., output = 'latex')
+# toc example
+mkd <- c('# Header 1', 'p1', '## Header 2', 'p2')
+
+mark(mkd, options = '+number_sections')
+`````
+
+````` {.latex .plain}
+\section{Header 1}
+
+p1
+
+\subsection{Header 2}
+
+p2
+`````
+
+````` {.r}
+mark(mkd, options = '+number_sections+toc')
+`````
+
+````` {.latex .plain}
+\tableofcontents
+\section{Header 1}
+
+p1
+
+\subsection{Header 2}
+
+p2
+`````
+
+````` {.r}
+# hard_wrap example
+mark('foo\nbar\n')
+`````
+
+````` {.latex .plain}
+foo
+bar
+`````
+
+````` {.r}
+mark('foo\nbar\n', options = '+hardbreaks')
+`````
+
+````` {.latex .plain}
+foo\\
+bar
+`````
+
+````` {.r}
+# latex math example
+mkd <- c(
+  '`$x$` is inline math $x$!', '', 'Display style:', '', '$$x + y$$', '',
+  '\\begin{align}
+a^{2}+b^{2} & = c^{2}\\\\
+\\sin^{2}(x)+\\cos^{2}(x) & = 1
+\\end{align}'
+)
+
+mark(mkd)
+`````
+
+````` {.latex .plain}
+\texttt{\$x\$} is inline math \(x\)!
+
+Display style:
+
+$$x + y$$
+
+\begin{align}
+a^{2}+b^{2} & = c^{2}\\
+\sin^{2}(x)+\cos^{2}(x) & = 1
+\end{align}
+`````
+
+````` {.r}
+mark(mkd, options = '-latex_math')
+`````
+
+````` {.latex .plain}
+\texttt{\$x\$} is inline math \$x\$!
+
+Display style:
+
+\$\$x + y\$\$
+
+\textbackslash{}begin\{align\}
+a\^{}\{2\}+b\^{}\{2\} \& = c\^{}\{2\}\textbackslash{}
+\textbackslash{}sin\^{}\{2\}(x)+\textbackslash{}cos\^{}\{2\}(x) \& = 1
+\textbackslash{}end\{align\}
+`````
+
+````` {.r}
+# table example
+mark('
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+')
+`````
+
+````` {.latex .plain}
+\begin{tabular}{ll}
+First Header & Second Header \\
+Content Cell & Content Cell \\
+Content Cell & Content Cell \\
+\end{tabular}
+
+`````
+
+````` {.r}
+# caption
+mark('
+| a | b |
+|---|--:|
+| A | 9 |
+
+Table: A table _caption_.
+')
+`````
+
+````` {.latex .plain}
+\begin{tabular}{lr}
+a & b \\
+A & 9 \\
+\end{tabular}
+
+Table: A table \emph{caption}.
+`````
+
+````` {.r}
+# no table
+mark('
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+', options = '-table')
+`````
+
+````` {.latex .plain}
+First Header  \textbar{} Second Header
+------------- \textbar{} -------------
+Content Cell  \textbar{} Content Cell
+Content Cell  \textbar{} Content Cell
+`````
+
+````` {.r}
+# autolink example
+mark('https://www.r-project.org/')
+`````
+
+````` {.latex .plain}
+\url{https://www.r-project.org/}
+`````
+
+````` {.r}
+mark('https://www.r-project.org/', options = '-autolink')
+`````
+
+````` {.latex .plain}
+https://www.r-project.org/
+`````
+
+````` {.r}
+# links and spans
+mark('[a b](#){.red}')
+`````
+
+````` {.latex .plain}
+\protect\hyperlink{}{a b}\{.red\}
+`````
+
+````` {.r}
+mark('[a\nb](){.red}')
+`````
+
+````` {.latex .plain}
+{a
+b}\{.red\}
+`````
+
+````` {.r}
+# strikethrough example
+mark('~~awesome~~')
+`````
+
+````` {.latex .plain}
+\sout{awesome}
+`````
+
+````` {.r}
+mark('~~awesome~~', options = '-strikethrough')
+`````
+
+````` {.latex .plain}
+\textasciitilde{}\textasciitilde{}awesome\textasciitilde{}\textasciitilde{}
+`````
+
+````` {.r}
+# superscript and subscript examples
+mark('2^10^')
+`````
+
+````` {.latex .plain}
+2\textsuperscript{10}
+`````
+
+````` {.r}
+mark('2^10^', options = '-superscript')
+`````
+
+````` {.latex .plain}
+2\^{}10\^{}
+`````
+
+````` {.r}
+mark('H~2~O')
+`````
+
+````` {.latex .plain}
+H\textsubscript{2}O
+`````
+
+````` {.r}
+mark('H~2~O', options = '-subscript')
+`````
+
+````` {.latex .plain}
+H\textasciitilde{}2\textasciitilde{}O
+`````
+
+````` {.r}
+# code blocks
+mark('```r\n1 + 1;\n```')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+1 + 1;
+\end{verbatim}
+`````
+
+````` {.r}
+mark('```{.r}\n1 + 1;\n```')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+1 + 1;
+\end{verbatim}
+`````
+
+````` {.r}
+mark('```{.r .js}\n1 + 1;\n```')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+1 + 1;
+\end{verbatim}
+`````
+
+````` {.r}
+mark('```{.r .js #foo}\n1 + 1;\n```')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+1 + 1;
+\end{verbatim}
+`````
+
+````` {.r}
+mark('```{.r .js #foo style="background:lime;"}\n1 + 1;\n```')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+1 + 1;
+\end{verbatim}
+`````
+
+````` {.r}
+mark('````\nA _code chunk_:\n\n```{r, echo=TRUE}\n1 + 1;\n```\n````')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+A _code chunk_:
+
+```{r, echo=TRUE}
+1 + 1;
+```
+\end{verbatim}
+`````
+
+````` {.r}
+# raw blocks
+mark('```{=html}\n<p>raw HTML</p>\n```')
+`````
+
+````` {.latex .plain}
+
+`````
+
+````` {.r}
+mark('```{=latex}\n\\textbf{raw LaTeX}\n```')
+`````
+
+````` {.latex .plain}
+\textbf{raw LaTeX}
+`````
+
+````` {.r}
+# fenced Divs
+mark('::: foo\nasdf\n:::')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+::: {.foo} :::
+\end{verbatim}
+
+asdf
+\end
+`````
+
+````` {.r}
+mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
+`````
+
+````` {.latex .plain}
+\begin{verbatim}
+::: {.foo .bar #baz style="color: red;"} :::
+\end{verbatim}
+
+asdf
+\end
+`````
+
+````` {.r}
+# smartypants example
+mark('1/2 (c)')
+`````
+
+````` {.latex .plain}
+1/2 (c)
+`````
+
+````` {.r}
+mark('1/2 (c)', options = '+smartypants')
+`````
+
+````` {.latex .plain}
+½ ©
+`````
+
+````` {.r}
+mkd <- paste(names(litedown:::pants), collapse = ' ')
+mark(mkd, options = '+smartypants')
+`````
+
+````` {.latex .plain}
+½ ⅓ ⅔ ¼ ¾ ⅕ ⅖ ⅗ ⅘ ⅙ ⅚ ⅛ ⅜ ⅝ ⅞ ⅐ ⅑ ⅒ © ® ™
+`````
+
+````` {.r}
+# filter HTML tags
+mkd = '<style>a {}</style><script type="text/javascript">console.log("No!");</script>\n[Hello](#)'
+mark(mkd)
+`````
+
+````` {.latex .plain}
+\protect\hyperlink{}{Hello}
+`````
+
+````` {.r}
+mark(mkd, options = 'tagfilter')
+`````
+
+````` {.latex .plain}
+\protect\hyperlink{}{Hello}
+`````
+
+````` {.r}
+rm(mark)
+`````

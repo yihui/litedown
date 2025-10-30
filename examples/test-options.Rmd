@@ -1,8 +1,10 @@
 ## Test Markdown options
 
-```{r, test-a}
+```{r}
 library(litedown)
+```
 
+```{r, test-a}
 # toc example
 mkd <- c('# Header 1', 'p1', '## Header 2', 'p2')
 
@@ -97,8 +99,17 @@ mark(mkd)
 mark(mkd, options = 'tagfilter')
 ```
 
-## The HTML output of above examples
+## HTML output of above examples
 
 ```{r, test-b, results = 'asis'}
 `<test-a>`
+```
+
+## LaTeX output of above examples
+
+```{r, test-c}
+# temporarily override mark()
+mark = function(...) litedown::mark(..., output = 'latex')
+`<test-a>`
+rm(mark)
 ```
