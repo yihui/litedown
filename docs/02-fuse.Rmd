@@ -777,6 +777,13 @@ Chunk options for plot files include:
     the option `dev.args` (@sec:option-dev), e.g.,
     `dev.args = list(width = 9, height = 7)`.
 
+-   `fig.keep`: Indices of plots to be kept. The indices can be either numeric
+    (positive or negative integers) or logical. Negative integers and false
+    values will remove the corresponding plots. For example, if a code chunk
+    generates 3 plots, `c(1, 3)`, `-2`, and `c(T, F, T)` are equivalent ways for
+    `fig.keep` to remove the second plot. The special value `fig.keep = 'last'`
+    means to keep the last plot only.
+
 -   `fig.path`: A path prefix for plot files. This prefix, joined by the chunk
     label and the plot number, will be the actual plot file path. For example,
     for `fig.path = 'figures/'` and a chunk with the label `foo`, the *i*-th

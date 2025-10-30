@@ -1097,7 +1097,7 @@ reactor(
   attr.source = NULL, attr.output = NULL, attr.plot = NULL, attr.chunk = NULL,
   attr.message = '.plain .message', attr.warning = '.plain .warning', attr.error = '.plain .error',
   cache = FALSE, cache.path = NULL,
-  dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL,
+  dev = NULL, dev.args = NULL, fig.path = NULL, fig.ext = NULL, fig.keep = TRUE,
   fig.width = 7, fig.height = 7, fig.dim = NULL, fig.cap = NULL, fig.alt = NULL, fig.env = '.figure',
   tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
@@ -1121,7 +1121,7 @@ eng_r = function(x, inline = FALSE, ...) {
     return(fmt_inline(res, x$math))
   }
   args = reactor(
-    'fig.path', 'fig.ext', 'dev', 'dev.args', 'message', 'warning', 'error',
+    'fig.path', 'fig.ext', 'fig.keep', 'dev', 'dev.args', 'message', 'warning', 'error',
     'cache', 'print', 'print.args', 'verbose'
   )
   if (is.character(args$fig.path)) args$fig.path = paste0(args$fig.path, opts$label)
@@ -1129,7 +1129,7 @@ eng_r = function(x, inline = FALSE, ...) {
   # if fig.dim is provided, override fig.width and fig.height
   if (length(dm <- opts$fig.dim) == 2) size[] = as.list(dm)
   # map chunk options to record() argument names
-  names(args)[1:2] = c('dev.path', 'dev.ext')
+  names(args)[1:3] = c('dev.path', 'dev.ext', 'dev.keep')
   args = dropNULL(args)
   args$dev.args = merge_list(size, opts$dev.args)
   args$cache = list(
