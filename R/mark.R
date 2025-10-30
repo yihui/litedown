@@ -317,6 +317,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       x = gsub(r4, '\\1\\3\\4', x)
       x
     }, perl = FALSE)
+    # for nested verbatim code blocks, the inner blocks may have leftover ```\nid4
+    ret = gsub(sprintf('(```)\n%s(.*?)%s', id4, id4), '\\1\\2', ret)
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
