@@ -86,6 +86,10 @@ mark('```{=latex}\n\\textbf{raw LaTeX}\n```')
 mark('::: foo\nasdf\n:::')
 mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 
+# footnotes
+mark('Hello[^foo] world!\n\n[^foo]: A _footnote_.')
+mark('Hello[^2] world!\n\n[^2]: A footnote with _multiple_ elements.\n\n    - list')
+
 # smartypants example
 mark('1/2 (c)')
 mark('1/2 (c)', options = '+smartypants')

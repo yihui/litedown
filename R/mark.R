@@ -298,7 +298,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # number figures and tables, etc.
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
-    ret = render_footnotes(ret)  # render [^n] footnotes
+    if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
     if (has_sup)
       ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '\\\\textsuperscript{\\1}', ret)
     if (has_sub)
@@ -475,7 +475,7 @@ yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2
 markdown_options = function() {
   # options enabled by default
   x1 = c(
-    'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight',
+    'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
     'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
     setdiff(commonmark::list_extensions(), 'tagfilter')
   )

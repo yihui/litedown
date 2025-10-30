@@ -340,9 +340,17 @@ out text, you must use a pair of *double* tildes.
 
 ### Footnotes
 
-Insert footnotes via `[^n]`, where `n` is a footnote number (a unique
-identifier). The footnote content should be defined in a separate block starting
-with `[^n]:`. For example:
+Insert footnotes via `[^n]`, where `n` is a unique footnote
+identifier.[^03-syntax-4] The footnote content should be defined in a separate
+block starting with `[^n]:`. For example:
+
+[^03-syntax-4]: Typically the identifier is a number, but it doesn't have to be.
+    The specific number doesn't matter, as long as it's unique for the footnote
+    in the document. For example, the first footnote can be `[^100]` and the
+    second can be `[^64]`. Eventually they will appear as `[1]` and `[2]`. If
+    you use the RStudio visual editor to edit Markdown documents, the footnote
+    numbers will be automatically generated and updated when new footnotes are
+    inserted before existing footnotes.
 
 ``` markdown
 Insert a footnote here.[^1]
@@ -350,23 +358,8 @@ Insert a footnote here.[^1]
 [^1]: This is the footnote.
 ```
 
-The support is limited for LaTeX output at the moment, and there are two caveats
-if the document is intended to be converted to LaTeX:
-
--   The footnote content must be a single paragraph.
-
--   Only numbers[^03-syntax-4] are supported as identifiers, and other types of
-    identifiers are not recognized.
-
-[^03-syntax-4]: The specific number doesn't matter, as long as it's a unique
-    footnote number in the document. For example, the first footnote can be
-    `[^100]` and the second can be `[^64]`. Eventually they will appear as `[1]`
-    and `[2]`. If you use the RStudio visual editor to edit Markdown documents,
-    the footnote numbers will be automatically generated and updated when new
-    footnotes are inserted before existing footnotes.
-
-The two limitations do not apply to HTML output, e.g., you can write arbitrary
-elements in footnotes and not necessarily one paragraph.
+You can write arbitrary elements in footnotes and not necessarily a single
+paragraph.
 
 ### Attributes
 

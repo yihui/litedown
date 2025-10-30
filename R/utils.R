@@ -785,18 +785,20 @@ latex_envir = function(x, env = NULL) {
   c(if (x1 == '') paste0('\\end', env2) else paste0('\\begin', x1), latex_envir(x[-1], env))
 }
 
-# find and render footnotes for LaTeX output
-render_footnotes = function(x) {
+# fix footnotes for LaTeX output: convert `\footnotemark[1] \footnotetext[1]{*}`
+# to `\footnote{*}` (see r-lib/commonmark#32)
+fix_footnotes = function(x) {
   f1 = f2 = NULL
-  # [^1] is converted to {[}\^{}1{]}
-  r = '(\n\n)(\\{\\[}\\\\\\^\\{}[0-9]+\\{\\]}): (.*?)\n(\n|$)'
+  r = '\n\\\\footnotetext\\[(.+?)]\\{(.+?)\n\n}\n'
   x = match_replace(x, r, function(z) {
-    f1 <<- c(f1, sub(r, '\\2', z))
-    f2 <<- c(f2, sub(r, '\\3', z))
-    gsub(r, '\\1', z)
+    f1 <<- c(f1, sub(r, '\\1', z))
+    f2 <<- c(f2, sub(r, '\\2', z))
+    ''
   }, perl = FALSE)
+  f1 = sprintf('\\footnotemark[%s]', f1)
+  f2 = sprintf('\\footnote{%s}', f2)
   for (i in seq_along(f1)) {
-    x = sub(f1[i], sprintf('\\footnote{%s}', f2[i]), x, fixed = TRUE)
+    x = sub(f1[i], f2[i], x, fixed = TRUE)
   }
   x
 }
@@ -1080,8 +1082,6 @@ normalize_options = function(x, format = 'html') {
   if (!is.character(o)) o = FALSE
   d$offline = o
   d = normalize_embed(d)
-  # TODO: fully enable footnotes https://github.com/github/cmark-gfm/issues/314
-  if (format == 'html' && !is.logical(d[['footnotes']])) d$footnotes = TRUE
   d
 }
 

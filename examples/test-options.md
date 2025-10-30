@@ -354,6 +354,41 @@ mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 `````
 
 ````` {.r}
+# footnotes
+mark('Hello[^foo] world!\n\n[^foo]: A _footnote_.')
+`````
+
+````` {.html .plain}
+<p>Hello<sup class="footnote-ref"><a href="#fn-foo" id="fnref-foo" data-footnote-ref>1</a></sup> world!</p>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-foo">
+<p>A <em>footnote</em>. <a href="#fnref-foo" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
+</li>
+</ol>
+</section>
+`````
+
+````` {.r}
+mark('Hello[^2] world!\n\n[^2]: A footnote with _multiple_ elements.\n\n    - list')
+`````
+
+````` {.html .plain}
+<p>Hello<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>1</a></sup> world!</p>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-2">
+<p>A footnote with <em>multiple</em> elements.</p>
+<ul>
+<li>list</li>
+</ul>
+<a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a>
+</li>
+</ol>
+</section>
+`````
+
+````` {.r}
 # smartypants example
 mark('1/2 (c)')
 `````
@@ -662,6 +697,35 @@ mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 <div id="baz" class="foo bar" style="color: red;">
 <p>asdf</p>
 </div>
+
+````` {.r}
+# footnotes
+mark('Hello[^foo] world!\n\n[^foo]: A _footnote_.')
+`````
+<p>Hello<sup class="footnote-ref"><a href="#fn-foo" id="fnref-foo" data-footnote-ref>1</a></sup> world!</p>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-foo">
+<p>A <em>footnote</em>. <a href="#fnref-foo" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
+</li>
+</ol>
+</section>
+
+````` {.r}
+mark('Hello[^2] world!\n\n[^2]: A footnote with _multiple_ elements.\n\n    - list')
+`````
+<p>Hello<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" data-footnote-ref>1</a></sup> world!</p>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-2">
+<p>A footnote with <em>multiple</em> elements.</p>
+<ul>
+<li>list</li>
+</ul>
+<a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a>
+</li>
+</ol>
+</section>
 
 ````` {.r}
 # smartypants example
@@ -1040,6 +1104,28 @@ mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 
 asdf
 \end
+`````
+
+````` {.r}
+# footnotes
+mark('Hello[^foo] world!\n\n[^foo]: A _footnote_.')
+`````
+
+````` {.latex .plain}
+Hello\footnote{A \emph{footnote}.} world!
+`````
+
+````` {.r}
+mark('Hello[^2] world!\n\n[^2]: A footnote with _multiple_ elements.\n\n    - list')
+`````
+
+````` {.latex .plain}
+Hello\footnote{A footnote with \emph{multiple} elements.
+
+\begin{itemize}
+\item list
+
+\end{itemize}} world!
 `````
 
 ````` {.r}
