@@ -255,7 +255,10 @@ pkg_code = function(
   path = attr(detect_pkg(), 'path'), pattern = '[.](R|c|h|f|cpp)$', toc = TRUE,
   number_sections = TRUE, link = TRUE
 ) {
-  if (!isTRUE(dir.exists(path))) return()
+  if (!isTRUE(dir.exists(path))) {
+    if (missing(path)) message('Please run this function in the package source directory.')
+    return()
+  }
   a = header_class(toc, number_sections)
   if (isTRUE(link) && length(u <- github_link(path))) link = paste0(u, 'blob/HEAD/%s')
   ds = c('R', 'src')
