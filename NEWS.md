@@ -2,6 +2,8 @@
 
 - `pkg_desc()` gained a new argument `type` and the package description can be generated to either a table or a definition list now.
 
+- The `embed_resources` option was buggy for deferred JS resources. Previously they were moved to `<head>`, but deferred scripts should be executed after the full DOM is ready, so they are moved before `</body>` instead if they are to be embedded.
+
 # CHANGES IN litedown VERSION 0.8
 
 - Added a new chunk option `fig.keep` to select plots to be kept in a code chunk (thanks, @Gabrielforest, #99). See https://yihui.org/litedown/#sec:option-fig for documentation.

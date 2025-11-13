@@ -980,25 +980,11 @@ latex_refs = function(x, r, clever = FALSE) {
 embed_resources = function(x, options) {
   if (length(x) == 0) return(x)
   r = '\n<link[^>]*? rel="stylesheet" [^>]*>|\n<script[^>]*? src="[^"]+"[^>]*>\\s*</script>'
-  x2 = NULL  # to be appended to <head>
   x = match_replace(x, r, function(z) {
     # de-dup assets (e.g., when vest() is called multiple times on the same asset)
     z[duplicated(z)] = ''
-    i = grep(' defer(>| ).*</script>$', z)
-    x2 <<- c(x2, z[i])
-    z[i] = ''
     z
   })
-  # move deferred scripts to the end of <head>
-  if (length(x2)) {
-    x = if (length(grep('</head>', x)) != 1) {
-      one_string(c(x2, x))
-    } else {
-      match_replace(x, '</head>', fixed = TRUE, perl = FALSE, function(z) {
-        one_string(c(x2, z))
-      })
-    }
-  }
 
   embed = c('https', 'local') %in% options[['embed_resources']]
   offline = options[['offline']]
@@ -1040,19 +1026,33 @@ embed_resources = function(x, options) {
     '<link[^>]*? rel="stylesheet" href="([^"]+)"[^>]*>|',
     '<script([^>]*?) src="([^"]+)"([^>]*)>\\s*</script>'
   )
-  match_replace(x, r, function(z) {
+  x2 = NULL  # js to be appended before </body>
+  x = match_replace(x, r, function(z) {
     z1 = sub(r, '\\1', z)  # css
     z2 = sub(r, '\\3', z)  # js
     js = z2 != ''
     z3 = paste0(z1, z2)
+    at = sub(r, '\\2\\4', z)  # attributes for js
     # skip resources already base64 encoded
     i1 = !grepl('^data:.+;base64,.+', z3)
     z3[i1] = gen_tags(
-      z3[i1], ifelse(js[i1], 'js', 'css'), embed[1], embed[2], offline,
-      sub(r, '\\2\\4', z)  # attributes for js
+      z3[i1], ifelse(js[i1], 'js', 'css'), embed[1], embed[2], offline, at
     )
+    # js with the defer attribute and has been embedded (i.e., no src attribute)
+    i = grepl(' defer($| )', at) & !grepl('^<script([^>]*?) src="', z3) & i1
+    x2 <<- c(x2, z3[i])
+    z3[i] = ''
     z3
   })
+  # move deferred scripts to the end of <body>
+  if (length(x2)) {
+    x = if (length(grep('</body>', x)) != 1) {
+      one_string(c(x, x2))
+    } else {
+      sub('</body>', one_string(c(x2, '</body>')), x, fixed = TRUE)
+    }
+  }
+  x
 }
 
 # remove the xml/doctype declaration in svg, and add attributes
