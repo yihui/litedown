@@ -1,3 +1,7 @@
+# CHANGES IN litedown VERSION 0.9
+
+- `pkg_desc()` gained a new argument `type` and the package description can be generated to either a table or a definition list now.
+
 # CHANGES IN litedown VERSION 0.8
 
 - Added a new chunk option `fig.keep` to select plots to be kept in a code chunk (thanks, @Gabrielforest, #99). See https://yihui.org/litedown/#sec:option-fig for documentation.
