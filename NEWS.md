@@ -4,6 +4,8 @@
 
 - The `embed_resources` option was buggy for deferred JS resources. Previously they were moved to `<head>`, but deferred scripts should be executed after the full DOM is ready, so they are moved before `</body>` instead if they are to be embedded.
 
+- Fixed a bug in `pkg_manual()` that may lead to omission of certain items when building TOC.
+
 # CHANGES IN litedown VERSION 0.8
 
 - Added a new chunk option `fig.keep` to select plots to be kept in a code chunk (thanks, @Gabrielforest, #99). See https://yihui.org/litedown/#sec:option-fig for documentation.

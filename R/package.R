@@ -395,6 +395,9 @@ pkg_manual = function(
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
   res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
   res = gsub('<h3>', '<h3 class="unnumbered unlisted">', res, fixed = TRUE)
+  res = match_replace(res, '<(h[1-6])[^>]*>(?s).+?</\\1>', function(x) {
+    gsub('\n', ' ', x)  # remove \n in headings so build_toc() can be correctly build TOC
+  })
   res = gsub('<code style="[^"]+">', '<code>', res)
   res = gsub('<code id="[^"]+">', '<code>', res)
   res = gsub('(<code[^>]*>)\\s+', '\\1', res)
