@@ -1359,11 +1359,11 @@ resolve_url = function(url, code, ext, encode = TRUE) {
   }
   # find `attr: url(resource)` and embed url resources in CSS
   if (ext == 'css') {
-    r = '(: ?url\\(["\']?)([^"\')]+)(["\']?\\))'
+    r = '((: ?| )url\\(["\']?)([^"\')]+)(["\']?\\))'
     code = match_replace(code, paste0('(?<!behavior)', r), function(z) {
       z1 = gsub(r, '\\1', z)
-      z2 = gsub(r, '\\2', z)
-      z3 = gsub(r, '\\3', z)
+      z2 = gsub(r, '\\3', z)
+      z3 = gsub(r, '\\4', z)
       i = is_https(z2)
       u = ifelse(i, z2, sprintf('%s/%s', d, z2))
       z2 = unlist(if (encode) {
