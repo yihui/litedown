@@ -13,7 +13,7 @@ title: The `attr.*` chunk options
 ```{r}
 #| example-a,
 #| attr.chunk = '#example-a',
-#| attr.source = '.line-numbers',
+#| attr.source = '.r .line-numbers',
 #| attr.plot = c('.round width="400"', '.dark .img-center'),
 #| fig.alt = c('A scatterplot of rnorm(100) numbers.',
 #|   'A sunflower plot of iris.')

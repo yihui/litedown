@@ -12,12 +12,12 @@ title: The `attr.*` chunk options
 
 ::: {#example-a}
 
-``` {.line-numbers}
+``` {.r .line-numbers}
 plot(rnorm(100), rnorm(100))
 ```
 ![A scatterplot of rnorm(100) numbers.](<002-attr-options__files/example-a-1.png>){.round width="400"}
 
-``` {.line-numbers}
+``` {.r .line-numbers}
 i34 = iris[, 3:4]
 smoothScatter(i34)
 sunflowerplot(i34, add = TRUE)

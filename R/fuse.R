@@ -800,8 +800,8 @@ fuse_code = function(x, blocks) {
     } else {
       a = opts[[paste0('attr.', type)]]
       if (type == 'source') {
-        # use engine name as class name; when `a` contains class names, prefix language-
-        if (!any(grepl('(^| )[.]', a))) a = c(paste0('.',  lang), a)
+        # use engine name as class name when `a` is not provided
+        if (is.null(a)) a = paste0('.',  lang)
         # add line numbers
         if (is_roaming()) a = c(a, lineno_attr(NA, l1 + l2 - 1))
       } else {
