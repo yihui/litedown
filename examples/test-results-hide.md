@@ -15,17 +15,11 @@ ncol(iris)
 iris
 ```
 
-Other types of output (such as messages) will interrupt the collapsed block:
+Message blocks will be collapsed, too:
 
 ``` {.r}
 nrow(iris)
 message(ncol(iris))
-```
-
-``` {.plain .message}
 #> 5
-```
-
-``` {.r}
 iris
 ```

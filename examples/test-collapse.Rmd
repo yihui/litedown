@@ -1,0 +1,19 @@
+`collapse = TRUE` will collapse messages into source blocks, too.
+
+```{r, test-a, collapse = TRUE, error = TRUE, strip.white = FALSE}
+message("this is a message")
+
+warning("this is a warning")
+
+stop("this is an error")
+```
+
+Not collapsing or striping blank lines:
+
+```{r, test-a, error = TRUE}
+```
+
+Collapsing without striping blank lines:
+
+```{r, test-a, collapse = TRUE, error = TRUE}
+```

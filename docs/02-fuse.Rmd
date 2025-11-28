@@ -613,8 +613,9 @@ x + 100
 ```
 
 Note that if a source block and an output block are not adjacent to each other,
-they will not be merged, e.g., when there is a warning block between the source
-and text output.
+they will not be merged, e.g., when there is a plot between the source and text
+output. Message blocks (warnings, messages, and errors) are also treated as text
+blocks, and will be merged if they are next to a source block.
 
 ### `comment`: comment out text output {#sec:option-comment}
 

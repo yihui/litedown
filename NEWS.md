@@ -2,6 +2,8 @@
 
 - The chunk option `attr.source` will default to `.lang` (where `lang` is the engine name) only when it is not provided, i.e., `NULL`. Previously the value `.lang` would still be used when `attr.source` has been provided. Now it's possible to completely override it, e.g., `attr.source = 'language-r'` as in #107 (thanks, @ThomasSoeiro).
 
+- The chunk option `collapse = TRUE` also applies to message blocks, including warnings, messages, and errors (thanks, @ThomasSoeiro, #108).
+
 - `pkg_desc()` gained a new argument `type` and the package description can be generated to either a table or a definition list now.
 
 - The `embed_resources` option was buggy for deferred JS resources. Previously they were moved to `<head>`, but deferred scripts should be executed after the full DOM is ready, so they are moved before `</body>` instead if they are to be embedded.

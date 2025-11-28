@@ -12,7 +12,7 @@ Keep the blank line:
 ```{r, chunk-a, results = 'hide', strip.white = FALSE}
 ```
 
-Other types of output (such as messages) will interrupt the collapsed block:
+Message blocks will be collapsed, too:
 
 ```{r, results = 'hide'}
 nrow(iris)

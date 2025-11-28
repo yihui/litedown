@@ -935,7 +935,9 @@ continue_block = function(e1_open, e1_end, e2) {
   if (length(e2) != 2 || e2[1] != '') return(FALSE)
   if ((e2_open <- e2[2]) == e1_end) return(TRUE)
   e3 = sub(' data-start="[0-9]+"', '', c(e1_open, e2_open))
-  e3[1] == e3[2]
+  if (e3[1] == e3[2]) return(TRUE)
+  # remove attributes of message blocks and see if they can be collapsed
+  sub(' \\{[.]plain [.](message|warning|error)}', '', e2_open) == e1_end
 }
 
 new_source = function(x) {
