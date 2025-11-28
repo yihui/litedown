@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.8.3">
+<meta name="generator" content="litedown 0.8.4">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/article.min.css">
@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-11-14</h3></div>
+<div class="date"><h3>2025-11-28</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -1369,7 +1369,7 @@ title: The `attr.*` chunk options
 ```{r}
 #| example-a,
 #| attr.chunk = '#example-a',
-#| attr.source = '.line-numbers',
+#| attr.source = '.r .line-numbers',
 #| attr.plot = c('.round width=&quot;400&quot;', '.dark .img-center'),
 #| fig.alt = c('A scatterplot of rnorm(100) numbers.',
 #|   'A sunflower plot of iris.')
@@ -1715,8 +1715,9 @@ x + 100
 </code></pre>
 </div>
 <p>Note that if a source block and an output block are not adjacent to each other,
-they will not be merged, e.g., when there is a warning block between the source
-and text output.</p>
+they will not be merged, e.g., when there is a plot between the source and text
+output. Message blocks (warnings, messages, and errors) are also treated as text
+blocks, and will be merged if they are next to a source block.</p>
 <h3 id="sec:option-comment"><span class="section-number">2.2.7</span> <code>comment</code>: comment out text output</h3>
 <p>By default, verbatim text output is commented out with a prefix <code>#&gt;</code>. This
 comment prefix can be set via the chunk option <code>comment</code>, e.g.,</p>
@@ -6153,11 +6154,11 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.8.3, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.8.4, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.54.1, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.54.3, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
