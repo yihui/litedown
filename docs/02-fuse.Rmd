@@ -879,6 +879,55 @@ The above example also showed the possibility of passing R data to a JS code
 chunk—we set `fill = xfun::tojson` so that the data frame is converted to JSON
 and embedded into the JS code.
 
+### `filter`: filter output elements {#sec:option-filter}
+
+A code chunk is evaluated via `xfun::record()`, which captures the results in a
+list containing elements such as the source code, text output, plots, and
+messages (see @fig:attr-structure for an illustration). The chunk option
+`filter` can take a function to filter post-process this list. Please make sure
+to read the help page of `xfun::record()` and understand the returned data
+structure before using this option.
+
+With the `filter` option, you can achieve the same effects as chunk options like
+`echo = FALSE` or `message = FALSE`. For example, `echo = FALSE` means to
+exclude the `record_source` elements from the list, which can be achieved with
+the following function:
+
+``` r
+filter = function(res) res[!sapply(res, inherits, 'record_source')]
+```
+
+One potentially useful application is to re-arrange the output elements, e.g.,
+this function
+
+``` r
+filter = function(res) res[c(1, 3, 2)]
+```
+
+will re-order the output elements by swapping the second and third element.
+
+The example below demonstrates a technical limitation of **litedown** (from
+`xfun::record()`) and provides a solution via the `filter` option. That is,
+`xfun::record()` evaluates *top-level* expressions in a code chunk one by one,
+and captures all results after each top-level evaluation. Normally that wouldn't
+be a problem, but if you want to interleave results in a lower-level expression,
+you will run into trouble. In the following example, we want to interleave text
+output and plots inside a `for` loop. Without using the `filter` option, the
+`for` loop will first produce three text output elements, followed by three
+plots. With `filter = 'interleave'`, the output order will be revised so that
+each plot follows one text output.
+
+`{r} c(.ex(25), .ex(25, '.md'))`
+
+Note that although we assigned a character value to `filter`, it will be
+resolved to a function (via `match.fun()`). The string `'interleave'` is
+resolved to the function `litedown:::interleave` (you can also pass the latter
+to `filter`), which finds the first text output element and the first plot
+element in the result list, and inserts the plots evenly into text elements. For
+example, if the original list is of the form
+`[ [text, text, text], [plot, plot, plot] ]`, the filtered list will be
+`[text, plot, text, plot, text, plot]`.
+
 ### `include`: visibility of whole code chunk {#sec:option-include}
 
 When you want to hide the full output of a code chunk, you can use the option

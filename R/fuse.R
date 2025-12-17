@@ -774,6 +774,8 @@ fuse_code = function(x, blocks) {
   if (is.logical(res_show)) res_show = if (res_show) 'markup' else 'hide'
 
   l1 = x$code_start  # starting line number of the whole code chunk
+  # filter the results if desired
+  if (!is.null(opts$filter)) res = match.fun(opts$filter)(res)
   # generate markdown output
   out = lapply(res, function(x) {
     type = grep_sub('^record_', '', class(x))[1]
@@ -950,6 +952,28 @@ new_plot = function(x) new_record(x, 'plot')
 new_asis = function(x, raw = FALSE) {
   res = new_record(x, 'asis')
   if (raw) raw_string(res) else res
+}
+
+# interleave text and plot output, e.g., t t t p p p -> t p t p t p, or t t t t
+# p p -> t t p t t p
+interleave = function(res) {
+  p = match(c('record_output', 'record_plot'), sapply(res, function(x) class(x)[1]))
+  if (any(is.na(p))) {
+    warning('Both text and plot output must be present in results to be interleaved.')
+    return(res)
+  }
+  x1 = res[[p[1]]]; n1 = length(x1)
+  x2 = res[[p[2]]]; n2 = length(x2)
+  n = n1 / n2
+  if (n < 1) return(res)
+  if (n1 %% n2 != 0) stop(
+    'Length of text output (', n1, ') is not multiple of the number of plots (', n2, ').'
+  )
+  # interleave text and plot output: one (chunk of) text followed by one plot
+  mix = unlist(lapply(seq_len(n2), function(i) {
+    list(new_output(x1[(i - 1) * n + 1:n]), new_plot(x2[i]))
+  }), recursive = FALSE)
+  append(res[-p], mix, p[1] - 1)
 }
 
 #' Mark a character vector as raw output

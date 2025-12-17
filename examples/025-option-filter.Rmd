@@ -1,0 +1,12 @@
+---
+title: Filter results
+---
+
+Interleave plots with text output:
+
+```{r, results = 'asis', filter = 'interleave'}
+for(i in 1:3) {
+  cat('\n## ', LETTERS[i], '\n\n')
+  plot(0, 0, pch = LETTERS[i])
+}
+```

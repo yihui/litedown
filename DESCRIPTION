@@ -22,7 +22,7 @@ Depends: R (>= 3.2.0)
 Imports:
     utils,
     commonmark (>= 2.0.0),
-    xfun (>= 0.54)
+    xfun (>= 0.55)
 Suggests:
     rbibutils,
     rstudioapi,
@@ -34,4 +34,3 @@ VignetteBuilder: litedown
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Remotes: yihui/xfun
