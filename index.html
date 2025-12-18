@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.8.4">
+<meta name="generator" content="litedown 0.8.5">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2025-11-28</h3></div>
+<div class="date"><h3>2025-12-18</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -90,19 +90,20 @@
 <li><a href="#sec:option-eval"><span class="section-number">2.2.11</span> <code>eval</code>: code evaluation</a></li>
 <li><a href="#sec:option-fig"><span class="section-number">2.2.12</span> <code>fig.*</code>: figure options</a></li>
 <li><a href="#sec:option-fill"><span class="section-number">2.2.13</span> <code>fill</code>: code interpolation</a></li>
-<li><a href="#sec:option-include"><span class="section-number">2.2.14</span> <code>include</code>: visibility of whole code chunk</a></li>
-<li><a href="#sec:option-label"><span class="section-number">2.2.15</span> <code>label</code>: chunk label</a></li>
-<li><a href="#sec:option-message"><span class="section-number">2.2.16</span> <code>message</code>: message behavior</a></li>
-<li><a href="#sec:option-order"><span class="section-number">2.2.17</span> <code>order</code>: order of execution</a></li>
-<li><a href="#sec:option-print"><span class="section-number">2.2.18</span> <code>print</code>: printing function</a></li>
-<li><a href="#sec:option-purl"><span class="section-number">2.2.19</span> <code>purl</code>: code extraction</a></li>
-<li><a href="#sec:option-results"><span class="section-number">2.2.20</span> <code>results</code>: text output behavior</a></li>
-<li><a href="#sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: trim blank lines in code</a></li>
-<li><a href="#sec:option-tab"><span class="section-number">2.2.22</span> <code>tab.*</code>: table options</a></li>
-<li><a href="#sec:option-time"><span class="section-number">2.2.23</span> <code>time</code>: code timing</a></li>
-<li><a href="#sec:option-verbose"><span class="section-number">2.2.24</span> <code>verbose</code>: printing verbosity</a></li>
-<li><a href="#sec:option-warning"><span class="section-number">2.2.25</span> <code>warning</code>: warning behavior</a></li>
-<li><a href="#sec:option-wd"><span class="section-number">2.2.26</span> <code>wd</code>: working directory</a></li>
+<li><a href="#sec:option-filter"><span class="section-number">2.2.14</span> <code>filter</code>: filter output elements</a></li>
+<li><a href="#sec:option-include"><span class="section-number">2.2.15</span> <code>include</code>: visibility of whole code chunk</a></li>
+<li><a href="#sec:option-label"><span class="section-number">2.2.16</span> <code>label</code>: chunk label</a></li>
+<li><a href="#sec:option-message"><span class="section-number">2.2.17</span> <code>message</code>: message behavior</a></li>
+<li><a href="#sec:option-order"><span class="section-number">2.2.18</span> <code>order</code>: order of execution</a></li>
+<li><a href="#sec:option-print"><span class="section-number">2.2.19</span> <code>print</code>: printing function</a></li>
+<li><a href="#sec:option-purl"><span class="section-number">2.2.20</span> <code>purl</code>: code extraction</a></li>
+<li><a href="#sec:option-results"><span class="section-number">2.2.21</span> <code>results</code>: text output behavior</a></li>
+<li><a href="#sec:option-strip-white"><span class="section-number">2.2.22</span> <code>strip.white</code>: trim blank lines in code</a></li>
+<li><a href="#sec:option-tab"><span class="section-number">2.2.23</span> <code>tab.*</code>: table options</a></li>
+<li><a href="#sec:option-time"><span class="section-number">2.2.24</span> <code>time</code>: code timing</a></li>
+<li><a href="#sec:option-verbose"><span class="section-number">2.2.25</span> <code>verbose</code>: printing verbosity</a></li>
+<li><a href="#sec:option-warning"><span class="section-number">2.2.26</span> <code>warning</code>: warning behavior</a></li>
+<li><a href="#sec:option-wd"><span class="section-number">2.2.27</span> <code>wd</code>: working directory</a></li>
 </ul>
 </li>
 <li><a href="#sec:inline-code"><span class="section-number">2.3</span> Inline code</a>
@@ -294,8 +295,13 @@
 </ul>
 </li>
 <li><a href="#chp:appendix">Appendix</a></li>
-<li><a href="#chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</a></li>
-<li><a href="#chp:vignettes"><span class="section-number main-number">B</span> Package vignettes</a></li>
+<li><a href="#chp:miscellaneous-topics"><span class="section-number main-number">A</span> Miscellaneous Topics</a>
+<ul>
+<li><a href="#sec:rmarkdown"><span class="section-number">A.1</span> For rmarkdown Users</a></li>
+<li><a href="#sec:file-text"><span class="section-number">A.2</span> File or text output</a></li>
+<li><a href="#sec:vignettes"><span class="section-number">A.3</span> Package vignettes</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="chapter body" data-source="docs/index.Rmd">
@@ -707,7 +713,7 @@ because environments in R are mutable. I cannot explain how awkward <strong>knit
 <h3 id="sec:non-linear-order-of-execution">Non-linear order of execution</h3>
 <p>A document does not have to be compiled in the linear order. With the chunk
 option <code>order</code>, you can specify code chunks and inline code expressions to be
-executed in an arbitrary order (<a class="cross-ref-sec" href="#sec:option-order">2.2.17</a>). For example, if you have an
+executed in an arbitrary order (<a class="cross-ref-sec" href="#sec:option-order">2.2.18</a>). For example, if you have an
 abstract in the beginning of a document, and the abstract needs to use a number
 calculated at the end of the document, you can let the abstract be compiled in
 the end, although it appears earlier in the document.</p>
@@ -721,14 +727,14 @@ it does not mean you run code chunks in an arbitrary or random order that can
 detriment reproducibility.</p>
 <h3 id="sec:time-code-chunks">Time code chunks</h3>
 <p>If you want to figure out which code chunks are time-consuming, simply set the
-chunk option <code>litedown::reactor(time = TRUE)</code> (<a class="cross-ref-sec" href="#sec:option-time">2.2.23</a>) in the
+chunk option <code>litedown::reactor(time = TRUE)</code> (<a class="cross-ref-sec" href="#sec:option-time">2.2.24</a>) in the
 beginning, and put <code>litedown::timing_data()</code> in the last code chunk. It will
 tell you detailed information. In the <code>roam()</code> preview, the data will also
 contain links to specific lines of code chunks, so you click to jump to a
 specific code chunk.</p>
 <h3 id="sec:table-output-for-data-frames-by-default">Table output for data frames by default</h3>
 <p>Rectangular objects such as data frames (including tibbles) and matrices are
-printed as tables by default (<a class="cross-ref-sec" href="#sec:option-tab">2.2.22</a>), and the number of rows is
+printed as tables by default (<a class="cross-ref-sec" href="#sec:option-tab">2.2.23</a>), and the number of rows is
 limited to 10 by default to avoid generating huge tables by accident.</p>
 <h3 id="sec:relieved-pain-of-paths">Relieved pain of paths</h3>
 <p>File paths (such as image paths) have been a mess in <strong>knitr</strong>. My deepest
@@ -979,7 +985,7 @@ that it can also contain code to be evaluated, such as the variable <code>who</c
 the function call <code>Sys.Date()</code>.</p>
 <p>The document has two code chunks in triple-backtick (<code>```</code>) fences. The
 first code chunk contains a chunk option <code>order = 0</code> (you may see
-<a class="cross-ref-sec" href="#sec:option-order">2.2.17</a> for its meaning later). You can do any computing in code
+<a class="cross-ref-sec" href="#sec:option-order">2.2.18</a> for its meaning later). You can do any computing in code
 chunks and generate text results or graphics.</p>
 <p>There are two text chunks: one between the two code chunks, and one after the
 second code chunk. These text chunks contain inline R code expressions in
@@ -2120,14 +2126,88 @@ to reduce the number of simulations during <code>R CMD check</code> via:</p>
 <p>The above example also showed the possibility of passing R data to a JS code
 chunk—we set <code>fill = xfun::tojson</code> so that the data frame is converted to JSON
 and embedded into the JS code.</p>
-<h3 id="sec:option-include"><span class="section-number">2.2.14</span> <code>include</code>: visibility of whole code chunk</h3>
+<h3 id="sec:option-filter"><span class="section-number">2.2.14</span> <code>filter</code>: filter output elements</h3>
+<p>A code chunk is evaluated via <code>xfun::record()</code>, which captures the results in a
+list containing elements such as the source code, text output, plots, and
+messages (see <a class="cross-ref-fig" href="#fig:attr-structure">6</a> for an illustration). The chunk option
+<code>filter</code> can take a function to filter post-process this list. Please make sure
+to read the help page of <code>xfun::record()</code> and understand the returned data
+structure before using this option.</p>
+<p>With the <code>filter</code> option, you can achieve the same effects as chunk options like
+<code>echo = FALSE</code> or <code>message = FALSE</code>. For example, <code>echo = FALSE</code> means to
+exclude the <code>record_source</code> elements from the list, which can be achieved with
+the following function:</p>
+<pre><code class="language-r">filter = function(res) res[!sapply(res, inherits, 'record_source')]
+</code></pre>
+<p>One potentially useful application is to re-arrange the output elements, e.g.,
+this function</p>
+<pre><code class="language-r">filter = function(res) res[c(1, 3, 2)]
+</code></pre>
+<p>will re-order the output elements by swapping the second and third element.</p>
+<p>The example below demonstrates a technical limitation of <strong>litedown</strong> (from
+<code>xfun::record()</code>) and provides a solution via the <code>filter</code> option. That is,
+<code>xfun::record()</code> evaluates <em>top-level</em> expressions in a code chunk one by one,
+and captures all results after each top-level evaluation. Normally that wouldn’t
+be a problem, but if you want to interleave results in a lower-level expression,
+you will run into trouble. In the following example, we want to interleave text
+output and plots inside a <code>for</code> loop. Without using the <code>filter</code> option, the
+<code>for</code> loop will first produce three text output elements, followed by three
+plots. With <code>filter = 'interleave'</code>, the output order will be revised so that
+each plot follows one text output.</p>
+<pre><code class="language-md" data-file="025.Rmd" data-output="025-option-filter.html">---
+title: Filter results
+---
+
+Interleave plots with text output:
+
+```{r, results = 'asis', filter = 'interleave'}
+for(i in 1:3) {
+  cat('\n## ', LETTERS[i], '\n\n')
+  plot(0, 0, pch = LETTERS[i])
+}
+```
+</code></pre>
+<pre><code class="language-md" data-file="025.md" data-output="025-option-filter.html">---
+title: Filter results
+---
+
+Interleave plots with text output:
+
+``` {.r}
+for(i in 1:3) {
+  cat('\n## ', LETTERS[i], '\n\n')
+  plot(0, 0, pch = LETTERS[i])
+}
+```
+
+##  A 
+
+![](&lt;025-option-filter__files/chunk-1-1.png&gt;)
+
+##  B 
+
+![](&lt;025-option-filter__files/chunk-1-2.png&gt;)
+
+##  C 
+
+![](&lt;025-option-filter__files/chunk-1-3.png&gt;)
+</code></pre>
+<p>Note that although we assigned a character value to <code>filter</code>, it will be
+resolved to a function (via <code>match.fun()</code>). The string <code>'interleave'</code> is
+resolved to the function <code>litedown:::interleave</code> (you can also pass the latter
+to <code>filter</code>), which finds the first text output element and the first plot
+element in the result list, and inserts the plots evenly into text elements. For
+example, if the original list is of the form
+<code>[ [text, text, text], [plot, plot, plot] ]</code>, the filtered list will be
+<code>[text, plot, text, plot, text, plot]</code>.</p>
+<h3 id="sec:option-include"><span class="section-number">2.2.15</span> <code>include</code>: visibility of whole code chunk</h3>
 <p>When you want to hide the full output of a code chunk, you can use the option
 <code>include = FALSE</code>, instead of trying to hide elements individually like
 <code>echo = FALSE</code> (source), <code>results = 'hide'</code> (text output), <code>message = FALSE</code>,
 and <code>warning = FALSE</code>, etc.</p>
 <p>Note that even with <code>include = FALSE</code>, the code is still executed, unless you
 also set <code>eval = FALSE</code>.</p>
-<h3 id="sec:option-label"><span class="section-number">2.2.15</span> <code>label</code>: chunk label</h3>
+<h3 id="sec:option-label"><span class="section-number">2.2.16</span> <code>label</code>: chunk label</h3>
 <p>The chunk label is an identifier of a code chunk. It is used in plot/cache
 filenames and figure/table cross-references. If two code chunks have the same
 label, their plots and cache will overwrite each other, which may lead to
@@ -2183,7 +2263,7 @@ example, the labels for the following code chunks will be <code>chunk-a</code>, 
 ```{mermaid, label = 'project-flowchart'}
 ```
 </code></pre>
-<h3 id="sec:option-message"><span class="section-number">2.2.16</span> <code>message</code>: message behavior</h3>
+<h3 id="sec:option-message"><span class="section-number">2.2.17</span> <code>message</code>: message behavior</h3>
 <p>The <code>message</code> option is similar to the <code>error</code> option (<a class="cross-ref-sec" href="#sec:option-error">2.2.10</a>) but is
 for handling <code>message()</code>. Possible values are:</p>
 <ul>
@@ -2198,7 +2278,7 @@ default).</p>
 <p><code>FALSE</code>: Suppress messages.</p>
 </li>
 </ul>
-<h3 id="sec:option-order"><span class="section-number">2.2.17</span> <code>order</code>: order of execution</h3>
+<h3 id="sec:option-order"><span class="section-number">2.2.18</span> <code>order</code>: order of execution</h3>
 <p>Code chunks and inline code expressions do not have to be executed sequentially.
 The chunk option <code>order</code> can be used to customize the order of execution. It
 takes a numeric value and defaults to the chunk number (e.g., <code>3</code> for the 3rd
@@ -2273,7 +2353,7 @@ m = mean(x$mpg)
 </code></pre>
 <p>You can change the value of <code>n_cyl</code> to 4 or 6, re-run the example, and get a new
 report of cars with 4 or 6 cylinders.</p>
-<h3 id="sec:option-print"><span class="section-number">2.2.18</span> <code>print</code>: printing function</h3>
+<h3 id="sec:option-print"><span class="section-number">2.2.19</span> <code>print</code>: printing function</h3>
 <p>In a code chunk, if the value of an expression is visible, it will be printed.
 You may read the help pages <code>?invisible</code> and <code>?withVisible</code> to learn more about
 the visibility of values.</p>
@@ -2350,7 +2430,7 @@ the above example. However, please note that this “universal” argument list 
 not work for all print functions or methods—some arguments may be ignored, and
 some may cause errors if the print function does not have certain arguments. It
 is often better to define <code>print.args</code> by class names.</p>
-<h3 id="sec:option-purl"><span class="section-number">2.2.19</span> <code>purl</code>: code extraction</h3>
+<h3 id="sec:option-purl"><span class="section-number">2.2.20</span> <code>purl</code>: code extraction</h3>
 <p>When using <code>litedown::fiss()</code> to extract code from a document, all code chunks
 are extracted by default. To skip a code chunk, set <code>purl = FALSE</code> for that
 chunk.</p>
@@ -2374,7 +2454,7 @@ if (TRUE) {
 </code></pre>
 <p>You can see that the <code>setup</code> chunk with the option <code>purl = FALSE</code> was omitted in
 the R script output (generated by <code>fiss()</code>).</p>
-<h3 id="sec:option-results"><span class="section-number">2.2.20</span> <code>results</code>: text output behavior</h3>
+<h3 id="sec:option-results"><span class="section-number">2.2.21</span> <code>results</code>: text output behavior</h3>
 <p>Text output from code chunks can be shown verbatim, hidden, or just written out
 as is. The behavior is controlled by the option <code>results</code>, with possible values:</p>
 <ul>
@@ -2435,7 +2515,7 @@ cat('Hello _world_!\n')
 ```
 Hello _world_!
 </code></pre>
-<h3 id="sec:option-strip-white"><span class="section-number">2.2.21</span> <code>strip.white</code>: trim blank lines in code</h3>
+<h3 id="sec:option-strip-white"><span class="section-number">2.2.22</span> <code>strip.white</code>: trim blank lines in code</h3>
 <p>By default, the leading and trailing blank lines of individual code expressions
 in a code chunk are removed. To keep them, you can use the chunk option
 <code>strip.white = FALSE</code>.</p>
@@ -2476,8 +2556,8 @@ for (i in 1:10) {
 
 ```
 </code></pre>
-<h3 id="sec:option-tab"><span class="section-number">2.2.22</span> <code>tab.*</code>: table options</h3>
-<p>Unless the default <code>print</code> option (<a class="cross-ref-sec" href="#sec:option-print">2.2.18</a>) is changed, common
+<h3 id="sec:option-tab"><span class="section-number">2.2.23</span> <code>tab.*</code>: table options</h3>
+<p>Unless the default <code>print</code> option (<a class="cross-ref-sec" href="#sec:option-print">2.2.19</a>) is changed, common
 rectangular data objects are printed to Markdown tables through
 <code>xfun::record_print()</code>, and tables are generated by a simple function
 <code>xfun::md_table()</code>, which is even much simpler than <code>knitr::kable()</code>.</p>
@@ -2595,8 +2675,8 @@ most 4 rows and 6 columns:</p>
 you may set <code>options(xfun.md_table.limit = Inf)</code> or <code>limit = Inf</code> in
 <code>print.args</code> or wrap the data object in <code>I()</code>.</p>
 <p>Please read the help page <code>?xfun::md_table</code> to learn the possible arguments, and
-also see <a class="cross-ref-sec" href="#sec:option-print">2.2.18</a> to learn how the chunk option <code>print.args</code> works.</p>
-<h3 id="sec:option-time"><span class="section-number">2.2.23</span> <code>time</code>: code timing</h3>
+also see <a class="cross-ref-sec" href="#sec:option-print">2.2.19</a> to learn how the chunk option <code>print.args</code> works.</p>
+<h3 id="sec:option-time"><span class="section-number">2.2.24</span> <code>time</code>: code timing</h3>
 <p>When the chunk option <code>time</code> is set to <code>TRUE</code>, the execution time of the chunk
 will be recorded. You can print out <code>litedown::timing_data()</code> at the end of a
 document to check the timing data. The data is sorted by default, so you can
@@ -2604,8 +2684,8 @@ quickly know which code chunks are slow.</p>
 <p>You can time specific code chunks by applying <code>time = TRUE</code> to them, or time all
 chunks in the document by setting <code>litedown::reactor(time = TRUE)</code> in the first
 code chunk.</p>
-<h3 id="sec:option-verbose"><span class="section-number">2.2.24</span> <code>verbose</code>: printing verbosity</h3>
-<p>By default, invisible values are not printed (<a class="cross-ref-sec" href="#sec:option-print">2.2.18</a>). However, you
+<h3 id="sec:option-verbose"><span class="section-number">2.2.25</span> <code>verbose</code>: printing verbosity</h3>
+<p>By default, invisible values are not printed (<a class="cross-ref-sec" href="#sec:option-print">2.2.19</a>). However, you
 can use the chunk option <code>verbose</code> to change this behavior. Its possible values
 are:</p>
 <ul>
@@ -2666,7 +2746,7 @@ print the variable or use the <code>()</code> trick to make it visible:</p>
 x  # print x explicitly
 (x = 1 + 1)  # or the () trick
 </code></pre>
-<h3 id="sec:option-warning"><span class="section-number">2.2.25</span> <code>warning</code>: warning behavior</h3>
+<h3 id="sec:option-warning"><span class="section-number">2.2.26</span> <code>warning</code>: warning behavior</h3>
 <p>The <code>warning</code> option is similar to the <code>error</code> option (<a class="cross-ref-sec" href="#sec:option-error">2.2.10</a>) but is
 for handling <code>warning()</code>. Possible values are:</p>
 <ul>
@@ -2683,7 +2763,7 @@ make sure the warnings can be safely suppressed before using
 <code>warning = FALSE</code>.</p>
 </li>
 </ul>
-<h3 id="sec:option-wd"><span class="section-number">2.2.26</span> <code>wd</code>: working directory</h3>
+<h3 id="sec:option-wd"><span class="section-number">2.2.27</span> <code>wd</code>: working directory</h3>
 <p>The working directory when evaluating code chunks and inline code will be
 temporarily changed to the directory of the input file to <code>fuse()</code>. If the input
 is not a file path, the working directory will not be changed.</p>
@@ -3089,12 +3169,12 @@ out code (<a class="cross-ref-sec" href="#sec:skipped-chunks">2.1.3</a>).</p>
 <li>
 <p>All code chunks in <strong>knitr</strong> are executed in the linear order, and
 <strong>litedown</strong> can execute code in an arbitrary custom order
-(<a class="cross-ref-sec" href="#sec:option-order">2.2.17</a>).</p>
+(<a class="cross-ref-sec" href="#sec:option-order">2.2.18</a>).</p>
 </li>
 <li>
 <p><strong>knitr</strong> supports chunk hooks and output hooks; <strong>litedown</strong> doesn’t
 support hooks but the <code>attr.*</code> (<a class="cross-ref-sec" href="#sec:option-attr">2.2.1</a>) and <code>print</code>
-(<a class="cross-ref-sec" href="#sec:option-print">2.2.18</a>) options have provided some flexibility in customizing
+(<a class="cross-ref-sec" href="#sec:option-print">2.2.19</a>) options have provided some flexibility in customizing
 the chunk output.</p>
 </li>
 <li>
@@ -6003,12 +6083,13 @@ e.g., you can delete the <code>.Rmd</code> source and <code>.yml</code> config f
 <div class="chapter-after side side-right">
 </div>
 </div>
-<div class="chapter body" data-source="docs/A-rmarkdown.Rmd">
+<div class="chapter body" data-source="docs/A-misc.Rmd">
 <div class="chapter-before side side-right">
-<p><a href="https://github.com/yihui/litedown/edit/main/docs/A-rmarkdown.Rmd">Edit this chapter</a> on GitHub</p>
+<p><a href="https://github.com/yihui/litedown/edit/main/docs/A-misc.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
 <h1 id="chp:appendix" class="appendix">Appendix</h1>
-<h1 id="chp:rmarkdown"><span class="section-number main-number">A</span> For rmarkdown Users</h1>
+<h1 id="chp:miscellaneous-topics"><span class="section-number main-number">A</span> Miscellaneous Topics</h1>
+<h2 id="sec:rmarkdown"><span class="section-number">A.1</span> For rmarkdown Users</h2>
 <p>The <strong>litedown</strong> package can partially recognize the output format names
 <code>html_document</code>, <code>html_vignette</code>, and <code>pdf_document</code> from <strong>rmarkdown</strong>: Some
 options of these output formats are mapped to <strong>litedown</strong>’s options internally.</p>
@@ -6035,14 +6116,101 @@ options of these output formats are mapped to <strong>litedown</strong>’s opti
 supported options have exactly the same effects in <strong>litedown</strong>. The supported
 options include:
 <code>toc</code>, <code>toc_depth</code>, <code>number_sections</code>, <code>anchor_sections</code>, <code>code_folding</code>, <code>self_contained</code>, <code>math_method</code>, <code>css</code>, and <code>includes</code>.</p>
-<div class="chapter-after side side-right">
+<h2 id="sec:file-text"><span class="section-number">A.2</span> File or text output</h2>
+<p>By default, <code>mark()</code> and <code>fuse()</code> follow the rule of “file in, file out; text
+in, text out”. That is, if you pass an input file, you get an output file, e.g.,
+<code>fuse('foo.Rmd')</code> may return a file <code>foo.html</code>. If you pass text input (e.g.,
+<code>mark('Hello _world_')</code> or <code>mark(text = 'Hello _world_')</code>), you get text output.</p>
+<p>You always get a file output if the argument <code>output</code> is a file path, e.g.,
+<code>fuse('pi = `{r} pi`', output = 'foo.pdf')</code>. If the <code>output</code> argument is not
+a character string (e.g., <code>NA</code>), or it is a format name (one of
+<code>html</code>, <code>xml</code>, <code>man</code>, <code>commonmark</code>, <code>markdown</code>, <code>text</code>, or <code>latex</code>),
+the output will be text, e.g., <code>mark('foo.md', output = NA)</code> or
+<code>mark('foo.md', output = 'latex')</code>.</p>
+<p>If the input is a file and the <code>output</code> argument takes a file extension (one of
+<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),
+you will get a file output with the same base name as the input file, e.g.,
+<code>mark('foo.md', output = '.tex')</code> will return a file <code>foo.tex</code>. The <code>.pdf</code>
+extension can also be used if you want to convert Markdown to LaTeX, and then
+render LaTeX to PDF.</p>
+<p>For <code>fuse()</code>, the <code>output</code> argument can take a special value of the form
+<code>markdown:format</code>, where <code>format</code> is a format name. This value means to generate
+the intermediate Markdown text for the target output format, e.g.,
+<code>fuse('foo.Rmd', output = 'markdown:latex')</code>.</p>
+<p><a class="cross-ref-tab" href="#tab:input-output">6</a> provides a summary of the above rules.</p>
+<div id="tab:input-output" class="table">
+<div class="caption">
+<p><span class="ref-number-tab">6</span> The returned value for different combinations of <code>input</code>
+and <code>output</code> arguments of <code>mark()</code> / <code>fuse()</code>.</p>
 </div>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th><code>input</code></th>
+<th><code>output</code></th>
+<th>returned value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mark()</code> / <code>fuse()</code></td>
+<td>file</td>
+<td><code>NULL</code></td>
+<td>file</td>
+</tr>
+<tr>
+<td></td>
+<td>text</td>
+<td><code>NULL</code></td>
+<td>text</td>
+</tr>
+<tr>
+<td></td>
+<td>*</td>
+<td>file</td>
+<td>file</td>
+</tr>
+<tr>
+<td></td>
+<td>*</td>
+<td><code>NA</code> / <code>format</code></td>
+<td>text</td>
+</tr>
+<tr>
+<td></td>
+<td><code>file.xxx</code></td>
+<td><code>.ext</code></td>
+<td><code>file.ext</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>file.xxx</code></td>
+<td><code>.pdf</code></td>
+<td><code>file.pdf</code></td>
+</tr>
+<tr>
+<td><code>fuse()</code></td>
+<td>*</td>
+<td><code>markdown</code></td>
+<td>intermediate Markdown text</td>
+</tr>
+<tr>
+<td></td>
+<td>*</td>
+<td><code>.md</code></td>
+<td>intermediate Markdown file</td>
+</tr>
+<tr>
+<td></td>
+<td>*</td>
+<td><code>markdown:format</code></td>
+<td>intermediate Markdown text for <code>format</code></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="chapter body" data-source="docs/B-vignettes.Rmd">
-<div class="chapter-before side side-right">
-<p><a href="https://github.com/yihui/litedown/edit/main/docs/B-vignettes.Rmd">Edit this chapter</a> on GitHub</p>
-</div>
-<h1 id="chp:vignettes"><span class="section-number main-number">B</span> Package vignettes</h1>
+<h2 id="sec:vignettes"><span class="section-number">A.3</span> Package vignettes</h2>
 <p>To build package vignettes with <strong>litedown</strong>, first add this to the package
 <code>DESCRIPTION</code> file:</p>
 <pre><code class="language-yaml">VignetteBuilder: litedown
@@ -6154,30 +6322,30 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.8.4, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.8.5, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.54.3, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.55.1, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.25/dist/katex.min.js,npm/katex@0.16.25/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.17/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.27/dist/katex.min.js,npm/katex@0.16.27/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js" defer></script>
 </body>
 </html>
