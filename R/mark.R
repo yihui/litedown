@@ -95,6 +95,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     names(Filter(isTRUE, options)), commonmark::list_extensions()
   )
 
+  # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
+  is_pdf = is_output_file(output) && format == 'latex' &&
+    (is.character(latex_engine <- yaml_field(yaml, format, 'latex_engine')) ||
+       file_ext(output) == 'pdf')
+
   # whether to write YAML metadata to output
   keep_yaml = isTRUE(options[['keep_yaml']])
 
@@ -105,7 +110,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # if not set there, check global option; if not set, disable template if no
   # YAML was provided (i.e., generate a fragment)
   if (is.null(template))
-    template = get_option('template', format, full || 'yaml' %in% names(part))
+    template = get_option('template', format, full || 'yaml' %in% names(part) || is_pdf)
   # template = FALSE means no template; other values mean the default template
   if (!is.character(template)) template = if (!isFALSE(template))
     pkg_file('resources', sprintf('litedown.%s', format))
@@ -399,21 +404,15 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   ret = sub('\n$', '', ret)
   if (is_output_file(output)) {
-    # build PDF for LaTeX output when the output file is .pdf
-    is_pdf = FALSE
-    if (format == 'latex') {
-      latex_engine = yaml_field(yaml, format, 'latex_engine')
-      if (is.character(latex_engine) || file_ext(output) == 'pdf') {
-        is_pdf = TRUE
-        tex = with_ext(output, '.tex')
-        if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
-          on.exit(file.remove(tex), add = TRUE)
-        write_utf8(ret, tex)
-        output = tinytex::latexmk(
-          tex, latex_engine %||% 'xelatex',
-          if (pkg_cite == 'biblatex') 'biber' else 'bibtex'
-        )
-      }
+    if (is_pdf) {
+      tex = with_ext(output, '.tex')
+      if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
+        on.exit(file.remove(tex), add = TRUE)
+      write_utf8(ret, tex)
+      output = tinytex::latexmk(
+        tex, latex_engine %||% 'xelatex',
+        if (pkg_cite == 'biblatex') 'biber' else 'bibtex'
+      )
     }
     # for RStudio to capture the output path when previewing the output
     if (is_rmd_preview()) message('\nOutput created: ', output)

@@ -41,28 +41,53 @@ options include:
 ## File or text output {#sec:file-text}
 
 By default, `mark()` and `fuse()` follow the rule of "file in, file out; text
-in, text out". That is, if you pass an input file, you get an output file, e.g.,
-`fuse('foo.Rmd')` may return a file `foo.html`. If you pass text input (e.g.,
-`mark('Hello _world_')` or `mark(text = 'Hello _world_')`), you get text output.
+in, text out". That is, if you pass an input file, you get an output file. If
+you pass text input, you get text output. For example:
 
-You always get a file output if the argument `output` is a file path, e.g.,
-`` fuse('pi = `{r} pi`', output = 'foo.pdf') ``. If the `output` argument is not
-a character string (e.g., `NA`), or it is a format name (one of
+``` r
+fuse('foo.Rmd')  # returns a file 'foo.html' or 'foo.tex', etc.
+mark('Hello _world_')  # returns text
+mark(text = 'Hello _world_')  # text
+```
+
+You always get a file output if the argument `output` is a file path. If the
+`output` argument is not a character string (e.g., `NA`), or it is a format name
+(one of
 `` {r} xfun::join_words(names(litedown:::md_formats), before = '`', and = 'or ') ``),
-the output will be text, e.g., `mark('foo.md', output = NA)` or
-`mark('foo.md', output = 'latex')`.
+the output will be text. For example:
+
+``` r
+fuse('$\\pi$ = `{r} pi`', output = 'foo.pdf')  # file
+mark('foo.md', output = NA)  # text
+mark('foo.md', output = 'latex')  # text (LaTeX code)
+```
 
 If the input is a file and the `output` argument takes a file extension (one of
-`` {r} xfun::join_words(litedown:::md_formats, before = '`', and = 'or ') ``),
-you will get a file output with the same base name as the input file, e.g.,
-`mark('foo.md', output = '.tex')` will return a file `foo.tex`. The `.pdf`
+`` {r} xfun::join_words(litedown:::md_formats, before = '`', and = 'or ') ``),[^a-misc-1]
+you will get a file output with the same base name as the input file. The `.pdf`
 extension can also be used if you want to convert Markdown to LaTeX, and then
-render LaTeX to PDF.
+render LaTeX to PDF. For example:
+
+[^a-misc-1]: Note that the format name `commonmark` and the extension
+    `.markdown` are for CommonMark output. It should be rare that you need to
+    convert Markdown input to CommonMark output, but it is possible anyway.
+
+``` r
+mark('foo/bar.md', output = '.html')  # file 'foo/bar.html'
+mark('foo/bar.md', output = '.pdf')   # file 'foo/bar.pdf'
+```
 
 For `fuse()`, the `output` argument can take a special value of the form
 `markdown:format`, where `format` is a format name. This value means to generate
 the intermediate Markdown text for the target output format, e.g.,
-`fuse('foo.Rmd', output = 'markdown:latex')`.
+
+```         
+fuse('foo.Rmd', output = 'markdown:latex')
+```
+
+Depending on the target output format, the intermediate Markdown may be
+different, e.g., for `html` output, the default graphical device is PNG, whereas
+for `latex` output, the default device is PDF.
 
 @tab:input-output provides a summary of the above rules.
 
