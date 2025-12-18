@@ -19,10 +19,10 @@
 #'   a file path, the output file path will have the same base name as the input
 #'   file, with an extension corresponding to the output format. The output
 #'   format is retrieved from the first value in the `output` field of the YAML
-#'   metadata of the `input` (e.g., `html` will generate HTML
-#'   output). The `output` argument can also take an output format name
-#'   (possible values are `html`, `latex`, `xml`, `man`, `commonmark`, and
-#'   `text`). If no output format is detected or provided, the default is HTML.
+#'   metadata of the `input` (e.g., `html` will generate HTML output). The
+#'   `output` argument can also take an output format name (possible values are
+#'   `html`, `latex`, `xml`, `man`, `commonmark`, and `text`). If no output
+#'   format is detected or provided, the default is HTML.
 #' @param text A character vector as the text input. By default, it is read from
 #'   the `input` file if provided.
 #' @param options Options to be passed to the renderer. See [markdown_options()]

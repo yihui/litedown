@@ -412,10 +412,12 @@ block_order = function(res, N = length(res)) {
   order(x)
 }
 
-#' @description The function `fuse()` extracts and runs code from code chunks
-#'   and inline code expressions in R Markdown, and interweaves the results with
-#'   the rest of text in the input, which is similar to what `knitr::knit()` and
-#'   `rmarkdown::render()` do. It also works on R scripts in a way similar to
+#' @description The function `fuse()` runs code from code chunks and inline code
+#'   expressions in R Markdown, interweaves the results with the rest of text in
+#'   the input to intermediate Markdown output (which is similar to what
+#'   `knitr::knit()` does), and renders the Markdown output through `mark()` to
+#'   the final output format, such as HTML or LaTeX (similar to
+#'   `rmarkdown::render()`). It also works on R scripts in a way similar to
 #'   `knitr::spin()`. The function `fiss()` extracts code from the input, and is
 #'   similar to `knitr::purl()`.
 #' @rdname mark
@@ -426,6 +428,8 @@ block_order = function(res, N = length(res)) {
 #'   a global [option][options] `litedown.progress.delay` (the default is `2`).
 #'   THe progress bar output can be set via a global option
 #'   `litedown.progress.output` (the default is [stderr()]).
+#' @note For `fuse()`, you can generate the intermediate Markdown output via
+#'   `output = '.md'` or `output = 'markdown'` without further calling `mark()`.
 #' @seealso [sieve()], for the syntax of R scripts to be passed to [fuse()].
 #' @export
 #' @examples

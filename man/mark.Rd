@@ -31,10 +31,10 @@ written to a file. If \code{output} is \code{NULL} or an extension, and the inpu
 a file path, the output file path will have the same base name as the input
 file, with an extension corresponding to the output format. The output
 format is retrieved from the first value in the \code{output} field of the YAML
-metadata of the \code{input} (e.g., \code{html} will generate HTML
-output). The \code{output} argument can also take an output format name
-(possible values are \code{html}, \code{latex}, \code{xml}, \code{man}, \code{commonmark}, and
-\code{text}). If no output format is detected or provided, the default is HTML.}
+metadata of the \code{input} (e.g., \code{html} will generate HTML output). The
+\code{output} argument can also take an output format name (possible values are
+\code{html}, \code{latex}, \code{xml}, \code{man}, \code{commonmark}, and \code{text}). If no output
+format is detected or provided, the default is HTML.}
 
 \item{text}{A character vector as the text input. By default, it is read from
 the \code{input} file if provided.}
@@ -67,15 +67,21 @@ character vector of the rendered output (wrapped in \code{\link[xfun:raw_string]
 for clearer printing).
 }
 \description{
-The function \code{fuse()} extracts and runs code from code chunks
-and inline code expressions in R Markdown, and interweaves the results with
-the rest of text in the input, which is similar to what \code{knitr::knit()} and
-\code{rmarkdown::render()} do. It also works on R scripts in a way similar to
+The function \code{fuse()} runs code from code chunks and inline code
+expressions in R Markdown, interweaves the results with the rest of text in
+the input to intermediate Markdown output (which is similar to what
+\code{knitr::knit()} does), and renders the Markdown output through \code{mark()} to
+the final output format, such as HTML or LaTeX (similar to
+\code{rmarkdown::render()}). It also works on R scripts in a way similar to
 \code{knitr::spin()}. The function \code{fiss()} extracts code from the input, and is
 similar to \code{knitr::purl()}.
 
 The function \code{mark()} renders Markdown to an output format via the
 \pkg{commonmark} package.
+}
+\note{
+For \code{fuse()}, you can generate the intermediate Markdown output via
+\code{output = '.md'} or \code{output = 'markdown'} without further calling \code{mark()}.
 }
 \examples{
 library(litedown)
