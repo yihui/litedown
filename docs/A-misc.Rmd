@@ -38,6 +38,53 @@ supported options have exactly the same effects in **litedown**. The supported
 options include:
 `` {r} xfun::join_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.
 
+## File or text output {#sec:file-text}
+
+By default, `mark()` and `fuse()` follow the rule of "file in, file out; text
+in, text out". That is, if you pass an input file, you get an output file, e.g.,
+`fuse('foo.Rmd')` may return a file `foo.html`. If you pass text input (e.g.,
+`mark('Hello _world_')` or `mark(text = 'Hello _world_')`), you get text output.
+
+You always get a file output if the argument `output` is a file path, e.g.,
+`` fuse('pi = `{r} pi`', output = 'foo.pdf') ``. If the `output` argument is not
+a character string (e.g., `NA`), or it is a format name (one of
+`` {r} xfun::join_words(names(litedown:::md_formats), before = '`', and = 'or ') ``),
+the output will be text, e.g., `mark('foo.md', output = NA)` or
+`mark('foo.md', output = 'latex')`.
+
+If the input is a file and the `output` argument takes a file extension (one of
+`` {r} xfun::join_words(litedown:::md_formats, before = '`', and = 'or ') ``),
+you will get a file output with the same base name as the input file, e.g.,
+`mark('foo.md', output = '.tex')` will return a file `foo.tex`. The `.pdf`
+extension can also be used if you want to convert Markdown to LaTeX, and then
+render LaTeX to PDF.
+
+For `fuse()`, the `output` argument can take a special value of the form
+`markdown:format`, where `format` is a format name. This value means to generate
+the intermediate Markdown text for the target output format, e.g.,
+`fuse('foo.Rmd', output = 'markdown:latex')`.
+
+@tab:input-output provides a summary of the above rules.
+
+:::: {#tab:input-output .table}
+::: caption
+[ ](#@tab:input-output) The returned value for different combinations of `input`
+and `output` arguments of `mark()` / `fuse()`.
+:::
+
+| function | `input` | `output` | returned value |
+|----|----|----|----|
+| `mark()` / `fuse()` | file | `NULL` | file |
+|  | text | `NULL` | text |
+|  | \* | file | file |
+|  | \* | `NA` / `format` | text |
+|  | `file.xxx` | `.ext` | `file.ext` |
+|  | `file.xxx` | `.pdf` | `file.pdf` |
+| `fuse()` | \* | `markdown` | intermediate Markdown text |
+|  | \* | `.md` | intermediate Markdown file |
+|  | \* | `markdown:format` | intermediate Markdown text for `format` |
+::::
+
 ## Package vignettes {#sec:vignettes}
 
 To build package vignettes with **litedown**, first add this to the package
