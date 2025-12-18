@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.8.5">
+<meta name="generator" content="litedown 0.9.1">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.20/css/article.min.css">
@@ -6118,25 +6118,37 @@ options include:
 <code>toc</code>, <code>toc_depth</code>, <code>number_sections</code>, <code>anchor_sections</code>, <code>code_folding</code>, <code>self_contained</code>, <code>math_method</code>, <code>css</code>, and <code>includes</code>.</p>
 <h2 id="sec:file-text"><span class="section-number">A.2</span> File or text output</h2>
 <p>By default, <code>mark()</code> and <code>fuse()</code> follow the rule of “file in, file out; text
-in, text out”. That is, if you pass an input file, you get an output file, e.g.,
-<code>fuse('foo.Rmd')</code> may return a file <code>foo.html</code>. If you pass text input (e.g.,
-<code>mark('Hello _world_')</code> or <code>mark(text = 'Hello _world_')</code>), you get text output.</p>
-<p>You always get a file output if the argument <code>output</code> is a file path, e.g.,
-<code>fuse('pi = `{r} pi`', output = 'foo.pdf')</code>. If the <code>output</code> argument is not
-a character string (e.g., <code>NA</code>), or it is a format name (one of
+in, text out”. That is, if you pass an input file, you get an output file. If
+you pass text input, you get text output. For example:</p>
+<pre><code class="language-r">fuse('foo.Rmd')  # returns a file 'foo.html' or 'foo.tex', etc.
+mark('Hello _world_')  # returns text
+mark(text = 'Hello _world_')  # text
+</code></pre>
+<p>You always get a file output if the argument <code>output</code> is a file path. If the
+<code>output</code> argument is not a character string (e.g., <code>NA</code>), or it is a format name
+(one of
 <code>html</code>, <code>xml</code>, <code>man</code>, <code>commonmark</code>, <code>markdown</code>, <code>text</code>, or <code>latex</code>),
-the output will be text, e.g., <code>mark('foo.md', output = NA)</code> or
-<code>mark('foo.md', output = 'latex')</code>.</p>
+the output will be text. For example:</p>
+<pre><code class="language-r">fuse('$\\pi$ = `{r} pi`', output = 'foo.pdf')  # file
+mark('foo.md', output = NA)  # text
+mark('foo.md', output = 'latex')  # text (LaTeX code)
+</code></pre>
 <p>If the input is a file and the <code>output</code> argument takes a file extension (one of
-<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),
-you will get a file output with the same base name as the input file, e.g.,
-<code>mark('foo.md', output = '.tex')</code> will return a file <code>foo.tex</code>. The <code>.pdf</code>
+<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),<sup class="footnote-ref"><a href="#fn-a-misc-1" id="fnref-a-misc-1" data-footnote-ref>13</a></sup>
+you will get a file output with the same base name as the input file. The <code>.pdf</code>
 extension can also be used if you want to convert Markdown to LaTeX, and then
-render LaTeX to PDF.</p>
+render LaTeX to PDF. For example:</p>
+<pre><code class="language-r">mark('foo/bar.md', output = '.html')  # file 'foo/bar.html'
+mark('foo/bar.md', output = '.pdf')   # file 'foo/bar.pdf'
+</code></pre>
 <p>For <code>fuse()</code>, the <code>output</code> argument can take a special value of the form
 <code>markdown:format</code>, where <code>format</code> is a format name. This value means to generate
-the intermediate Markdown text for the target output format, e.g.,
-<code>fuse('foo.Rmd', output = 'markdown:latex')</code>.</p>
+the intermediate Markdown text for the target output format, e.g.,</p>
+<pre><code>fuse('foo.Rmd', output = 'markdown:latex')
+</code></pre>
+<p>Depending on the target output format, the intermediate Markdown may be
+different, e.g., for <code>html</code> output, the default graphical device is PNG, whereas
+for <code>latex</code> output, the default device is PDF.</p>
 <p><a class="cross-ref-tab" href="#tab:input-output">6</a> provides a summary of the above rules.</p>
 <div id="tab:input-output" class="table">
 <div class="caption">
@@ -6309,6 +6321,11 @@ someday. <a href="#fnref-06-widgets-2" class="footnote-backref" data-footnote-ba
 <p>Remember that you can cache time-consuming code chunks to make the
 rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="12" aria-label="Back to reference 12">↩</a></p>
 </li>
+<li id="fn-a-misc-1">
+<p>Note that the format name <code>commonmark</code> and the extension
+<code>.markdown</code> are for CommonMark output. It should be rare that you need to
+convert Markdown input to CommonMark output, but it is possible anyway. <a href="#fnref-a-misc-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="13" aria-label="Back to reference 13">↩</a></p>
+</li>
 </ol>
 </section>
 <div id="refs">
@@ -6322,7 +6339,7 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2025).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.8.5, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.9.1, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2025).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
