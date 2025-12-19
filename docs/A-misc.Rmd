@@ -1,8 +1,8 @@
 # Appendix {.appendix}
 
-# Miscellaneous Topics
+# Miscellaneous Topics {#apd:misc}
 
-## For rmarkdown Users {#sec:rmarkdown}
+## For rmarkdown users {#sec:rmarkdown}
 
 The **litedown** package can partially recognize the output format names
 `html_document`, `html_vignette`, and `pdf_document` from **rmarkdown**: Some
@@ -81,7 +81,7 @@ For `fuse()`, the `output` argument can take a special value of the form
 `markdown:format`, where `format` is a format name. This value means to generate
 the intermediate Markdown text for the target output format, e.g.,
 
-```         
+``` r
 fuse('foo.Rmd', output = 'markdown:latex')
 ```
 

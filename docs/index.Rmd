@@ -521,7 +521,7 @@ apologies for that. I have worked much harder in **litedown** in this regard.
 
 Functions such as `mark()`, `fuse()`, and `fuse_book()` can operate in memory
 without writing to disk. By default, if you pass a file input, you get a file
-output; if you pass text input, you get text output.
+output; if you pass text input, you get text output (@sec:file-text).
 
 ### A new cache system
 

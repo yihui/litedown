@@ -2,6 +2,8 @@
 
 - When the `output` argument of `mark()` is a `.pdf` file, Markdown will be converted to a full `.tex` file instead of a LaTeX fragment before it is compiled to PDF.
 
+- Fixed a bug that sections in the appendix could not be cross-referenced.
+
 # CHANGES IN litedown VERSION 0.9
 
 - Provided [a new chunk option `filter`](https://yihui.org/litedown/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).

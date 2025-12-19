@@ -906,7 +906,7 @@ number_refs = function(x, r, katex = TRUE) {
   db = list()  # element numbers
 
   # first, find numbered section headings
-  r2 = '<h[1-6][^>]*? id="([^"]+)"[^>]*><span class="section-number[^"]*">([0-9.]+)</span>'
+  r2 = '<h[1-6][^>]*? id="([^"]+)"[^>]*><span class="section-number[^"]*">([A-Z0-9.]+)</span>'
   m = match_all(x, r2)[[1]]
   if (length(m)) {
     ids = m[2, ]
