@@ -606,6 +606,22 @@ other JS files.
 
 A class name for the main body (the default value is `body`).
 
+#### The `lang` variable
+
+The language of the HTML document, used to set the `lang` attribute of the
+`<html>` tag. It should be a [BCP 47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt)
+language tag such as `en`, `en-US`, or `zh-CN`. The default value is
+automatically detected from the system locale (via `Sys.getlocale('LC_CTYPE')`)
+if the locale is in the POSIX format (e.g., `en_US.UTF-8`). You can override it
+in YAML, e.g.,
+
+``` yaml
+output:
+  html:
+    meta:
+      lang: "zh-CN"
+```
+
 --------------------------------------------------------------------------------
 
 The following variables are for LaTeX templates:
