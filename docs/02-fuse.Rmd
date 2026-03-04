@@ -1566,10 +1566,12 @@ date
 ```
 ````
 
-You can override the command via the chunk option `command`, e.g.,
+You can pass additional arguments to the command via the `args1` chunk option
+(inserted before the script file path) or `args2` (after it). For example,
+`awk` requires the `-f` flag to read its program from a file:
 
 ```` md
-```{exec, command = 'awk'}
+```{exec, command = 'awk', args1 = '-f'}
 BEGIN { print "Hello, world!" }
 ```
 ````

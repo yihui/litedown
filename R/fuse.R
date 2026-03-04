@@ -1241,24 +1241,26 @@ eng_js = function(x, inline = FALSE, ...) {
 eng_exec = function(x, inline = FALSE, ...) {
   opts = reactor()
   cmd = opts$command %||% opts$engine
-  if (cmd == 'exec') stop("The 'exec' engine requires the chunk option 'command'.")
-  # write code to a temp file with an appropriate extension
-  ext = switch(cmd, sh = , bash = 'sh', zsh = 'zsh', powershell = 'ps1',
-               sans_ext(basename(cmd)))
-  f = with_ext(tempfile(), paste0('.', ext))
+  if (opts$engine == 'exec' && is.null(opts$command))
+    stop("The 'exec' engine requires the chunk option 'command'.")
+  # write code to a temp file; powershell requires .ps1 extension, others need none
+  ext = opts$ext %||% if (cmd == 'powershell') 'ps1' else NULL
+  f = if (is.null(ext)) tempfile() else with_ext(tempfile(), ext)
   on.exit(unlink(f), add = TRUE)
   write_utf8(x$source, f)
-  # powershell needs -File flag; others take the file path as positional argument
-  args = if (cmd == 'powershell') c('-File', f) else f
+  # build args: [args1] + [args (default: file path)] + [args2]
+  # powershell needs -File before the script path
+  default_args = if (cmd == 'powershell') c('-File', f) else f
+  a = c(opts$args1, opts$args %||% default_args, opts$args2)
   out = tryCatch(
-    system2(cmd, args, stdout = TRUE, stderr = TRUE),
+    system2(cmd, shQuote(a), stdout = TRUE, stderr = TRUE),
     error = function(e) {
       if (is.na(opts$error)) stop(e)
       if (isFALSE(opts$error)) return(character(0))
       paste('Error in running command', cmd, ':', conditionMessage(e))
     }
   )
-  # handle non-zero exit status based on the error option
+  # handle non-zero exit status based on the error chunk option
   if (!is.null(attr(out, 'status'))) {
     if (is.na(opts$error)) stop(one_string(out))
     if (isFALSE(opts$error)) out = character(0)
