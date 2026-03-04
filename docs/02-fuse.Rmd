@@ -1543,6 +1543,38 @@ You can use the chunk option `results = "hide"` to hide the output, or
 `results = "asis"` to output the file content as is (i.e., not wrapping it in a
 code block).
 
+### The exec engine {#sec:engine-exec}
+
+The `exec` engine can be used to run arbitrary commands via `system2()` and
+capture the output. The first line of the chunk body is the command to run, and
+the remaining lines are passed to the command as standard input, e.g.,
+
+```` md
+```{exec}
+bash
+echo "Hello, world!"
+date
+```
+````
+
+The shell engines `sh`, `bash`, and `zsh` are shortcuts based on `exec`, using
+the engine name as the command directly, e.g.,
+
+```` md
+```{bash}
+echo "Hello, world!"
+date
+```
+````
+
+You can override the command via the chunk option `command`, e.g.,
+
+```` md
+```{sh, command = "zsh"}
+echo $ZSH_VERSION
+```
+````
+
 ## Comparison to **knitr**
 
 Major differences between **knitr** and **litedown** include:
