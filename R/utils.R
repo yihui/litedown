@@ -47,6 +47,21 @@ is_lang = function(x) is.symbol(x) || is.language(x)
 uapply = function(..., recursive = TRUE) unlist(lapply(...), recursive = recursive)
 .mapply = function(fun, ...) base::.mapply(fun, list(...), NULL)
 
+# convert the system locale to a BCP 47 language tag for use in the HTML lang attribute
+locale_lang = function() {
+  lc = Sys.getlocale('LC_CTYPE')
+  # remove encoding part (e.g., ".UTF-8", ".1252")
+  lc = sub('[.][^.]*$', '', lc)
+  # extract language (and optional region) from POSIX-style locale (case-insensitive)
+  m = regmatches(lc, regexpr('^[a-zA-Z]{2,3}([_-][a-zA-Z]{2,3})?', lc))
+  if (length(m) == 0) return('')
+  # normalize to BCP 47: language lowercase, region uppercase, hyphen separator
+  parts = strsplit(m, '[_-]')[[1]]
+  parts[1] = tolower(parts[1])
+  if (length(parts) > 1) parts[2] = toupper(parts[2])
+  paste(parts, collapse = '-')
+}
+
 #' Convert some ASCII strings to HTML entities
 #'
 #' Transform ASCII strings `(c)` (copyright), `(r)` (registered trademark),
