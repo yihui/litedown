@@ -120,7 +120,7 @@
 <li><a href="#sec:engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</a></li>
 <li><a href="#sec:the-mermaid-engine"><span class="section-number">2.5.3</span> The Mermaid engine</a></li>
 <li><a href="#sec:the-embed-engine"><span class="section-number">2.5.4</span> The embed engine</a></li>
-<li><a href="#sec:engine-exec"><span class="section-number">2.5.5</span> The exec engine</a></li>
+<li><a href="#sec:the-exec-engine"><span class="section-number">2.5.5</span> The <code>exec</code> engine</a></li>
 </ul>
 </li>
 <li><a href="#sec:comparison-to-knitr"><span class="section-number">2.6</span> Comparison to <strong>knitr</strong></a></li>
@@ -3000,8 +3000,9 @@ An illustration of how scripts are rendered.</p>
 check all supported languages via:</p>
 <pre><code class="language-r">sort(names(litedown::engines()))
 </code></pre>
-<pre><code>#&gt;  [1] &quot;bash&quot;    &quot;css&quot;     &quot;embed&quot;   &quot;exec&quot;    &quot;js&quot;      &quot;md&quot;      &quot;mermaid&quot;
-#&gt;  [8] &quot;r&quot;       &quot;sh&quot;      &quot;zsh&quot;    
+<pre><code>#&gt;  [1] &quot;bash&quot;       &quot;css&quot;        &quot;embed&quot;      &quot;exec&quot;       &quot;js&quot;        
+#&gt;  [6] &quot;md&quot;         &quot;mermaid&quot;    &quot;powershell&quot; &quot;r&quot;          &quot;sh&quot;        
+#&gt; [11] &quot;zsh&quot;       
 </code></pre>
 <p>You can get a language engine definition via <code>litedown::engines('LANG')</code>, where
 <code>LANG</code> is the language name, e.g.,</p>
@@ -3125,26 +3126,25 @@ hello world
 <p>You can use the chunk option <code>results = &quot;hide&quot;</code> to hide the output, or
 <code>results = &quot;asis&quot;</code> to output the file content as is (i.e., not wrapping it in a
 code block).</p>
-<h3 id="sec:engine-exec"><span class="section-number">2.5.5</span> The exec engine</h3>
+<h3 id="sec:the-exec-engine"><span class="section-number">2.5.5</span> The <code>exec</code> engine</h3>
 <p>The <code>exec</code> engine can be used to run arbitrary commands via <code>system2()</code> and
-capture the output. The first line of the chunk body is the command to run, and
-the remaining lines are passed to the command as standard input, e.g.,</p>
-<pre><code class="language-md">```{exec}
-bash
-echo &quot;Hello, world!&quot;
-date
+capture the output. The chunk option <code>command</code> is required to specify the
+command to run, and the chunk body is the code to be executed, e.g.,</p>
+<pre><code class="language-md">```{exec, command = 'Rscript'}
+1 + 1
+cat(&quot;Hello, world!\n&quot;)
 ```
 </code></pre>
-<p>The shell engines <code>sh</code>, <code>bash</code>, and <code>zsh</code> are shortcuts based on <code>exec</code>, using
-the engine name as the command directly, e.g.,</p>
+<p>The shell engines <code>sh</code>, <code>bash</code>, <code>zsh</code>, and <code>powershell</code> are shortcuts based on
+<code>exec</code>, using the engine name as the command directly, e.g.,</p>
 <pre><code class="language-md">```{bash}
 echo &quot;Hello, world!&quot;
 date
 ```
 </code></pre>
 <p>You can override the command via the chunk option <code>command</code>, e.g.,</p>
-<pre><code class="language-md">```{sh, command = &quot;zsh&quot;}
-echo $ZSH_VERSION
+<pre><code class="language-md">```{exec, command = 'awk'}
+BEGIN { print &quot;Hello, world!&quot; }
 ```
 </code></pre>
 <h2 id="sec:comparison-to-knitr"><span class="section-number">2.6</span> Comparison to <strong>knitr</strong></h2>
