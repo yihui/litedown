@@ -426,7 +426,7 @@ build_output = function(format, options, template, meta, ...) {
   if (format == 'html') {
     defaults = list(
       'css' = 'default',
-      'lang' = '',
+      'lang' = locale_lang(),
       'plain-title' = I(str_trim(commonmark::markdown_text(meta[['title']])))
     )
     for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
