@@ -1237,6 +1237,22 @@ eng_js = function(x, inline = FALSE, ...) {
   }
 }
 
+# the exec engine: run arbitrary commands and capture output
+eng_exec = function(x, inline = FALSE, ...) {
+  opts = reactor()
+  # determine the command: use chunk option `command`, or fall back to engine name
+  cmd = opts$command %||% opts$engine
+  # for the generic 'exec' engine, the first line of code is the command
+  if (cmd == 'exec') {
+    lines = x$source
+    if (length(lines) == 0) return(list())
+    cmd = lines[1]
+    x$source = lines[-1]
+  }
+  out = system2(cmd, input = x$source, stdout = TRUE, stderr = TRUE)
+  list(new_source(x$source), new_output(out))
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -1261,7 +1277,8 @@ eng_js = function(x, inline = FALSE, ...) {
 engines = new_opts()
 engines(
   r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
-  css = eng_css, js = eng_js
+  css = eng_css, js = eng_js,
+  exec = eng_exec, sh = eng_exec, bash = eng_exec, zsh = eng_exec
 )
 
 #' @export
