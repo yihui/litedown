@@ -1543,22 +1543,21 @@ You can use the chunk option `results = "hide"` to hide the output, or
 `results = "asis"` to output the file content as is (i.e., not wrapping it in a
 code block).
 
-### The exec engine {#sec:engine-exec}
+### The `exec` engine
 
 The `exec` engine can be used to run arbitrary commands via `system2()` and
-capture the output. The first line of the chunk body is the command to run, and
-the remaining lines are passed to the command as standard input, e.g.,
+capture the output. The chunk option `command` is required to specify the
+command to run, and the chunk body is the code to be executed, e.g.,
 
 ```` md
-```{exec}
-bash
-echo "Hello, world!"
-date
+```{exec, command = 'Rscript'}
+1 + 1
+cat("Hello, world!\n")
 ```
 ````
 
-The shell engines `sh`, `bash`, and `zsh` are shortcuts based on `exec`, using
-the engine name as the command directly, e.g.,
+The shell engines `sh`, `bash`, `zsh`, and `powershell` are shortcuts based on
+`exec`, using the engine name as the command directly, e.g.,
 
 ```` md
 ```{bash}
@@ -1570,8 +1569,8 @@ date
 You can override the command via the chunk option `command`, e.g.,
 
 ```` md
-```{sh, command = "zsh"}
-echo $ZSH_VERSION
+```{exec, command = 'awk'}
+BEGIN { print "Hello, world!" }
 ```
 ````
 

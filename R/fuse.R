@@ -1237,19 +1237,32 @@ eng_js = function(x, inline = FALSE, ...) {
   }
 }
 
-# the exec engine: run arbitrary commands and capture output
+# the exec engine: run arbitrary commands via system2() and capture output
 eng_exec = function(x, inline = FALSE, ...) {
   opts = reactor()
-  # determine the command: use chunk option `command`, or fall back to engine name
   cmd = opts$command %||% opts$engine
-  # for the generic 'exec' engine, the first line of code is the command
-  if (cmd == 'exec') {
-    lines = x$source
-    if (length(lines) == 0) return(list())
-    cmd = lines[1]
-    x$source = lines[-1]
+  if (cmd == 'exec') stop("The 'exec' engine requires the chunk option 'command'.")
+  # write code to a temp file with an appropriate extension
+  ext = switch(cmd, sh = , bash = 'sh', zsh = 'zsh', powershell = 'ps1',
+               sans_ext(basename(cmd)))
+  f = with_ext(tempfile(), paste0('.', ext))
+  on.exit(unlink(f), add = TRUE)
+  write_utf8(x$source, f)
+  # powershell needs -File flag; others take the file path as positional argument
+  args = if (cmd == 'powershell') c('-File', f) else f
+  out = tryCatch(
+    system2(cmd, args, stdout = TRUE, stderr = TRUE),
+    error = function(e) {
+      if (is.na(opts$error)) stop(e)
+      if (isFALSE(opts$error)) return(character(0))
+      paste('Error in running command', cmd, ':', conditionMessage(e))
+    }
+  )
+  # handle non-zero exit status based on the error option
+  if (!is.null(attr(out, 'status'))) {
+    if (is.na(opts$error)) stop(one_string(out))
+    if (isFALSE(opts$error)) out = character(0)
   }
-  out = system2(cmd, input = x$source, stdout = TRUE, stderr = TRUE)
   list(new_source(x$source), new_output(out))
 }
 
@@ -1278,7 +1291,7 @@ engines = new_opts()
 engines(
   r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
   css = eng_css, js = eng_js,
-  exec = eng_exec, sh = eng_exec, bash = eng_exec, zsh = eng_exec
+  exec = eng_exec, sh = eng_exec, bash = eng_exec, zsh = eng_exec, powershell = eng_exec
 )
 
 #' @export
