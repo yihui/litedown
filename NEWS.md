@@ -1,8 +1,6 @@
-# CHANGES IN litedown VERSION 0.11
-
-- Added a new `exec` engine to run arbitrary commands via `system2()` and capture the output. The first line of the chunk body is used as the command, and the remaining lines are passed to the command as standard input. The shell engines `sh`, `bash`, and `zsh` are also provided based on `exec`, using the engine name as the command (the chunk option `command` can override it).
-
 # CHANGES IN litedown VERSION 0.10
+
+- Added new engines `exec`, `sh`, `bash`, `zsh`, and `powershell` to run arbitrary commands via `system2()` and capture the output. The `exec` engine requires the chunk option `command`; the `sh`/`bash`/`zsh`/`powershell` engines use the engine name as the command.
 
 - When the `output` argument of `mark()` is a `.pdf` file, Markdown will be converted to a full `.tex` file instead of a LaTeX fragment before it is compiled to PDF.
 
