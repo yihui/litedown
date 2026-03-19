@@ -4,6 +4,8 @@
 
 - Fixed a bug that sections in the appendix could not be cross-referenced.
 
+- Added a meta variable `lang` for HTML output, which is the language of the document (e.g., `en-US` for US English). This variable is used in the `<html lang="...">` tag of the HTML output file. By default, the language is detected from the system locale, but you can also set it via the `lang` field under `meta` in YAML metadata, e.g., `lang: en-GB` for British English (thanks, @TimTaylor, #121).
+
 # CHANGES IN litedown VERSION 0.9
 
 - Provided [a new chunk option `filter`](https://yihui.org/litedown/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).
