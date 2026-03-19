@@ -27,6 +27,9 @@ if (file.exists(readme <- file.path(pkg_path, 'README.md'))) {
   i = which(x == '<!-- badges: start -->')
   # remove lines before badges since they usually contain duplicated info (e.g., title)
   if (length(i)) x = x[-seq_len(i[1] - 1)]
+  i = which(x == paste('#', pkg_name))
+  # remove the title line if it still exists
+  if (length(i)) x = x[-i[1]]
   xfun::raw_string(x)
 }
 ```
