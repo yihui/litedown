@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.9.2">
+<meta name="generator" content="litedown 0.9.3">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/article.min.css">
@@ -193,8 +193,9 @@
 <li><a href="#sec:meta-css"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</a></li>
 <li><a href="#sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</a></li>
 <li><a href="#sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</a></li>
-<li><a href="#sec:the-classoption-variable"><span class="section-number">4.3.2.4</span> The <code>classoption</code> variable</a></li>
-<li><a href="#sec:the-documentclass-variable"><span class="section-number">4.3.2.5</span> The <code>documentclass</code> variable</a></li>
+<li><a href="#sec:the-lang-variable"><span class="section-number">4.3.2.4</span> The <code>lang</code> variable</a></li>
+<li><a href="#sec:the-classoption-variable"><span class="section-number">4.3.2.5</span> The <code>classoption</code> variable</a></li>
+<li><a href="#sec:the-documentclass-variable"><span class="section-number">4.3.2.6</span> The <code>documentclass</code> variable</a></li>
 </ul>
 </li>
 <li><a href="#sec:naming-convention-of-variables"><span class="section-number">4.3.3</span> Naming convention of variables</a></li>
@@ -4432,11 +4433,23 @@ same as the <code>css</code> variable, e.g., <code>snap</code> means <code>snap.
 other JS files.</p>
 <h4 id="sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</h4>
 <p>A class name for the main body (the default value is <code>body</code>).</p>
+<h4 id="sec:the-lang-variable"><span class="section-number">4.3.2.4</span> The <code>lang</code> variable</h4>
+<p>The language of the HTML document, used to set the <code>lang</code> attribute of the
+<code>&lt;html&gt;</code> tag. It should be a <a href="https://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>
+language tag such as <code>en</code>, <code>en-US</code>, or <code>zh-CN</code>. The default value is
+automatically detected from the system locale (via <code>Sys.getlocale('LC_CTYPE')</code>)
+if the locale is in the POSIX format (e.g., <code>en_US.UTF-8</code>). You can override it
+in YAML, e.g.,</p>
+<pre><code class="language-yaml">output:
+  html:
+    meta:
+      lang: &quot;zh-CN&quot;
+</code></pre>
 <hr />
 <p>The following variables are for LaTeX templates:</p>
-<h4 id="sec:the-classoption-variable"><span class="section-number">4.3.2.4</span> The <code>classoption</code> variable</h4>
+<h4 id="sec:the-classoption-variable"><span class="section-number">4.3.2.5</span> The <code>classoption</code> variable</h4>
 <p>A string containing options for the document class.</p>
-<h4 id="sec:the-documentclass-variable"><span class="section-number">4.3.2.5</span> The <code>documentclass</code> variable</h4>
+<h4 id="sec:the-documentclass-variable"><span class="section-number">4.3.2.6</span> The <code>documentclass</code> variable</h4>
 <p>The document class (by default, <code>article</code>).</p>
 <h3 id="sec:naming-convention-of-variables"><span class="section-number">4.3.3</span> Naming convention of variables</h3>
 <p>A variable name must consist of alphanumeric characters and hyphens only. You
@@ -6339,7 +6352,7 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.9.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.9.3, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
