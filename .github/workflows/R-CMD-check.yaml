@@ -47,35 +47,18 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install dependencies for cairo_pdf device
-        if: runner.os == 'macOS'
-        run: |
-          brew install --cask xquartz
-
       - name: Whether to use codecov
         run: |
           echo "USE_R_CODECOV=${{ (runner.os == 'Linux' && matrix.config.r == 'release') && true || false }}" >> $GITHUB_ENV
 
-      - uses: r-lib/actions/setup-r-dependencies@HEAD
-        if: matrix.config.r >= '4.0'
+      - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
           # install the package itself as we register vignette engine
-          extra-packages: any::rcmdcheck, local::. ${{ env.USE_R_CODECOV == 'true' && ', any::covr, any::xml2' || '' }}
-          needs: check
+          extra-packages: . ${{ env.USE_R_CODECOV == 'true' && ' covr xml2' || '' }}
+          # install dependencies for cairo_pdf device
+          brew-packages: xquartz
 
-      - uses: r-lib/actions/check-r-package@HEAD
-        if: matrix.config.r >= '4.0'
-        with:
-          upload-snapshots: true
-
-      - name: Check against R < 4.0
-        if: matrix.config.r < '4.0'
-        run: |
-          Rscript .github/workflows/deps.R
-          R CMD INSTALL .
-          cd ..
-          R CMD build litedown
-          R CMD check --as-cran --no-manual litedown_*.tar.gz
+      - uses: yihui/actions/check-r-package@HEAD
 
       - name: Run examples
         working-directory: examples
@@ -95,7 +78,7 @@ jobs:
           xfun::file_string('./cobertura.xml')
         shell: Rscript {0}
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@HEAD
         if: env.USE_R_CODECOV == 'true'
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' }}
