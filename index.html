@@ -15,14 +15,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.39/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.42/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-03-19</h3></div>
+<div class="date"><h3>2026-03-25</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -5967,22 +5967,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/checkout@HEAD
+      - uses: actions/configure-pages@HEAD
         with:
           enablement: true
       - uses: r-lib/actions/setup-r@HEAD
         with:
           use-public-rspm: true
-      - uses: r-lib/actions/setup-r-dependencies@HEAD
+      - uses: yihui/actions/setup-r-dependencies@HEAD
       - uses: yihui/litedown/site@HEAD
         with:
           site-dir: 'site'
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@HEAD
         with:
           path: 'site'
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@HEAD
 </code></pre>
 <p>You can copy it to the <code>.github/workflows/</code> directory of the R package’s Git
 repository and commit/push it via Git. Within a few minutes, the package site
@@ -6356,7 +6356,7 @@ R package version 0.9.3, <a href="https://github.com/yihui/litedown">https://git
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.56.6, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.57.1, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
@@ -6372,7 +6372,7 @@ R package version 0.56.6, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.39/dist/katex.min.js,npm/katex@0.16.39/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.42/dist/katex.min.js,npm/katex@0.16.42/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.24/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
