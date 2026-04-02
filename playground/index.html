@@ -147,22 +147,14 @@ const escapeHtml = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // ---------------------------------------------------------------------------
-// CodeMirror editor (loaded from CDN)
+// CodeMirror editor (pre-bundled to avoid duplicate @codemirror/state
+// instances that break instanceof checks when loaded from CDN)
 // ---------------------------------------------------------------------------
 let editorView;
 
 async function initEditor() {
-  const [
-    { EditorView, basicSetup },
-    { EditorState },
-    { markdown },
-    { keymap }
-  ] = await Promise.all([
-    import('https://esm.sh/codemirror@6.0.1'),
-    import('https://esm.sh/@codemirror/state@6.5.2'),
-    import('https://esm.sh/@codemirror/lang-markdown@6.3.2'),
-    import('https://esm.sh/@codemirror/view@6.36.5')
-  ]);
+  const { EditorView, EditorState, basicSetup, keymap, markdown } =
+    await import('./cm-bundle.min.js');
 
   const renderKeymap = keymap.of([{
     key: 'Mod-Shift-Enter',
@@ -320,14 +312,25 @@ async function renderRmd() {
 // Bootstrap
 // ---------------------------------------------------------------------------
 async function init() {
+  // Initialize editor and webR independently so the editor is usable even if
+  // webR takes a long time or fails to load.
   try {
-    await Promise.all([initEditor(), initWebR()]);
+    await initEditor();
+  } catch (e) {
+    setLoading('Failed to load editor: ' + e.message);
+    console.error('Editor init error:', e);
+    return;
+  }
+
+  try {
+    await initWebR();
     overlay.style.display = 'none';
     runBtn.disabled = false;
     setStatus('Ready — click Render or press Ctrl+Shift+Enter');
   } catch (e) {
-    setLoading('Failed to initialize: ' + e.message);
-    console.error('Init error:', e);
+    overlay.style.display = 'none';
+    setStatus('webR failed to load: ' + e.message);
+    console.error('webR init error:', e);
   }
 }
 
