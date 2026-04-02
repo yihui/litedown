@@ -152,10 +152,17 @@ const escapeHtml = (s) =>
 let editorView;
 
 async function initEditor() {
-  const { EditorView, basicSetup } = await import('https://esm.sh/codemirror@6.0.1');
-  const { EditorState } = await import('https://esm.sh/@codemirror/state@6.5.2');
-  const { markdown } = await import('https://esm.sh/@codemirror/lang-markdown@6.3.2');
-  const { keymap } = await import('https://esm.sh/@codemirror/view@6.36.5');
+  const [
+    { EditorView, basicSetup },
+    { EditorState },
+    { markdown },
+    { keymap }
+  ] = await Promise.all([
+    import('https://esm.sh/codemirror@6.0.1'),
+    import('https://esm.sh/@codemirror/state@6.5.2'),
+    import('https://esm.sh/@codemirror/lang-markdown@6.3.2'),
+    import('https://esm.sh/@codemirror/view@6.36.5')
+  ]);
 
   const renderKeymap = keymap.of([{
     key: 'Mod-Shift-Enter',
@@ -232,12 +239,11 @@ async function replaceImages(html) {
   }
   if (!jobs.length) return html;
 
+  const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+                    gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp' };
   for (const job of jobs) {
     try {
-      // Determine MIME type from extension
       const ext = job.src.split('.').pop().toLowerCase();
-      const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
-                        gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp' };
       const url = await vfsBlobUrl(job.src, mimeMap[ext] || 'image/png');
       prevBlobUrls.push(url);
       html = html.replace(job.full, `<img src="${url}"`);
