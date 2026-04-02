@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>litedown Playground</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --header-h: 44px;
+  --border: #ccc;
+  --bg: #f7f7f7;
+  --accent: #4a90d9;
+}
+body { font-family: system-ui, -apple-system, sans-serif; height: 100vh; overflow: hidden; }
+header {
+  height: var(--header-h); display: flex; align-items: center;
+  padding: 0 12px; background: var(--bg); border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+header h1 { font-size: 15px; font-weight: 600; }
+#run-btn {
+  padding: 4px 14px; border: 1px solid var(--accent); border-radius: 4px;
+  background: var(--accent); color: #fff; cursor: pointer; font-size: 13px;
+}
+#run-btn:hover { background: #3a7bc8; }
+#run-btn:disabled { opacity: .5; cursor: not-allowed; }
+#status { font-size: 12px; color: #666; flex: 1; }
+.container {
+  display: flex; height: calc(100vh - var(--header-h));
+}
+.pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pane-header {
+  height: 28px; display: flex; align-items: center; padding: 0 10px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; color: #555;
+}
+#editor-pane { border-right: 1px solid var(--border); }
+#editor-wrap { flex: 1; overflow: auto; }
+#editor-wrap .cm-editor { height: 100%; }
+#editor-wrap .cm-scroller { overflow: auto; }
+#preview-frame {
+  flex: 1; border: none; width: 100%; background: #fff;
+}
+#loading-overlay {
+  position: fixed; inset: 0; background: rgba(255,255,255,.92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 1000; font-family: system-ui, sans-serif;
+}
+#loading-overlay h2 { font-size: 18px; margin-bottom: 12px; }
+#loading-overlay p { font-size: 13px; color: #666; max-width: 400px; text-align: center; }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid #eee;
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .8s linear infinite; margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <h2>Initializing litedown Playground</h2>
+  <p id="loading-msg">Loading webR…</p>
+</div>
+
+<header>
+  <h1>litedown Playground</h1>
+  <button id="run-btn" disabled>&#9654; Render</button>
+  <span id="status"></span>
+</header>
+
+<div class="container">
+  <div class="pane" id="editor-pane">
+    <div class="pane-header">Rmd Editor</div>
+    <div id="editor-wrap"></div>
+  </div>
+  <div class="pane" id="preview-pane">
+    <div class="pane-header">HTML Preview</div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+</div>
+
+<script type="module">
+// ---------------------------------------------------------------------------
+// Default Rmd content
+// ---------------------------------------------------------------------------
+const defaultRmd = [
+  '---',
+  'title: Hello litedown',
+  'author: Playground User',
+  "date: '2025-01-01'",
+  'output:',
+  '  html:',
+  '    meta:',
+  '      css: ["default"]',
+  '      js: ["@heading-anchor"]',
+  '---',
+  '',
+  '# Introduction',
+  '',
+  'This is a **litedown** playground powered by [webR](https://docs.r-wasm.org/webr/).',
+  'Edit this R Markdown on the left and click **Render** (or press',
+  'Ctrl/Cmd + Shift + Enter) to see the HTML output on the right.',
+  '',
+  '## R Code',
+  '',
+  '```{r}',
+  'x <- 1:10',
+  'mean(x)',
+  '```',
+  '',
+  'A simple plot:',
+  '',
+  '```{r}',
+  '#| fig.cap="A scatter plot"',
+  'plot(cars, pch = 19, col = "steelblue")',
+  '```',
+  '',
+  '## Math',
+  '',
+  'Inline math: `$\\alpha + \\beta$`',
+  '',
+  'Display math:',
+  '',
+  '$$E = mc^2$$',
+  '',
+  '## Summary',
+  '',
+  'You can write any R Markdown supported by litedown here!',
+  ''
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// UI references
+// ---------------------------------------------------------------------------
+const runBtn = document.getElementById('run-btn');
+const statusEl = document.getElementById('status');
+const overlay = document.getElementById('loading-overlay');
+const loadingMsg = document.getElementById('loading-msg');
+const previewFrame = document.getElementById('preview-frame');
+
+const setStatus = (msg) => { statusEl.textContent = msg; };
+const setLoading = (msg) => { loadingMsg.textContent = msg; };
+const escapeHtml = (s) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// ---------------------------------------------------------------------------
+// CodeMirror editor (loaded from CDN)
+// ---------------------------------------------------------------------------
+let editorView;
+
+async function initEditor() {
+  const { EditorView, basicSetup } = await import('https://esm.sh/codemirror@6.0.1');
+  const { EditorState } = await import('https://esm.sh/@codemirror/state@6.5.2');
+  const { markdown } = await import('https://esm.sh/@codemirror/lang-markdown@6.3.2');
+  const { keymap } = await import('https://esm.sh/@codemirror/view@6.36.5');
+
+  const renderKeymap = keymap.of([{
+    key: 'Mod-Shift-Enter',
+    run: () => { renderRmd(); return true; }
+  }]);
+
+  editorView = new EditorView({
+    state: EditorState.create({
+      doc: defaultRmd,
+      extensions: [basicSetup, markdown(), renderKeymap]
+    }),
+    parent: document.getElementById('editor-wrap')
+  });
+}
+
+// ---------------------------------------------------------------------------
+// webR setup
+// ---------------------------------------------------------------------------
+let webR, shelter;
+
+async function initWebR() {
+  setLoading('Loading webR (this may take a moment)…');
+  const { WebR } = await import('https://webr.r-wasm.org/latest/webr.mjs');
+  webR = new WebR();
+  await webR.init();
+  shelter = await new webR.Shelter();
+
+  setLoading('Installing R packages (commonmark, xfun, litedown)…');
+  await webR.evalRVoid(
+    'webr::install(c("commonmark", "xfun", "litedown"), quiet = TRUE)'
+  );
+
+  setLoading('Ready!');
+}
+
+// ---------------------------------------------------------------------------
+// Read a binary file from the webR virtual filesystem and return a Blob URL.
+// This avoids base64-encoding images — the browser gets real binary blobs.
+// ---------------------------------------------------------------------------
+async function vfsBlobUrl(path, mime) {
+  const result = await shelter.captureR(
+    'readBin(path, "raw", file.info(path)$size)',
+    { env: { path } }
+  );
+  const raw = result.result;
+  const bytes = await raw.toTypedArray();
+  const blob = new Blob([bytes], { type: mime || 'application/octet-stream' });
+  return URL.createObjectURL(blob);
+}
+
+// Revoke previous blob URLs to avoid memory leaks
+let prevBlobUrls = [];
+function revokePrevBlobs() {
+  for (const u of prevBlobUrls) URL.revokeObjectURL(u);
+  prevBlobUrls = [];
+}
+
+// ---------------------------------------------------------------------------
+// Replace local image paths in the HTML with Blob URLs.
+// Images generated by fuse() live in the webR VFS only; they are not
+// accessible to the browser. We read the raw bytes and create object URLs
+// so the <img> tags work inside the preview iframe.
+// ---------------------------------------------------------------------------
+async function replaceImages(html) {
+  const imgRegex = /<img\s+src="([^"]+)"/g;
+  let match;
+  const jobs = [];
+
+  while ((match = imgRegex.exec(html)) !== null) {
+    const src = match[1];
+    // Skip data URIs and absolute http(s) URLs
+    if (/^data:|^https?:\/\//i.test(src)) continue;
+    jobs.push({ full: match[0], src });
+  }
+  if (!jobs.length) return html;
+
+  for (const job of jobs) {
+    try {
+      // Determine MIME type from extension
+      const ext = job.src.split('.').pop().toLowerCase();
+      const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+                        gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp' };
+      const url = await vfsBlobUrl(job.src, mimeMap[ext] || 'image/png');
+      prevBlobUrls.push(url);
+      html = html.replace(job.full, `<img src="${url}"`);
+    } catch (e) {
+      console.warn('Could not load image from VFS:', job.src, e);
+    }
+  }
+  return html;
+}
+
+// ---------------------------------------------------------------------------
+// Render Rmd → HTML
+// ---------------------------------------------------------------------------
+let rendering = false;
+
+async function renderRmd() {
+  if (rendering || !webR) return;
+  rendering = true;
+  runBtn.disabled = true;
+  setStatus('Rendering…');
+  revokePrevBlobs();
+
+  const rmdText = editorView.state.doc.toString();
+
+  try {
+    // Write the Rmd text to a file in /tmp so fuse() resolves fig paths there
+    await shelter.captureR(
+      'writeLines(text, con = "/tmp/_playground.Rmd")',
+      { env: { text: rmdText } }
+    );
+
+    // fuse() knits R code chunks, then calls mark() to produce HTML.
+    // output = NA  →  mark() returns the HTML string instead of writing a file.
+    // We do NOT embed local resources (embed_resources: false is the default
+    // when returning as string); images stay as file paths which we then swap
+    // to Blob URLs in replaceImages().
+    const result = await shelter.captureR(
+      'litedown::fuse("/tmp/_playground.Rmd", output = NA)'
+    );
+
+    // The printed representation of the raw_string is the HTML
+    let html = result.output.map((m) => m.data).join('\n');
+
+    // Replace VFS image paths with browser-accessible Blob URLs
+    html = await replaceImages(html);
+
+    // Write to the iframe document directly (not via srcdoc) so that
+    // Blob URLs created in the parent context are accessible.
+    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+    setStatus('Rendered successfully');
+  } catch (e) {
+    console.error('Render error:', e);
+    setStatus('Error — see preview for details');
+    const errHtml = [
+      '<html><body style="font-family:system-ui;padding:20px">',
+      '<h3 style="color:#c00">Render Error</h3>',
+      '<pre style="white-space:pre-wrap">' + escapeHtml(String(e)) + '</pre>',
+      '</body></html>'
+    ].join('');
+    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    doc.open();
+    doc.write(errHtml);
+    doc.close();
+  } finally {
+    rendering = false;
+    runBtn.disabled = false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bootstrap
+// ---------------------------------------------------------------------------
+async function init() {
+  try {
+    await Promise.all([initEditor(), initWebR()]);
+    overlay.style.display = 'none';
+    runBtn.disabled = false;
+    setStatus('Ready — click Render or press Ctrl+Shift+Enter');
+  } catch (e) {
+    setLoading('Failed to initialize: ' + e.message);
+    console.error('Init error:', e);
+  }
+}
+
+runBtn.addEventListener('click', renderRmd);
+init();
+</script>
+</body>
+</html>
