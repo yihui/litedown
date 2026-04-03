@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>litedown Playground</title>
+<title>Playground</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,7 +27,7 @@ header h1 { font-size: 15px; font-weight: 600; }
 #run-btn:hover { background: #3a7bc8; }
 #run-btn:disabled { opacity: .5; cursor: not-allowed; }
 #status { font-size: 12px; color: #666; flex: 1; text-align: right; }
-#examples-select {
+#examples-select, #mode-select {
   font-size: 12px; padding: 3px 6px;
   border: 1px solid var(--border); border-radius: 4px; background: #fff; cursor: pointer;
 }
@@ -61,20 +61,24 @@ header h1 { font-size: 15px; font-weight: 600; }
 
 <div id="loading-overlay">
   <div class="spinner"></div>
-  <h2>Initializing litedown Playground</h2>
+  <h2>Initializing Playground</h2>
   <p id="loading-msg">Loading webR…</p>
 </div>
 
 <header>
-  <h1>litedown Playground</h1>
-  <button id="run-btn" disabled>&#9654; Render</button>
+  <h1>Playground</h1>
+  <button id="run-btn" disabled>&#9654; Run</button>
+  <select id="mode-select">
+    <option value="rmd">Rmd</option>
+    <option value="r">R</option>
+  </select>
   <select id="examples-select"><option value="">Load example…</option></select>
   <span id="status"></span>
 </header>
 
 <div class="container">
   <div class="pane" id="editor-pane">
-    <div class="pane-header">Rmd Editor</div>
+    <div class="pane-header">Source Editor</div>
     <div id="editor-wrap"></div>
   </div>
   <div class="pane" id="preview-pane">
@@ -84,59 +88,6 @@ header h1 { font-size: 15px; font-weight: 600; }
     <iframe id="preview-frame"></iframe>
   </div>
 </div>
-
-<!-- Default Rmd stored as plain text — no JS string escaping needed. -->
-<script type="text/plain" id="default-rmd">
----
-title: Hello litedown
-author: Playground User
-date: '`{r} Sys.Date()`'
----
-
-# Introduction
-
-This is a **litedown** playground powered by [webR](https://docs.r-wasm.org/webr/).
-Edit this R Markdown on the left and click **Render** (or press
-Ctrl/Cmd + Shift + Enter) to see the HTML output on the right.
-
-Learn more at <https://github.com/yihui/litedown>.
-
-## R Code
-
-```{r}
-x = 1:10
-mean(x)
-```
-
-A simple plot:
-
-```{r}
-#| fig.cap = "A scatter plot", dev = "svg"
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = "steelblue")
-```
-
-## Table
-
-See @tab:penguins for the `penguins` dataset.
-
-```{r}
-#| penguins, tab.cap = "First and last 5 rows of the `penguins` dataset."
-penguins
-```
-
-## Math
-
-Inline math: $\alpha + \beta$
-
-Display math:
-
-$$E = mc^2$$
-
-## Summary
-
-You can write any R Markdown supported by litedown here!
-</script>
 
 <!-- CodeMirror 5 — plain <script> tags from CDN, no ES-module deduplication issues
      (the problem that plagued CodeMirror 6 when loading its modules from CDN). -->
@@ -149,26 +100,85 @@ You can write any R Markdown supported by litedown here!
 
 <script type="module">
 // ---------------------------------------------------------------------------
-// Default Rmd content — stored in <script type="text/plain"> above to avoid
-// any JS string escaping of backticks, backslashes, dollar signs, etc.
+// UI references
 // ---------------------------------------------------------------------------
-const defaultRmd = document.getElementById('default-rmd').textContent.trimStart();
+const runBtn       = document.getElementById('run-btn');
+const statusEl     = document.getElementById('status');
+const overlay      = document.getElementById('loading-overlay');
+const loadingMsg   = document.getElementById('loading-msg');
+const previewFrame = document.getElementById('preview-frame');
+const modeSelect   = document.getElementById('mode-select');
+const sel          = document.getElementById('examples-select');
+
+const setStatus  = (msg) => { statusEl.textContent = msg; };
+const setLoading = (msg) => { loadingMsg.textContent = msg; };
+const escapeHtml = (s) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // ---------------------------------------------------------------------------
-// Examples dropdown — "default" option always loads the built-in example;
-// numbered examples are appended from examples.txt when available (generated
-// by the GitHub Actions workflow; absent when running locally from the repo).
+// CodeMirror 5 editor  (global `CodeMirror` injected by the <script> tags above)
 // ---------------------------------------------------------------------------
-const sel = document.getElementById('examples-select');
+
+// Register {r} as a MIME alias so fenced ```{r} blocks get R syntax highlighting
+CodeMirror.defineMIME('text/{r}', 'text/x-rsrc');
+
+const rmdMode = { name: 'markdown', fencedCodeBlockHighlighting: true, highlightFormatting: true };
+const rMode   = 'text/x-rsrc';
+
+const editor = CodeMirror(document.getElementById('editor-wrap'), {
+  value: '',
+  mode: rmdMode,
+  lineNumbers: true,
+  lineWrapping: true,
+  extraKeys: {
+    'Ctrl-Shift-Enter': () => run(),
+    'Cmd-Shift-Enter':  () => run(),
+  },
+});
+
+function setEditorMode(mode) {
+  modeSelect.value = mode;
+  editor.setOption('mode', mode === 'r' ? rMode : rmdMode);
+}
+
+modeSelect.addEventListener('change', () => setEditorMode(modeSelect.value));
+
+// ---------------------------------------------------------------------------
+// Default content — fetch default.Rmd or default.R from playground dir
+// ---------------------------------------------------------------------------
+async function loadDefault() {
+  for (const file of ['default.Rmd', 'default.R']) {
+    try {
+      const res = await fetch('./' + file);
+      if (!res.ok) continue;
+      const text = await res.text();
+      setEditorMode(/\.R$/.test(file) && !/\.Rmd$/i.test(file) ? 'r' : 'rmd');
+      editor.setValue(text.trimStart());
+      return;
+    } catch (_) {}
+  }
+  // Fallback: empty editor in Rmd mode
+  setEditorMode('rmd');
+  editor.setValue('');
+}
+
+// ---------------------------------------------------------------------------
+// Examples dropdown — numbered examples appended from examples.txt when
+// available (generated by the GitHub Actions workflow).
+// ---------------------------------------------------------------------------
 sel.addEventListener('change', async () => {
   if (!sel.value) {
-    editor.setValue(defaultRmd);
+    await loadDefault();
     return;
   }
   try {
     const r = await fetch('../examples/' + sel.value);
     if (!r.ok) throw new Error(r.statusText);
-    editor.setValue(await r.text());
+    const text = await r.text();
+    // Detect mode from file extension (.R script vs .Rmd document)
+    const isR = /\.R$/.test(sel.value) && !/\.Rmd$/i.test(sel.value);
+    setEditorMode(isR ? 'r' : 'rmd');
+    editor.setValue(text);
   } catch (e) {
     console.error('Failed to load example:', e);
   }
@@ -182,43 +192,11 @@ async function initExamples() {
     for (const f of files) {
       const opt = document.createElement('option');
       opt.value = f;
-      opt.textContent = f.replace(/\.Rmd$/i, '');
+      opt.textContent = f.replace(/\.(Rmd|R)$/i, '');
       sel.appendChild(opt);
     }
-  } catch (e) { /* examples.txt not present */ }
+  } catch (_) { /* examples.txt not present */ }
 }
-
-// ---------------------------------------------------------------------------
-// UI references
-// ---------------------------------------------------------------------------
-const runBtn = document.getElementById('run-btn');
-const statusEl = document.getElementById('status');
-const overlay = document.getElementById('loading-overlay');
-const loadingMsg = document.getElementById('loading-msg');
-const previewFrame = document.getElementById('preview-frame');
-
-const setStatus = (msg) => { statusEl.textContent = msg; };
-const setLoading = (msg) => { loadingMsg.textContent = msg; };
-const escapeHtml = (s) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-// ---------------------------------------------------------------------------
-// CodeMirror 5 editor  (global `CodeMirror` injected by the <script> tags above)
-// ---------------------------------------------------------------------------
-
-// Register {r} as a MIME alias so fenced ```{r} blocks get R syntax highlighting
-CodeMirror.defineMIME('text/{r}', 'text/x-rsrc');
-
-const editor = CodeMirror(document.getElementById('editor-wrap'), {
-  value: defaultRmd,
-  mode: { name: 'markdown', fencedCodeBlockHighlighting: true, highlightFormatting: true },
-  lineNumbers: true,
-  lineWrapping: true,
-  extraKeys: {
-    'Ctrl-Shift-Enter': () => renderRmd(),
-    'Cmd-Shift-Enter':  () => renderRmd(),
-  },
-});
 
 // ---------------------------------------------------------------------------
 // webR setup
@@ -236,63 +214,66 @@ async function initWebR() {
   // required during code evaluation (used internally by the R evaluator).
   setLoading('Installing R packages…');
   await webR.evalRVoid(
-    'webr::install(c("commonmark", "xfun", "litedown", "codetools", "KernSmooth"), quiet = TRUE)'
+    'webr::install(c("commonmark", "xfun", "litedown", "codetools"), quiet = TRUE)'
   );
+
+  // Run setup.R if present in the playground directory
+  try {
+    const setupRes = await fetch('./setup.R');
+    if (setupRes.ok) {
+      setLoading('Running setup.R…');
+      await webR.evalRVoid(await setupRes.text());
+    }
+  } catch (_) { /* setup.R not present */ }
 
   setLoading('Ready!');
 }
 
 // ---------------------------------------------------------------------------
-// Render Rmd → HTML
+// Run — write source to /tmp, call fuse(), display HTML
 // ---------------------------------------------------------------------------
-let rendering = false;
+let running = false;
 
-async function renderRmd() {
-  if (rendering || !webR) return;
-  rendering = true;
+async function run() {
+  if (running || !webR) return;
+  running = true;
   runBtn.disabled = true;
-  setStatus('Rendering…');
+  setStatus('Running…');
   previewFrame.style.opacity = '.25';
   document.body.style.cursor = 'wait';
   const t0 = performance.now();
 
-  const rmdText = editor.getValue();
+  const mode    = modeSelect.value;             // 'rmd' or 'r'
+  const tmpFile = '/tmp/_playground' + (mode === 'r' ? '.R' : '.Rmd');
 
   try {
-    // Write Rmd to the webR virtual filesystem
+    // Write source to the webR virtual filesystem
     await shelter.captureR(
-      'writeLines(text, con = "/tmp/_playground.Rmd")',
-      { env: { text: rmdText } }
+      'writeLines(text, con = file)',
+      { env: { text: editor.getValue(), file: tmpFile } }
     );
 
-    // fuse() knits R code chunks then calls mark() to produce HTML.
-    // output = NA  →  return the HTML as a character string.
-    // quiet = TRUE  →  suppress the progress bar.
-    // setwd("/tmp") so plot files are written there and litedown's default
-    // embed_resources behaviour base64-encodes them into the returned HTML.
-    const result = await shelter.captureR(`
-      setwd("/tmp")
-      litedown::fuse("/tmp/_playground.Rmd", output = NA, quiet = TRUE)
-    `);
+    // fuse() handles both .R and .Rmd inputs.
+    // setwd("/tmp") so plot files land there and litedown base64-encodes them.
+    const result = await shelter.captureR(
+      'setwd("/tmp"); litedown::fuse(file, output = NA, quiet = TRUE)',
+      { env: { file: tmpFile } }
+    );
 
-    // result.result is an RCharacter vector; join elements in case it is
-    // split across multiple lines (typically it is a single element).
     const html = (await result.result.toArray()).join('\n');
 
-    // Write to the iframe.  Using doc.write() (rather than srcdoc) keeps
-    // Blob URLs created in the parent context accessible inside the iframe.
     const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
     doc.open();
     doc.write(html);
     doc.close();
     const secs = ((performance.now() - t0) / 1000).toFixed(1);
-    setStatus(`Rendered in ${secs}s`);
+    setStatus(`Done in ${secs}s`);
   } catch (e) {
-    console.error('Render error:', e);
+    console.error('Run error:', e);
     setStatus('Error — see preview for details');
     const errHtml = [
       '<html><body style="font-family:system-ui;padding:20px">',
-      '<h3 style="color:#c00">Render Error</h3>',
+      '<h3 style="color:#c00">Error</h3>',
       '<pre style="white-space:pre-wrap">' + escapeHtml(String(e)) + '</pre>',
       '</body></html>'
     ].join('');
@@ -301,7 +282,7 @@ async function renderRmd() {
     doc.write(errHtml);
     doc.close();
   } finally {
-    rendering = false;
+    running = false;
     runBtn.disabled = false;
     previewFrame.style.opacity = '';
     document.body.style.cursor = '';
@@ -312,12 +293,13 @@ async function renderRmd() {
 // Bootstrap
 // ---------------------------------------------------------------------------
 async function init() {
+  loadDefault();   // fire-and-forget; independent of webR
   initExamples();  // fire-and-forget; independent of webR
   try {
     await initWebR();
     overlay.style.display = 'none';
     runBtn.disabled = false;
-    setStatus('Ready — click Render or press Ctrl+Shift+Enter');
+    setStatus('Ready — click Run or press Ctrl+Shift+Enter');
   } catch (e) {
     overlay.style.display = 'none';
     setStatus('webR failed to load: ' + e.message);
@@ -325,7 +307,7 @@ async function init() {
   }
 }
 
-runBtn.addEventListener('click', renderRmd);
+runBtn.addEventListener('click', run);
 init();
 </script>
 </body>
