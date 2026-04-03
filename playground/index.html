@@ -233,9 +233,9 @@ async function initWebR() {
 
   // `codetools` is a recommended base-R package not bundled with webR but
   // required during code evaluation (used internally by the R evaluator).
-  setLoading('Installing R packages (commonmark, xfun, litedown, codetools)…');
+  setLoading('Installing R packages…');
   await webR.evalRVoid(
-    'webr::install(c("commonmark", "xfun", "litedown", "codetools"), quiet = TRUE)'
+    'webr::install(c("commonmark", "xfun", "litedown", "codetools", "KernSmooth"), quiet = TRUE)'
   );
 
   setLoading('Ready!');
