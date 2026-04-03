@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>litedown Playground</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -25,10 +26,8 @@ header h1 { font-size: 15px; font-weight: 600; }
 }
 #run-btn:hover { background: #3a7bc8; }
 #run-btn:disabled { opacity: .5; cursor: not-allowed; }
-#status { font-size: 12px; color: #666; flex: 1; }
-.container {
-  display: flex; height: calc(100vh - var(--header-h));
-}
+#status { font-size: 12px; color: #666; flex: 1; text-align: right; }
+.container { display: flex; height: calc(100vh - var(--header-h)); }
 .pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .pane-header {
   height: 28px; display: flex; align-items: center; padding: 0 10px;
@@ -36,12 +35,9 @@ header h1 { font-size: 15px; font-weight: 600; }
   font-size: 12px; font-weight: 600; color: #555;
 }
 #editor-pane { border-right: 1px solid var(--border); }
-#editor-wrap { flex: 1; overflow: auto; }
-#editor-wrap .cm-editor { height: 100%; }
-#editor-wrap .cm-scroller { overflow: auto; }
-#preview-frame {
-  flex: 1; border: none; width: 100%; background: #fff;
-}
+#editor-wrap { flex: 1; overflow: hidden; }
+#editor-wrap .CodeMirror { height: 100%; font-size: 13px; }
+#preview-frame { flex: 1; border: none; width: 100%; background: #fff; }
 #loading-overlay {
   position: fixed; inset: 0; background: rgba(255,255,255,.92);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -78,9 +74,20 @@ header h1 { font-size: 15px; font-weight: 600; }
   </div>
   <div class="pane" id="preview-pane">
     <div class="pane-header">HTML Preview</div>
+    <!-- An iframe is the cleanest way to display litedown's standalone HTML output:
+         its own <head> CSS/JS would conflict with the playground page if injected directly. -->
     <iframe id="preview-frame"></iframe>
   </div>
 </div>
+
+<!-- CodeMirror 5 — plain <script> tags from CDN, no ES-module deduplication issues
+     (the problem that plagued CodeMirror 6 when loading its modules from CDN). -->
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/markdown/markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/r/r.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/yaml/yaml.min.js"></script>
+<!-- xml mode is needed by the markdown mode for inline HTML highlighting -->
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/xml/xml.min.js"></script>
 
 <script type="module">
 // ---------------------------------------------------------------------------
@@ -147,28 +154,22 @@ const escapeHtml = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // ---------------------------------------------------------------------------
-// CodeMirror editor (pre-bundled to avoid duplicate @codemirror/state
-// instances that break instanceof checks when loaded from CDN)
+// CodeMirror 5 editor  (global `CodeMirror` injected by the <script> tags above)
 // ---------------------------------------------------------------------------
-let editorView;
 
-async function initEditor() {
-  const { EditorView, EditorState, basicSetup, keymap, markdown } =
-    await import('./cm-bundle.min.js');
+// Register {r} as a MIME alias so fenced ```{r} blocks get R syntax highlighting
+CodeMirror.defineMIME('text/{r}', 'text/x-rsrc');
 
-  const renderKeymap = keymap.of([{
-    key: 'Mod-Shift-Enter',
-    run: () => { renderRmd(); return true; }
-  }]);
-
-  editorView = new EditorView({
-    state: EditorState.create({
-      doc: defaultRmd,
-      extensions: [basicSetup, markdown(), renderKeymap]
-    }),
-    parent: document.getElementById('editor-wrap')
-  });
-}
+const editor = CodeMirror(document.getElementById('editor-wrap'), {
+  value: defaultRmd,
+  mode: { name: 'markdown', fencedCodeBlockHighlighting: true, highlightFormatting: true },
+  lineNumbers: true,
+  lineWrapping: true,
+  extraKeys: {
+    'Ctrl-Shift-Enter': () => renderRmd(),
+    'Cmd-Shift-Enter':  () => renderRmd(),
+  },
+});
 
 // ---------------------------------------------------------------------------
 // webR setup
@@ -182,9 +183,9 @@ async function initWebR() {
   await webR.init();
   shelter = await new webR.Shelter();
 
-  setLoading('Installing R packages (codetools, commonmark, xfun, litedown)…');
+  setLoading('Installing R packages (commonmark, xfun, litedown, codetools)…');
   await webR.evalRVoid(
-    'webr::install(c("codetools", "commonmark", "xfun", "litedown"), quiet = TRUE)'
+    'webr::install(c("commonmark", "xfun", "litedown", "codetools"), quiet = TRUE)'
   );
 
   setLoading('Ready!');
@@ -196,11 +197,10 @@ async function initWebR() {
 // ---------------------------------------------------------------------------
 async function vfsBlobUrl(path, mime) {
   const result = await shelter.captureR(
-    'readBin(path, "raw", file.info(path)$size)',
+    'as.integer(readBin(path, "raw", file.info(path)$size))',
     { env: { path } }
   );
-  const raw = result.result;
-  const bytes = await raw.toTypedArray();
+  const bytes = new Uint8Array(await result.result.toArray());
   const blob = new Blob([bytes], { type: mime || 'application/octet-stream' });
   return URL.createObjectURL(blob);
 }
@@ -222,7 +222,7 @@ const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
 // so the <img> tags work inside the preview iframe.
 // ---------------------------------------------------------------------------
 async function replaceImages(html) {
-  const imgRegex = /<img\s+src="([^"]+)"/g;
+  const imgRegex = /<img\s[^>]*?src=["']([^"']+)["']/g;
   let match;
   const jobs = [];
 
@@ -230,16 +230,18 @@ async function replaceImages(html) {
     const src = match[1];
     // Skip data URIs and absolute http(s) URLs
     if (/^data:|^https?:\/\//i.test(src)) continue;
-    jobs.push({ full: match[0], src });
+    jobs.push({ src });
   }
   if (!jobs.length) return html;
 
   for (const job of jobs) {
     try {
       const ext = job.src.split('.').pop().toLowerCase();
-      const url = await vfsBlobUrl(job.src, mimeMap[ext] || 'image/png');
+      // Resolve relative paths against /tmp/ where the .Rmd file lives
+      const vfsPath = job.src.startsWith('/') ? job.src : '/tmp/' + job.src;
+      const url = await vfsBlobUrl(vfsPath, mimeMap[ext] || 'image/png');
       prevBlobUrls.push(url);
-      html = html.replace(job.full, `<img src="${url}"`);
+      html = html.split(job.src).join(url);
     } catch (e) {
       console.warn('Could not load image from VFS:', job.src, e);
     }
@@ -259,32 +261,37 @@ async function renderRmd() {
   setStatus('Rendering…');
   revokePrevBlobs();
 
-  const rmdText = editorView.state.doc.toString();
+  const rmdText = editor.getValue();
 
   try {
-    // Write the Rmd text to a file in /tmp so fuse() resolves fig paths there
+    // Write Rmd to the webR virtual filesystem
     await shelter.captureR(
       'writeLines(text, con = "/tmp/_playground.Rmd")',
       { env: { text: rmdText } }
     );
 
-    // fuse() knits R code chunks, then calls mark() to produce HTML.
-    // output = NA  →  mark() returns the HTML string instead of writing a file.
-    // We do NOT embed local resources (embed_resources: false is the default
-    // when returning as string); images stay as file paths which we then swap
-    // to Blob URLs in replaceImages().
-    const result = await shelter.captureR(
-      'litedown::fuse("/tmp/_playground.Rmd", output = NA)'
-    );
+    // fuse() knits R code chunks then calls mark() to produce HTML.
+    // output = NA  →  return the HTML string instead of writing a file.
+    // quiet = TRUE  →  suppress the progress bar.
+    // setwd("/tmp") so relative figure paths resolve correctly later.
+    // The result is written to a temp file and read back as a plain string —
+    // most reliable way to extract the full HTML out of the webR session.
+    await shelter.captureR(`
+      setwd("/tmp")
+      .res_ <- litedown::fuse("/tmp/_playground.Rmd", output = NA, quiet = TRUE)
+      writeLines(as.character(.res_), "/tmp/_playground_output.html")
+    `);
 
-    // The printed representation of the raw_string is the HTML
-    let html = result.output.map((m) => m.data).join('\n');
+    const readResult = await shelter.captureR(
+      'paste(readLines("/tmp/_playground_output.html"), collapse = "\\n")'
+    );
+    let html = await readResult.result.toString();
 
     // Replace VFS image paths with browser-accessible Blob URLs
     html = await replaceImages(html);
 
-    // Write to the iframe document directly (not via srcdoc) so that
-    // Blob URLs created in the parent context are accessible.
+    // Write to the iframe.  Using doc.write() (rather than srcdoc) keeps
+    // Blob URLs created in the parent context accessible inside the iframe.
     const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
     doc.open();
     doc.write(html);
@@ -313,16 +320,6 @@ async function renderRmd() {
 // Bootstrap
 // ---------------------------------------------------------------------------
 async function init() {
-  // Initialize editor and webR independently so the editor is usable even if
-  // webR takes a long time or fails to load.
-  try {
-    await initEditor();
-  } catch (e) {
-    setLoading('Failed to load editor: ' + e.message);
-    console.error('Editor init error:', e);
-    return;
-  }
-
   try {
     await initWebR();
     overlay.style.display = 'none';
@@ -331,7 +328,7 @@ async function init() {
   } catch (e) {
     overlay.style.display = 'none';
     setStatus('webR failed to load: ' + e.message);
-    console.error('webR init error:', e);
+    console.error('Init error:', e);
   }
 }
 
