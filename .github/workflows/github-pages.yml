@@ -27,6 +27,10 @@ jobs:
       - uses: yihui/litedown/site@HEAD
         with:
           site-dir: 'site'
+      - name: Add playground to site
+        run: |
+          cp -r playground site/playground
+          cd examples && ls [0-9]*.Rmd | sort > ../site/playground/examples.txt
       - uses: actions/upload-pages-artifact@HEAD
         with:
           path: 'site'
