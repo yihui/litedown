@@ -1,0 +1,49 @@
+---
+title: Hello litedown
+author: Playground User
+date: '`{r} Sys.Date()`'
+---
+
+# Introduction
+
+This is a **litedown** playground powered by [webR](https://docs.r-wasm.org/webr/).
+Edit this R Markdown on the left and click **Run** (or press
+Ctrl/Cmd + Shift + Enter) to see the HTML output on the right.
+
+Learn more at <https://github.com/yihui/litedown>.
+
+## R Code
+
+```{r}
+x = 1:10
+mean(x)
+```
+
+A simple plot:
+
+```{r}
+#| fig.cap = "A scatter plot", dev = "svg"
+par(mar = c(4, 4, 1, .1))
+plot(cars, pch = 19, col = "steelblue")
+```
+
+## Table
+
+See @tab:penguins for the `penguins` dataset.
+
+```{r}
+#| penguins, tab.cap = "First and last 5 rows of the `penguins` dataset."
+penguins
+```
+
+## Math
+
+Inline math: $\alpha + \beta$
+
+Display math:
+
+$$E = mc^2$$
+
+## Summary
+
+You can write any R Markdown supported by litedown here!

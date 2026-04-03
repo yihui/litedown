@@ -34,6 +34,8 @@ runs:
         [ -f "$OLDPWD/NEWS.md" ] || [ -f "$OLDPWD/inst/NEWS.Rd" ] || rm -f news.Rmd
         if [ -d "$OLDPWD/examples" ]; then
           cp -r "$OLDPWD/examples" ./
+          cd examples && (ls [0-9]*.Rmd 2>/dev/null; ls [0-9]*.R 2>/dev/null) > ../playground/examples.txt
+          cd ..
         else
           rm -f examples.Rmd
         fi
