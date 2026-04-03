@@ -6,4 +6,5 @@ Makefile
 ^LICENSE\.md$
 ^docs$
 ^examples$
+^playground$
 ^site$
