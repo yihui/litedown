@@ -182,9 +182,9 @@ async function initWebR() {
   await webR.init();
   shelter = await new webR.Shelter();
 
-  setLoading('Installing R packages (commonmark, xfun, litedown)…');
+  setLoading('Installing R packages (codetools, commonmark, xfun, litedown)…');
   await webR.evalRVoid(
-    'webr::install(c("commonmark", "xfun", "litedown"), quiet = TRUE)'
+    'webr::install(c("codetools", "commonmark", "xfun", "litedown"), quiet = TRUE)'
   );
 
   setLoading('Ready!');
