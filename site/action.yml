@@ -30,7 +30,6 @@ runs:
         mkdir -p "${{ inputs.site-dir }}"
         cd "${{ inputs.site-dir }}"
         [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}"/* ./
-        mv playground .playground
         [ -d "$OLDPWD/vignettes" ] || rm -f articles.Rmd
         [ -f "$OLDPWD/NEWS.md" ] || [ -f "$OLDPWD/inst/NEWS.Rd" ] || rm -f news.Rmd
         if [ -d "$OLDPWD/examples" ]; then
@@ -41,7 +40,6 @@ runs:
         [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
         rm -f ${{ inputs.exclude }}
         Rscript -e "litedown::fuse_site()"
-        mv .playground playground
         [ -d "$OLDPWD/playground" ] && cp -r "$OLDPWD/playground/." playground
         if [ -d "examples" ]; then
           ls examples | grep -E '^[^_]' | grep -E '[.](Rmd|R)$' > playground/examples.txt

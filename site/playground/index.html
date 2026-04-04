@@ -144,10 +144,10 @@ function setEditorMode(mode) {
 modeSelect.addEventListener('change', () => setEditorMode(modeSelect.value));
 
 // ---------------------------------------------------------------------------
-// Default content — fetch default.Rmd or default.R from playground dir
+// Default content — fetch _default.Rmd or _default.R from playground dir
 // ---------------------------------------------------------------------------
 async function loadDefault() {
-  for (const file of ['default.Rmd', 'default.R']) {
+  for (const file of ['_default.Rmd', '_default.R']) {
     try {
       const res = await fetch('./' + file);
       if (!res.ok) continue;
