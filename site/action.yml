@@ -43,5 +43,9 @@ runs:
         Rscript -e "litedown::fuse_site()"
         mv .playground playground
         [ -d "$OLDPWD/playground" ] && cp -r "$OLDPWD/playground/." playground
-        ls examples/*.Rmd examples/*.R 2>/dev/null > playground/examples.txt || true
+        if [ -d "examples" ]; then
+          cd examples
+          ls *.Rmd *.R 2>/dev/null > ../playground/examples.txt || true
+          cd ..
+        fi
         ${{ inputs.cleanup }}

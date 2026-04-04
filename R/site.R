@@ -277,7 +277,7 @@ find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
   if (!is.character(pattern)) pattern = site_pattern
   x = list.files(d, pattern, full.names = TRUE, recursive = deep)
   # exclude .* and _* files/dirs
-  x = x[!grepl('(^|/)[_.]', x)]
+  x = x[!grepl('(^|/)[_.]', gsub('^([.]+/)+', '', x))]
   # exclude readme
   x = x[tolower(basename(sans_ext(x))) != 'readme']
   # for .md files, don't include them if they have .Rmd/.qmd files
