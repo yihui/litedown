@@ -114,16 +114,19 @@ nav_menu = function(info, inputs) {
   if (is.na(info$root)) return('[Home](/index.html)')
   root = sub('/+$', '', info$root)  # strip any trailing slash for reliable dirname() comparison
   b = basename(inputs[dirname(inputs) == root])
-  x = gsub('[-_]', ' ', sans_ext(ifelse(is_index(b), 'home', b)))
   links = sprintf(
-    '[%s](/%s)', tools::toTitleCase(x),
+    '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))),
     if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
   )
   # add subdirs that already have an index.html (same exclusion as find_input)
   sub_dirs = list.dirs(root, recursive = FALSE)
   sub_dirs = sub_dirs[file.exists(file.path(sub_dirs, 'index.html'))]
   dnames = basename(sub_dirs)
-  c(links, sprintf('[%s](/%s/index.html)', tools::toTitleCase(gsub('[-_]', ' ', dnames)), dnames))
+  c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames))
+}
+
+menu_name = function(x) {
+  tools::toTitleCase(gsub('[-_]', ' ', x))
 }
 
 #' Fuse multiple R Markdown documents to a single output file
