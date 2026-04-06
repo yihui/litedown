@@ -206,7 +206,7 @@ async function initWebR() {
   // required during code evaluation (used internally by the R evaluator).
   setLoading('Installing R packages…');
   await webR.evalRVoid(
-    'webr::shim_install(); webr::install(c("commonmark", "xfun", "litedown", "codetools"), quiet = TRUE)'
+    'webr::shim_install(); webr::install(c("commonmark", "xfun", "litedown", "codetools"), repos = c("https://yihui.r-universe.dev", "https://repo.r-wasm.org"), quiet = TRUE)'
   );
 
   // Run setup.R if present in the playground directory
