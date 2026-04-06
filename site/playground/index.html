@@ -218,6 +218,17 @@ async function initWebR() {
     }
   } catch (_) { /* setup.R not present */ }
 
+  // Warm up the fuse() pipeline so the first user-triggered run is snappy.
+  // Both shelter.captureR() and litedown::fuse() on a VFS file have first-call
+  // initialisation overhead that evalRVoid()-based warm-ups do not address.
+  // Mimicking the exact flow of run() (write a file → fuse it) reduces the
+  // first-run slowdown from ~6–10× to ~1×.
+  setLoading('Warming up…');
+  await shelter.captureR('writeLines("", con = "/tmp/.warmup.R")');
+  await shelter.captureR(
+    'setwd("/tmp"); litedown::fuse("/tmp/.warmup.R", output = structure(NA, full = TRUE), quiet = TRUE)'
+  );
+
   setLoading('Ready!');
 }
 
