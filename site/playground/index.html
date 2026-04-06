@@ -226,7 +226,7 @@ async function initWebR() {
   setLoading('Warming up…');
   await shelter.captureR('writeLines("", con = "/tmp/.warmup.R")');
   await shelter.captureR(
-    'setwd("/tmp"); litedown::fuse("/tmp/.warmup.R", output = structure(NA, full = TRUE), quiet = TRUE)'
+    'litedown::fuse("/tmp/.warmup.R", output = NA, quiet = TRUE)'
   );
   await shelter.captureR('unlink("/tmp/.warmup.R")');
 
