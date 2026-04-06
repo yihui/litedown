@@ -249,3 +249,31 @@ want `code.Rmd`, either).
 
 The `cleanup` option allows you to run a command before publishing the site,
 e.g., you can delete the `.Rmd` source and `.yml` config files.
+
+#### Package playground
+
+The site template also includes a `playground/` subpage, which provides an
+interactive R playground powered by [webR](https://r-wasm.org). It installs
+**litedown** and its dependencies in the browser and lets users write and run R
+code or render R Markdown documents without a server or a local R installation
+(yes, it works on your mobile device, too!).
+
+The playground can be customized by adding a `playground/` directory to the
+package root, which the site action copies into `site/playground/`. The
+following files are recognized:
+
+-   `_default.Rmd` (or `_default.R`): the content pre-loaded in the editor when
+    the playground opens. The `.Rmd` version is tried first; if it does not
+    exist, the `.R` version is tried.
+
+-   `setup.R`: an R script executed once in the webR session after packages are
+    installed. It is a good place to install/load the package under
+    documentation[^08-site-2] and define any helpers that users might need.
+
+[^08-site-2]: To install the development version of a package,
+    [r-universe.dev](https://docs.r-universe.dev/install/binaries.html) can be
+    helpful.
+
+If the package has an `examples/` directory, the `.Rmd`/`.R` files under it will
+show up in the "Load example..." dropdown of the playground. Selecting an
+example loads its source into the editor.
