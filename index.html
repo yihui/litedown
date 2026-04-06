@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.9.4">
+<meta name="generator" content="litedown 0.9.5">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/article.min.css">
@@ -15,14 +15,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.44/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.45/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-04-05</h3></div>
+<div class="date"><h3>2026-04-06</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -290,7 +290,11 @@
 <li><a href="#sec:pkg-site"><span class="section-number">8.3</span> R package documentation</a>
 <ul>
 <li><a href="#sec:the-pkg-helper-functions"><span class="section-number">8.3.1</span> The <code>pkg_*()</code> helper functions</a></li>
-<li><a href="#sec:package-sites-via-github-action"><span class="section-number">8.3.2</span> Package sites via GitHub Action</a></li>
+<li><a href="#sec:package-sites-via-github-action"><span class="section-number">8.3.2</span> Package sites via GitHub Action</a>
+<ul>
+<li><a href="#sec:package-playground"><span class="section-number">8.3.2.1</span> Package playground</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -6093,6 +6097,30 @@ include the news, you can specify <code>exclude: 'code.Rmd news.Rmd'</code> (if 
 want <code>code.Rmd</code>, either).</p>
 <p>The <code>cleanup</code> option allows you to run a command before publishing the site,
 e.g., you can delete the <code>.Rmd</code> source and <code>.yml</code> config files.</p>
+<h4 id="sec:package-playground"><span class="section-number">8.3.2.1</span> Package playground</h4>
+<p>The site template also includes a <code>playground/</code> subpage, which provides an
+interactive R playground powered by <a href="https://r-wasm.org">webR</a>. It installs
+<strong>litedown</strong> and its dependencies in the browser and lets users write and run R
+code or render R Markdown documents without a server or a local R installation
+(yes, it works on your mobile device, too!).</p>
+<p>The playground can be customized by adding a <code>playground/</code> directory to the
+package root, which the site action copies into <code>site/playground/</code>. The
+following files are recognized:</p>
+<ul>
+<li>
+<p><code>_default.Rmd</code> (or <code>_default.R</code>): the content pre-loaded in the editor when
+the playground opens. The <code>.Rmd</code> version is tried first; if it does not
+exist, the <code>.R</code> version is tried.</p>
+</li>
+<li>
+<p><code>setup.R</code>: an R script executed once in the webR session after packages are
+installed. It is a good place to install/load the package under
+documentation<sup class="footnote-ref"><a href="#fn-08-site-2" id="fnref-08-site-2" data-footnote-ref>13</a></sup> and define any helpers that users might need.</p>
+</li>
+</ul>
+<p>If the package has an <code>examples/</code> directory, the <code>.Rmd</code>/<code>.R</code> files under it will
+show up in the “Load example…” dropdown of the playground. Selecting an
+example loads its source into the editor.</p>
 <div class="chapter-after side side-right">
 </div>
 </div>
@@ -6147,7 +6175,7 @@ mark('foo.md', output = NA)  # text
 mark('foo.md', output = 'latex')  # text (LaTeX code)
 </code></pre>
 <p>If the input is a file and the <code>output</code> argument takes a file extension (one of
-<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),<sup class="footnote-ref"><a href="#fn-a-misc-1" id="fnref-a-misc-1" data-footnote-ref>13</a></sup>
+<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),<sup class="footnote-ref"><a href="#fn-a-misc-1" id="fnref-a-misc-1" data-footnote-ref>14</a></sup>
 you will get a file output with the same base name as the input file. The <code>.pdf</code>
 extension can also be used if you want to convert Markdown to LaTeX, and then
 render LaTeX to PDF. For example:</p>
@@ -6334,10 +6362,15 @@ someday. <a href="#fnref-06-widgets-2" class="footnote-backref" data-footnote-ba
 <p>Remember that you can cache time-consuming code chunks to make the
 rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="12" aria-label="Back to reference 12">↩</a></p>
 </li>
+<li id="fn-08-site-2">
+<p>To install the development version of a package,
+<a href="https://docs.r-universe.dev/install/binaries.html">r-universe.dev</a> can be
+helpful. <a href="#fnref-08-site-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="13" aria-label="Back to reference 13">↩</a></p>
+</li>
 <li id="fn-a-misc-1">
 <p>Note that the format name <code>commonmark</code> and the extension
 <code>.markdown</code> are for CommonMark output. It should be rare that you need to
-convert Markdown input to CommonMark output, but it is possible anyway. <a href="#fnref-a-misc-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="13" aria-label="Back to reference 13">↩</a></p>
+convert Markdown input to CommonMark output, but it is possible anyway. <a href="#fnref-a-misc-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="14" aria-label="Back to reference 14">↩</a></p>
 </li>
 </ol>
 </section>
@@ -6352,7 +6385,7 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.9.4, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.9.5, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -6372,7 +6405,7 @@ R package version 0.57.3, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.44/dist/katex.min.js,npm/katex@0.16.44/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.16.45/dist/katex.min.js,npm/katex@0.16.45/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.31/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
