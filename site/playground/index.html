@@ -256,7 +256,7 @@ async function run() {
     // fuse() handles both .R and .Rmd inputs.
     // setwd("/tmp") so plot files land there and litedown base64-encodes them.
     const result = await shelter.captureR(
-      'setwd("/tmp"); litedown::fuse(file, output = NA, quiet = TRUE)',
+      'setwd("/tmp"); options(litedown.html.template = TRUE); litedown::fuse(file, output = NA, quiet = TRUE)',
       { env: { file: tmpFile } }
     );
 
