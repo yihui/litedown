@@ -192,7 +192,7 @@ async function initExamples() {
     for (const f of files) {
       const opt = document.createElement('option');
       opt.value = f;
-      opt.textContent = f.replace(/\.(Rmd|R)$/i, '');
+      opt.textContent = f;
       sel.appendChild(opt);
     }
   } catch (_) { /* examples.txt not present */ }
@@ -244,7 +244,7 @@ async function run() {
   const t0 = performance.now();
 
   const mode    = modeSelect.value;             // 'rmd' or 'r'
-  const tmpFile = '/tmp/_playground' + (mode === 'r' ? '.R' : '.Rmd');
+  const tmpFile = '/tmp/' + (sel.value || ('_playground' + (mode === 'r' ? '.R' : '.Rmd')));
 
   try {
     // Write source to the webR virtual filesystem
