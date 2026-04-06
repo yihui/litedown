@@ -228,6 +228,7 @@ async function initWebR() {
   await shelter.captureR(
     'setwd("/tmp"); litedown::fuse("/tmp/.warmup.R", output = structure(NA, full = TRUE), quiet = TRUE)'
   );
+  await shelter.captureR('unlink("/tmp/.warmup.R")');
 
   setLoading('Ready!');
 }
