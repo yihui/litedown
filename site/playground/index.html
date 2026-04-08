@@ -218,18 +218,6 @@ async function initWebR() {
     }
   } catch (_) { /* setup.R not present */ }
 
-  // Warm up the fuse() pipeline so the first user-triggered run is snappy.
-  // Both shelter.captureR() and litedown::fuse() on a VFS file have first-call
-  // initialisation overhead that evalRVoid()-based warm-ups do not address.
-  // Mimicking the exact flow of run() (write a file → fuse it) reduces the
-  // first-run slowdown from ~6–10× to ~1×.
-  setLoading('Warming up…');
-  await shelter.captureR('writeLines("plot(1)", con = "/tmp/.warmup.R")');
-  await shelter.captureR(
-    'litedown::fuse("/tmp/.warmup.R", output = NA, quiet = TRUE)'
-  );
-  await shelter.captureR('unlink("/tmp/.warmup.R")');
-
   setLoading('Ready!');
 }
 
@@ -297,12 +285,14 @@ async function run() {
 // Bootstrap
 // ---------------------------------------------------------------------------
 async function init() {
-  loadDefault();   // fire-and-forget; independent of webR
-  initExamples();  // fire-and-forget; independent of webR
+  await loadDefault();  // must complete before auto-run so editor is populated
+  initExamples();       // fire-and-forget; independent of webR
   try {
     await initWebR();
-    overlay.style.display = 'none';
+    setLoading('Running default example…');
     runBtn.disabled = false;
+    await run();        // auto-run renders the default content and warms up fuse()
+    overlay.style.display = 'none';
     setStatus('Ready — click Run or press Ctrl+Shift+Enter');
   } catch (e) {
     overlay.style.display = 'none';
