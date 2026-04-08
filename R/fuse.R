@@ -592,6 +592,15 @@ fiss = function(input, output = '.R', text = NULL) {
     p_bar(p_clr)
   }
   k = n + 1
+  # ensure a blank line between adjacent block outputs; this is needed when
+  # blocks are consecutive (e.g., R script code chunks with no text block
+  # separating them), because fuse_code() removes the leading blank line from
+  # its output, assuming the preceding text block provides the blank line
+  for (j in seq_len(n - 1)) {
+    if (nchar(res[j]) == 0 || nchar(res[j + 1]) == 0) next
+    if (!endsWith(res[j], '\n') && !startsWith(res[j + 1], '\n'))
+      res[j] = paste0(res[j], '\n')
+  }
   res
 }
 
