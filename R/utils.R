@@ -1393,7 +1393,7 @@ resolve_url = function(url, code, ext, encode = TRUE) {
   } else if (ext == 'js') {
     # the literal sequence '</script>' inside <script> tag needs to be escaped;
     # to avoid problems in general caused by closing tags, we escape them all
-    code = gsub('</', '<\\/', code, fixed = TRUE)
+    code = gsub('</script>', '<\\/script>', code, fixed = TRUE)
   }
   code
 }

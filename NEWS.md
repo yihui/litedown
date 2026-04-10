@@ -6,6 +6,8 @@
 
 - Added a meta variable `lang` for HTML output, which is the language of the document (e.g., `en-US` for US English). This variable is used in the `<html lang="...">` tag of the HTML output file. By default, the language is detected from the system locale, but you can also set it via the `lang` field under `meta` in YAML metadata, e.g., `lang: en-GB` for British English (thanks, @TimTaylor, #121).
 
+- Fixed a bug when embedding JS resources: previously `</` was escaped to `<\/` to avoid `</script>` from being present in the JS source, but the escaping was too general (e.g., `</` may appear in a regex `/</g`). Now we only escape `</script>` to `<\/script>`.
+
 - For `fuse_site()`, the generated site menu now automatically includes landing pages for one-level subdirectories containing `index.html` (e.g., `playground/index.html`), so subdirectory index pages appear in the navigation.
 
 # CHANGES IN litedown VERSION 0.9
