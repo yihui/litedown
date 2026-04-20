@@ -463,7 +463,8 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   # restore and clean up some objects on exit
   opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
-  nested = isTRUE(.env$in_fuse); .env$in_fuse = TRUE
+  nested = isTRUE(.env$in_fuse)
+  .env$in_fuse = TRUE
   if (nested) {
     opts$fig.path = NULL
     opts$cache.path = NULL
