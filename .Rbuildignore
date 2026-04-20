@@ -8,3 +8,5 @@ Makefile
 ^examples$
 ^playground$
 ^site$
+.*\.tar\.gz$
+.*\.Rcheck$
