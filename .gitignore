@@ -9,4 +9,3 @@
 /docs/packages.bib
 *.Rcheck/
 *.tar.gz
-*chunk-*-*.png

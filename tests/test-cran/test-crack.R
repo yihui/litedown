@@ -103,7 +103,7 @@ assert('sieve() splits code by #| comments into separate chunks', {
   (isFALSE(res[[2]]$options$echo))
 })
 
-assert('sieve() handles pure code with no #| or #\' markers', {
+assert("sieve() handles pure code with no #| or #' markers", {
   src = c('x = 1', 'y = 2', 'x + y')
   res = sieve(text=src)
   # splits by expressions

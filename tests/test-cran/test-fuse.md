@@ -4,7 +4,7 @@
 
 ````r
 library(litedown)
-fuse(text=c('```{r}', '1 + 1', '```'), output = 'markdown')
+fuse(text = c('```{r}', '1 + 1', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -19,7 +19,7 @@ fuse(text=c('```{r}', '1 + 1', '```'), output = 'markdown')
 ## Inline code evaluation
 
 ````r
-fuse(text='Value is `{r} 1 + 1`.', output = 'markdown')
+fuse(text = 'Value is `{r} 1 + 1`.', output = 'markdown')
 ````
 ````
 Value is 2.
@@ -28,7 +28,7 @@ Value is 2.
 ## echo = FALSE hides source, shows output
 
 ````r
-fuse(text=c('```{r, echo=FALSE}', '2 * 3', '```'), output = 'markdown')
+fuse(text = c('```{r, echo=FALSE}', '2 * 3', '```'), output = 'markdown')
 ````
 ````
 ```
@@ -39,7 +39,7 @@ fuse(text=c('```{r, echo=FALSE}', '2 * 3', '```'), output = 'markdown')
 ## results = FALSE suppresses output
 
 ````r
-fuse(text=c('```{r, results=FALSE}', '1 + 1', '```'), output = 'markdown')
+fuse(text = c('```{r, results=FALSE}', '1 + 1', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -50,7 +50,7 @@ fuse(text=c('```{r, results=FALSE}', '1 + 1', '```'), output = 'markdown')
 ## include = FALSE produces no output at all
 
 ````r
-fuse(text=c('```{r, include=FALSE}', '1 + 1', '```'), output = 'markdown')
+fuse(text = c('```{r, include=FALSE}', '1 + 1', '```'), output = 'markdown')
 ````
 ````
 
@@ -59,7 +59,7 @@ fuse(text=c('```{r, include=FALSE}', '1 + 1', '```'), output = 'markdown')
 ## comment option prefixes each output line
 
 ````r
-fuse(text=c('```{r, comment="##"}', '1:3', '```'), output = 'markdown')
+fuse(text = c('```{r, comment="##"}', '1:3', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -74,7 +74,7 @@ fuse(text=c('```{r, comment="##"}', '1:3', '```'), output = 'markdown')
 ## comment = "" produces no prefix
 
 ````r
-fuse(text=c('```{r, comment=""}', '1:3', '```'), output = 'markdown')
+fuse(text = c('```{r, comment=""}', '1:3', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -89,7 +89,7 @@ fuse(text=c('```{r, comment=""}', '1:3', '```'), output = 'markdown')
 ## collapse = TRUE merges source and output blocks
 
 ````r
-fuse(text=c('```{r, collapse=TRUE}', '1 + 1', '2 + 2', '```'), output = 'markdown')
+fuse(text = c('```{r, collapse=TRUE}', '1 + 1', '2 + 2', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -103,7 +103,7 @@ fuse(text=c('```{r, collapse=TRUE}', '1 + 1', '2 + 2', '```'), output = 'markdow
 ## results = "asis" output is written verbatim (no code fence)
 
 ````r
-fuse(text=c('#| results="asis"', 'cat("<p>hi</p>\\n")', '#| foo', '1:2'), output = 'markdown')
+fuse(text = c('#| results="asis"', 'cat("<p>hi</p>\\n")', '#| foo', '1:2'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -122,7 +122,7 @@ cat("<p>hi</p>\n")
 ## error = TRUE captures errors instead of stopping
 
 ````r
-fuse(text=c('```{r, error=TRUE}', 'stop("oops")', '```'), output = 'markdown')
+fuse(text = c('```{r, error=TRUE}', 'stop("oops")', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -137,7 +137,7 @@ stop("oops")
 ## warning = TRUE includes warnings in output
 
 ````r
-fuse(text=c('```{r, warning=TRUE}', 'warning("careful!")', '```'), output = 'markdown')
+fuse(text = c('```{r, warning=TRUE}', 'warning("careful!")', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -152,7 +152,7 @@ warning("careful!")
 ## warning = FALSE suppresses warnings
 
 ````r
-fuse(text=c('```{r, warning=FALSE}', 'warning("shh")', '```'), output = 'markdown')
+fuse(text = c('```{r, warning=FALSE}', 'warning("shh")', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -163,7 +163,7 @@ warning("shh")
 ## message = TRUE includes messages in output
 
 ````r
-fuse(text=c('```{r, message=TRUE}', 'message("hey")', '```'), output = 'markdown')
+fuse(text = c('```{r, message=TRUE}', 'message("hey")', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -178,7 +178,7 @@ message("hey")
 ## Multiple chunks with independent results
 
 ````r
-fuse(text=c('```{r}', 'x = 42', '```', '', '```{r}', 'x', '```'), output = 'markdown')
+fuse(text = c('```{r}', 'x = 42', '```', '', '```{r}', 'x', '```'), output = 'markdown')
 ````
 ````
 ``` {.r}
@@ -197,7 +197,7 @@ x
 ## Text-only input passes through unchanged
 
 ````r
-fuse(text='# Title\n\nJust some text.', output = 'markdown')
+fuse(text = '# Title\n\nJust some text.', output = 'markdown')
 ````
 ````
 # Title

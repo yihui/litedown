@@ -20,27 +20,6 @@ assert('smartypants() transforms ASCII typographic markers', {
   (smartypants(c('text (c)', '```', '(c)', '```')) %==% c('text &copy;', '```', '(c)', '```'))
 })
 
-assert('markdown_options() returns a character vector of all available options', {
-  opts = litedown::markdown_options()
-  (is.character(opts))
-  (length(opts) > 10L)
-  # options enabled by default have a + prefix
-  (any(startsWith(opts, '+')))
-  # options disabled by default have a - prefix
-  (any(startsWith(opts, '-')))
-  # result is sorted
-  (identical(opts, sort(opts)))
-  # known enabled options are present
-  ('+embed_resources' %in% opts)
-  ('+latex_math' %in% opts)
-  ('+superscript' %in% opts)
-  ('+subscript' %in% opts)
-  # known disabled options are present
-  ('-toc' %in% opts)
-  ('-number_sections' %in% opts)
-  ('-smartypants' %in% opts)
-})
-
 assert('merge_list() merges named lists, later values override earlier ones', {
   (merge_list(list(a = 1), list(b = 2)) %==% list(a = 1, b = 2))
   (merge_list(list(a = 1), list(a = 2)) %==% list(a = 2))

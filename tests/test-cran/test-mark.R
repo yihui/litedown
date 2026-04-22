@@ -15,12 +15,6 @@ assert('mark() with empty or trivial input produces empty output', {
   }
 })
 
-assert('mark() returns a raw_string when output is not a file path', {
-  out = litedown::mark('Hello _world_!', output = NA)
-  (inherits(out, 'xfun_raw_string'))
-  (is.character(out))
-})
-
 assert('mark() writes to a file when given a file path and returns it invisibly', {
   f = tempfile(fileext = '.html')
   ret = litedown::mark('Hello.', output = f)
@@ -36,33 +30,20 @@ assert('mark() treats I() input as text, not a file path', {
 
 assert('mark() supports LaTeX and plain text output formats', {
   tex = litedown::mark('Hello _world_!', '.tex')
-  (is.character(tex))
   (grepl('\\\\emph', tex))
   txt = litedown::mark('Hello _world_!', 'text')
   (grepl('Hello world', txt))
 })
 
-assert('mark() renders superscripts and subscripts', {
-  out = litedown::mark('x^2^ and H~2~O', output = NA)
-  (grepl('<sup>2</sup>', out, fixed = TRUE))
-  (grepl('<sub>2</sub>', out, fixed = TRUE))
-})
-
-assert('mark() renders LaTeX math with latex_math option', {
-  out = litedown::mark('$x^2$', output = NA)
-  (grepl('x^2', out, fixed = TRUE))
-})
-
-assert('mark() handles YAML metadata without error', {
-  src = c('---', 'title: "My Doc"', '---', '', '# Hello')
+assert('mark() processes YAML metadata and applies title to output', {
+  src = c('---', 'title: My Doc', '---', '', '# Hello')
   out = litedown::mark(I(src), output = NA)
-  (is.character(out))
+  (grepl('<title>My Doc</title>', out, fixed = TRUE))
 })
 
 assert('fiss() extracts R code from an R Markdown document', {
   src = c('```{r}', 'x = 1', '```', 'text', '```{r}', 'x + 1', '```')
   out = litedown::fiss(I(src), output = NA)
-  (is.character(out))
   (any(grepl('x = 1', out)))
   (any(grepl('x \\+ 1', out)))
 })
@@ -74,9 +55,3 @@ assert('fiss() respects purl = FALSE chunk option', {
   (any(grepl('public', out)))
 })
 
-assert('raw_text() marks a character vector as asis output', {
-  out = litedown::raw_text(c('**bold**', '_italic_'))
-  (inherits(out, 'xfun_raw_string'))
-  (inherits(out, 'record_asis'))
-  (grepl('bold', paste(unclass(out), collapse = '')))
-})

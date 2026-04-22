@@ -7,7 +7,7 @@ compared on each test run.
 
 ```r
 library(litedown)
-mark('**bold** and _italic_', output = NA)
+mark('**bold** and _italic_')
 ```
 ```
 <p><strong>bold</strong> and <em>italic</em></p>
@@ -16,7 +16,7 @@ mark('**bold** and _italic_', output = NA)
 ## Headings
 
 ```r
-mark(c('# H1', '', '## H2', '', '### H3'), output = NA)
+mark(c('# H1', '', '## H2', '', '### H3'))
 ```
 ```
 <h1 id="chp:h1">H1</h1>
@@ -27,7 +27,7 @@ mark(c('# H1', '', '## H2', '', '### H3'), output = NA)
 ## Unordered list
 
 ```r
-mark(c('- item a', '- item b', '- item c'), output = NA)
+mark(c('- item a', '- item b', '- item c'))
 ```
 ```
 <ul>
@@ -40,7 +40,7 @@ mark(c('- item a', '- item b', '- item c'), output = NA)
 ## Ordered list
 
 ```r
-mark(c('1. first', '2. second', '3. third'), output = NA)
+mark(c('1. first', '2. second', '3. third'))
 ```
 ```
 <ol>
@@ -53,7 +53,7 @@ mark(c('1. first', '2. second', '3. third'), output = NA)
 ## Fenced code block with language attribute
 
 ```r
-mark(c('```r', '1 + 1', '```'), output = NA)
+mark(c('```r', '1 + 1', '```'))
 ```
 ```
 <pre><code class="language-r">1 + 1
@@ -63,7 +63,7 @@ mark(c('```r', '1 + 1', '```'), output = NA)
 ## Inline code
 
 ```r
-mark('Use `x <- 1` to assign.', output = NA)
+mark('Use `x <- 1` to assign.')
 ```
 ```
 <p>Use <code>x &lt;- 1</code> to assign.</p>
@@ -72,7 +72,7 @@ mark('Use `x <- 1` to assign.', output = NA)
 ## Hyperlink
 
 ```r
-mark('[example](https://example.com)', output = NA)
+mark('[example](https://example.com)')
 ```
 ```
 <p><a href="https://example.com">example</a></p>
@@ -81,7 +81,7 @@ mark('[example](https://example.com)', output = NA)
 ## Blockquote
 
 ```r
-mark('> A wise quote.', output = NA)
+mark('> A wise quote.')
 ```
 ```
 <blockquote>
@@ -92,7 +92,7 @@ mark('> A wise quote.', output = NA)
 ## Horizontal rule
 
 ```r
-mark(c('---'), output = NA)
+mark(c('---'))
 ```
 ```
 <hr />
@@ -101,7 +101,7 @@ mark(c('---'), output = NA)
 ## Table
 
 ```r
-mark(c('| a | b |', '|---|---|', '| 1 | 2 |', '| 3 | 4 |'), output = NA)
+mark(c('| a | b |', '|---|---|', '| 1 | 2 |', '| 3 | 4 |'))
 ```
 ```
 <table>
@@ -127,7 +127,7 @@ mark(c('| a | b |', '|---|---|', '| 1 | 2 |', '| 3 | 4 |'), output = NA)
 ## Superscript and subscript
 
 ```r
-mark('x^2^ and H~2~O', output = NA)
+mark('x^2^ and H~2~O')
 ```
 ```
 <p>x<sup>2</sup> and H<sub>2</sub>O</p>
@@ -136,7 +136,7 @@ mark('x^2^ and H~2~O', output = NA)
 ## Footnote
 
 ```r
-mark(c('text[^1]', '', '[^1]: A footnote.'), output = NA)
+mark(c('text[^1]', '', '[^1]: A footnote.'))
 ```
 ```
 <p>text<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" data-footnote-ref>1</a></sup></p>
@@ -152,7 +152,7 @@ mark(c('text[^1]', '', '[^1]: A footnote.'), output = NA)
 ## Raw HTML block
 
 ```r
-mark(c('```{=html}', '<hr class="special">', '```'), output = NA)
+mark(c('```{=html}', '<hr class="special">', '```'))
 ```
 ```
 <hr class="special">
@@ -179,7 +179,7 @@ Hello world!
 ## Smart quotes (smart option enabled by default)
 
 ```r
-mark('"hello" and \'world\'', output = NA)
+mark('"hello" and \'world\'')
 ```
 ```
 <p>“hello” and ‘world’</p>
