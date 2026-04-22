@@ -463,6 +463,9 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   # restore and clean up some objects on exit
   opts2 = as.list(opts); on.exit(reactor(opts2), add = TRUE)
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
+  # use default fig.path/cache.path instead of inheriting (#127)
+  nested = isTRUE(.env$in_fuse); .env$in_fuse = TRUE
+  if (nested) opts$fig.path = opts$cache.path = NULL
 
   # set working directory if unset
   if (is_file(input) && is.null(opts$wd)) opts$wd = dirname(normalizePath(input))
