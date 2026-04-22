@@ -7,3 +7,6 @@
 /site/doc/
 /site/_footer.md
 /docs/packages.bib
+*.Rcheck/
+*.tar.gz
+*chunk-*-*.png
