@@ -16,20 +16,31 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install R packages
-      shell: bash
-      run: |
-        Rscript -e "install.packages(c('litedown', 'xfun'), repos = setdiff(c('https://yihui.r-universe.dev', 'https://cloud.r-project.org', getOption('repos')), '@CRAN@'))"
-        R CMD build "${{ inputs.pkg-root }}"
-        R CMD INSTALL *_*.tar.gz
-
+    - name: Install R
+      uses: r-lib/actions/setup-r@HEAD
+      with:
+        use-public-rspm: true
+    - name: Install R package dependencies
+      uses: yihui/actions/setup-r-dependencies@HEAD
+      with:
+        extra-packages: litedown xfun .
+        r-universe: yihui
     - name: Build site
       shell: bash
       run: |
         cd "${{ inputs.pkg-root }}"
+        if [ ! -f DESCRIPTION ]; then
+          for i in $(seq 2 10); do
+            result=$(find . -mindepth $i -maxdepth $i -name DESCRIPTION | head -1)
+            if [ -n "$result" ]; then
+              cd "$(dirname "$result")"
+              break
+            fi
+          done
+        fi
         mkdir -p "${{ inputs.site-dir }}"
         cd "${{ inputs.site-dir }}"
-        [ -z "$(ls -A)" ] && cp -r "${{ github.action_path }}"/* ./
+        rsync -a --ignore-existing "${{ github.action_path }}"/ ./
         [ -d "$OLDPWD/vignettes" ] || rm -f articles.Rmd
         [ -f "$OLDPWD/NEWS.md" ] || [ -f "$OLDPWD/inst/NEWS.Rd" ] || rm -f news.Rmd
         if [ -d "$OLDPWD/examples" ]; then
@@ -38,7 +49,7 @@ runs:
           rm -f examples.Rmd
         fi
         [ -f "_footer.Rmd" ] && Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
-        rm -f ${{ inputs.exclude }}
+        rm -rf ${{ inputs.exclude }}
         Rscript -e "litedown::fuse_site()"
         [ -d "$OLDPWD/playground" ] && cp -r "$OLDPWD/playground/." playground
         if [ -d "examples" ]; then

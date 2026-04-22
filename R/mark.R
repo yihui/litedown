@@ -161,6 +161,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       p <<- prose_index(text)
     }
   })
+  # ensure a blank line after an HTML tag if followed by a code block,
+  # otherwise the code block may be considered part of HTML, e.g.,
+  # for <p></p>\n```\n```, the code block after </p> won't be recognized
+  find_prose()
+  if (length(i <- grep('</[a-z0-9]+>\\s*$', text[p]))) {
+    # if the next line is not prose but code block, append \n
+    k = p[!(p[i] + 1) %in% p]
+    if (length(k)) text[k] = paste0(text[k], '\n')
+  }
+
   # superscript and subscript; for now, we allow only characters alnum|*|(|) for
   # script text but can consider changing this rule upon users' request
   r2 = '(?<!`)\\^([[:alnum:]*(),.]+?)\\^(?!`)'
