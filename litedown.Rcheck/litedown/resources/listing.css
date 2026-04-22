@@ -1,0 +1,49 @@
+body {
+  max-width: none;
+}
+.body, ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+h1 {
+  text-align: left;
+  font-size: 1em;
+}
+.box {
+  width: 30em;
+  flex-grow: 1;
+  margin: .5em;
+  & > .name {
+    font-size: 1em;
+    padding: 1px .5em;
+    p {
+      margin: .5em 0;
+    }
+  }
+  .run {
+    float: right;
+  }
+}
+pre > code:not([class]) {
+  border: none;
+  padding: 0 1em 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+pre, pre:hover {
+  white-space: pre;
+}
+ul {
+  width: 100%;
+  padding-left: .5em;
+}
+li {
+  display: inline-block;
+  margin-right: 2em;
+}
+em, pre code {
+  font-size: .8em;
+}
+em:not(:hover), pre code:not(:hover) {
+  opacity: .7;
+}

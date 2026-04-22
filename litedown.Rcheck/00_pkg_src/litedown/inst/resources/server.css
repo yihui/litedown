@@ -1,0 +1,40 @@
+.nav-path {
+  font-size: .8em;
+  width: 100%;
+  order: -1;
+}
+.buttons {
+  float: right;
+  a {
+    margin-left: .5em;
+  }
+}
+.btn-lite {
+  font-style: normal;
+  text-decoration: none;
+  font-size: 1.3em;
+}
+td .pencil {
+  font-size: inherit;
+}
+.auto-numbers span[data-line-number] {
+  cursor: pointer;
+}
+.litedown-dialog {
+  label { display: inline-block; }
+  #filename-input { min-width: 20em; }
+}
+::backdrop {
+  cursor: wait;
+  opacity: .5;
+}
+@media screen {
+  .pagesjs .nav-path {
+    display: block;
+  }
+}
+@media print {
+  .nav-path, .auto-numbers span[data-line-number] {
+    display: none;
+  }
+}

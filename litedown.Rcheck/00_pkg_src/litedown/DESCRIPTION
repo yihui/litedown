@@ -19,15 +19,8 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
     output formats (the primary formats are HTML and 'LaTeX'). Book and website
     projects of multiple input documents are also supported.
 Depends: R (>= 3.2.0)
-Imports:
-    utils,
-    commonmark (>= 2.0.0),
-    xfun (>= 0.55)
-Suggests:
-    rbibutils,
-    rstudioapi,
-    testit,
-    tinytex
+Imports: utils, commonmark (>= 2.0.0), xfun (>= 0.55)
+Suggests: rbibutils, rstudioapi, testit, tinytex
 License: MIT + file LICENSE
 URL: https://github.com/yihui/litedown
 BugReports: https://github.com/yihui/litedown/issues
@@ -35,3 +28,9 @@ VignetteBuilder: litedown
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
+NeedsCompilation: no
+Packaged: 2026-04-22 14:35:27 UTC; runner
+Author: Yihui Xie [aut, cre] (ORCID: <https://orcid.org/0000-0003-0645-5666>,
+    URL: https://yihui.org),
+  Tim Taylor [ctb] (ORCID: <https://orcid.org/0000-0002-8587-7113>)
+Maintainer: Yihui Xie <xie@yihui.name>

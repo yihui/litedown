@@ -1,0 +1,20 @@
+crack                   Parse R Markdown or R scripts
+engines                 Language engines
+fuse                    Render Markdown, R Markdown, and R scripts
+fuse_book               Fuse multiple R Markdown documents to a single
+                        output file
+fuse_env                The 'fuse()' environment
+fuse_site               Fuse R Markdown documents individually under a
+                        directory
+get_context             Get the 'fuse()' context
+html_format             Output formats in YAML metadata
+litedown-package        A lightweight version of R Markdown
+markdown_options        Markdown rendering options
+pkg_desc                Print the package description, news, citation,
+                        manual pages, and source code
+raw_text                Mark a character vector as raw output
+reactor                 Get and set chunk options
+roam                    Preview Markdown and R Markdown files
+timing_data             Get the timing data of code chunks and text
+                        blocks in a document
+vest                    Add CSS/JS assets to HTML output
