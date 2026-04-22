@@ -10,6 +10,8 @@
 
 - For `fuse_site()`, the generated site menu now automatically includes landing pages for one-level subdirectories containing `index.html` (e.g., `playground/index.html`), so subdirectory index pages appear in the navigation.
 
+- Fixed a re-entrancy bug that chunk options `fig.path` and `cache.path` in nested `fuse()` calls caused overridden figure/cache files (thanks, @nanxstats, #127).
+
 # CHANGES IN litedown VERSION 0.9
 
 - Provided [a new chunk option `filter`](https://yihui.org/litedown/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).
