@@ -27,4 +27,4 @@ jobs:
 
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
-          extra-packages: roxygen2
+          extra-packages: roxygen2 .
