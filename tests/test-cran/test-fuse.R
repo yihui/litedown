@@ -51,9 +51,11 @@ assert('fuse() does not let nested fuse() override outer plot files (#127)', {
     paste0('fuse(b, output = "markdown")'),
     '```'
   ), a)
-  fuse(a, output = 'markdown')
+  out = fuse(a, output = 'markdown')
   a_files = paste0(tools::file_path_sans_ext(a), '__files')
   b_files = paste0(tools::file_path_sans_ext(b), '__files')
+  (any(grepl(basename(a_files), out, fixed = TRUE)))
+  (any(grepl(basename(b_files), out, fixed = TRUE)))
   # outer and inner plots must be in separate directories
   (dir.exists(a_files))
   (dir.exists(b_files))
