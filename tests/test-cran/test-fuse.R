@@ -48,7 +48,7 @@ assert('fuse() does not let nested fuse() override outer plot files (#127)', {
   writeLines(c(
     '```{r}', 'plot(1)', '```', '',
     '```{r}',
-    paste0('fuse("', b, '", output = "markdown")'),
+    paste0('fuse(b, output = "markdown")'),
     '```'
   ), a)
   fuse(a, output = 'markdown')
