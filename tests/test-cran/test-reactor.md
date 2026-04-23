@@ -2,10 +2,10 @@
 
 ## get_context('format') returns the output format inside fuse()
 
-```r
+````r
 library(litedown)
 fuse(text = c('```{r}', 'get_context("format")', '```'), output = 'markdown')
-```
+````
 ````
 ``` {.r}
 get_context("format")
@@ -18,15 +18,15 @@ get_context("format")
 
 ## get_context('input') is NULL when fuse() uses text input (no file)
 
-```r
-fuse(text = c('```{r}', 'is.null(get_context("input"))', '```'), output = 'markdown')
-```
+````r
+fuse(text = c('```{r}', 'get_context("input")', '```'), output = 'markdown')
+````
 ````
 ``` {.r}
-is.null(get_context("input"))
+get_context("input")
 ```
 
 ```
-#> [1] TRUE
+#> NULL
 ```
 ````

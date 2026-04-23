@@ -36,6 +36,17 @@ fuse(text = c('```{r, echo=FALSE}', '2 * 3', '```'), output = 'markdown')
 ```
 ````
 
+## eval = FALSE doesn't run code
+
+````r
+fuse(text = c('```{r, eval=FALSE}', 'stop("No")', '```'), output = 'markdown')
+````
+````
+``` {.r}
+stop("No")
+```
+````
+
 ## results = FALSE suppresses output
 
 ````r
