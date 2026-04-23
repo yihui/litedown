@@ -756,7 +756,7 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
   match_replace(x, r, function(y) {
     z = sub(r, s, y, perl = TRUE)
     if (format == 'html') {
-      z = gsub('[\U201c\U201d]', '"', z)
+      z = gsub('[\u201c\u201d]', '"', z)
     } else {
       z = gsub('=``', '="', z, fixed = TRUE)
       z = gsub("''( |\\\\})", '"\\1', z)
