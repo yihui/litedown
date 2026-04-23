@@ -10,7 +10,7 @@
 
 - For `fuse_site()`, the generated site menu now automatically includes landing pages for one-level subdirectories containing `index.html` (e.g., `playground/index.html`), so subdirectory index pages appear in the navigation.
 
-- Fixed a re-entrancy bug that chunk options `fig.path` and `cache.path` in nested `fuse()` calls caused overridden figure/cache files (thanks, @nanxstats, #127). Also fixed an incomplete part of the fix: `fig.path` and `cache.path` are now explicitly restored on exit of nested `fuse()` calls.
+- Fixed a re-entrancy bug that chunk options `fig.path` and `cache.path` in nested `fuse()` calls caused overridden figure/cache files (thanks, @nanxstats, #127).
 
 # CHANGES IN litedown VERSION 0.9
 
