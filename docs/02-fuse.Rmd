@@ -1543,6 +1543,39 @@ You can use the chunk option `results = "hide"` to hide the output, or
 `results = "asis"` to output the file content as is (i.e., not wrapping it in a
 code block).
 
+### The `exec` engine
+
+The `exec` engine can be used to run arbitrary commands via `system2()` and
+capture the output. The chunk option `command` is required to specify the
+command to run, and the chunk body is the code to be executed, e.g.,
+
+```` md
+```{exec, command = 'Rscript'}
+1 + 1
+cat("Hello, world!\n")
+```
+````
+
+The shell engines `sh`, `bash`, `zsh`, and `powershell` are shortcuts based on
+`exec`, using the engine name as the command directly, e.g.,
+
+```` md
+```{bash}
+echo "Hello, world!"
+date
+```
+````
+
+You can pass additional arguments to the command via the `args1` chunk option
+(inserted before the script file path) or `args2` (after it). For example,
+`awk` requires the `-f` flag to read its program from a file:
+
+```` md
+```{exec, command = 'awk', args1 = '-f'}
+BEGIN { print "Hello, world!" }
+```
+````
+
 ## Comparison to **knitr**
 
 Major differences between **knitr** and **litedown** include:

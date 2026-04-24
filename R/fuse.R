@@ -1240,6 +1240,37 @@ eng_js = function(x, inline = FALSE, ...) {
   }
 }
 
+# the exec engine: run arbitrary commands via system2() and capture output
+eng_exec = function(x, inline = FALSE, ...) {
+  opts = reactor()
+  cmd = opts$command %||% opts$engine
+  if (opts$engine == 'exec' && is.null(opts$command))
+    stop("The 'exec' engine requires the chunk option 'command'.")
+  # write code to a temp file; powershell requires .ps1 extension, others need none
+  ext = opts$ext %||% if (cmd == 'powershell') 'ps1' else NULL
+  f = if (is.null(ext)) tempfile() else with_ext(tempfile(), ext)
+  on.exit(unlink(f), add = TRUE)
+  write_utf8(x$source, f)
+  # build args: [args1] + [args (default: file path)] + [args2]
+  # powershell needs -File before the script path
+  default_args = if (cmd == 'powershell') c('-File', f) else f
+  a = c(opts$args1, opts$args %||% default_args, opts$args2)
+  out = tryCatch(
+    system2(cmd, shQuote(a), stdout = TRUE, stderr = TRUE),
+    error = function(e) {
+      if (is.na(opts$error)) stop(e)
+      if (isFALSE(opts$error)) return(character(0))
+      paste('Error in running command', cmd, ':', conditionMessage(e))
+    }
+  )
+  # handle non-zero exit status based on the error chunk option
+  if (!is.null(attr(out, 'status'))) {
+    if (is.na(opts$error)) stop(one_string(out))
+    if (isFALSE(opts$error)) out = character(0)
+  }
+  list(new_source(x$source), new_output(out))
+}
+
 #' Language engines
 #'
 #' Get or set language engines for evaluating code chunks and inline code.
@@ -1264,7 +1295,8 @@ eng_js = function(x, inline = FALSE, ...) {
 engines = new_opts()
 engines(
   r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
-  css = eng_css, js = eng_js
+  css = eng_css, js = eng_js,
+  exec = eng_exec, sh = eng_exec, bash = eng_exec, zsh = eng_exec, powershell = eng_exec
 )
 
 #' @export
