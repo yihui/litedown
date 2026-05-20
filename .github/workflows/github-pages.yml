@@ -27,7 +27,7 @@ jobs:
         with:
           extra-packages: litedown xfun .
           r-universe: yihui
-      - uses: yihui/litedown/site@HEAD
+      - uses: yihui/actions/litedown-site@HEAD
         with:
           site-dir: 'site'
       - uses: actions/upload-pages-artifact@HEAD

@@ -95,6 +95,7 @@ jobs:
       - name: Publish book
         if: runner.os == 'macOS'
         run: |
+          git clone --depth 1 https://github.com/yihui/actions.git ../actions
           Rscript -e 'install.packages("xfun", repos="https://yihui.r-universe.dev")'
           Rscript -e 'litedown::fuse_book("docs")'
           cd docs; cp -r *.html ../gh-pages/; cd ../gh-pages

@@ -1,7 +1,0 @@
----
-title: Source code
----
-
-```{r, echo = FALSE}
-litedown::pkg_code()
-```
