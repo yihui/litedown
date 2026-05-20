@@ -16,15 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install R
-      uses: r-lib/actions/setup-r@HEAD
-      with:
-        use-public-rspm: true
-    - name: Install R package dependencies
-      uses: yihui/actions/setup-r-dependencies@HEAD
-      with:
-        extra-packages: litedown xfun .
-        r-universe: yihui
     - name: Build site
       shell: bash
       run: |
