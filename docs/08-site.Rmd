@@ -190,7 +190,7 @@ under the `with` field. In the above example workflow, we used the option
 `site-dir`. Below are the options currently supported:
 
 ```{r, echo = FALSE, results = 'asis'}
-inputs = xfun::yaml_load(readLines('../actions/litedown-site/action.yml'), use_yaml = FALSE)$inputs
+inputs = xfun::yaml_load(readLines('../../actions/litedown-site/action.yml'), use_yaml = FALSE)$inputs
 cat(sprintf(
   '- `%s`: %s (default: `%s`).', names(inputs),
   unlist(lapply(inputs, `[[`, 'description')),
@@ -208,7 +208,7 @@ template](https://github.com/yihui/actions/tree/main/litedown-site) from the **a
 which contains the following `.Rmd` files (explained in @tab:pkg-site):
 
 ```{r}
-list.files('../actions/litedown-site/', '[.]Rmd$')
+list.files('../../actions/litedown-site/', '[.]Rmd$')
 ```
 
 :::: table
