@@ -37,9 +37,9 @@ div > .caption { padding: 1px 1em; }
 table {
   &:only-child:not(.table > *) { margin: auto; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
-  thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
-  thead th { border-bottom: 1px solid #ddd; }
-  &:not(.datatable-table) {
+  &:not([class]) {
+    thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+    thead th { border-bottom: 1px solid #ddd; }
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
   }
@@ -54,7 +54,7 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
 .frontmatter { text-align: center; }
 #TOC {
   a { text-decoration: none; }
-  ul { list-style: none; padding-left: 1em; }
+  ul { list-style: none; padding-left: 1em; columns: 24em; }
   & > ul { padding: 0; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
