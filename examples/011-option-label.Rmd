@@ -1,0 +1,12 @@
+---
+title: Shared chunk labels
+---
+
+```{r, chunk-a}
+message("This chunk's label is chunk-a")
+```
+
+Repeat `chunk-a` but suppress the message:
+
+```{r, chunk-a, message=FALSE}
+```

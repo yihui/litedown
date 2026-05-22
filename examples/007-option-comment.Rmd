@@ -1,0 +1,15 @@
+---
+title: The `comment` option
+---
+
+Use `#-> ` to comment out text output:
+
+```{r, comment = '#-> ', print = NA}
+matrix(1:12, 3)
+```
+
+Do not comment out text output:
+
+```{r, comment = '', print = NA}
+matrix(1:12, 3)
+```

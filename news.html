@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.9.9">
+<title>News</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/prism-xcode.min.css">
+</head>
+<body>
+<nav><p><a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="examples.html">Examples</a>
+<a href="manual.html">Manual</a>
+<a href="news.html">News</a>
+<a href="book/">Book</a>
+<a href="playground/">Playground</a></p></nav>
+<div class="frontmatter">
+<div class="title"><h1>News</h1></div>
+</div>
+<div class="body">
+<div id="TOC">
+<ul>
+<li><a href="#sec:litedown-0-10">litedown 0.10</a></li>
+<li><a href="#sec:litedown-0-9">litedown 0.9</a></li>
+<li><a href="#sec:litedown-0-8">litedown 0.8</a></li>
+<li><a href="#sec:litedown-0-7">litedown 0.7</a></li>
+<li><a href="#sec:litedown-0-6">litedown 0.6</a></li>
+<li><a href="#sec:litedown-0-5">litedown 0.5</a></li>
+<li><a href="#sec:litedown-0-4">litedown 0.4</a></li>
+<li><a href="#sec:litedown-0-3">litedown 0.3</a></li>
+<li><a href="#sec:litedown-0-2">litedown 0.2</a></li>
+<li><a href="#sec:litedown-0-1">litedown 0.1</a></li>
+</ul>
+</div>
+<h2 id="sec:litedown-0-10" class="unnumbered">litedown 0.10</h2>
+<ul>
+<li>
+<p>When the <code>output</code> argument of <code>mark()</code> is a <code>.pdf</code> file, Markdown will be converted to a full <code>.tex</code> file instead of a LaTeX fragment before it is compiled to PDF.</p>
+</li>
+<li>
+<p>Fixed a bug that sections in the appendix could not be cross-referenced.</p>
+</li>
+<li>
+<p>Added a meta variable <code>lang</code> for HTML output, which is the language of the document (e.g., <code>en-US</code> for US English). This variable is used in the <code>&lt;html lang=&quot;...&quot;&gt;</code> tag of the HTML output file. By default, the language is detected from the system locale, but you can also set it via the <code>lang</code> field under <code>meta</code> in YAML metadata, e.g., <code>lang: en-GB</code> for British English (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/121">#121</a>).</p>
+</li>
+<li>
+<p>Fixed a bug when embedding JS resources: previously <code>&lt;/</code> was escaped to <code>&lt;\/</code> to avoid <code>&lt;/script&gt;</code> from being present in the JS source, but the escaping was too general (e.g., <code>&lt;/</code> may appear in a regex <code>/&lt;/g</code>). Now we only escape <code>&lt;/script&gt;</code> to <code>&lt;\/script&gt;</code>.</p>
+</li>
+<li>
+<p>For <code>fuse_site()</code>, the generated site menu now automatically includes landing pages for one-level subdirectories containing <code>index.html</code> (e.g., <code>playground/index.html</code>), so subdirectory index pages appear in the navigation.</p>
+</li>
+<li>
+<p>Fixed a re-entrancy bug that chunk options <code>fig.path</code> and <code>cache.path</code> in nested <code>fuse()</code> calls caused overridden figure/cache files (thanks, <a href="https://github.com/nanxstats">@nanxstats</a>, <a href="https://github.com/yihui/litedown/issues/127">#127</a>).</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-9" class="unnumbered">litedown 0.9</h2>
+<ul>
+<li>
+<p>Provided <a href="https://yihui.org/litedown/#sec:option-filter">a new chunk option <code>filter</code></a> to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a <code>for</code>-loop can be interleaved (thanks, <a href="https://github.com/reedacartwright">@reedacartwright</a>, <a href="https://github.com/yihui/litedown/issues/106">#106</a>).</p>
+</li>
+<li>
+<p>The chunk option <code>attr.source</code> will default to <code>.lang</code> (where <code>lang</code> is the engine name) only when it is not provided, i.e., <code>NULL</code>. Previously the value <code>.lang</code> would still be used when <code>attr.source</code> has been provided. Now it’s possible to completely override it, e.g., <code>attr.source = 'language-r'</code> as in <a href="https://github.com/yihui/litedown/issues/107">#107</a> (thanks, <a href="https://github.com/ThomasSoeiro">@ThomasSoeiro</a>).</p>
+</li>
+<li>
+<p>The chunk option <code>collapse = TRUE</code> also applies to message blocks, including warnings, messages, and errors (thanks, <a href="https://github.com/ThomasSoeiro">@ThomasSoeiro</a>, <a href="https://github.com/yihui/litedown/issues/108">#108</a>).</p>
+</li>
+<li>
+<p><code>pkg_desc()</code> gained a new argument <code>type</code> and the package description can be generated to either a table or a definition list now.</p>
+</li>
+<li>
+<p>The <code>embed_resources</code> option was buggy for deferred JS resources. Previously they were moved to <code>&lt;head&gt;</code>, but deferred scripts should be executed after the full DOM is ready, so they are moved before <code>&lt;/body&gt;</code> instead if they are to be embedded.</p>
+</li>
+<li>
+<p>Fixed a bug in <code>pkg_manual()</code> that may lead to omission of certain items when building TOC.</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-8" class="unnumbered">litedown 0.8</h2>
+<ul>
+<li>
+<p>Added a new chunk option <code>fig.keep</code> to select plots to be kept in a code chunk (thanks, <a href="https://github.com/Gabrielforest">@Gabrielforest</a>, <a href="https://github.com/yihui/litedown/issues/99">#99</a>). See <a href="https://yihui.org/litedown/#sec:option-fig">https://yihui.org/litedown/#sec:option-fig</a> for documentation.</p>
+</li>
+<li>
+<p>Improved support for LaTeX footnotes. The footnote identifier no longer has to be a number, and the footnote can include arbitrary elements (not necessarily a single paragraph).</p>
+</li>
+<li>
+<p>The chunk option <code>results = 'hide'</code> will imply <code>collapse = TRUE</code>, i.e., when text output is hidden, the source blocks will be merged (thanks, <a href="https://github.com/jangorecki">@jangorecki</a>, <a href="https://github.com/yihui/litedown/issues/87">#87</a>).</p>
+</li>
+<li>
+<p><code>fuse(text = '# text')</code> will be treated as Markdown input instead of R code input (thanks, <a href="https://github.com/chuxinyuan">@chuxinyuan</a>, <a href="https://github.com/yihui/litedown/issues/102">#102</a>).</p>
+</li>
+<li>
+<p>Fixed the bug that the chunk option <code>fig.path</code> does not work when it does not contain <code>/</code> (thanks, <a href="https://github.com/J-Moravec">@J-Moravec</a>, <a href="https://github.com/yihui/litedown/issues/88">#88</a>).</p>
+</li>
+<li>
+<p><code>get_context('full_input')</code> gives the full path to the input file of <code>fuse()</code> (thanks, <a href="https://github.com/rikivillalba">@rikivillalba</a>, <a href="https://github.com/yihui/litedown/issues/104">#104</a>).</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-7" class="unnumbered">litedown 0.7</h2>
+<ul>
+<li>
+<p><code>pkg_manual()</code> will exclude help pages with the keyword <code>internal</code> (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/78">#78</a>).</p>
+</li>
+<li>
+<p><code>pkg_news()</code> will add links to Github users and issue numbers if the package is hosted on Github.</p>
+</li>
+<li>
+<p>Allow <code>,</code> and <code>.</code> in superscripts and subscripts (thanks, <a href="https://github.com/janlisec">@janlisec</a>, <a href="https://github.com/yihui/litedown/issues/81">#81</a>).</p>
+</li>
+<li>
+<p>Special characters in bibliography entries such as <code>{\&quot;u}</code> can be correctly read now (thanks, <a href="https://github.com/bastistician">@bastistician</a>).</p>
+</li>
+<li>
+<p>Fixed a bug that inline code expressions (<code>`{lang} expr`</code>) cannot be correctly located when the line has leading spaces that are not meaningful.</p>
+</li>
+<li>
+<p>Deleted vignettes <code>markdown-examples</code> and <code>markdown-output</code>. They are rendered on the package site now: <a href="https://git.yihui.org/litedown/examples/test-options.html">https://git.yihui.org/litedown/examples/test-options.html</a></p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-6" class="unnumbered">litedown 0.6</h2>
+<ul>
+<li>
+<p>Added a Markdown rendering option <code>offline</code> to download web resources when this option is set to true, so that the HTML output can be viewed offline (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/73">#73</a>). See <a href="https://yihui.org/litedown/#sec:offline">https://yihui.org/litedown/#sec:offline</a> for more info.</p>
+</li>
+<li>
+<p>Added a function <code>get_context()</code> to query the <code>fuse()</code> context such as the input file path or the output format (thanks, <a href="https://github.com/MichaelChirico">@MichaelChirico</a> <a href="https://github.com/yihui/litedown/issues/67">#67</a>, <a href="https://github.com/vincentarelbundock">@vincentarelbundock</a> <a href="https://github.com/yihui/litedown/issues/70">#70</a>).</p>
+</li>
+<li>
+<p>Added a function <code>raw_text()</code> to output raw text content in a code chunk (thanks, <a href="https://github.com/vincentarelbundock">@vincentarelbundock</a>, <a href="https://github.com/yihui/litedown/issues/69">#69</a>).</p>
+</li>
+<li>
+<p>Dropped the chunk option <code>ref.label</code> and added a new chunk option <code>fill</code>, which is more general (<code>ref.label = &quot;LABEL&quot;</code> can be achieved by <code>`&lt;LABEL&gt;`</code> inside a chunk). See <a href="https://yihui.org/litedown/#sec:option-fill">https://yihui.org/litedown/#sec:option-fill</a> for more information.</p>
+</li>
+<li>
+<p>Fixed a bug that <code>fuse()</code> fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, <a href="https://github.com/kevinushey">@kevinushey</a>, <a href="https://github.com/yihui/knitr/issues/2387">yihui/knitr#2387</a>).</p>
+</li>
+<li>
+<p><code>fuse_book()</code> will ignore YAML headers in book chapters except for the index chapter.</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-5" class="unnumbered">litedown 0.5</h2>
+<ul>
+<li>
+<p>Added a wizard in <code>roam()</code> to create new <code>.Rmd</code>/<code>.md</code>/<code>.R</code> files with selected HTML features.</p>
+</li>
+<li>
+<p>Added a new engine <code>embed</code> to embed text files via a code chunk.</p>
+</li>
+<li>
+<p>Changed the meaning of the chunk option <code>order</code>: previously, higher values indicate earlier execution; now higher values indicate later execution. This is a breaking change, but the new meaning should feel more natural. For example, <code>order = i</code> means to execute the chunk in the i-th step, and <code>order = i - 1.5</code> means to move the chunk back 1.5 step in the queue so it will be executed earlier than its previous chunk. See <a href="https://yihui.org/litedown/#sec:option-order">https://yihui.org/litedown/#sec:option-order</a> for details.</p>
+</li>
+<li>
+<p>Shortened the output format names <code>litedown::html_format</code> to <code>html</code>, and <code>litedown::latex_format</code> to <code>latex</code>. The names <code>litedown::*</code> can still be used if you like.</p>
+</li>
+<li>
+<p>Added options <code>dollar</code>, <code>signif</code>, and <code>power</code> to format numbers from inline code. See <a href="https://yihui.org/litedown/#sec:inline-code">https://yihui.org/litedown/#sec:inline-code</a> for details.</p>
+</li>
+<li>
+<p>When embedding SVG images in HTML output, embed their raw XML content instead of base64 encoding them.</p>
+</li>
+<li>
+<p>Empty table headers are removed in HTML output (they may be generated from data frames or matrices without column names).</p>
+</li>
+<li>
+<p>Added support for the chunk option <code>collapse = TRUE</code> (thanks, <a href="https://github.com/J-Moravec">@J-Moravec</a>, <a href="https://github.com/yihui/litedown/issues/40">#40</a>).</p>
+</li>
+<li>
+<p>Added support for the chunk option <code>fig.dim</code>, which is a shortcut for <code>fig.width</code> and <code>fig.height</code>.</p>
+</li>
+<li>
+<p>Added a new function <code>vest()</code> as another way to add CSS/JS assets to HTML output.</p>
+</li>
+<li>
+<p>Provided templates and a Github action <code>yihui/litedown/site</code> to build package websites. See <a href="https://yihui.org/litedown/#sec:pkg-site">https://yihui.org/litedown/#sec:pkg-site</a> for details.</p>
+</li>
+<li>
+<p>Added an argument <code>examples</code> to <code>pkg_manual()</code> to run examples and show their output (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/54">#54</a>).</p>
+</li>
+<li>
+<p>Fixed a bug that the default CSS wouldn’t be added when a math expression exists on the page (thanks, <a href="https://github.com/calvinw">@calvinw</a>, <a href="https://github.com/yihui/litedown/issues/61">#61</a>).</p>
+</li>
+<li>
+<p>Fixed a bug that cross-references to other chapters of a book could not be resolved when previewing a single chapter.</p>
+</li>
+<li>
+<p>Fixed a bug that the file navigation by line numbers on code blocks stopped working in <code>litedown::roam()</code> due to yihui/lite.js@5e06d19.</p>
+</li>
+<li>
+<p>Fixed a bug that <code>R</code> code blocks could not be embedded when using prism.js for syntax highlighting (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/53">#53</a>).</p>
+</li>
+<li>
+<p><code>pkg_manual()</code> will point out the name of the problematic Rd file when the Rd file fails to convert to HTML (thanks, <a href="https://github.com/BSchamberger">@BSchamberger</a>).</p>
+</li>
+<li>
+<p>Dropped <strong>knitr</strong> and <strong>rmarkdown</strong> from the <code>Suggests</code> field in <code>DESCRIPTION</code>. Previously, <strong>litedown</strong> allowed <code>rmarkdown::render()</code> to use the output formats <code>litedown::html_format</code> and <code>litedown::latex_format</code>. Now <code>rmarkdown::render()</code> is no longer supported, and <code>litedown::fuse()</code> must be used instead.</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-4" class="unnumbered">litedown 0.4</h2>
+<ul>
+<li>
+<p>Provided an option <code>options(litedown.roam.cleanup = TRUE)</code> to clean up the <code>*__files/</code> directory after previewing <code>.Rmd</code> or <code>.R</code> files via <code>litedown::roam()</code> (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/36">#36</a>).</p>
+</li>
+<li>
+<p>Added the keyboard shortcut <code>Ctrl + K</code> (or <code>Command + K</code> on macOS) for rendering a file to disk in the <code>litedown::roam()</code> preview.</p>
+</li>
+<li>
+<p>Cross-references also work for LaTeX output now.</p>
+</li>
+<li>
+<p>Fixed an error in the internal function <code>detect_pkg()</code> during <code>R CMD check</code> on CRAN.</p>
+</li>
+<li>
+<p>Set <code>options(bitmapType = 'cairo')</code> on macOS only when <code>xquartz</code> is available. Previously only <code>capabilities('cairo')</code> was checked, which was not enough. This option can also be manually set via <code>options(bitmapType)</code> in a code chunk if the automatic switch to <code>cairo</code> is not desired.</p>
+</li>
+<li>
+<p>Fixed the bug that indented or quoted code blocks are not correctly indented or quoted when a code expression contains multiple lines.</p>
+</li>
+<li>
+<p>Fixed the bug that the span syntax <code>[text](){...}</code> doesn’t work when <code>text</code> contains markup (e.g., bold or italic).</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-3" class="unnumbered">litedown 0.3</h2>
+<ul>
+<li>
+<p>Added a new engine <code>md</code> to output Markdown text both verbatim and as-is, which can be useful for showing Markdown examples, e.g.,</p>
+<pre><code class="language-md">```{md}
+You can see both the _source_ and _output_ of
+this `md` chunk.
+```
+
+You can also use `{md} the engine **inline**`.
+</code></pre>
+</li>
+<li>
+<p>Added a new engine <code>mermaid</code> to generate Mermaid diagrams, e.g.,</p>
+<pre><code class="language-md">```{mermaid, fig.cap='A nice flowchart.'}
+graph TD;
+    A--&gt;B;
+    A--&gt;C;
+    B--&gt;D;
+    C--&gt;D;
+```
+</code></pre>
+</li>
+<li>
+<p>Added helper functions <code>pkg_desc()</code>, <code>pkg_news()</code>, <code>pkg_citation()</code>, <code>pkg_code()</code>, and <code>pkg_manual()</code> to get various package information for building the full package documentation as a single-file book (thanks, <a href="https://github.com/jangorecki">@jangorecki</a> <a href="https://github.com/llrs">@llrs</a> <a href="https://github.com/yihui/litedown/issues/24">#24</a>, <a href="https://github.com/TimTaylor">@TimTaylor</a> <a href="https://github.com/yihui/litedown/issues/22">#22</a>).</p>
+</li>
+<li>
+<p>LaTeX math environments such as equations can be numbered and cross-referenced now (thanks, <a href="https://github.com/hturner">@hturner</a>, <a href="https://github.com/yihui/litedown/issues/32">#32</a>).</p>
+</li>
+<li>
+<p>Section headings containing the class name “unlisted” will be excluded in the table of contents.</p>
+</li>
+<li>
+<p>Provided a way to write <code>&lt;span&gt;</code> with attributes based on empty links, i.e., <code>[text](){.class #id ...}</code>. The empty URL here tells <code>mark()</code> to treat the link as a <code>&lt;span&gt;</code> instead of <code>&lt;a&gt;</code>.</p>
+</li>
+<li>
+<p>Added back/forward/refresh/print buttons to the toolbar in the <code>litedown::roam()</code> preview interface.</p>
+</li>
+<li>
+<p>Changed the behavior of <code>.Rmd</code> and <code>.R</code> file links in the <code>litedown::roam()</code> interface: previously, clicking on an <code>.Rmd</code> or <code>.R</code> filename will execute them; now it will only show their content, because fully executing the code may be expensive or even dangerous (especially when the files were not authored by you). A new “Run” button has been provided in the interface, on which you can click on to run a file in memory and preview it (i.e., the old behavior of clicking on filenames). You should use this button only if you trust the file.</p>
+</li>
+<li>
+<p>Added the JS asset <a href="https://github.com/yihui/lite.js/blob/main/js/mathjax-config.js"><code>@mathjax-config</code></a> to enable equation numbering by default when the JS math library is set to MathJax (thanks, <a href="https://github.com/hturner">@hturner</a>, <a href="https://github.com/yihui/litedown/issues/32">#32</a>).</p>
+</li>
+<li>
+<p>Set <code>options(bitmapType = 'cairo')</code> in <code>fuse()</code> if <code>capabilities('cairo')</code> is TRUE, which will generate smaller bitmap plot files (e.g., <code>.png</code>) than using <code>quartz</code> or <code>Xlib</code>, and is also a safer option for <code>fuse()</code> to be executed in parallel (rstudio/rmarkdown#2561).</p>
+</li>
+<li>
+<p>Added a new vignette engine <code>litedown::book</code> to make it possible to build multiple vignettes into a book. To use this engine, declare <code>\VignetteEngine{litedown::book}</code> only in the book index file (e.g., <code>index.Rmd</code>) but not in other book chapter files.</p>
+</li>
+<li>
+<p>Added support for an array of multiple authors in the YAML metadata (thanks, <a href="https://github.com/AlbertLei">@AlbertLei</a>, <a href="https://github.com/yihui/litedown/issues/28">#28</a>). If the <code>author</code> field in YAML is an array of length &gt; 1, each author will be written to a separate <code>&lt;h2&gt;</code> in HTML output, or concatenated by <code>\and</code> in LaTeX output. Note that you can also write multiple authors in a single string (e.g., <code>author: &quot;Jane X and John Y&quot;</code>) instead of using an array (<code>author: [&quot;Jane X&quot;, &quot;John Y&quot;]</code>), in which case the string will be treated as a single author (they will be put inside a single <code>&lt;h2&gt;</code> in HTML output).</p>
+</li>
+<li>
+<p>Fixed the bug that the leading <code>-</code>, <code>+</code>, or <code>*</code> in a LaTeX math expression was recognized as the bullet list marker, which would invalidate the math expression (thanks, <a href="https://github.com/hturner">@hturner</a>, <a href="https://github.com/yihui/litedown/issues/33">#33</a>).</p>
+</li>
+<li>
+<p>Changed the first <code>-</code> to <code>:</code> in automatically generated element IDs, including section, figure, and table IDs, e.g., the ID <code>sec-intro-methods</code> is changed to <code>sec:intro-methods</code>, and <code>fig-nice-plot</code> is changed to <code>fig:nice-plot</code>. You can still use <code>-</code> when manually assigning IDs to elements, e.g., <code># Intro Methods {#sec-intro-methods}</code>. For backward compatibility, cross-references using <code>-</code> will be resolved if the <code>:</code> version of the ID can be found, e.g., <code>@sec-intro-methods</code> will be resolved to <code>@sec:intro-methods</code> if the former cannot be found but the latter can.</p>
+</li>
+<li>
+<p>Fixed a bug that when LaTeX math environments are written in raw LaTeX blocks (i.e., <code> ```{=latex}</code>), <code>mark()</code> will not load the math JS library such as MathJax or KaTeX unless <code>$ $</code> or <code>$$ $$</code> expressions are present in the document.</p>
+</li>
+<li>
+<p>As-is output accepts attributes via the chunk option <code>attr.asis</code> now. If provided, as-is output will be wrapped in a fenced Div with these attributes.</p>
+</li>
+<li>
+<p>Numeric output from inline code will no longer be formatted if the value is wrapped in <code>I()</code>.</p>
+</li>
+<li>
+<p>The prefix for the automatic IDs of <code>h1</code> headings has been changed from <code>sec:</code> to <code>chp:</code>. For other levels of headings, the prefix is still <code>sec:</code>.</p>
+</li>
+<li>
+<p>Provided a new option <code>embed_cleanup</code> to clean up plot files that have been embedded in HTML output (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/16">#16</a>).</p>
+</li>
+<li>
+<p><code>fuse()</code> supports the output format <code>litedown::markdown_format</code> now, which generates the intermediate Markdown from R Markdown without further rendering Markdown to other formats. Using this output format is equivalent to <code>fuse(..., output = '.md')</code> or <code>fuse(..., output = 'markdown')</code> (thanks, <a href="https://github.com/mikmart">@mikmart</a>, <a href="https://github.com/yihui/litedown/issues/35">#35</a>).</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-2" class="unnumbered">litedown 0.2</h2>
+<ul>
+<li>
+<p>A data frame (or matrix/tibble) wrapped in <code>I()</code> is fully printed to a table now by default. Without <code>I()</code>, data objects are truncated to 10 rows by default when printing to tables.</p>
+</li>
+<li>
+<p>When <code>options(litedown.fig.alt = TRUE)</code> and the chunk option <code>fig.alt</code> is unset, <code>fuse()</code> will emit reminders about the missing alt text for code chunks containing plots (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/23">#23</a>). Providing alt text can improve the accessibility of images in HTML output. To avoid omitting the alt text inadvertently, you can set the option <code>litedown.fig.alt</code> in your <code>.Rprofile</code>.</p>
+</li>
+<li>
+<p>Added the meta variable <code>plain-title</code> for HTML output, which is the plain version of the document title (i.e., without HTML tags), and used in the <code>&lt;title&gt;</code> tag.</p>
+</li>
+<li>
+<p>Check boxes from <code>- [ ] ...</code> are no longer disabled in HTML output.</p>
+</li>
+<li>
+<p>The implicit latest version of jsdelivr resources will be resolved to an explicit version, e.g., <code>https://cdn.jsdelivr.net/npm/@xiee/utils/css/default.css</code> will be resolved to <code>https://cdn.jsdelivr.net/npm/@xiee/utils@X.Y.Z/css/default.css</code>, where <code>X.Y.Z</code> is the current latest version. This will make sure the HTML output containing jsdelivr resources is stable.</p>
+</li>
+</ul>
+<h2 id="sec:litedown-0-1" class="unnumbered">litedown 0.1</h2>
+<ul>
+<li>Initial CRAN release.</li>
+</ul>
+</div>
+<footer><div class="flex-col">
+<p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.9</p>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+</body>
+</html>

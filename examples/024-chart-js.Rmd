@@ -1,0 +1,42 @@
+---
+title: "Chart.js"
+---
+
+Import the [chart.js](https://www.chartjs.org) library:
+
+```{r}
+litedown::vest(js = '@npm/chart.js')
+```
+
+Draw the chart with the `uspop` dataset:
+
+```{js, type = 'module', fill = xfun::tojson}
+const ctx = document.getElementById('uspop-polar');
+new Chart(ctx, {
+  type: 'polarArea',
+  data: {
+    labels: `{ time(uspop) }`,
+    datasets: [{
+      data: `{ uspop }`
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      r: {
+        pointLabels: {
+          display: true,
+          centerPointLabels: true
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
+  }
+});
+```
+
+<canvas id="uspop-polar"></canvas>

@@ -1,0 +1,1605 @@
+# Computing {#chp:fuse}
+
+::: epigraph
+> If you give someone a program, you will frustrate them for a day; if you teach
+> them how to program, you will frustrate them for a lifetime.
+>
+> ---David Leinweber
+:::
+
+In this chapter, we introduce how to manage computing in computational
+documents. The computing may be done in code chunks, inline code expressions,
+script files, and in R or other languages.
+
+## Code chunks
+
+A code chunk is a fenced code block that consists of: 1) the language (or
+engine) name, 2) chunk options that control the behavior of computing and
+output, and 3) the program code. It is of the following form:
+
+```` md
+```{lang}
+#| chunk options
+
+code
+```
+````
+
+Whitespaces are allowed between the opening ```` ``` ```` and `{`. The language
+name should begin with only alphanumeric characters (`a-z`, `A-Z`, `0-9`) and
+underscores (`_`). If any other character is used or there are no curly braces
+in the chunk header, the chunk will be treated as a normal fenced code block in
+Markdown, instead of a code chunk for computing. Below are some examples of
+normal code blocks:
+
+```` md
+```r
+# lack of {} in the header
+```
+
+``` {.r, echo = FALSE}
+# the language name should not start with "."
+```
+````
+
+In this book, we use the term "code block" to refer to *plain Markdown* code
+blocks, and "code chunk" to refer to *executable* code chunks.
+
+### Syntax for chunk options {#sec:option-syntax}
+
+The chunk options can be provided in the chunk header after the language name,
+or in the chunk body as pipe comments (`#|`).
+
+-   Chunk options in the chunk header must be provided in the comma-separated
+    tag-value pairs, except for the chunk label, of which the tag `label` can be
+    omitted.
+
+-   Chunk options in the chunk body must be provided in `#|` comments in the
+    beginning. They can use either the comma-separated or YAML syntax. When
+    using the comma-separated syntax, you can wrap the comments freely.
+
+For the comma-separated syntax, the option value can be provided via arbitrary R
+code as long as it is syntactically valid. The code will be evaluated when the
+value is needed (i.e., the evaluation is lazy).
+
+::: callout-note
+You can write chunk options in both the chunk header and pipe comments, but
+please note that if you provide the same option in both places, the option in
+pipe comments will override the one in the chunk header, e.g.,
+
+```` md
+```{r, echo = TRUE}
+#| echo = FALSE, fig.height = 6
+```
+````
+
+The option `echo` will be `FALSE` for this chunk.
+:::
+
+Below are examples showing different ways to write chunk options:
+
+-   Options in the chunk header (the chunk label is `foo`, which can also be
+    written as `label = "foo"`):
+
+    ```` md
+    ```{r, foo, echo = FALSE, fig.height = 6, fig.cap = "A scatterplot."}
+    plot(cars)
+    ```
+    ````
+
+-   Comma-separated options in pipe comments:
+
+    ```` md
+    ```{r}
+    #| foo, echo = FALSE, fig.height = 6,
+    #| fig.cap = "A scatterplot."
+
+    plot(cars)
+    ```
+    ````
+
+-   YAML options in pipe comments:
+
+    ```` md
+    ```{r}
+    #| label: "foo"
+    #| echo: false
+    #| fig.height: 6
+    #| fig.cap: "A scatterplot."
+
+    plot(cars)
+    ```
+    ````
+
+You can use `#|` for any language, although not all languages use `#` as the
+comment character. If you prefer, you can use language-specific comments and add
+pipes after the comment characters to write chunk options, e.g., `//|` for
+JavaScript. You can find the supported comment characters for different
+languages in `xfun:::comment_chars`. Here are a few of them:
+
+```{r}
+str(xfun:::comment_chars[c('css', 'fortran', 'js', 'r')])
+```
+
+For languages that use opening and closing comment delimiters such as C and CSS,
+you do not need to repeat the comment pipe on every line, e.g.,
+
+```` md
+```{css}
+/*| label = 'foo',
+    echo = FALSE   */
+
+p { color: red; }
+```
+````
+
+In this book, I will write options in the chunk header when they are relatively
+short, and write them in pipe comments when they are too long to fit one line.
+
+See @sec:chunk-options for the full list of possible chunk options.
+
+### The chunk option manager {#sec:reactor}
+
+All chunk options are managed internally via `litedown::reactor()`. To get an
+option value, call `reactor("NAME")`, where `NAME` is the option name (e.g.,
+`fig.width`). To set an option globally for all code chunks, call
+`reactor(NAME = VALUE)`.
+
+::: callout-note
+If an option is set in both `reactor()` and a code chunk (@sec:option-syntax),
+the value in the chunk wins. For example, if you have set
+`litedown::reactor(echo = FALSE)` previously, and `echo = TRUE` in a chunk
+header, the chunk option `echo` will be `TRUE` for this chunk.
+:::
+
+Alternatively, you can manipulate the value returned by `reactor()` directly,
+which is essentially an environment:
+
+``` r
+opts = litedown::reactor()
+opts$fig.width  # get an option
+opts$echo = FALSE  # set an option via assignment
+```
+
+You can call `reactor()` anywhere to get or set chunk options. For example, you
+can call it inside a code chunk. Please note that when you call it to change
+global chunk options *outside* an R Markdown document, we recommend that you
+restore the original options afterwards to limit the scope of the changes,
+otherwise the changes may affect the behavior of other documents unexpectedly.
+To restore options, you need to save the old option values, e.g.,
+
+``` r
+# reactor() returns old values after setting new values
+old_opts = litedown::reactor(echo = FALSE, fig.height = 6)
+
+# fuse a document with new global chunk options
+litedown::fuse("foo.Rmd")
+
+# restore old option values
+litedown::reactor(old_opts)
+```
+
+This is unnecessary if you call `reactor()` inside a document, since global
+chunk options are always restored when `fuse()` finishes compiling the document,
+e.g.,
+
+```` md
+```{r, setup}
+litedown::reactor(echo = FALSE)
+```
+
+```{r}
+# echo = FALSE will be applied to this chunk
+1 + 1
+```
+````
+
+The chunk option `echo` will be restored to `TRUE` after `fuse()` finishes this
+document.
+
+### Skipped code chunks {#sec:skipped-chunks}
+
+Code chunks inside other code blocks are not parsed or evaluated, which provides
+a way to write verbatim code chunks, e.g.,
+
+````` md
+````md
+Some verbatim content.
+
+```{r}
+1 + 1
+```
+````
+`````
+
+Similarly, code in HTML comments (`<!-- -->`) will not be recognized, either,
+e.g.,
+
+```` html
+<!--
+Do not run this chunk:
+
+```{r}
+1 + 1
+```
+
+or the inline code `{r} pi`.
+-->
+````
+
+### Show chunk fences in output
+
+If `N + 1` pairs of curly braces are used in the opening fence, the chunk fences
+(with `N` pairs of curly braces) and chunk options will be shown in the output,
+which can be useful for telling readers the full source of a chunk, e.g.,
+
+::: callout-example
+```` md
+```{{r}}
+#| echo = TRUE, eval = FALSE
+
+1 + 1
+```
+````
+:::
+
+::: callout-output
+```{{r}}
+#| echo = TRUE, eval = FALSE
+
+1 + 1
+```
+:::
+
+## Chunk options {#sec:chunk-options}
+
+All supported chunk options are listed alphabetically below.
+
+### `attr.*`: attributes for output elements {#sec:option-attr}
+
+The `attr.*` options can be used to customize different types of output
+elements, such as source code blocks, messages, and plots, etc. To understand
+these options, you need to learn the Markdown syntax in @sec:attributes and
+@sec:fenced-divs.
+
+@fig:attr-structure illustrates the structure of Markdown output from a code
+chunk (the class names in the figure such as `.chunk` are not names used in the
+actual output but for illustration only).
+
+```{css, echo = FALSE}
+.attr-blocks {
+  margin: 1em auto;
+  max-width: 30em;
+  border-right: 1px solid;
+  pre { margin: 0 2em; }
+  code { padding: .5em; border-left: 1px solid; }
+  .source-block { border-left-color: orangered; }
+  pre:has(.open-fence, .close-fence) {
+    code { border-left-width: 2px; }
+  }
+  pre:has(.open-fence) {
+    margin-top: 1em;
+    &:first-child { margin: 0 0 1em 0; }
+  }
+  pre:has(.close-fence) {
+    margin-bottom: 1em;
+    &:last-child { margin: 1em 0 0; }
+  }
+}
+```
+
+::::: {#fig:attr-structure .figure}
+::: {.attr-blocks .fenced-chunk}
+``` {.md .open-fence .code-fence}
+:::: {.chunk}
+```
+
+``` {.md .open-fence .code-fence .source-block}
+``` {.source}
+```
+
+``` {.r .source-block}
+1:2 + 1:3
+```
+
+```` {.md .close-fence .code-fence .source-block}
+```
+````
+
+``` {.md .open-fence .code-fence}
+``` {.output}
+```
+
+```         
+#> [1] 2 4 4
+```
+
+```` {.md .close-fence .code-fence}
+```
+````
+
+``` {.md .open-fence .code-fence}
+``` {.warning}
+```
+
+``` {.plain .warning}
+#> longer object length is not a multiple of ...
+```
+
+```` {.md .close-fence .code-fence}
+```
+````
+
+``` {.md .open-fence .code-fence .source-block}
+``` {.source}
+```
+
+``` {.r .source-block}
+plot(cars)
+```
+
+```` {.md .close-fence .code-fence .source-block}
+```
+````
+
+``` md
+![alt](*__files/*.png){.plot}
+```
+
+``` {.md .close-fence .code-fence}
+::::
+```
+:::
+
+::: caption
+[ ](#@fig:attr-structure) An illustration of the output structure of a code
+chunk.
+:::
+:::::
+
+The source code, text output, and messages (including warnings and errors) are
+formatted as fenced code blocks. Plots are written in `![]()`. The whole chunk
+can be wrapped in a fenced `Div` (@sec:fenced-divs). The `attr.*` options will
+add attributes to these fenced code blocks, plots, and fenced `Div`s.
+
+-   `attr.asis`: When provided and the chunk option `results = 'asis'`, text
+    output will be wrapped in a fenced `Div` using attributes from this option.
+    By default, this option is empty, and the fenced `Div` is not generated.
+
+-   `attr.chunk`: When provided, the whole chunk will be wrapped in a fenced
+    `Div` with attributes from this option. By default, it is empty.
+
+-   `attr.error`: Attributes for error message blocks. The default is
+    `.plain .error` (i.e., two class names `plain` and `error` will be added to
+    error blocks). The class name `plain` is to avoid syntax highlighting.
+
+-   `attr.message`: Attributes for message blocks generated by `message()`. The
+    default is `.plain .message`.
+
+-   `attr.output`: Attributes for text output blocks. By default, it is empty.
+
+-   `attr.plot`: Attributes for plots. If a code chunk produces multiple plots,
+    you may provide a vector to `attr.plot` so that *i*-th element of the vector
+    is applied to the *i*-th plot. For example, if a code chunk has two plots,
+    you may use `attr.plot = c('width="40%"', 'width="60%"')` to set the width
+    of the first plot to `40%`, and the second plot to `60%`.
+
+-   `attr.source`: Attributes for the source blocks. By default, it uses the
+    language name of the code chunk as the class name. For example, for
+    ```` ```{r} ````, the attribute `.r` will be used.
+
+-   `attr.warning`: Attributes for warning blocks. The default is
+    `.plain .warning`.
+
+Below is an example of using options `attr.chunk`, `attr.source`, and
+`attr.plot`:
+
+`{r} .ex(2)`
+
+Here is an example of creating a callout (@sec:callout) from a code chunk:
+
+`{r} .ex(3)`
+
+### `cache`: speed up the computing {#sec:option-cache}
+
+> There are only two hard things in Computer Science: cache invalidation and
+> naming things.
+>
+> ---Phil Karlton
+
+You can cache the computing of code chunks via the chunk option `cache = TRUE`.
+When a code chunk is cached, the computing will be skipped when the document is
+compiled on the next time if the source code in the chunk has not
+changed[^02-fuse-1] and the external dependencies used by the chunk have not
+changed, either, otherwise the cache will be invalidated and the results will be
+re-computed.
+
+[^02-fuse-1]: Cosmetic changes such as adding/deleting spaces and blank lines or
+    modifying comments do not matter. The code is considered unchanged if it
+    still parses to the same expressions via `parse()`. For example,
+    `parse(text = '1+1')` and `parse(text = '1 + 1')` generate the same result.
+
+The key to understand cache (in)validation is understanding the "external
+dependencies" of a code chunk. A common dependency is *external variables*. For
+example, `x` is an external (or global) variable and `y` is an internal (or
+local) variable in the following chunk:
+
+```` md
+```{r}
+y = x + 1
+```
+````
+
+That is because `y` is defined inside the code chunk, and `x` must come from
+elsewhere, otherwise the code chunk will throw an error ("object `x` not
+found").
+
+When cache is enabled on a code chunk, the global and local variables will be
+automatically inferred from the code. If the value of any global variable has
+changed, the cache will be invalidated. Local variables will be saved in a
+current run, and (lazy-)loaded[^02-fuse-2] in the next run, so they can be
+available to later code chunks in the document.
+
+[^02-fuse-2]: Lazy-loading means that the value of a variable will not be read
+    from the cache until the variable is actually used somewhere. This can save
+    the read time, especially if a large variable is not actually used later in
+    the document.
+
+Another common dependency is external data sources. For example, if the data
+file `foo.csv` has been updated in the following chunk, we may want to
+invalidate the cache and read the file again:
+
+```` md
+```{r, cache = TRUE}
+z = read.csv('foo.csv')
+```
+````
+
+@fig:flow-cache illustrates how the cache system works. The code expression,
+global variables, and other dependencies will be summarized into a hash (a
+character string), which will be used to check if the cache exists. Any change
+in the input of the hash will lead to a change in the hash value, which in turn
+invalidates the old cache and creates new cache.
+
+```{mermaid}
+#| flow-cache, echo = FALSE,
+#| fig.cap = 'The cache (in)validation process.'
+
+flowchart TD
+  A[[Code chunk]]--"parse()"--> B1>Expression]
+  A--"xfun::find_globals()"--> B2>Global variables]
+  A--"cache.extra"--> B3>Other dependencies]
+  B1--"deparse()"--> C((Hash))
+  B2 --> C
+  B3 --> C
+  C--find cache--> D@{ shape: f-circ }
+  D--"No (re-run code)"--> E@{ shape: lin-cyl, label: "New cache" }
+  D--"Yes (skip running)"--> F[(Load cache)]--import--> G@{ shape: bow-rect, label: "Local variables" }
+  E--"export"--> G
+  style C stroke-dasharray:5 5,stroke-width:3px,color:orangered
+  style E fill:lightyellow
+```
+
+Besides the option `cache`, below are other chunk options that allow you to
+customize the cache system:
+
+-   `cache.path`: The path to save the cache. If the path is intended to be a
+    directory path, please add a trailing slash. By default, the path is set to
+    `INPUT__cache/`, where `INPUT` is the input file path to `fuse()`. For
+    example, if you `fuse('foo.Rmd')`, the default cache path will be
+    `foo__cache/`. If the input is not a file, `litedown__cache/` will be used.
+
+    The special value `:memory:` means in-memory caching, meaning that the cache
+    will be stored in memory, which is faster than writing to disk but the cache
+    will be lost once the R session quits.
+
+-   `cache.vars`: Names of local variables. By default, local variables are
+    automatically detected from the expression via `xfun::find_locals()`.
+    Locally created variables are cached along with the full output of the code
+    chunk. They will be re-loaded the next time the code chunk is recompiled,
+    unless the cache is invalidated.
+
+-   `cache.hash`: Names of R variables to be used to determine if cache should
+    be loaded or invalidated. By default, it is the names of global variables
+    automatically detected by `xfun::find_locals()` from the code chunk. You can
+    provide a vector of names to override the automatic detection if you want
+    some specific global variables to affect caching, or if the automatic
+    detection is not reliable.
+
+    Alternatively, you can also pass a list object containing values that should
+    affect caching (i.e., if any of these values change, the cache should be
+    invalidated). Please avoid using too large objects, since hashing them may
+    be slow.
+
+-   `cache.extra`: Additional information to validate the cache. For example, if
+    the code reads an external file `foo.csv`, and you want the cache to be
+    invalidated after the file is modified, you may use
+    `extra = file.mtime("foo.csv")` (i.e., use the file modification time for
+    validation).
+
+-   `cache.keep`: By default, only one copy of the cache is kept, and all other
+    copies are automatically purged.
+
+    -   If `TRUE`, all copies of the cache are kept, which can be useful when
+        you are experimenting with different changes and have not decided the
+        version of the change to use. You can always go back to a certain
+        version, and the cache corresponding to that version still exists.
+
+    -   If `FALSE`, all copies are removed, which means the cache is *always*
+        invalidated, and can be useful to force re-executing the code, after
+        which you can clear this option to resume the default behavior of
+        keeping one copy.
+
+-   `cache.rw`: A list of functions to read/write the cache files. The list is
+    of the form
+    `list(name = 'xxx', load = function(file) {}, save = function(x, file) {})`.
+    This argument can also take a character string to use some built-in
+    read/write methods. currently including:
+
+    -   `rds`: The default, using `readRDS()` and `saveRDS()`.
+
+    -   `raw`: Using `serialize()` and `unserialize()`). Note that the `rds`
+        method generates smaller files because it uses compression, but is often
+        slower than the `raw` method, which does not use compression.
+
+    -   `qs2`: Using `qs2::qs_read()` and `qs2::qs_save()`. It requires the
+        **qs2** package, which can be much faster than the above base R methods
+        and also supports compression.
+
+A special application of the `cache.hash` option is to freeze the computation of
+a code chunk, meaning that the cache will not be affected by any variable, even
+if the chunk uses global variables. To do this, you can set `cache.hash` to any
+non-character constant, e.g., `cache.hash = FALSE`. Since `FALSE` is a constant
+that cannot be changed by any variable, the cache will not be invalidated by
+changes in any variable.
+
+::: callout-caution
+With great power comes great responsibility. Freezing the cache can make it
+faster to compile the document, but you may get outdated and/or inconsistent
+computational results when the old cache should have been invalidated. Please
+make sure you understand what you are doing before freezing the cache.
+:::
+
+### `cap.pos`: caption position {#sec:option-cap-pos}
+
+Possible values are `'top'` and `'bottom'`. By default, figure captions are
+placed below figures, and table captions are placed above tables.
+@tab:tab-bottom shows an example of a table caption at the bottom.
+
+```{{r}}
+#| tab-bottom, cap.pos = 'bottom',
+#| tab.cap = 'A table caption at the bottom via `cap.pos = "bottom"`.'
+head(cars, 4)
+```
+
+You can test different positions for both figures and tables in the following
+example.
+
+`{r} .ex(4)`
+
+### `child`: child documents {#sec:option-child}
+
+The `child` option can take a vector of file paths to other `.Rmd` files, which
+will be compiled and included as the output the current chunk. This offers a way
+to organize a large R Markdown report as smaller child documents.
+
+### `code` and `file`: alternative ways to provide code {#sec:option-code}
+
+While you can write source code directly in a code chunk, there are two more
+ways to provide the code through the chunk options:
+
+-   `code`: A character vector of the source code, e.g.,
+    `code = c('x = 1 + 1', 'x')`.
+
+-   `file`: A vector of file paths to read the code from, e.g.,
+    `file = c('foo.R', 'bar.R')`. If both `file` and `code` options are provided
+    and non-empty, the `code` option will be ignored.
+
+These options will be ignored (with a warning) if the code chunk is not empty.
+They can be used in any code chunks (not necessarily R code chunks).
+
+`{r} c(.ex(5), .ex(5, '.md'))`
+
+### `collapse`: collapse source code and text output {#sec:option-collapse}
+
+When the option `collapse = TRUE` (it is `FALSE` by default), adjacent source
+code blocks and verbatim text output blocks will be merged, which can make the
+output a little more compact, e.g.,
+
+```{{r, collapse = TRUE}}
+x = 1:5
+x
+x + 100
+```
+
+Note that if a source block and an output block are not adjacent to each other,
+they will not be merged, e.g., when there is a plot between the source and text
+output. Message blocks (warnings, messages, and errors) are also treated as text
+blocks, and will be merged if they are next to a source block.
+
+### `comment`: comment out text output {#sec:option-comment}
+
+By default, verbatim text output is commented out with a prefix `#>`. This
+comment prefix can be set via the chunk option `comment`, e.g.,
+
+```{{r, comment = '#~~> ', print = NA}}
+1:9
+matrix(1:9, 3)
+```
+
+If you do not want the comment prefix, you may set `comment = ''`.
+
+```{{r, comment = '', print = NA}}
+matrix(1:9, 3)
+```
+
+The reason to use comments is that readers will be able to copy multiple code
+blocks from the chunk output in one go and directly run the copied text as code
+elsewhere when desired (all text output will be ignored as comments).
+
+### `dev`: graphics device {#sec:option-dev}
+
+For a code chunk to generate graphics output, it will need a graphics device to
+record the plots. The device can be set via the `dev` option. The value can be a
+function (e.g., `svg`), a function name as a string (e.g., `"svg"`), or a string
+that can be evaluated to a function (e.g., `"grDevices::svg"`).
+
+The default device is `cairo_pdf` for LaTeX output, and `png` for other types of
+output (such as HTML).
+
+The plot file path (specified via the chunk option `fig.path`) will be passed to
+the first argument of the device function. The chunk option `dev.args` can be
+used to pass a list of additional arguments to the device, and the default list
+is:
+
+```{r, echo = FALSE, attr.output = '.r', comment = ''}
+dput(xfun:::dev_args)
+```
+
+Note that the default unit for `width` and `height` is inches instead of pixels.
+
+Any argument in `dev.args` that is not available in a device function will be
+ignored. For example, the `png()` device does not have the `onefile` argument,
+so it will not be passed to `png()`, whereas you can use
+`dev.args = list(bg = 'yellow')` to pass a custom `bg` value (yellow background)
+to `png()`. Please read the help page of the device function (e.g., `?png`) to
+learn the possible arguments that you can use.
+
+`{r} .ex(8)`
+
+### `echo`: visibility of source code {#sec:option-echo}
+
+By default, the source code blocks are displayed in the output with the chunk
+option `echo = TRUE`. To suppress source code blocks, you can use
+`echo = FALSE`.
+
+### `error`: error behavior {#sec:option-error}
+
+You can specify how errors in a code chunk should be handled with the `error`
+option. Its possible values are:
+
+-   `NA` (default): No special handling, i.e., if an error occurs, just throw it
+    and halt the process.
+
+-   `TRUE`: Capture errors with `tryCatch()` and show the error messages in the
+    output.
+
+-   `FALSE`: Suppress errors.
+
+If a certain error cannot be captured by `tryCatch()`, the chunk option
+`error = TRUE` or `FALSE` will not work.
+
+Note that in addition to errors in executing the code, syntax errors in the
+source code can also be captured, e.g.,
+
+```{{r, error = TRUE}}
+x = 1 + 2 +
+```
+
+### `eval`: code evaluation {#sec:option-eval}
+
+If you do not want to evaluate a certain code chunk, you can use the chunk
+option `eval = FALSE`, which is `TRUE` by default.
+
+### `fig.*`: figure options {#sec:option-fig}
+
+The `fig.*` options fall into two categories: one for decorating the images in
+the output, and the other for customizing the plot files. Chunk options for
+decoration include:
+
+-   `fig.alt`: The alt text for plots, which will be used in image tags
+    (`<img alt="..." />`) in HTML output. By default, it takes value from the
+    `fig.cap` option, which defaults to `NULL`. You are encouraged to provide
+    the alt text, since it improves the accessibility of images on HTML pages.
+
+-   `fig.cap`: The figure caption. By default, it is empty (`NULL`).
+
+-   `fig.env`: Attributes for the figure environment. By default, it is a class
+    name `.figure`.
+
+::: callout-tip
+To avoid omitting the alt text inadvertently, you can set
+`options(litedown.fig.alt = TRUE)` in your `.Rprofile`. When this option is set
+and the chunk option `fig.alt` is unset, `fuse()` will emit reminders about the
+missing alt text for code chunks containing plots. You can also set this option
+inside a particular R Markdown document to receive reminders only for that
+document.
+:::
+
+When all these options are provided, the Markdown output of figures will be of
+this form:
+
+``` md
+:::: {fig.env}
+![fig.alt](fig.path){attr.plot}
+
+:::
+fig.cap
+:::
+::::
+```
+
+When a code chunk generates multiple plots, the options `fig.alt` and
+`attr.plot` (@sec:option-attr) are vectorized, i.e., they will be recycled to a
+length equal to the number of plots, and each value in the vectors will be
+applied to each plot. For example, for `fig.alt = c('aaa', 'bbb')`, the first
+value will be the alt text for the first plot, and the second value is for the
+second plot.
+
+When `fig.cap` is provided and a chunk generates multiple plots, all plots will
+be moved into the same figure environment at the end of the chunk output. As a
+result, one code chunk can produce at most one figure environment, which may
+contain one or more plots. If you need multiple figure environments, you have to
+write separate code chunks.
+
+`{r} .ex(9)`
+
+Chunk options for plot files include:
+
+-   `fig.ext`: The plot file extension. By default, it will be automatically
+    inferred from the first argument of the graphics device function
+    (@sec:option-dev). For example, the extensions `.png` and `.svg` can be
+    detected from the `png()` and `svg()` devices, respectively:
+
+    ```{r, collapse = TRUE}
+    formals(png)[[1]]
+    formals(svg)[[1]]
+    ```
+
+    You can manually provide the extension via `fig.ext` if the automatic
+    inference fails.
+
+-   `fig.height` and `fig.width`: The physical size of plots to be passed to the
+    graphics device. By default, a plot is 8 x 8 inches with a resolution of
+    84ppi (i.e., 672 x 672 pixels). The chunk option `fig.dim` (figure
+    dimension) can be used as a shorthand to provide `fig.width` and
+    `fig.height` at the same time, e.g., `fig.dim = c(10, 6)` means
+    `fig.width = 10` and `fig.height = 6`. These options can be overridden by
+    the option `dev.args` (@sec:option-dev), e.g.,
+    `dev.args = list(width = 9, height = 7)`.
+
+-   `fig.keep`: Indices of plots to be kept. The indices can be either numeric
+    (positive or negative integers) or logical. Negative integers and false
+    values will remove the corresponding plots. For example, if a code chunk
+    generates 3 plots, `c(1, 3)`, `-2`, and `c(T, F, T)` are equivalent ways for
+    `fig.keep` to remove the second plot. The special value `fig.keep = 'last'`
+    means to keep the last plot only.
+
+-   `fig.path`: A path prefix for plot files. This prefix, joined by the chunk
+    label and the plot number, will be the actual plot file path. For example,
+    for `fig.path = 'figures/'` and a chunk with the label `foo`, the *i*-th
+    plot in the chunk will be `figures/foo-i.ext`, with the extension `.ext`
+    from the chunk option `fig.ext`. The default `fig.path` is the input file
+    path with its extension substituted by `__files/`, e.g., when running
+    `fuse('path/foo.Rmd')`, the `fig.path` will be set to `path/foo__files/` by
+    default.
+
+    If `fig.path` is not a character value or `NULL` (e.g., `fig.path = NA`),
+    plots will not be captured for output.
+
+`{r} .ex(10)`
+
+### `fill`: code interpolation {#sec:option-fill}
+
+The source code in a chunk can be dynamically constructed via interpolation. Two
+types of placeholders are supported, which will be filled out by the character
+strings associated with them if the chunk option `fill = TRUE` (the default):
+
+1.  `` `<label>` ``: embed the source code of another chunk into the current
+    chunk via the label of that chunk.
+
+2.  `` `{code}` ``: run R code to return a string to be inserted into the
+    current code chunk.
+
+Inline chunk references via `` `<label>` `` make it possible to avoid copying
+code from one chunk to another manually. You can compose code freely from other
+chunks. Generating code dynamically via `` `{code}` `` offers even more
+flexibility, since the code does not have to come from other code chunks but can
+be from anything. It is similar to the chunk option `code` (@sec:option-code),
+but the placeholder syntax may make the chunk source more readable in the source
+document.
+
+These placeholders can be used anywhere in a code chunk. For `` `<label>` ``, if
+it is on a line that is indented, and the referred chunk has multiple lines, all
+subsequent lines will be indented by the same amount of white spaces. For
+example, suppose that we have a chunk with the label `chunk-a`:
+
+```` md
+```{r, chunk-a}
+{
+  cat('x is positive')
+}
+```
+````
+
+and we embed it in another chunk (the line is indented by four spaces):
+
+```` md
+```{r, chunk-b}
+f = function(x) {
+    if (x > 0) `<chunk-a>`
+}
+```
+````
+
+The source code of this chunk will be resolved to:
+
+``` r
+f = function(x) {
+    if (x > 0) {
+      cat('x is positive')
+    }
+}
+```
+
+Note that the whole function body above has been indented by four spaces.
+
+Inline chunk references can be recursive. For example, `chunk-a` may embed
+`chunk-b` while `chunk-b` contains more references to other chunks. Of course,
+the recursion must be finite (e.g., a chunk cannot reference itself).
+
+The `` `{code}` `` placeholder can be useful when you want to run or present the
+code differently according to different scenarios. The chunk option `fill` can
+also take a function to convert the value returned by the code.
+
+`{r} c(.ex(15), .ex(15, '.md'))`
+
+In the above example, we are simulating the value of $\pi$, but the number of
+simulations `N` is dynamic. We can generate different copies of code by changing
+the value of `N` (note that `N` can be defined outside the document before you
+run `litedown::fuse()`). For example, if you are an R package developer and you
+have a package vignette that involves time-consuming simulations, you may want
+to reduce the number of simulations during `R CMD check` via:
+
+``` r
+N = if (xfun::is_R_CMD_check()) 10 else 100000
+```
+
+The above example also showed the possibility of passing R data to a JS code
+chunk—we set `fill = xfun::tojson` so that the data frame is converted to JSON
+and embedded into the JS code.
+
+### `filter`: filter output elements {#sec:option-filter}
+
+A code chunk is evaluated via `xfun::record()`, which captures the results in a
+list containing elements such as the source code, text output, plots, and
+messages (see @fig:attr-structure for an illustration). The chunk option
+`filter` can take a function to filter post-process this list. Please make sure
+to read the help page of `xfun::record()` and understand the returned data
+structure before using this option.
+
+With the `filter` option, you can achieve the same effects as chunk options like
+`echo = FALSE` or `message = FALSE`. For example, `echo = FALSE` means to
+exclude the `record_source` elements from the list, which can be achieved with
+the following function:
+
+``` r
+filter = function(res) res[!sapply(res, inherits, 'record_source')]
+```
+
+One potentially useful application is to re-arrange the output elements, e.g.,
+this function
+
+``` r
+filter = function(res) res[c(1, 3, 2)]
+```
+
+will re-order the output elements by swapping the second and third element.
+
+The example below demonstrates a technical limitation of **litedown** (from
+`xfun::record()`) and provides a solution via the `filter` option. That is,
+`xfun::record()` evaluates *top-level* expressions in a code chunk one by one,
+and captures all results after each top-level evaluation. Normally that wouldn't
+be a problem, but if you want to interleave results in a lower-level expression,
+you will run into trouble. In the following example, we want to interleave text
+output and plots inside a `for` loop. Without using the `filter` option, the
+`for` loop will first produce three text output elements, followed by three
+plots. With `filter = 'interleave'`, the output order will be revised so that
+each plot follows one text output.
+
+`{r} c(.ex(25), .ex(25, '.md'))`
+
+Note that although we assigned a character value to `filter`, it will be
+resolved to a function (via `match.fun()`). The string `'interleave'` is
+resolved to the function `litedown:::interleave` (you can also pass the latter
+to `filter`), which finds the first text output element and the first plot
+element in the result list, and inserts the plots evenly into text elements. For
+example, if the original list is of the form
+`[ [text, text, text], [plot, plot, plot] ]`, the filtered list will be
+`[text, plot, text, plot, text, plot]`.
+
+### `include`: visibility of whole code chunk {#sec:option-include}
+
+When you want to hide the full output of a code chunk, you can use the option
+`include = FALSE`, instead of trying to hide elements individually like
+`echo = FALSE` (source), `results = 'hide'` (text output), `message = FALSE`,
+and `warning = FALSE`, etc.
+
+Note that even with `include = FALSE`, the code is still executed, unless you
+also set `eval = FALSE`.
+
+### `label`: chunk label {#sec:option-label}
+
+The chunk label is an identifier of a code chunk. It is used in plot/cache
+filenames and figure/table cross-references. If two code chunks have the same
+label, their plots and cache will overwrite each other, which may lead to
+unexpected output. If one of these chunks does not produce plots/tables or use
+cache, it is fine for them to use the same label.
+
+If two code chunks share the same label, and one of the chunks is empty, the
+empty chunk will copy code from the non-empty one.
+
+`{r} c(.ex(11), .ex(11, '.md'))`
+
+If the label is not provided in a chunk, a label of the form `chunk-i` will be
+assigned to the chunk, where `i` is the chunk number in the document. For
+example, the labels for the following code chunks will be `chunk-a`, `chunk-2`,
+`chunk-js`, and `project-flowchart`:
+
+```` md
+```{r, chunk-a}
+```
+
+```{css}
+```
+
+```{js}
+//| label: chunk-js
+```
+
+```{mermaid, label = 'project-flowchart'}
+```
+````
+
+### `message`: message behavior {#sec:option-message}
+
+The `message` option is similar to the `error` option (@sec:option-error) but is
+for handling `message()`. Possible values are:
+
+-   `NA`: No special handling (messages will be written to the R console by
+    default).
+
+-   `TRUE` (default): Capture messages and show them in the output document.
+
+-   `FALSE`: Suppress messages.
+
+### `order`: order of execution {#sec:option-order}
+
+Code chunks and inline code expressions do not have to be executed sequentially.
+The chunk option `order` can be used to customize the order of execution. It
+takes a numeric value and defaults to the chunk number (e.g., `3` for the 3rd
+chunk), therefore all chunks are executed in the natural linear order by
+default.
+
+A lower `order` value indicates earlier execution of the chunk, and *vice
+versa*. If you want to delay the execution of a chunk, assign a higher `order`
+value to it. If you want to prioritize the execution, you may assign a lower
+value.
+
+It is the order of these values that matters, instead of the specific values.
+For example, if the input contains three chunks in total, order values `1`,
+`1000`, and `888` for these chunks will be equivalent to `1`, `3`, and `2`,
+since the order is calculated via the `order()` function:
+
+```{r, collapse=TRUE}
+order(c(1, 1000, 888))
+order(c(1, 3, 2))  # same order
+```
+
+You may use two variables, `i` (the chunk number) and `N` (the total number of
+chunks), in the `order` value, which can make it easier to specify the relative
+order. For example, if a chunk has `order = i + 1.5`, its next chunk will be
+executed before it, because the order of the next chunk is `i + 1` (unless its
+order has also been changed), which is smaller than `i + 1.5`. Without the
+variable `i`, you would have to figure out the chunk number by yourself and
+assign a fixed value like `8.5` in this case.
+
+If you want an earlier chunk to be executed last, you may use `order = N + 1`.
+Similarly, to execute a later chunk first, you may use `order = 0`.
+
+Note that the `order` option also works for text chunks that contain inline code
+expressions. To specify the order of a text chunk, set the `order` option in any
+inline code expression in the chunk.
+
+In the following example, we execute the first text chunk in the end by setting
+`order = N + 1`, so that the variables `x` and `n_cyl` will be available
+(calculated from later chunks), and we move the last chunk one step earlier via
+`order = i - 1.5`, so the variable `m` will be ready for the text chunk before.
+Without the custom order, this example will either throw errors (objects not
+found) or use wrong values of these variables (from elsewhere in the session).
+
+`{r} c(.ex(12), .ex(12, '.md'))`
+
+You can change the value of `n_cyl` to 4 or 6, re-run the example, and get a new
+report of cars with 4 or 6 cylinders.
+
+### `print`: printing function {#sec:option-print}
+
+In a code chunk, if the value of an expression is visible, it will be printed.
+You may read the help pages `?invisible` and `?withVisible` to learn more about
+the visibility of values.
+
+To print a value, a print function needs to be called. The function can be
+provided via the chunk option `print`, which defaults to the S3 generic function
+`xfun::record_print()`, with the following methods:
+
+```{r, message = FALSE}
+methods(xfun::record_print)
+```
+
+These methods are mainly for generating tables from rectangular data objects,
+such as matrices and data frames.
+
+If a non-function value (such as `NA`) is passed to the `print` option,
+`base::print()` (or `methods::show()` for S4 objects) will be called, which will
+generate text output that you would normally see in the R console. Therefore if
+you wish to avoid printing data objects to tables, you may use the chunk option
+`print = NA`.
+
+The chunk option `print.args` can be used to pass additional arguments to the
+print function. It should be of the form
+`list(class_a = args_a, class_b = args_b, ...)`, where `class_x` is a class
+name, and `args_x` is a list of arguments. If the (first) class name of a
+visible value in a code chunk is `class_x`, `args_x` will be passed to the print
+function.
+
+In the following example, objects are printed through `base::print()` (by
+setting the chunk option `print = NA`). The argument `zero.print = '.'` (see
+`?print.table`) is used for `table` objects, and arguments `quote` /
+`max.levels` (see `?print.factor`) are used for `factor` objects.
+
+`{r} c(.ex(13), .ex(13, '.md', last = -12))`
+
+If you do not want to pass arguments by class names but pass a list of arguments
+to the print function regardless of the object classes, you can wrap the list in
+`I()`. For example, `print.args = I(list(zero.print = '.'))` means that
+`print(..., zero.print = '.')` is called to print *any* objects in the chunk in
+the above example. However, please note that this "universal" argument list may
+not work for all print functions or methods---some arguments may be ignored, and
+some may cause errors if the print function does not have certain arguments. It
+is often better to define `print.args` by class names.
+
+### `purl`: code extraction {#sec:option-purl}
+
+When using `litedown::fiss()` to extract code from a document, all code chunks
+are extracted by default. To skip a code chunk, set `purl = FALSE` for that
+chunk.
+
+`{r} c(.ex(14), .ex(14, '.R'))`
+
+You can see that the `setup` chunk with the option `purl = FALSE` was omitted in
+the R script output (generated by `fiss()`).
+
+### `results`: text output behavior {#sec:option-results}
+
+Text output from code chunks can be shown verbatim, hidden, or just written out
+as is. The behavior is controlled by the option `results`, with possible values:
+
+-   `TRUE` (default): Show text output verbatim (in fenced code blocks).
+
+-   `FALSE` (or `"hide"`): Hide text output.
+
+-   `"asis"`: Write raw text (interpreted as Markdown) to the output.
+
+`{r} c(.ex(16), .ex(16, '.md'))`
+
+### `strip.white`: trim blank lines in code {#sec:option-strip-white}
+
+By default, the leading and trailing blank lines of individual code expressions
+in a code chunk are removed. To keep them, you can use the chunk option
+`strip.white = FALSE`.
+
+`{r} c(.ex(17), .ex(17, '.md'))`
+
+### `tab.*`: table options {#sec:option-tab}
+
+Unless the default `print` option (@sec:option-print) is changed, common
+rectangular data objects are printed to Markdown tables through
+`xfun::record_print()`, and tables are generated by a simple function
+`xfun::md_table()`, which is even much simpler than `knitr::kable()`.
+
+The chunk option `tab.cap` can be used to provide the table caption. The option
+`tab.env` can be used to customize the attributes (@sec:fenced-divs) of the
+table environment, and it defaults to `.table`, i.e., a class name `table`.
+Below is a quick example showing where `tab.cap` and `tab.env` are used in the
+Markdown output:
+
+`{r} c(.ex(18), .ex(18, '.md'))`
+
+The position of the caption can be changed via the chunk option `cap.pos`
+(@sec:option-cap-pos).
+
+To customize the table content, you can pass arguments to `xfun::md_table()` via
+the chunk option `print.args`. Below is an example that limits data frames to at
+most 4 rows and 6 columns:
+
+```{{r}}
+#| print.args = list(data.frame = list(limit = c(4, 6)))
+mtcars
+```
+
+By default, tables are limited to 10 rows. If you want to get rid of this limit,
+you may set `options(xfun.md_table.limit = Inf)` or `limit = Inf` in
+`print.args` or wrap the data object in `I()`.
+
+Please read the help page `?xfun::md_table` to learn the possible arguments, and
+also see @sec:option-print to learn how the chunk option `print.args` works.
+
+### `time`: code timing {#sec:option-time}
+
+When the chunk option `time` is set to `TRUE`, the execution time of the chunk
+will be recorded. You can print out `litedown::timing_data()` at the end of a
+document to check the timing data. The data is sorted by default, so you can
+quickly know which code chunks are slow.
+
+You can time specific code chunks by applying `time = TRUE` to them, or time all
+chunks in the document by setting `litedown::reactor(time = TRUE)` in the first
+code chunk.
+
+### `verbose`: printing verbosity {#sec:option-verbose}
+
+By default, invisible values are not printed (@sec:option-print). However, you
+can use the chunk option `verbose` to change this behavior. Its possible values
+are:
+
+-   `0` (default): Do not print invisible values.
+
+-   `1`: Always print the last value in the code chunk, no matter if it is
+    visible.
+
+-   `2`: Print all invisble values in the code, except for invisible `NULL`
+    (which is often not useful).
+
+Below are examples for different values of `verbose`:
+
+```{{r, test-verbose, collapse = TRUE}}
+1:5
+x = 1 + 1
+y = x^2
+```
+
+```{{r, test-verbose, verbose = 1, collapse = TRUE}}
+```
+
+```{{r, test-verbose, verbose = 2, collapse = TRUE}}
+```
+
+In case you do not know, an assignment (e.g., `x = 1 + 1`) in R returns the
+value being assigned invisibly, so the value will not be printed by default. You
+can set `verbose = 2` to reveal the value. Normally you would have to explicitly
+print the variable or use the `()` trick to make it visible:
+
+``` r
+x = 1 + 1
+x  # print x explicitly
+(x = 1 + 1)  # or the () trick
+```
+
+### `warning`: warning behavior {#sec:option-warning}
+
+The `warning` option is similar to the `error` option (@sec:option-error) but is
+for handling `warning()`. Possible values are:
+
+-   `NA`: No special handling (warnings will be sent to the R console by
+    default).
+
+-   `TRUE` (default): Capture warnings and show them in the output document.
+
+-   `FALSE`: Suppress warnings. Warnings often exist for good reasons. Please
+    make sure the warnings can be safely suppressed before using
+    `warning = FALSE`.
+
+### `wd`: working directory {#sec:option-wd}
+
+The working directory when evaluating code chunks and inline code will be
+temporarily changed to the directory of the input file to `fuse()`. If the input
+is not a file path, the working directory will not be changed.
+
+::: callout-note
+When using relative paths to read/write files in code chunks, these paths are
+relative to the directory of the input file by default. I know some people hate
+this default. It is a matter of thinking inside or outside the (R Markdown) box.
+I tend to think *inside*—everything is relative to the document that I'm working
+inside. It is just a habit (following the conventions of HTML and CSS), not
+necessarily right or wrong.
+:::
+
+You are free to specify any directory as the working directory for the code via
+the chunk option `wd`, e.g., `wd = '../'` (up one level from the directory of
+the input file) or `wd = 'C:/Documents/Project/'`. Please note that using a
+hard-coded absolute directory may affect others if they need to re-run your
+document on their computers, since the absolute directory may not exist there.
+
+If you have to change the working directory to an absolute directory, you may
+consider using functions like `xfun::proj_root()` to dynamically find the
+absolute directory.
+
+## Inline code
+
+### The syntax {#sec:inline-syntax}
+
+The syntax for inline code expressions is `` `{lang} code` ``, where `lang` is
+the language name, e.g., `r`. Spaces are allowed after the opening backtick and
+before the closing backtick. If the `code` happens to contain `N` backticks, you
+will need to use at least `N + 1` backticks outside, e.g.,
+``` ``{r} paste("`", rnorm(1), "`")`` ```. An inline code expression inside
+another piece of inline code is not parsed or evaluated, which provides a way to
+write verbatim inline code expressions, e.g., ``` `` `{lang} code` `` ```.
+
+Comma-separated chunk options can also be provided to inline code expressions
+after the language name, e.g., `` `{r, eval = FALSE} code` ``. Currently, only
+`eval` (@sec:option-eval) and `error` (@sec:option-error) are supported, and
+most other chunk options in @sec:chunk-options are not supported for inline
+code. A few additional options are provided for formatting inline numeric output
+(@sec:numeric-output).
+
+The inline code is expected to return a value of length 1. If it returns an
+object of length greater than 1, all elements in the object will be concatenated
+by line breaks (`\n`) to form a single string.
+
+### Numeric output
+
+If the inline expression returns a single number, the number will be formatted.
+To bypass the formatting, wrap the inline expression in `I()`. We denote the
+number by $x$ for now.
+
+-   First, $x$ will be rounded to $n$ significant digits, where $n$ is
+    controlled by the option `signif` and its default value is `3`.
+
+-   Then $x$ will be formatted using the scientific notation $\pm m\times 10^n$
+    if $|x| \geq 10^p$ or $|x| \leq 10^{-p}$, where $p$ is controlled by the
+    option `power`, which defaults to `6`. If you want to avoid the scientific
+    notation, you can set this option to `Inf`. When $m = 1$, it will be omitted
+    (i.e., the output will be $10^n$ instead of $1 \times 10^n$.
+
+When a number is formatted in the scientific notation, it will be enclosed with
+`$ $` as an inline LaTeX math expression. For example, `` `{r} 1234567` `` will
+be rendered to $`{r} 1234567`$.
+
+Options to control the formatting include:
+
+-   `dollar`: Whether to add `$ $` to numbers in the scientific notation. By
+    default (`dollar = NA`), dollar signs will be added automatically if the
+    inline code expression in the source is not directly enclosed with dollar
+    signs. `TRUE` means to always add dollar signs, and `FALSE` means to never
+    add dollar signs. You will need to use `dollar = FALSE` for numbers in a
+    LaTeX math expression because you should not use `$ $` inside a math
+    expression (see the example below).
+
+-   `power`: The threshold for scientific notation.
+
+-   `signif`: The desired number of significant digits.
+
+`{r} c(.ex(20), .ex(20, '.md'))`
+
+To make it easier to read the numbers in the Markdown table above, we render the
+table to @tab:inline-numbers:
+
+:::: table
+::: caption
+[ ](#@tab:inline-numbers) Inline numbers formatted with different `signif` and
+`power` options.
+:::
+
+```{r, echo = FALSE, results = 'asis'}
+ex20 = .ex(20, '.md', verbatim = FALSE)
+cat(grep('^[|][- ]', ex20, value = TRUE), sep = '\n')
+```
+::::
+
+### Compatibility with knitr
+
+For **knitr** users, please note that the syntax `` `r code` `` is not supported
+by default. You have to wrap the language name `r` in curly braces. As a
+temporary workaround, you may set `options(litedown.enable.knitr_inline = TRUE)`
+in your `.Rprofile` to make **litedown** recognize `` `r code` ``, but we
+recommend that you convert the document via `litedown:::convert_knitr()` instead
+if you decide to stay with **litedown** in the long run.
+
+## R scripts
+
+Besides R Markdown, you can also pass an R script to `fuse()`. You can write
+Markdown content in `#'` comments, and group lines of code into chunks by `#|`
+comments, e.g.,
+
+``` r
+#' ---
+#' title: An R script
+#' output: latex
+#' ---
+#' 
+#' A _paragraph_.
+
+#| eval = FALSE
+1:10
+1 + 1
+
+#| fig.width = 10, dev = 'pdf'
+plot(cars)
+```
+
+Both `#'` and `#|` comments are optional. If no `#'` or `#|` comments are found
+in the script, the whole script will be treated as a single code chunk.
+
+```{mermaid}
+#| flow-sieve, echo = FALSE,
+#| fig.cap = 'An illustration of how scripts are rendered.'
+flowchart TD
+  O@{ shape: lin-doc, label: "Input script" }--"sieve()"--> A@{ shape: f-circ } -.-o B[["#' YAML"]]
+  A -.-o C[["#' Text"]]
+  C ---> H[[Text]]
+  A -.-o D[[Code chunk]]
+  D -.- D1>"#| Chunk options"]
+  D -.- D2>Code]--> G{Results} --> I[[Chunk output]]
+  A -.-o E[[More chunks...]] -.- K>...] --> L{...} --> M[[More output...]] -.-> J
+  H -.-> J@{ shape: doc, label: "Markdown" }
+  I -.-> J
+  B --> R[[YAML]] -.-> J
+  J--"mark()" --> N@{ shape: tag-doc, label: "Output document" }
+  class O,J,N document
+  classDef document stroke-width:3px
+  class G,L fuse-out
+  classDef fuse-out fill:lightyellow
+  class H,I,M,R output
+  classDef output fill:none
+```
+
+## Language engines {#sec:engines}
+
+Currently, the main computing language supported by **litedown** is R. You can
+check all supported languages via:
+
+```{r}
+sort(names(litedown::engines()))
+```
+
+You can get a language engine definition via `litedown::engines('LANG')`, where
+`LANG` is the language name, e.g.,
+
+``` r
+litedown::engines('md')
+```
+
+You can also set a new language engine via:
+
+``` r
+litedown::engines(LANG = function(x, inline = FALSE, ...) {
+
+})
+```
+
+The function's argument `x` is an element in the list returned by
+`litedown::crack()`.
+
+### The Markdown engine
+
+The `md` engine will output Markdown text both verbatim and as-is, which can be
+useful for showing Markdown examples, e.g.,
+
+```` md
+```{md}
+You can see both the _source_ and _output_ of
+this `md` chunk.
+```
+
+You can also use `{md} the engine **inline**`.
+````
+
+### The CSS/JS engines {#sec:engine-css}
+
+You can insert CSS/JS to the output via the `css`/`js` engines, e.g.,
+
+```` md
+```{css}
+a {
+  color: red;
+}
+```
+
+```{js}
+document.body.classList.add('dark');
+```
+````
+
+The `css` engine will output its content in the `<style>` tag. The `js` engine
+will output its content in the `<script>` tag. If the chunk option `type` is
+present, it will be included as an attribute of the `<script>` tag. For example,
+`type = "module"` indicates that the script should be treated as a [JS
+module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules).
+
+By default, the chunk source is also displayed verbatim in the output. In most
+cases, you may want to hide the source via the chunk option `echo = FALSE`
+(@sec:option-echo).
+
+The `css` engine can also accept the chunk option `href` to include a stylesheet
+via the `<link>` tag, e.g.,
+
+```` md
+```{css, href="https://unpkg.com/mvp.css"}
+```
+````
+
+The `js` engine can also include external scripts via the chunk option `src`,
+e.g.,
+
+```` md
+```{js, src="https://cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.js"}
+```
+````
+
+By default, external scripts are
+[deferred](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer)
+(i.e., they will not run until the full document has been parsed). If you want
+to run an external script immediately, you may set the chunk option
+`defer = FALSE`.
+
+### The Mermaid engine
+
+The `mermaid` engine can be used to draw diagrams with
+[mermaid.js](https://mermaid.js.org), e.g.,
+
+```` md
+```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
+flowchart TD
+    A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
+    A --> C[CWEB]
+    D --> F[litedown]
+```
+````
+
+The JS library mermaid.js has to be loaded for the diagrams to be rendered. By
+default, the latest version of mermaid.js will be added to the `js` variable
+(@sec:the-js-variable) in the YAML metadata automatically. If you prefer using a
+specific version, you can add it manually to the YAML metadata, e.g.,
+
+```` md
+---
+title: "A mermaid diagram"
+output:
+  html:
+    meta:
+      js: ["@npm/mermaid@11.3.0/dist/mermaid.min.js"]
+---
+
+```{mermaid}
+
+```
+````
+
+### The embed engine
+
+The `embed` engine can be used to embed text files verbatim in the output. You
+can pass the file paths to the chunk option `file` or write the paths in the
+chunk body (with optional quotes), e.g.,
+
+```` md
+```{embed, file = "foo.txt"}
+```
+
+```{embed}
+"foo.txt"
+```
+````
+
+You can use multiple paths in either case, e.g.,
+
+```` md
+```{embed, file = c("foo.txt", "bar.R")}
+```
+
+```{embed}
+"foo.txt"
+bar.R
+```
+````
+
+The content of the file(s) will be included in a fenced code block in the
+output. For example, if `foo.txt` contains a single line "hello world", the
+output will be:
+
+```` md
+``` {.txt}
+hello world
+```
+````
+
+By default, the language name of the code block is from the file extension. You
+can use the chunk option `attr.output` to customize the name, e.g.,
+
+```` md
+```{embed, file = "foo.txt", attr.output = ".md"}
+```
+````
+
+Then the output will be in a Markdown (`.md`) block:
+
+```` md
+``` {.md}
+hello world
+```
+````
+
+You can use the chunk option `results = "hide"` to hide the output, or
+`results = "asis"` to output the file content as is (i.e., not wrapping it in a
+code block).
+
+## Comparison to **knitr**
+
+Major differences between **knitr** and **litedown** include:
+
+-   **knitr** accepts a variety of input document formats, such as `*.Rnw`,
+    `*.Rhtml`, `*.Rmd`, `*.Rtex`, `*.Rrst`, and `*.Rasciidoc`,[^02-fuse-3]
+    whereas **litedown** only supports Markdown.
+
+-   **knitr** supports multiple graphics devices for a chunk via the `dev`
+    option, and **litedown** only supports one device for a chunk (but there are
+    multiple choices for this device). I hate the
+    [ugly](https://github.com/yihui/knitr/blob/4510c0/R/block.R#L393-L426)
+    [hacks](https://github.com/yihui/knitr/blob/69b063/R/plot.R#L288-L306) in
+    **knitr** for drawing a plot in one device and rendering it with other
+    devices later. This feature is not worth the effort due to the daunting
+    complexity of implementation, not to mention that it doesn't always work. If
+    you need multiple file formats for the same plot in **litedown**, you should
+    start a new chunk with the same code (@sec:option-fill) and a different
+    `dev` option instead.
+
+-   **knitr** may output images in Markdown (`![]()`) or raw HTML (`<img>`) /
+    LaTeX (`\includegraphics{}`), depending on certain chunk options;
+    **litedown** always uses the Markdown syntax for figures, which is cleaner
+    and more portable.
+
+-   The document parser of **knitr** is based solely on regular expressions and
+    not robust. Code chunks and inline expressions are not aware of their
+    contexts. The parser of **litedown** is based on **commonmark**, which is
+    more robust and makes it straightforward to write verbatim code or comment
+    out code (@sec:skipped-chunks).
+
+-   **knitr** supports a large number of chunk options and language engines, and
+    **litedown** only supports a limited number of chunk options and engines
+    (this number may grow in the future but perhaps not significantly).
+
+-   Inline code for **knitr** does not support options or non-R languages, and
+    **litedown** is much more flexible in this regard.
+
+-   All code chunks in **knitr** are executed in the linear order, and
+    **litedown** can execute code in an arbitrary custom order
+    (@sec:option-order).
+
+-   **knitr** supports chunk hooks and output hooks; **litedown** doesn't
+    support hooks but the `attr.*` (@sec:option-attr) and `print`
+    (@sec:option-print) options have provided some flexibility in customizing
+    the chunk output.
+
+-   **knitr** is more than 12 years old and quite mature, and **litedown** is
+    new and still experimental.
+
+[^02-fuse-3]: Perhaps Paul Murrell is the only person in the world who uses the
+    `.Rhtml` format. I wonder if anyone uses any of the rest of formats, except
+    for `.Rnw` and `.Rmd`.
+
+If you feel any indispensable **knitr** features are missing in **litedown**,
+please feel free to suggest them in [Github
+issues](https://github.com/yihui/litedown). However, please remember that the
+goal of **litedown** is not to fully re-implement **rmarkdown**, **knitr** or
+Pandoc. Some features may never be re-implemented, especially when the
+implementation is not simple enough.

@@ -1,0 +1,23 @@
+---
+title: Caption position
+---
+
+## Default caption positions
+
+```{r, fig-bottom, fig.cap = 'Bottom figure caption.'}
+plot(cars)
+```
+
+```{r, tab-top, tab.cap = 'Top table caption.'}
+cars
+```
+
+## Change the positions
+
+```{r, fig-top, fig.cap = 'Top figure caption.', cap.pos = 'top'}
+plot(cars)
+```
+
+```{r, tab-bottom, tab.cap = 'Bottom table caption.', cap.pos = 'bottom'}
+cars
+```

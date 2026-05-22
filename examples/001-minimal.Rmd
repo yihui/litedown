@@ -1,0 +1,11 @@
+---
+title: Area of a circle
+---
+
+Define the radius as `x`:
+
+```{r}
+x = 1 + 1
+```
+
+When the radius is `{r} x`, the area will be `{r} pi * x^2`.

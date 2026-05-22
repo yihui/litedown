@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.9.9">
+<title>The attr.* chunk options</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/code-line-numbers.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/css/prism-xcode.min.css">
+</head>
+<body>
+<nav><p><a href="../index.html">Home</a>
+<a href="../articles.html">Articles</a>
+<a href="../examples.html">Examples</a>
+<a href="../manual.html">Manual</a>
+<a href="../news.html">News</a>
+<a href="../book/">Book</a>
+<a href="../playground/">Playground</a></p></nav>
+<div class="frontmatter">
+<div class="title"><h1>The <code>attr.*</code> chunk options</h1></div>
+</div>
+<div class="body">
+<ol>
+<li>
+<p>Add an ID <code>#example-a</code> to the whole chunk.</p>
+</li>
+<li>
+<p>Add line numbers to source blocks via the <code>.line-numbers</code> class.</p>
+</li>
+<li>
+<p>Add the class <code>.round</code> to the first plot and set its width to 400px.</p>
+</li>
+<li>
+<p>Add two classes <code>.dark</code> and <code>.img-center</code> to the second plot.</p>
+</li>
+</ol>
+<div id="example-a">
+<pre><code class="language-r line-numbers">plot(rnorm(100), rnorm(100))
+</code></pre>
+<p><img src="002-attr-options__files/example-a-1.png" alt="A scatterplot of rnorm(100) numbers." class="round" width="400" /></p>
+<pre><code class="language-r line-numbers">i34 = iris[, 3:4]
+smoothScatter(i34)
+sunflowerplot(i34, add = TRUE)
+</code></pre>
+<p><img src="002-attr-options__files/example-a-2.png" alt="A sunflower plot of iris." class="dark img-center" /></p>
+</div>
+<p>Define CSS rules for the classes in the <code>#example-a</code> chunk:</p>
+<pre><code class="language-css">#example-a {
+  .round { border: solid 1px; border-radius: 50%; }
+  .dark  { filter: invert(1); }
+  .img-center { display: block; margin: auto; }
+}
+</code></pre>
+<style type="text/css">
+#example-a {
+  .round { border: solid 1px; border-radius: 50%; }
+  .dark  { filter: invert(1); }
+  .img-center { display: block; margin: auto; }
+}
+</style>
+</div>
+<footer><div class="flex-col">
+<p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.9</p>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.44/js/code-line-numbers.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+</body>
+</html>

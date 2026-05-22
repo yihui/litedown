@@ -1,0 +1,21 @@
+---
+title: Plot files
+---
+
+The default extension for the `jpeg()` device is `jpeg`, and you can change it to `.jpg` if desired:
+
+```{r, chunk-a, dev = 'jpeg', fig.ext = '.jpg'}
+plot(cars)
+```
+
+Set the plot size via `fig.dim`:
+
+```{r, chunk-b, fig.dim = c(5, 4)}
+plot(cars)
+```
+
+Write plot files to a different folder:
+
+```{r, chunk-c, fig.path = 'figures/'}
+plot(cars)
+```

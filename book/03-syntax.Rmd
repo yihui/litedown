@@ -1,0 +1,751 @@
+# Markdown Syntax {#chp:syntax}
+
+::: epigraph
+> All the tired horses in a run; how’m I gonna get any writing done!
+>
+> ---[Michael
+> Friendly](https://bsky.app/profile/datavisfriendly.bsky.social/post/3lapaume4m22k)
+> (and Bob Dylan)
+:::
+
+A Markdown document consists of a YAML frontmatter providing the document
+metadata, and a Markdown body. The frontmatter is optional, and (if provided)
+should be written using the syntax introduced in @sec:yaml-syntax. The syntax
+for the body is introduced in @sec:markdown-basic and @sec:markdown-addon.
+
+## YAML syntax
+
+YAML stands for "YAML Ain't Markup Language", which aims at being a
+"human-friendly data serialization language". You may judge how "human-friendly"
+it is[^03-syntax-1] by yourself after reading its specifications at
+<https://yaml.org>.
+
+[^03-syntax-1]: At least [it was not quite friendly to
+    Norwegian](https://news.ycombinator.com/item?id=36745212) until YAML 1.2.
+
+What we introduce in this section is a significantly trimmed-down version of
+YAML. Its official name is "TRACY", a recursive acronym for "TRACY Really Ain't
+Complete YAML" and also in honor of [Tracy
+Teal](https://en.wikipedia.org/wiki/Tracy_Teal) since she was once a nice boss
+of mine. However, to follow the naming convention of `*ML`, we use the name
+"TAML" (with apologies for the further recursion) when the audience has some
+software background.
+
+The following example shows all types of data that TAML supports:
+
+``` yaml
+a: 1
+b: "string"
+c: true
+d: null
+# e is also null
+e:
+# an expression
+f: !expr 1 + 1
+# vectors
+g: [1, 2, 3]
+h: ["foo", "bar"]
+# a nested list
+i:
+  i1: -1e8
+  i2: "another string"
+  i3:
+    i31: [true, false, true]
+any_character.is-okay: string not quoted
+```
+
+The TAML specifications are:
+
+1.  Each line should be of the form `field: value`. The `field` name can use any
+    character (except a leading `#` or a colon followed by a space). The `value`
+    cannot span across multiple lines. A line starting with `#` is treated as a
+    comment. Any line not of the form `field: value` is ignored.
+
+2.  Values must be character, numeric, logical, expressions, null, or vectors.
+
+    -   Character strings are quoted in either single or double quotes. Quotes
+        are optional when the values cannot be interpreted as other types of
+        values (e.g., numeric or logical).
+
+    -   Numeric values must consist of numbers (0-9), `+`, `-`, and `e`, and can
+        be converted to numbers.
+
+    -   Logical values must be either `true` or `false`. No other values are
+        recognized, such as `yes`, `YES`, `no`, `NO`,[^03-syntax-2] `on`, `off`,
+        `TRUE`, `FALSE`, `T`, `F`, `to be`, or `not to be` .
+
+    -   Expressions start with `!expr` followed by R code.
+
+    -   Null values can be either literally `null` or empty.
+
+    -   A vector consists of comma-separated character/numeric/logical values in
+        `[ ]`.
+
+3.  If `value` is empty, and the next line is of the form `field: value`
+    indented by $n$ white spaces ($n \geq 1$),[^03-syntax-3] the next line will
+    be treated as a child member of the current line. One field can have
+    multiple children indented to the same level, and each child can have its
+    children (further indented by $n$ spaces).
+
+[^03-syntax-2]: TAML is a good friend of Norwegian.
+
+[^03-syntax-3]: Most people may want to use 2 or 4 spaces. Avoid 8, because that
+    has been reserved for a VIP in the R club, [Roger
+    Peng](https://simplystatistics.org/posts/2018-07-27-why-i-indent-my-code-8-spaces/).
+    You may also choose to use tabs. If you *really* want to, you can mix tabs
+    with spaces (then $n$ is the total number of them). If people tell you that
+    you are crazy by mixing up things, don't listen and never follow. TAML is
+    human-friendly and respects the space right of all human beings. Guess what
+    happens if you indent one line by 2 spaces and the next line by 3 spaces
+    when you meant to use 4 spaces?
+
+TAML is implemented in `xfun::taml_load()` and used by **litedown**. See
+@sec:yaml-metadata for all possible fields supported in **litedown**.
+
+## Basic Markdown {#sec:markdown-basic}
+
+If you cannot learn the basic Markdown in this section (i.e.,
+@sec:markdown-basic) in a few minutes, please feel free to file [a GitHub
+issue](https://github.com/yihui/litedown/issues) and I will send you a
+sponsorship of \$20 on GitHub.
+
+### Inline elements
+
+You can write these elements inline: `**strong**`, `_emphasis_`, `` `code` ``,
+`~~strikethrough~~`, `[text](link)`, and `![alt](image/path)`.
+
+::: callout-note
+For links and images, their URLs [should not contain
+spaces](https://spec.commonmark.org/current/#link-destination). If they do, the
+URLs must be enclosed in `<>`, e.g., `![alt](<some dir/a subdir/foo.png>).`
+:::
+
+The rest of elements in this section are block-level elements.
+
+### Headings
+
+Headings start with a number of `#`'s, e.g., `## level-two heading`.
+
+You are recommended to use `##` (level-two) as the top heading level in a
+document, except for books, in which case each document is a chapter and you
+should use `#` (level-one) as the top level.
+
+### Paragraphs
+
+Paragraphs are separated by blank lines.
+
+### Code blocks
+
+Code blocks can be indented by 4 spaces, or fenced by ```` ``` ````. In the
+latter case, the code block can have a class name (typically the language name).
+For example, below is a JS code block:
+
+```` md
+```js
+x < 0 ? -x : x;
+```
+````
+
+### Lists
+
+There are three types of lists: unordered, ordered, and task lists.
+
+An unordered list item starts with `-`, `+`, or `*`, e.g., `- item`.
+
+A task list item is a regular list item with `[ ]` (unchecked) or `[x]`
+(checked) in the beginning, e.g., `- [ ] item`.
+
+An ordered list item starts with a number followed by a period. The number of
+the first item is used as the starting number of the list, and the rest of
+numbers can be arbitrary. The examples on the left below are equivalent to those
+on the right:
+
+::: flex-col
+``` md
+1. Get up!
+1. Write a book!
+1. Go to bed!
+```
+
+``` md
+1. Get up!
+2. Write a book!
+3. Go to bed!
+```
+:::
+
+::: flex-col
+``` md
+5. Get up!
+100. Write a book!
+1. Go to bed!
+```
+
+``` md
+5. Get up!
+6. Write a book!
+7. Go to bed!
+```
+:::
+
+### Block quotes
+
+Block quotes start with `>` followed by a space and then the quote. A quote can
+contain any number of any Markdown elements. If it contains multiple block-level
+elements, each line needs to start with `>`. For example, below is a block quote
+with multiple paragraphs:
+
+``` md
+> "You're an oaf. I told you quite distinctly to make his discharge papers out."
+>
+> And all the bile which had accumulated in the judge advocate's soul in the course of that day because of Captain Linhart and Švejk poured out like a wild torrent on the head of the staff warder. At the end of it Bernis said:
+>
+> "And now do you understand that you are a prize royal oaf?"
+>
+> This is something which should only be said to kings and emperors, but even this simple staff warder, who was no royal personage, was not very pleased about it.
+>
+> ---Jaroslav Hašek, _The Good Soldier Švejk_ (Chapter 9)
+```
+
+### Tables
+
+Tables are created with `|` as the column separator, i.e., Pandoc's pipe table,
+which can be generated by `xfun::md_table(x)` or `knitr::kable(x, "pipe")` if
+you want to create a table from a rectangular object `x` in R.
+
+``` md
+| col 1 | col 2 | col 3 |
+|:------|------:|:-----:|
+| row 1 | row 1 | row 1 |
+| row 2 | row 2 | row 2 |
+```
+
+The position of the colon below the table header controls the column alignment,
+e.g., a colon on the right means the column is right-aligned, and colons on both
+ends means the column is center-aligned.
+
+## Add-on features {#sec:markdown-addon}
+
+In addition to the basic features above (supported by **commonmark**), the
+**litedown** package also supports the following features.
+
+### Raw LaTeX/HTML blocks
+
+Raw LaTeX and HTML blocks can be written as fenced code blocks with language
+names `=latex` and `=html`, e.g.,
+
+```` markdown
+```{=latex}
+This only appears in \LaTeX{} output.
+```
+````
+
+Raw LaTeX blocks will only appear in LaTeX output, and will be ignored in other
+output formats. Similarly, raw HTML blocks will only appear in HTML output. One
+exception is raw LaTeX blocks that are LaTeX math environments, which also work
+for HTML output (see the next section).
+
+### LaTeX math {#sec:math}
+
+You can write both `$inline$` and `$$display$$` LaTeX math, e.g.,
+$\sin^{2}(\theta)+\cos^{2}(\theta) = 1$.
+
+$$\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$$
+
+$$|x| = \begin{cases}
+x &\text{if } x \geq 0 \\
+-x &\text{if } x < 0
+\end{cases}$$
+
+For expressions in pairs of single or double dollar signs to be recognized as
+LaTeX math, there must be no spaces after the opening dollar sign, or before the
+closing dollar sign. The math expression should either start from the very
+beginning of a line, or have a space or `(` before the opening dollar sign.
+
+-   For a pair of single dollar signs, they must be on the same line in the
+    text, and the closing dollar sign should not be followed by a number (to
+    avoid detecting math mistakenly from text like "a \$5 bill and a \$10
+    bill"). The inner math expression should not be wrapped in backticks.
+
+-   For `$$ $$` expressions, they can span over multiple lines, in which case
+    the closing `$$` must have at least one non-space character before it, and
+    no spaces after it.
+
+Valid examples:
+
+``` tex
+$x + y$
+($x + y$)
+  $x + y$
+text $x + y$ text
+
+$$x + y$$
+  $$x + y$$
+text $$x + y$$ text
+$$x +
+  y$$
+```
+
+Invalid examples:
+
+``` md
+$ x + y$  <- space after the opening `$`
+text$x + y$  <- lack of space before the opening `$`
+text $x + y$10 text  <- number after closing `$`
+$x +
+y$  <- multi-line `$ $` expressions
+$`x + y`$  <- expression wrapped in backticks
+
+$$x +
+  y
+$$
+^- lack of non-space character before closing `$$`
+```
+
+LaTeX math environments are also supported, e.g., below are an `align`
+environment and an `equation` environment:
+
+```{md, attr.source = '.tex', attr.asis = '.callout-output'}
+\begin{align}
+a^{2}+b^{2} & =  c^{2}\\
+\sin^{2}(\theta)+\cos^{2}(\theta) & =  1
+\label{eq:pyth-identity}
+\end{align}
+
+\begin{equation}
+  \begin{split}
+  (a+b)^2 &=(a+b)(a+b)\\
+    &=a^2+2ab+b^2
+  \end{split}
+\end{equation}
+```
+
+These math environments can be written as either nake LaTeX code or raw LaTeX
+blocks (```` ```{=latex} ````), but we recommend that you use raw LaTeX blocks
+because they are more robust. LaTeX math environments work for both LaTeX and
+HTML output.
+
+For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
+math environment can be rendered (@sec:js-math).
+
+### Superscripts and subscripts
+
+Write superscripts in `^text^` and subscripts in `~text~` (same syntax as
+Pandoc's Markdown), e.g., 2^10^ and H~2~O. Currently only alphanumeric
+characters, `*`, `(`, and `)` are allowed in the scripts. For example, `a^b c^`
+will not be recognized as a superscript (because the space is not allowed). Note
+that GFM supports striking out text via `~text~`, but this feature has been
+disabled and replaced by the feature of subscripts in **litedown**. To strike
+out text, you must use a pair of *double* tildes.
+
+### Footnotes
+
+Insert footnotes via `[^n]`, where `n` is a unique footnote
+identifier.[^03-syntax-4] The footnote content should be defined in a separate
+block starting with `[^n]:`. For example:
+
+[^03-syntax-4]: Typically the identifier is a number, but it doesn't have to be.
+    The specific number doesn't matter, as long as it's unique for the footnote
+    in the document. For example, the first footnote can be `[^100]` and the
+    second can be `[^64]`. Eventually they will appear as `[1]` and `[2]`. If
+    you use the RStudio visual editor to edit Markdown documents, the footnote
+    numbers will be automatically generated and updated when new footnotes are
+    inserted before existing footnotes.
+
+``` markdown
+Insert a footnote here.[^1]
+
+[^1]: This is the footnote.
+```
+
+You can write arbitrary elements in footnotes and not necessarily a single
+paragraph.
+
+### Attributes
+
+Attributes on images, links, fenced code blocks, and section headings can be
+written in `{}`. ID and class are two common attributes. An ID can be written
+after the `#` character, and a class can be written after `.` . Attributes are
+typically written in the form `name="value"`, and separated by spaces (in fact,
+you can also write IDs and classes explicitly like other attributes, e.g.,
+`id="foo" class="bar"`). Certain attributes do not require values, and you can
+provide the attribute name only, e.g., `disabled` or `contenteditable`, although
+it is harmless to write `disabled="true"`.
+
+::: callout-note
+Only lowercase letters (a-z), digits (0-9), hyphens (`-`), and colons (`:`) are
+allowed in ID and class strings. For example, `sec:intro` and `fig-cars` are
+valid IDs, but `sec_intro` and `tab cars` are not.
+:::
+
+For example, `![text](path){.foo #bar width="50%"}` will generate an `<img>` tag
+with attributes in HTML output:
+
+``` html
+<img src="path" alt="text" id="bar" class="foo" width="50%" />
+```
+
+and `## Heading {#baz}` will generate:
+
+``` html
+<h2 id="baz">Heading</h2>
+```
+
+Links of the form `[text](url){...}` will generate:
+
+``` html
+<a href="url" ...></a>
+```
+
+When the `url` is empty, `<a>` will be converted to `<span>`, e.g.,
+`[text](){.foo .bar}` will generate:
+
+``` html
+<span class="foo bar">text</span>
+```
+
+This provides a way to create `<span>` elements, which is similar to [bracketed
+`Span`s](https://pandoc.org/MANUAL.html#extension-bracketed_spans) (i.e.,
+`[text]{...}`) in Pandoc's Markdown.
+
+For fenced code blocks, a special rule is that the first class name will be
+treated as the language name for a block, and the `class` attribute of the
+result `<code>` tag will have a `language-` prefix. For example, the following
+code block
+
+```` markdown
+```{.foo .bar #my-code style="color: red;"}
+```
+````
+
+will generate the HTML output below:
+
+``` html
+<pre>
+  <code class="language-foo bar" id="my-code" style="color: red;">
+  </code>
+</pre>
+```
+
+Most attributes in `{}` are ignored for LaTeX output except for:
+
+-   The `width` attribute for images, e.g., `![text](path){width="50%"}` will be
+    converted to `\includegraphics[width=.5\linewidth]{path}`.
+
+-   The `.unnumbered` attribute, which will make a heading unnumbered, e.g.,
+    `# Hello {.unnumbered}` will be converted to `\section*{Hello}`.
+
+-   The `.appendix` attribute on a heading, which will start the appendix, e.g.,
+    `# Appendix {.appendix}` will be converted to `\appendix`.
+
+-   The ID attributes on headings, which will be converted to `\label{}`, e.g.,
+    `# Introduction {#sec:intro}` will be converted to
+    `\section{Introduction}\label{sec:intro}`.
+
+### Appendices
+
+When a top-level heading has the attribute `.appendix`, the rest of the document
+will be treated as the appendix. If section numbering is enabled
+(@sec:number-sections), the appendix section headings will be numbered
+differently.
+
+### Fenced `Div`s
+
+A fenced `Div` can be written in `:::` fences. Note that the opening fence must
+have at least one attribute, such as the class name. For example:
+
+``` markdown
+::: foo
+This is a fenced Div.
+:::
+
+::: {.foo}
+The syntax `::: foo` is equivalent to `::: {.foo}`.
+:::
+
+::: {.foo #bar style="color: red;"}
+This div has more attributes.
+
+It will be red in HTML output.
+:::
+```
+
+A fenced `Div` will be converted to `<div>` with attributes in HTML output,
+e.g.,
+
+``` html
+<div class="foo" id="bar" style="color: red;">
+</div>
+```
+
+For LaTeX output, it can be converted to a LaTeX environment if both the class
+name and an attribute `data-latex` are present. For example,
+
+``` markdown
+::: {.tiny data-latex=""}
+This is _tiny_ text.
+:::
+```
+
+will be converted to:
+
+``` latex
+\begin{tiny}
+This is \emph{tiny} text.
+\end{tiny}
+```
+
+The `data-latex` attribute can be used to specify arguments to the environment
+(which can be an empty string if the environment doesn't need an argument). For
+example,
+
+``` markdown
+::: {.minipage data-latex="{.5\linewidth}"}
+```
+
+will be converted to:
+
+``` latex
+\begin{minipage}{.5\linewidth}
+```
+
+The `data-latex` attribute is optional for fenced `Div`s with class names
+`figure` or `table`. They will be converted to `figure` or `table` environments.
+For example,
+
+``` markdown
+:::: {.figure}
+![](foo.png)
+
+::: {.caption}
+This is a caption.
+:::
+::::
+```
+
+will be converted to:
+
+``` tex
+\begin{figure}
+  \includegraphics{foo.png}
+  \caption{This is a caption.}
+\end{figure}
+```
+
+Other fenced `Div`s will be ignored if they don't have the `data-latex`
+attribute, and their inner content will be written out normally without a
+surrounding environment.
+
+If a fenced `Div` has multiple class names (e.g., `{.a .b .c}`), only the first
+class name will be used as the LaTeX environment name. However, all class names
+will be used if the output format is HTML (e.g., `<div class="a b c">`).
+
+### Cross-references {#sec:cross-references}
+
+To cross-reference an element, it must be numbered first. Then we can refer to
+it by its ID.
+
+#### Sections, figures, and tables
+
+Section heading IDs can be either manually assigned or automatically generated
+(@sec:auto-identifiers). Section numbers are automatically generated if the
+`number_sections` option is true (@sec:number-sections).
+
+Figures and tables are automatically numbered if their captions are provided
+(via the chunk options `fig.cap` / `tab.cap`), e.g.,
+
+```` md
+```{r}
+#| nice-plot, fig.cap = "A nice caption"
+
+plot(cars)
+```
+````
+
+To refer to an element in the text, use the syntax `@ID`, where `ID` is the ID
+of the element to be referenced, which typically consists of a prefix (e.g.,
+`sec:`, `fig:`, `tab:`, or `eq:`) and a label. For example:
+
+``` md
+Please see @fig:nice-plot for an overview of the `cars` data.
+```
+
+Hyphens (`-`) are also allowed in place of colons in the ID prefix, e.g.,
+`@fig-nice-plot`.
+
+#### LaTeX equations
+
+LaTeX math environments such as `align` and `equation` are numbered by default.
+To refer to an expression (e.g., an equation) in a math environment, a label
+needs to be assigned to the expression first via `\label{}`, and it must start
+with the prefix `eq:` or `eq-`, e.g.,
+
+```` md
+```{=latex}
+\begin{equation}
+\sin^2(x) + \cos^2(x) = 1 \label{eq:pyth-identity}
+\end{equation}
+```
+````
+
+Then we can use either `@eq:*` or `@eqn:*` to cross-reference the equation,
+e.g., `@eqn:pyth-identity`. Under the hood, the prefix `@eq` will be resolved to
+`\ref{}`, and `@eqn` will be resolved to `\eqref{}`. If you are not familiar
+with LaTeX commands `\ref{}` and `\eqref{}`, the main difference is that
+`\eqref{}` will render the equation number in parentheses, e.g.,
+@eqn:pyth-identity, whereas `\ref{}` will only generate the equation number,
+e.g., @eq:pyth-identity.
+
+In HTML output, `\eqref{}` will also add a label "Equation" before the number by
+default. If you prefer writing the label manually and having control over the
+parentheses, you can use `@eq:` instead of `@eqn:`, e.g., `Eq. [@eq:*]` (using
+the label "Eq." and square brackets).
+
+In addition to equation numbers, you can also specify a tag for an equation via
+`\tag{}` and refer to the equations by its tag, e.g.,
+
+```{md, attr.source = '.tex', attr.asis = '.callout-output'}
+For a right-angled triangle, we are all familiar with @eqn:pyth-theorem.
+
+\begin{equation}
+a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
+\end{equation}
+```
+
+#### Arbitrary elements
+
+You can cross-reference any other type of elements by adding empty anchors of
+the form `[](#@ID)` into them, e.g.,
+
+````{md, attr.asis = '.callout-output'}
+:::: {#lst:example .box}
+::: caption
+[](#@lst:example) A code listing demonstrating how to fold code blocks with JS.
+:::
+
+```js
+document.querySelectorAll('pre').forEach(pre => {
+  const d = document.createElement('details');
+  d.innerHTML = '<summary>Details</summary>';
+  pre.before(d);  // insert <details> before <pre>
+  d.append(pre);  // move <pre> into <details>
+});
+```
+::::
+
+We can cross-reference @lst:example.
+````
+
+```{css, echo = FALSE}
+[id^="lst:"] code[class] { background-color: inherit; }
+```
+
+Note that we also added the ID (`#lst:example`) to the fenced Div to make it the
+target of the cross reference, i.e., when you click on the reference, the
+browser will navigate to the Div.
+
+For HTML output, we can style the numbers and references with CSS. Element
+numbers are wrapped in `<span class="ref-number-*"></span>`, and references are
+wrapped in `<span class="cross-ref-*"></span>`, where `*` is the ID prefix
+(e.g., `fig`, `tab`, and `eqn`). For example, we can add the label "Listing" to
+the number and reference of the block above:
+
+```{css}
+.ref-number-lst::before, .cross-ref-lst::before {
+  content: "Listing ";
+}
+.ref-number-lst {
+  font-style: italic;
+}
+.ref-number-lst::after {
+  content: ". "
+}
+```
+
+### Citations
+
+This feature requires the R package **rbibutils** [@R-rbibutils]. Please make
+sure it is installed before using citations.
+
+``` r
+xfun::pkg_load2("rbibutils")
+```
+
+To insert citations, you have to first declare one or multiple bibliography
+databases in the YAML metadata, e.g.,
+
+``` yaml
+bibliography: ["papers.bib", "books.bib"]
+```
+
+Each `.bib` file contains entries that start with keywords. For example,
+`R-base` is the keyword for the following entry:
+
+``` plain
+@Manual{R-base,
+  title = {R: A Language and Environment for Statistical Computing},
+  author = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address = {Vienna, Austria},
+  year = {2024},
+  url = {https://www.R-project.org/},
+}
+```
+
+Then you can use `[@R-base]` or `@R-base` to cite this item. The keywords must
+consist of only alphanumeric characters (`a-z`, `A-Z`, `0-9`) and `-`. You can
+include multiple keywords in `[ ]` separated by semicolons.
+
+For HTML output, the citation uses the author-year style. The syntax
+`[@keyword]` generates the citation in parentheses (e.g., `(Author, 2024)`), and
+`@keyword` only puts the year in parentheses (e.g., `Author (2024)`). All
+references will be put in a Div with the id `refs`, i.e.,
+`<div id="refs"></div>`. This Div will appear at the end of the document by
+default. If you want it to appear elsewhere, you can provide an empty Div there.
+
+For LaTeX output, the citation style depends on the LaTeX package, which you can
+set via the `citation_package` option of the output format in YAML metadata,
+e.g.,
+
+``` yaml
+output:
+  latex:
+    citation_package: biblatex
+```
+
+The default is `natbib`. The table below shows the LaTeX commands corresponding
+to the Markdown citation syntax:
+
+| citation package | `[@key-1; @key-2]`         | `@key`        |
+|------------------|----------------------------|---------------|
+| none             | `\cite{key-1, key-2}`      | `\cite{key}`  |
+| natbib           | `\citep{key-1, key-2}`     | `\citet{key}` |
+| biblatex         | `\parencite{key-1, key-2}` | `\cite{key}`  |
+
+Note that **litedown** actually generates `\citep` and `\citet` regardless of
+the citation package, but will redefine them to `\cite` or `\parencite`
+according to the citation package. For example, it will insert
+`\let\citep\parencite` in the LaTeX preamble when `citation_package` is
+`biblatex`.
+
+### Smart HTML entities
+
+"Smart" HTML entities can be represented by ASCII characters, e.g., you can
+write fractions in the form `n/m`. Below are some example entities:
+
+```{r, smartypants, echo = FALSE}
+p = litedown:::pants[-(4:14)]
+t(as.matrix(setNames(p, sprintf('`%s`', names(p)))))
+```
+
+## Comparison to Pandoc
+
+As mentioned earlier, a lot of features in Pandoc's Markdown are not supported
+in the **litedown** package. Any feature that you find missing in previous
+sections is likely to be unavailable. In addition, a lot of R Markdown and
+Quarto (both are based on Pandoc) features are not supported, either. Some HTML
+features have been implemented via JavaScript and CSS.
+
+Pandoc can convert Markdown to many output formats, such as Word, PowerPoint,
+LaTeX beamer, and EPUB. The **litedown** package is unlikely to support output
+formats beyond HTML and LaTeX.

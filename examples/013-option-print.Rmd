@@ -1,0 +1,17 @@
+---
+title: Print objects
+---
+
+Print objects with `base::print()`, and use different arguments for different objects.
+
+```{r}
+#| print = NA,
+#| print.args = list(table = list(zero.print = '.'),
+#|   factor = list(quote = TRUE, max.levels = 3))
+
+X = c('a', 'b', 'c', 'c', 'c', 'a')
+Y = factor(c('A', 'B', 'C', 'C', 'D', 'E'))
+Y  # factor
+
+table(X, Y)  # table
+```
