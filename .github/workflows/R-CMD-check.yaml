@@ -86,20 +86,3 @@ jobs:
           plugins: noop
           disable_search: true
 
-      - uses: actions/checkout@HEAD
-        if: runner.os == 'macOS'
-        with:
-          path: gh-pages
-          ref: gh-pages
-
-      - name: Publish book
-        if: runner.os == 'macOS'
-        run: |
-          git clone --depth 1 https://github.com/yihui/actions.git ../actions
-          Rscript -e 'install.packages("xfun", repos="https://yihui.r-universe.dev")'
-          Rscript -e 'litedown::fuse_book("docs")'
-          cd docs; cp -r *.html ../gh-pages/; cd ../gh-pages
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "update docs" && git push || true

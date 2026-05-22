@@ -5,21 +5,13 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@HEAD
-      - uses: actions/configure-pages@HEAD
-        with:
-          enablement: true
       - uses: r-lib/actions/setup-r@HEAD
         with:
           use-public-rspm: true
@@ -30,8 +22,7 @@ jobs:
       - uses: yihui/actions/litedown-site@HEAD
         with:
           site-dir: 'site'
-      - uses: actions/upload-pages-artifact@HEAD
+      - uses: peaceiris/actions-gh-pages@HEAD
         with:
-          path: 'site'
-      - id: deployment
-        uses: actions/deploy-pages@HEAD
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
