@@ -485,7 +485,7 @@ detect_pkg = local({
       "Cannot automatically detect the package root directory from '", getwd(), "'. ",
       "You must provide the package name explicitly."
     ) else return()
-  } else if (is.null(name)) {
+  } else if (length(name) == 0) {
     desc = read_utf8(file.path(root, 'DESCRIPTION'))
     name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
   }

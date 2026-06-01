@@ -12,6 +12,8 @@
 
 - Fixed a re-entrancy bug that chunk options `fig.path` and `cache.path` in nested `fuse()` calls caused overridden figure/cache files (thanks, @nanxstats, #127).
 
+- Fixed a bug that `detect_pkg()` doesn't work when `R CMD check` checks package vignettes.
+
 # CHANGES IN litedown VERSION 0.9
 
 - Provided [a new chunk option `filter`](https://yihui.org/litedown/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).
