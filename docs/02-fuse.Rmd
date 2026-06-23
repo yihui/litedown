@@ -1545,9 +1545,16 @@ code block).
 
 ### The `exec` engine
 
-The `exec` engine can be used to run arbitrary commands via `system2()` and
-capture the output. The chunk option `command` is required to specify the
-command to run, and the chunk body is the code to be executed, e.g.,
+The `exec` engine runs an arbitrary command and captures its output. It writes
+the chunk body to a temporary file and executes:
+
+``` sh
+command [args1] file [args2]
+```
+
+where `command` is specified by the `command` chunk option, `file` is the
+temporary file containing the chunk body, and `args1`/`args2` are optional chunk
+options for extra arguments before/after the file path. For example:
 
 ```` md
 ```{exec, command = 'Rscript'}
@@ -1566,9 +1573,11 @@ date
 ```
 ````
 
-You can pass additional arguments to the command via the `args1` chunk option
-(inserted before the script file path) or `args2` (after it). For example,
-`awk` requires the `-f` flag to read its program from a file:
+These engines also work inline, e.g., `` `{bash} date` `` will insert the
+output into the text.
+
+For commands that need flags before the file path, use `args1`. For example,
+`awk` requires `-f` to read its program from a file (i.e., `awk -f file`):
 
 ```` md
 ```{exec, command = 'awk', args1 = '-f'}

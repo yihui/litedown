@@ -1251,10 +1251,9 @@ eng_exec = function(x, inline = FALSE, ...) {
   f = if (is.null(ext)) tempfile() else with_ext(tempfile(), ext)
   on.exit(unlink(f), add = TRUE)
   write_utf8(x$source, f)
-  # build args: [args1] + [args (default: file path)] + [args2]
-  # powershell needs -File before the script path
+  # build args: [args1] + file + [args2]; powershell needs -File before the path
   default_args = if (cmd == 'powershell') c('-File', f) else f
-  a = c(opts$args1, opts$args %||% default_args, opts$args2)
+  a = c(opts$args1, default_args, opts$args2)
   out = tryCatch(
     system2(cmd, shQuote(a), stdout = TRUE, stderr = TRUE),
     error = function(e) {
@@ -1268,7 +1267,7 @@ eng_exec = function(x, inline = FALSE, ...) {
     if (is.na(opts$error)) stop(one_string(out))
     if (isFALSE(opts$error)) out = character(0)
   }
-  list(new_source(x$source), new_output(out))
+  if (inline) one_string(out) else list(new_source(x$source), new_output(out))
 }
 
 #' Language engines
