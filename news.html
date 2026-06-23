@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.9.11">
+<meta name="generator" content="litedown 0.9.12">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/article.min.css">
@@ -41,6 +41,9 @@
 </div>
 <h2 id="sec:litedown-0-10" class="unnumbered">litedown 0.10</h2>
 <ul>
+<li>
+<p>Added <code>fuse_exit()</code>, which can be called inside a code chunk to exit <code>fuse()</code> early and discard the rest of the document. It takes an optional <code>append</code> argument to add text after the current chunk (thanks, <a href="https://github.com/TimTaylor">@TimTaylor</a>, <a href="https://github.com/yihui/litedown/issues/117">#117</a>).</p>
+</li>
 <li>
 <p>Added support for optimizing PNG plot files via the global option <code>litedown.tinypng</code>. When set to <code>TRUE</code> and the <strong>tinyimg</strong> package is installed, PNG images generated from code chunks will be optimized by <code>tinyimg::tinypng()</code> to reduce file size. For other PNG files (e.g., images manually included in the document), users can call <code>tinyimg::tinypng('.')</code> to optimize all PNG files under the current directory (thanks, <a href="https://github.com/bastistician">@bastistician</a>, <a href="https://github.com/yihui/litedown/issues/116">#116</a>).</p>
 </li>
@@ -337,7 +340,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.11</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.12</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/appendix.min.js" defer></script>

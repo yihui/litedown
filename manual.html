@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.9.11">
+<meta name="generator" content="litedown 0.9.12">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/article.min.css">
@@ -32,17 +32,18 @@
 <li><a href="#sec:man-engines"><span class="section-number main-number">3</span> Language engines</a></li>
 <li><a href="#sec:man-fuse_book"><span class="section-number main-number">4</span> Fuse multiple R Markdown documents to a single output file</a></li>
 <li><a href="#sec:man-fuse_env"><span class="section-number main-number">5</span> The <code>fuse()</code> environment</a></li>
-<li><a href="#sec:man-fuse_site"><span class="section-number main-number">6</span> Fuse R Markdown documents individually under a directory</a></li>
-<li><a href="#sec:man-get_context"><span class="section-number main-number">7</span> Get the <code>fuse()</code> context</a></li>
-<li><a href="#sec:man-html_format"><span class="section-number main-number">8</span> Output formats in YAML metadata</a></li>
-<li><a href="#sec:man-mark"><span class="section-number main-number">9</span> Render Markdown, R Markdown, and R scripts</a></li>
-<li><a href="#sec:man-markdown_options"><span class="section-number main-number">10</span> Markdown rendering options</a></li>
-<li><a href="#sec:man-pkg_desc"><span class="section-number main-number">11</span> Print the package description, news, citation, manual pages, and source code</a></li>
-<li><a href="#sec:man-raw_text"><span class="section-number main-number">12</span> Mark a character vector as raw output</a></li>
-<li><a href="#sec:man-reactor"><span class="section-number main-number">13</span> Get and set chunk options</a></li>
-<li><a href="#sec:man-roam"><span class="section-number main-number">14</span> Preview Markdown and R Markdown files</a></li>
-<li><a href="#sec:man-timing_data"><span class="section-number main-number">15</span> Get the timing data of code chunks and text blocks in a document</a></li>
-<li><a href="#sec:man-vest"><span class="section-number main-number">16</span> Add CSS/JS assets to HTML output</a></li>
+<li><a href="#sec:man-fuse_exit"><span class="section-number main-number">6</span> Exit <code>fuse()</code> early</a></li>
+<li><a href="#sec:man-fuse_site"><span class="section-number main-number">7</span> Fuse R Markdown documents individually under a directory</a></li>
+<li><a href="#sec:man-get_context"><span class="section-number main-number">8</span> Get the <code>fuse()</code> context</a></li>
+<li><a href="#sec:man-html_format"><span class="section-number main-number">9</span> Output formats in YAML metadata</a></li>
+<li><a href="#sec:man-mark"><span class="section-number main-number">10</span> Render Markdown, R Markdown, and R scripts</a></li>
+<li><a href="#sec:man-markdown_options"><span class="section-number main-number">11</span> Markdown rendering options</a></li>
+<li><a href="#sec:man-pkg_desc"><span class="section-number main-number">12</span> Print the package description, news, citation, manual pages, and source code</a></li>
+<li><a href="#sec:man-raw_text"><span class="section-number main-number">13</span> Mark a character vector as raw output</a></li>
+<li><a href="#sec:man-reactor"><span class="section-number main-number">14</span> Get and set chunk options</a></li>
+<li><a href="#sec:man-roam"><span class="section-number main-number">15</span> Preview Markdown and R Markdown files</a></li>
+<li><a href="#sec:man-timing_data"><span class="section-number main-number">16</span> Get the timing data of code chunks and text blocks in a document</a></li>
+<li><a href="#sec:man-vest"><span class="section-number main-number">17</span> Add CSS/JS assets to HTML output</a></li>
 </ul>
 </div>
 <style type="text/css">
@@ -63,6 +64,7 @@ h2 {
 <b>-- <kbd>F</kbd> --</b>
 <a href="#sec:man-fuse_book"><code>fuse_book()</code></a>
 <a href="#sec:man-fuse_env"><code>fuse_env()</code></a>
+<a href="#sec:man-fuse_exit"><code>fuse_exit()</code></a>
 <a href="#sec:man-fuse_site"><code>fuse_site()</code></a>
 <a href="#sec:man-mark"><code>fuse()</code></a>
 <a href="#sec:man-mark"><code>fiss()</code></a>
@@ -181,11 +183,11 @@ YAML syntax). An inline code fragment is of the form <code>`{lang} source`</code
 embedded in Markdown text.
 </p>
 <p>For R scripts, text blocks are extracted by removing the leading
-<p><code>#’</code> tokens. All other lines are treated as R code, which can optionally be
+<code>#'</code> tokens. All other lines are treated as R code, which can optionally be
 separated into chunks by consecutive lines of <code>#|</code> comments (chunk options
-are written in these comments). If no <code>#’</code> or <code>#|</code> tokens are found in the
+are written in these comments). If no <code>#'</code> or <code>#|</code> tokens are found in the
 script, the script will be divided into chunks that contain smallest
-possible complete R expressions.</p>
+possible complete R expressions.
 </p>
 <h3 id="sec:value_1" class="unnumbered unlisted">Value</h3>
 <p>A list of code chunks and text blocks:
@@ -422,13 +424,31 @@ environment in which code chunks and inline code are evaluated.
 <p>When called during <code>fuse()</code>, it returns the <code>envir</code> argument value of
 <code>fuse()</code>. When called outside <code>fuse()</code>, it returns the global environment.
 </p>
-<h2 id="sec:man-fuse_site"><span class="section-number main-number">6</span> Fuse R Markdown documents individually under a directory</h2>
+<h2 id="sec:man-fuse_exit"><span class="section-number main-number">6</span> Exit <code>fuse()</code> early</h2>
 <h3 id="sec:description_6" class="unnumbered unlisted">Description</h3>
-<p>Run <code><a href="#sec:man-mark">fuse()</a></code> on R Markdown documents individually to generate a website.
+<p>Stop <code><a href="#sec:man-mark">fuse()</a></code> from processing the remaining code chunks and text blocks. This
+function is meant to be called inside a code chunk to end the document early.
 </p>
 <h3 id="sec:usage_5" class="unnumbered unlisted">Usage</h3>
-<pre><code class="language-r">fuse_site(input = ".")</code></pre>
+<pre><code class="language-r">fuse_exit(append = "")</code></pre>
 <h3 id="sec:arguments_4" class="unnumbered unlisted">Arguments</h3>
+<table role = "presentation">
+<tr><td><code>append</code></td>
+<td>
+<p>A character string to be appended to the fuse output after the
+current code chunk.</p>
+</td></tr>
+</table>
+<h3 id="sec:value_5" class="unnumbered unlisted">Value</h3>
+<p>Invisible <code>NULL</code>.
+</p>
+<h2 id="sec:man-fuse_site"><span class="section-number main-number">7</span> Fuse R Markdown documents individually under a directory</h2>
+<h3 id="sec:description_7" class="unnumbered unlisted">Description</h3>
+<p>Run <code><a href="#sec:man-mark">fuse()</a></code> on R Markdown documents individually to generate a website.
+</p>
+<h3 id="sec:usage_6" class="unnumbered unlisted">Usage</h3>
+<pre><code class="language-r">fuse_site(input = ".")</code></pre>
+<h3 id="sec:arguments_5" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>input</code></td>
 <td>
@@ -465,24 +485,24 @@ values are:
 output file is older than the input.
 </p>
 </li></ul>
-<h3 id="sec:value_5" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_6" class="unnumbered unlisted">Value</h3>
 <p>Output file paths (invisibly).
 </p>
-<h2 id="sec:man-get_context"><span class="section-number main-number">7</span> Get the <code>fuse()</code> context</h2>
-<h3 id="sec:description_7" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-get_context"><span class="section-number main-number">8</span> Get the <code>fuse()</code> context</h2>
+<h3 id="sec:description_8" class="unnumbered unlisted">Description</h3>
 <p>A helper function to query the <code><a href="#sec:man-mark">fuse()</a></code> context (such as the input file path
 or the output format name) when called inside a code chunk.
 </p>
-<h3 id="sec:usage_6" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_7" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">get_context(item = NULL)</code></pre>
-<h3 id="sec:arguments_5" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_6" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>item</code></td>
 <td>
 <p>The name of the context item.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_6" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_7" class="unnumbered unlisted">Value</h3>
 <p>If the <code>item</code> is provided, return its value in the context. If
 <code>NULL</code>, the whole context (an environment) is returned.
 </p>
@@ -502,13 +522,13 @@ or the output format name) when called inside a code chunk.
 <pre><code>#&gt; [1] &quot;source_pos&quot; &quot;input&quot;      &quot;full_input&quot; &quot;in_fuse&quot;    &quot;format&quot;    
 #&gt; [6] &quot;global&quot;     &quot;wd_out&quot;     &quot;plot_files&quot;
 </code></pre>
-<h2 id="sec:man-html_format"><span class="section-number main-number">8</span> Output formats in YAML metadata</h2>
-<h3 id="sec:description_8" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-html_format"><span class="section-number main-number">9</span> Output formats in YAML metadata</h2>
+<h3 id="sec:description_9" class="unnumbered unlisted">Description</h3>
 <p>These functions exist only for historical reasons, and should never be called
 directly. They can be used to configure output formats in YAML, but you are
 recommended to use the file format names instead of these function names.
 </p>
-<h3 id="sec:usage_7" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_8" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">html_format(options = NULL, meta = NULL, template = NULL, keep_md = FALSE)
 
 latex_format(
@@ -520,7 +540,7 @@ latex_format(
   latex_engine = "xelatex",
   citation_package = "natbib"
 )</code></pre>
-<h3 id="sec:arguments_6" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_7" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>meta</code>, <code>options</code></td>
 <td>
@@ -568,38 +588,38 @@ output:
 top-level field <code>knit: litedown:::knit</code> to the YAML metadata. See
 <a href="https://yihui.org/litedown/#sec:knit-button">https://yihui.org/litedown/#sec:knit-button</a> for more information.
 </p>
-<h2 id="sec:man-mark"><span class="section-number main-number">9</span> Render Markdown, R Markdown, and R scripts</h2>
-<h3 id="sec:description_9" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-mark"><span class="section-number main-number">10</span> Render Markdown, R Markdown, and R scripts</h2>
+<h3 id="sec:description_10" class="unnumbered unlisted">Description</h3>
 <p>The function <code>fuse()</code> runs code from code chunks and inline code
 expressions in R Markdown, interweaves the results with the rest of text in
 the input to intermediate Markdown output (which is similar to what
-<p><code>knitr::knit()</code> does), and renders the Markdown output through <code>mark()</code> to</p>
-<p>the final output format, such as HTML or LaTeX (similar to
+<code>knitr::knit()</code> does), and renders the Markdown output through <code>mark()</code> to
+the final output format, such as HTML or LaTeX (similar to
 <code>rmarkdown::render()</code>). It also works on R scripts in a way similar to
 <code>knitr::spin()</code>. The function <code>fiss()</code> extracts code from the input, and is
-similar to <code>knitr::purl()</code>.</p>
+similar to <code>knitr::purl()</code>.
 </p>
 <p>The function <code>mark()</code> renders Markdown to an output format via the
 <span class="pkg">commonmark</span> package.
 </p>
-<h3 id="sec:usage_8" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_9" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">fuse(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE)
 
 fiss(input, output = ".R", text = NULL)
 
 mark(input, output = NULL, text = NULL, options = NULL, meta = list())</code></pre>
-<h3 id="sec:arguments_7" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_8" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>input</code></td>
 <td>
 <p>A character vector to provide the input file path or text. If
 not provided, the <code>text</code> argument must be provided instead. The <code>input</code>
-<p>vector will be treated as a file path if it is a single string, and points
+vector will be treated as a file path if it is a single string, and points
 to an existing file or has a filename extension. In other cases, the vector
 will be treated as the <code>text</code> argument input. To avoid ambiguity, if a
 string should be treated as <code>text</code> input when it happens to be an existing
 file path or has an extension, wrap it in <code><a href="https://rdrr.io/r/base/AsIs.html">I()</a></code>, or simply use the <code>text</code>
-argument instead.</p></p>
+argument instead.</p>
 </td></tr>
 <tr><td><code>output</code></td>
 <td>
@@ -631,19 +651,19 @@ accessed via <code><a href="#sec:man-fuse-env">fuse_env()</a></code> inside <cod
 <td>
 <p>If <code>TRUE</code>, do not show the progress bar. If <code>FALSE</code>, the
 progress bar will be shown after a number of seconds, which can be set via
-a global <a href="https://rdrr.io/r/base/options.html">option</a> <code>litedown.progress.delay</code> (the default is <code>2</code>).
+<p>a global <a href="https://rdrr.io/r/base/options.html">option</a> <code>litedown.progress.delay</code> (the default is <code>2</code>).
 THe progress bar output can be set via a global option
-<code>litedown.progress.output</code> (the default is <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>).</p>
+<code>litedown.progress.output</code> (the default is <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>).</p></p>
 </td></tr>
 <tr><td><code>options</code></td>
 <td>
 <p>Options to be passed to the renderer. See <code><a href="#sec:man-markdown-options">markdown_options()</a></code>
-<p>for details. This argument can take either a character vector of the form
-<code>”+option1 option2-option3”</code> (use <code>+</code> or a space to enable an option, and
-<code>-</code> to disable an option), or a list of the form <code>list(option1 = value1, option2 = value2, …)</code>. A string <code>”+option1”</code> is equivalent to
-<code>list(option1 = TRUE)</code>, and <code>”-option2”</code> means <code>list(option2 = FALSE)</code>.
+for details. This argument can take either a character vector of the form
+<code>"+option1 option2-option3"</code> (use <code>+</code> or a space to enable an option, and
+<code>-</code> to disable an option), or a list of the form <code>list(option1 = value1, option2 = value2, ...)</code>. A string <code>"+option1"</code> is equivalent to
+<code>list(option1 = TRUE)</code>, and <code>"-option2"</code> means <code>list(option2 = FALSE)</code>.
 Options that do not take logical values must be specified via a list, e.g.,
-<code>list(width = 30)</code>.</p></p>
+<code>list(width = 30)</code>.</p>
 </td></tr>
 <tr><td><code>meta</code></td>
 <td>
@@ -653,7 +673,7 @@ to fill out the template by their names and values, e.g., <code>list(title = ...
 variables.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_7" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_8" class="unnumbered unlisted">Value</h3>
 <p>The output file path if output is written to a file, otherwise a
 character vector of the rendered output (wrapped in <code><a href="https://rdrr.io/cran/xfun/man/raw_string.html">xfun::raw_string()</a></code>
 for clearer printing).
@@ -718,7 +738,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/tmp/RtmpzJgFco/file18383c628a79&quot;
+<pre><code>#&gt; [1] &quot;/tmp/RtmpgEr118/file18336040ee7c&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -745,19 +765,19 @@ mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
 </code></pre>
 <pre><code class="language-text plain">Hello World!
 </code></pre>
-<h2 id="sec:man-markdown_options"><span class="section-number main-number">10</span> Markdown rendering options</h2>
-<h3 id="sec:description_10" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-markdown_options"><span class="section-number main-number">11</span> Markdown rendering options</h2>
+<h3 id="sec:description_11" class="unnumbered unlisted">Description</h3>
 <p>A list of all options to control Markdown rendering. Options that are enabled
 by default are marked by a <code>+</code> prefix, and those disabled by default are
 marked by <code>-</code>.
 </p>
-<h3 id="sec:usage_9" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_10" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">markdown_options()</code></pre>
 <h3 id="sec:details_6" class="unnumbered unlisted">Details</h3>
 <p>See <a href="https://yihui.org/litedown/#sec:markdown-options">https://yihui.org/litedown/#sec:markdown-options</a> for the full list of
 options and their documentation.
 </p>
-<h3 id="sec:value_8" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_9" class="unnumbered unlisted">Value</h3>
 <p>A character vector of all available options.
 </p>
 <h3 id="sec:examples_5" class="unnumbered unlisted">Examples</h3>
@@ -773,13 +793,13 @@ litedown::markdown_options()
 #&gt; [19] &quot;+subscript&quot;        &quot;+superscript&quot;      &quot;+table&quot;           
 #&gt; [22] &quot;+tasklist&quot;        
 </code></pre>
-<h2 id="sec:man-pkg_desc"><span class="section-number main-number">11</span> Print the package description, news, citation, manual pages, and source code</h2>
-<h3 id="sec:description_11" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-pkg_desc"><span class="section-number main-number">12</span> Print the package description, news, citation, manual pages, and source code</h2>
+<h3 id="sec:description_12" class="unnumbered unlisted">Description</h3>
 <p>Helper functions to retrieve various types of package information that can be
 put together as the full package documentation like a <span class="pkg">pkgdown</span> website.
 These functions can be called inside any R Markdown document.
 </p>
-<h3 id="sec:usage_10" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_11" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">pkg_desc(name = detect_pkg(), type = c("table", "dl"))
 
 pkg_news(
@@ -808,7 +828,7 @@ pkg_manual(
   overview = TRUE,
   examples = list()
 )</code></pre>
-<h3 id="sec:arguments_8" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_9" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>name</code></td>
 <td>
@@ -872,7 +892,7 @@ will be filled out with the file paths via <code>sprintf()</code>), e.g.,
 examples each help page, e.g., <code>list(dev = 'svg', dev.args = list(height = 6))</code>. If not a list (e.g., <code>FALSE</code>), examples will not be run.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_9" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_10" class="unnumbered unlisted">Value</h3>
 <p>A character vector (HTML or Markdown) that will be printed as is
 inside a code chunk of an R Markdown document.
 </p>
@@ -893,15 +913,15 @@ and BibTeX formats.
 litedown::pkg_news()
 litedown::pkg_citation()
 </code></pre>
-<h2 id="sec:man-raw_text"><span class="section-number main-number">12</span> Mark a character vector as raw output</h2>
-<h3 id="sec:description_12" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-raw_text"><span class="section-number main-number">13</span> Mark a character vector as raw output</h2>
+<h3 id="sec:description_13" class="unnumbered unlisted">Description</h3>
 <p>This function should be called inside a code chunk, and its effect is the
 same as the chunk option <code>results = "asis"</code>. The input character vector will
 be written verbatim to the output (and interpreted as Markdown).
 </p>
-<h3 id="sec:usage_11" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_12" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">raw_text(x, format = NULL)</code></pre>
-<h3 id="sec:arguments_9" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_10" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>x</code></td>
 <td>
@@ -913,7 +933,7 @@ be written verbatim to the output (and interpreted as Markdown).
 <code>x</code> will be wrapped in a fenced code block, e.g., <code> ```{=html}</code>.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_10" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_11" class="unnumbered unlisted">Value</h3>
 <p>A character vector with a special class to indicate that it should be
 treated as raw output.
 </p>
@@ -936,22 +956,22 @@ _is_
 \textbf{Bold}
 ```
 </code></pre>
-<h2 id="sec:man-reactor"><span class="section-number main-number">13</span> Get and set chunk options</h2>
-<h3 id="sec:description_13" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-reactor"><span class="section-number main-number">14</span> Get and set chunk options</h2>
+<h3 id="sec:description_14" class="unnumbered unlisted">Description</h3>
 <p>Chunk options are stored in an environment returned by <code>reactor()</code>. Option
 values can be queried by passing their names to <code>reactor()</code>, and set by
 passing named values.
 </p>
-<h3 id="sec:usage_12" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_13" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">reactor(...)</code></pre>
-<h3 id="sec:arguments_10" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_11" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>...</code></td>
 <td>
 <p>Named values (for setting) or unnamed values (for getting).</p>
 </td></tr>
 </table>
-<h3 id="sec:value_11" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_12" class="unnumbered unlisted">Value</h3>
 <p>With no arguments, <code>reactor()</code> returns an environment that stores the
 options, which can also be used to get or set options. For example, with
 <code>opts = reactor()</code>, <code>opts$name</code> returns an option value, and <code>opts$name = value</code> sets an option to a value.
@@ -1022,13 +1042,13 @@ opts$echo
 #&gt; [41] &quot;results&quot;      &quot;signif&quot;       &quot;strip.white&quot;  &quot;tab.cap&quot;      &quot;tab.env&quot;     
 #&gt; [46] &quot;time&quot;         &quot;warning&quot;      &quot;wd&quot;          
 </code></pre>
-<h2 id="sec:man-roam"><span class="section-number main-number">14</span> Preview Markdown and R Markdown files</h2>
-<h3 id="sec:description_14" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-roam"><span class="section-number main-number">15</span> Preview Markdown and R Markdown files</h2>
+<h3 id="sec:description_15" class="unnumbered unlisted">Description</h3>
 <p>Launch a web page to list and preview files under a directory.
 </p>
-<h3 id="sec:usage_13" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_14" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">roam(dir = ".", live = TRUE, ...)</code></pre>
-<h3 id="sec:arguments_11" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_12" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>dir</code></td>
 <td>
@@ -1049,23 +1069,23 @@ can manually refresh the page to fully re-render it.</p>
 <h3 id="sec:details_7" class="unnumbered unlisted">Details</h3>
 <p>Markdown files will be converted to HTML and returned to the web browser
 directly without writing to HTML files, to keep the directory clean during
-the preview. Clicking on a filename will bring up an HTML preview. To see its
-raw content, click on the link on its file size instead.
+<p>the preview. Clicking on a filename will bring up an HTML preview. To see its
+raw content, click on the link on its file size instead.</p>
 </p>
-<h3 id="sec:value_12" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_13" class="unnumbered unlisted">Value</h3>
 <p>A URL (invisibly) for the preview.
 </p>
-<h2 id="sec:man-timing_data"><span class="section-number main-number">15</span> Get the timing data of code chunks and text blocks in a document</h2>
-<h3 id="sec:description_15" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-timing_data"><span class="section-number main-number">16</span> Get the timing data of code chunks and text blocks in a document</h2>
+<h3 id="sec:description_16" class="unnumbered unlisted">Description</h3>
 <p>Timing can be enabled via the chunk option <code>time = TRUE</code> (e.g., set
 <a href="#sec:man-reactor">reactor</a><code>(time = TRUE)</code> in the first code chunk). After it is
 enabled, the execution time for code chunks and text blocks will be recorded.
 This function can be called to retrieve the timing data later in the document
 (e.g., in the last code chunk).
 </p>
-<h3 id="sec:usage_14" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_15" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">timing_data(threshold = 0, sort = TRUE, total = TRUE)</code></pre>
-<h3 id="sec:arguments_12" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_13" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>threshold</code></td>
 <td>
@@ -1081,7 +1101,7 @@ with time above this threshold are returned.</p>
 <p>Whether to append the total time to the data.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_13" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_14" class="unnumbered unlisted">Value</h3>
 <p>A data frame containing input file paths, line numbers, chunk labels,
 and time. If no timing data is available, <code>NULL</code> is returned.
 </p>
@@ -1094,15 +1114,15 @@ book). Each document needs to point the <code>time</code> option to the same pat
 When you do not need timing any more, you will need to delete this file by
 yourself.
 </p>
-<h2 id="sec:man-vest"><span class="section-number main-number">16</span> Add CSS/JS assets to HTML output</h2>
-<h3 id="sec:description_16" class="unnumbered unlisted">Description</h3>
+<h2 id="sec:man-vest"><span class="section-number main-number">17</span> Add CSS/JS assets to HTML output</h2>
+<h3 id="sec:description_17" class="unnumbered unlisted">Description</h3>
 <p>While CSS/JS assets can be set via the <code>css</code>/<code>js</code> keys under the <code>meta</code> field
 of the <code>html</code> output format in YAML, this function provides another way to
 add them, which can be called in a code chunk to dynamically add assets.
 </p>
-<h3 id="sec:usage_15" class="unnumbered unlisted">Usage</h3>
+<h3 id="sec:usage_16" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">vest(feature = NULL, css = NULL, js = NULL)</code></pre>
-<h3 id="sec:arguments_13" class="unnumbered unlisted">Arguments</h3>
+<h3 id="sec:arguments_14" class="unnumbered unlisted">Arguments</h3>
 <table role = "presentation">
 <tr><td><code>feature</code></td>
 <td>
@@ -1115,7 +1135,7 @@ available features. Each feature will be mapped to CSS/JS.</p>
 <p>Character vectors of CSS/JS assets.</p>
 </td></tr>
 </table>
-<h3 id="sec:value_14" class="unnumbered unlisted">Value</h3>
+<h3 id="sec:value_15" class="unnumbered unlisted">Value</h3>
 <p>A vector of <code>&lt;link&gt;</code> (CSS) or <code>&lt;script&gt;</code> (JS) tags.
 </p>
 <h3 id="sec:examples_9" class="unnumbered unlisted">Examples</h3>
@@ -1158,7 +1178,7 @@ litedown::vest(css = &quot;@tabsets&quot;, js = c(&quot;@tabsets&quot;, &quot;@f
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.11</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.12</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/appendix.min.js" defer></script>
