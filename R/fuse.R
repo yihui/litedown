@@ -370,6 +370,19 @@ convert_knitr = function(input) {
 #' names(litedown::get_context())  # all available items
 get_context = function(item = NULL) if (is.null(item)) .env else .env[[item]]
 
+#' Exit `fuse()` early
+#'
+#' Stop [fuse()] from processing the remaining code chunks and text blocks. This
+#' function is meant to be called inside a code chunk to end the document early.
+#' @param append A character string to be appended to the fuse output after the
+#'   current code chunk.
+#' @return Invisible `NULL`.
+#' @export
+fuse_exit = function(append = '') {
+  .env$exit = append
+  invisible()
+}
+
 # return a string to indicate the error location
 get_loc = function(label) {
   l = .env$source_pos; n = length(l)
@@ -600,6 +613,11 @@ fiss = function(input, output = '.R', text = NULL) {
     }
     if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, nms[k])
     p_bar(p_clr)
+    if (!is.null(.env$exit)) {
+      res = c(res[seq_len(k)], .env$exit)
+      .env$exit = NULL
+      break
+    }
   }
   k = n + 1
   res
