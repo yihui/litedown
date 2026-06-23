@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.9.10">
+<meta name="generator" content="litedown 0.9.11">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/css/article.min.css">
@@ -121,8 +121,14 @@ output document format. The main differences between this package and
 dependencies), and it also has fewer Markdown features.
 </p>
 <h3 id="sec:author-s" class="unnumbered unlisted">Author(s)</h3>
-<p><strong>Maintainer</strong>: Yihui Xie <a href="mailto:xie@yihui.name">xie@yihui.name</a> (<a href="https://orcid.org/0000-0003-0645-5666">ORCID</a>) (https://yihui.org)
+<p><strong>Maintainer</strong>: Yihui Xie <a href="mailto:xie@yihui.name">xie@yihui.name</a> (<a href="https://orcid.org/0000-0003-0645-5666">ORCID</a>) (URL: https://yihui.org)
 </p>
+<p>Authors:
+</p>
+<ul>
+<li><p> Yihui Xie <a href="mailto:xie@yihui.name">xie@yihui.name</a> (<a href="https://orcid.org/0000-0003-0645-5666">ORCID</a>) (URL: https://yihui.org)
+</p>
+</li></ul>
 <p>Other contributors:
 </p>
 <ul>
@@ -156,10 +162,10 @@ sieve(input, text = NULL)</code></pre>
 not provided, the <code>text</code> argument must be provided instead. The <code>input</code>
 vector will be treated as a file path if it is a single string, and points
 to an existing file or has a filename extension. In other cases, the vector
-will be treated as the <code>text</code> argument input. To avoid ambiguity, if a
-string should be treated as <code>text</code> input when it happens to be an existing
+<p>will be treated as the <code>text</code> argument input. To avoid ambiguity, if a</p>
+<p>string should be treated as <code>text</code> input when it happens to be an existing
 file path or has an extension, wrap it in <code><a href="https://rdrr.io/r/base/AsIs.html">I()</a></code>, or simply use the <code>text</code>
-argument instead.</p>
+argument instead.</p></p>
 </td></tr>
 <tr><td><code>text</code></td>
 <td>
@@ -175,11 +181,11 @@ YAML syntax). An inline code fragment is of the form <code>`{lang} source`</code
 embedded in Markdown text.
 </p>
 <p>For R scripts, text blocks are extracted by removing the leading
-<code>#'</code> tokens. All other lines are treated as R code, which can optionally be
+<p><code>#’</code> tokens. All other lines are treated as R code, which can optionally be
 separated into chunks by consecutive lines of <code>#|</code> comments (chunk options
-are written in these comments). If no <code>#'</code> or <code>#|</code> tokens are found in the
+are written in these comments). If no <code>#’</code> or <code>#|</code> tokens are found in the
 script, the script will be divided into chunks that contain smallest
-possible complete R expressions.
+possible complete R expressions.</p>
 </p>
 <h3 id="sec:value_1" class="unnumbered unlisted">Value</h3>
 <p>A list of code chunks and text blocks:
@@ -567,9 +573,9 @@ top-level field <code>knit: litedown:::knit</code> to the YAML metadata. See
 <p>The function <code>fuse()</code> runs code from code chunks and inline code
 expressions in R Markdown, interweaves the results with the rest of text in
 the input to intermediate Markdown output (which is similar to what
-<code>knitr::knit()</code> does), and renders the Markdown output through <code>mark()</code> to
-<p>the final output format, such as HTML or LaTeX (similar to</p>
-<p><code>rmarkdown::render()</code>). It also works on R scripts in a way similar to
+<p><code>knitr::knit()</code> does), and renders the Markdown output through <code>mark()</code> to</p>
+<p>the final output format, such as HTML or LaTeX (similar to
+<code>rmarkdown::render()</code>). It also works on R scripts in a way similar to
 <code>knitr::spin()</code>. The function <code>fiss()</code> extracts code from the input, and is
 similar to <code>knitr::purl()</code>.</p>
 </p>
@@ -588,8 +594,8 @@ mark(input, output = NULL, text = NULL, options = NULL, meta = list())</code></p
 <td>
 <p>A character vector to provide the input file path or text. If
 not provided, the <code>text</code> argument must be provided instead. The <code>input</code>
-vector will be treated as a file path if it is a single string, and points
-<p>to an existing file or has a filename extension. In other cases, the vector
+<p>vector will be treated as a file path if it is a single string, and points
+to an existing file or has a filename extension. In other cases, the vector
 will be treated as the <code>text</code> argument input. To avoid ambiguity, if a
 string should be treated as <code>text</code> input when it happens to be an existing
 file path or has an extension, wrap it in <code><a href="https://rdrr.io/r/base/AsIs.html">I()</a></code>, or simply use the <code>text</code>
@@ -632,8 +638,8 @@ THe progress bar output can be set via a global option
 <tr><td><code>options</code></td>
 <td>
 <p>Options to be passed to the renderer. See <code><a href="#sec:man-markdown-options">markdown_options()</a></code>
-for details. This argument can take either a character vector of the form
-<p><code>”+option1 option2-option3”</code> (use <code>+</code> or a space to enable an option, and
+<p>for details. This argument can take either a character vector of the form
+<code>”+option1 option2-option3”</code> (use <code>+</code> or a space to enable an option, and
 <code>-</code> to disable an option), or a list of the form <code>list(option1 = value1, option2 = value2, …)</code>. A string <code>”+option1”</code> is equivalent to
 <code>list(option1 = TRUE)</code>, and <code>”-option2”</code> means <code>list(option2 = FALSE)</code>.
 Options that do not take logical values must be specified via a list, e.g.,
@@ -655,6 +661,13 @@ for clearer printing).
 <h3 id="sec:note_3" class="unnumbered unlisted">Note</h3>
 <p>For <code>fuse()</code>, you can generate the intermediate Markdown output via
 <code>output = '.md'</code> or <code>output = 'markdown'</code> without further calling <code>mark()</code>.
+</p>
+<p>If the global option <code>litedown.tinypng</code> is set to <code>TRUE</code> and the
+<span class="pkg">tinyimg</span> package is installed, PNG plots generated from code chunks
+will be optimized by <code><a href="https://rdrr.io/cran/tinyimg/man/tinypng.html">tinyimg::tinypng()</a></code> to reduce file size. To optimize
+other PNG files (e.g., images that you manually include in the document),
+you may call <code>tinyimg::tinypng('.')</code> to optimize all PNG files under the
+current directory.
 </p>
 <h3 id="sec:see-also_2" class="unnumbered unlisted">See Also</h3>
 <p><code><a href="#sec:man-crack">sieve()</a></code>, for the syntax of R scripts to be passed to <code><a href="#sec:man-mark">fuse()</a></code>.
@@ -705,7 +718,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/tmp/Rtmp3O6s7U/file180b64ac3b61&quot;
+<pre><code>#&gt; [1] &quot;/tmp/RtmpzJgFco/file18383c628a79&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -1035,9 +1048,9 @@ can manually refresh the page to fully re-render it.</p>
 </table>
 <h3 id="sec:details_7" class="unnumbered unlisted">Details</h3>
 <p>Markdown files will be converted to HTML and returned to the web browser
-<p>directly without writing to HTML files, to keep the directory clean during
+directly without writing to HTML files, to keep the directory clean during
 the preview. Clicking on a filename will bring up an HTML preview. To see its
-raw content, click on the link on its file size instead.</p>
+raw content, click on the link on its file size instead.
 </p>
 <h3 id="sec:value_12" class="unnumbered unlisted">Value</h3>
 <p>A URL (invisibly) for the preview.
@@ -1145,7 +1158,7 @@ litedown::vest(css = &quot;@tabsets&quot;, js = c(&quot;@tabsets&quot;, &quot;@f
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.10</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.9.11</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.57/js/appendix.min.js" defer></script>
