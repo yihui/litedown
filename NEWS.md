@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.10
 
+- Added support for optimizing PNG plot files via the global option `litedown.tinypng`. When set to `TRUE` and the **tinyimg** package is installed, PNG images generated from code chunks will be optimized by `tinyimg::tinypng()` to reduce file size. For other PNG files (e.g., images manually included in the document), users can call `tinyimg::tinypng('.')` to optimize all PNG files under the current directory (thanks, @bastistician, #116).
+
 - Added new engines `exec`, `sh`, `bash`, `zsh`, and `powershell` to run arbitrary commands via `system2()` and capture the output. The `exec` engine requires the chunk option `command`; the `sh`/`bash`/`zsh`/`powershell` engines use the engine name as the command.
 
 - When the `output` argument of `mark()` is a `.pdf` file, Markdown will be converted to a full `.tex` file instead of a LaTeX fragment before it is compiled to PDF.

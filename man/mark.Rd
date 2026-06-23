@@ -82,6 +82,13 @@ The function \code{mark()} renders Markdown to an output format via the
 \note{
 For \code{fuse()}, you can generate the intermediate Markdown output via
 \code{output = '.md'} or \code{output = 'markdown'} without further calling \code{mark()}.
+
+If the global option \code{litedown.tinypng} is set to \code{TRUE} and the
+\pkg{tinyimg} package is installed, PNG plots generated from code chunks
+will be optimized by \code{\link[tinyimg:tinypng]{tinyimg::tinypng()}} to reduce file size. To optimize
+other PNG files (e.g., images that you manually include in the document),
+you may call \code{tinyimg::tinypng('.')} to optimize all PNG files under the
+current directory.
 }
 \examples{
 library(litedown)

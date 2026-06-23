@@ -430,6 +430,13 @@ block_order = function(res, N = length(res)) {
 #'   `litedown.progress.output` (the default is [stderr()]).
 #' @note For `fuse()`, you can generate the intermediate Markdown output via
 #'   `output = '.md'` or `output = 'markdown'` without further calling `mark()`.
+#'
+#'   If the global option `litedown.tinypng` is set to `TRUE` and the
+#'   \pkg{tinyimg} package is installed, PNG plots generated from code chunks
+#'   will be optimized by [tinyimg::tinypng()] to reduce file size. To optimize
+#'   other PNG files (e.g., images that you manually include in the document),
+#'   you may call `tinyimg::tinypng('.')` to optimize all PNG files under the
+#'   current directory.
 #' @seealso [sieve()], for the syntax of R scripts to be passed to [fuse()].
 #' @export
 #' @examples
@@ -762,8 +769,13 @@ fuse_code = function(x, blocks) {
   # however, when cache = true, we shouldn't clean up plots since they won't be
   # regenerated next time (then they won't be found)
   if (!isTRUE(opts$cache)) .env$plot_files = c(.env$plot_files, p3)
-  # recycle alt and attributes for all plots
   pn = length(p3)
+  if (pn && getOption('litedown.tinypng', FALSE)) {
+    if (xfun::loadable('tinyimg')) {
+      tinyimg::tinypng(grep('[.]png$', p3, value = TRUE))
+    } else message("The 'tinyimg' is not available; PNG images won't be optimized.")
+  }
+  # recycle alt and attributes for all plots
   if (pn && is.null(alt)) {
     # reminder about missing alt text if this option is set to TRUE
     if (getOption('litedown.fig.alt', FALSE)) message(
