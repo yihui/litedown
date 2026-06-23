@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.10
 
+- Added new engines `exec`, `sh`, `bash`, `zsh`, and `powershell` to run arbitrary commands via `system2()` and capture the output. The `exec` engine requires the chunk option `command`; the `sh`/`bash`/`zsh`/`powershell` engines use the engine name as the command.
+
 - When the `output` argument of `mark()` is a `.pdf` file, Markdown will be converted to a full `.tex` file instead of a LaTeX fragment before it is compiled to PDF.
 
 - Fixed a bug that sections in the appendix could not be cross-referenced.
