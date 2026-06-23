@@ -8,30 +8,22 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.os }} (${{ matrix.r }})
 
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {os: ubuntu-latest, r: 'release'}
-          - {os: ubuntu-latest, r: '4.5'}
-          - {os: ubuntu-latest, r: '4.4'}
-          - {os: ubuntu-latest, r: '4.3'}
-          - {os: ubuntu-latest, r: '4.2'}
-          - {os: ubuntu-latest, r: '4.1'}
-          - {os: ubuntu-latest, r: '4.0'}
-          - {os: ubuntu-latest, r: '3.6'}
-          - {os: ubuntu-latest, r: '3.5'}
-          - {os: ubuntu-latest, r: '3.4'}
-          - {os: ubuntu-latest, r: '3.3'}
-          - {os: ubuntu-latest, r: '3.2'}
-          - {os: ubuntu-latest, r: '3.2.0'}
-          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
-          - {os: macOS-latest, r: 'release'}
-          - {os: windows-latest, r: 'release'}
+        os: [ubuntu-latest]
+        r: ['release', '4.5', '4.4', '4.3', '4.2', '4.1', '4.0', '3.6', '3.5', '3.4', '3.3', '3.2', '3.2.0', 'devel']
+        include:
+          - r: devel
+            http-user-agent: release
+          - os: macOS-latest
+            r: release
+          - os: windows-latest
+            r: release
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -44,13 +36,13 @@ jobs:
 
       - uses: r-lib/actions/setup-r@HEAD
         with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
+          r-version: ${{ matrix.r }}
+          http-user-agent: ${{ matrix.http-user-agent }}
           use-public-rspm: true
 
       - name: Whether to use codecov
         run: |
-          echo "USE_R_CODECOV=${{ (runner.os == 'Linux' && matrix.config.r == 'release') && true || false }}" >> $GITHUB_ENV
+          echo "USE_R_CODECOV=${{ (runner.os == 'Linux' && matrix.r == 'release') && true || false }}" >> $GITHUB_ENV
 
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:

@@ -1,0 +1,55 @@
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+name: Update R versions matrix
+
+jobs:
+  update-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@HEAD
+
+      - name: Query available R versions
+        id: versions
+        run: |
+          release=$(curl -s https://api.r-hub.io/rversions/r-release | jq -r '.version | split(".") | "\(.[0]).\(.[1])"')
+          curl -s https://api.r-hub.io/rversions/r-versions | \
+            jq -r --arg rel "$release" \
+              '[.[] | .version | split(".") | "\(.[0]).\(.[1])"] | unique | map(select(. >= "3.2" and . != $rel)) | reverse | join(" ")' \
+            > r_versions.txt
+          echo "versions=$(cat r_versions.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Update workflow matrix
+        run: |
+          versions="${{ steps.versions.outputs.versions }}"
+          # Build the YAML list: 'release', version numbers, '3.2.0', 'devel'
+          yaml_list="'release'"
+          for v in $versions; do
+            yaml_list="$yaml_list, '$v'"
+          done
+          yaml_list="$yaml_list, '3.2.0', 'devel'"
+          # Replace the r: line in the workflow
+          sed -i "s|^        r: \[.*\]|        r: [$yaml_list]|" .github/workflows/R-CMD-check.yaml
+          rm -f r_versions.txt
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes to R version matrix."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="update-r-versions"
+          git checkout -B "$branch"
+          git add .github/workflows/R-CMD-check.yaml
+          git commit -m "Update R version matrix"
+          git push -f origin "$branch"
+          if ! gh pr view "$branch" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr create --title "Update R version matrix" \
+              --body "New R version(s) detected. Updated the CI matrix to include all minor versions from 3.2 to the latest release."
+          fi
