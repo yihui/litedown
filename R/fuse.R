@@ -791,7 +791,9 @@ fuse_code = function(x, blocks) {
   if (pn && getOption('litedown.tinypng', FALSE)) {
     if (xfun::loadable('tinyimg')) {
       tinyimg::tinypng(grep('[.]png$', p3, value = TRUE))
-    } else message("The 'tinyimg' is not available; PNG images won't be optimized.")
+    } else message(
+      "The 'tinyimg' package is not available; PNG images won't be optimized."
+    )
   }
   # recycle alt and attributes for all plots
   if (pn && is.null(alt)) {
