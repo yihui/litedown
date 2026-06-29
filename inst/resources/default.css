@@ -91,6 +91,10 @@ section.footnotes {
   background: repeating-linear-gradient(135deg, white, white 30px, #ddd 32px, #ddd 32px);
   opacity: 0.6;
 }
+@media (prefers-color-scheme: dark) {
+  html, img, video, iframe { filter: invert(1); }
+  body { background: #ededed; }
+}
 @media print {
   body { max-width: 100%; }
   tr, img { break-inside: avoid; }
