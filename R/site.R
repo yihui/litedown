@@ -31,6 +31,14 @@
 #' output file is older than the input.
 #' @param input The root directory of the site, or a vector of input file paths.
 #' @return Output file paths (invisibly).
+#' @examples
+#' # create a minimal book example in the temp dir
+#' d = tempfile()
+#' litedown:::proj_skeleton(d, 'site')
+#' fuse_site(d)
+#' if (interactive()) browseURL(file.path(d, 'index.html'))
+#' # clean up
+#' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
 fuse_site = function(input = '.') {
   info = NULL; preview = FALSE
@@ -182,6 +190,14 @@ menu_name = function(x) {
 #'   `input` field under `book`).
 #' @return An output file path or the output content, depending on the `output`
 #'   argument.
+#' @examples
+#' # create a minimal book example in the temp dir
+#' d = tempfile()
+#' litedown:::proj_skeleton(d, 'book')
+#' fuse_book(d)
+#' if (interactive()) browseURL(file.path(d, 'index.html'))
+#' # clean up
+#' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
 fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
   # when input is c(dir, file1, file2, ...), we find book files under dir, but
@@ -276,6 +292,12 @@ yml_config = function(d) {
     if (!is.null(yaml2 <- normalize_yaml(yaml))) yaml = yaml2
     yaml
   }
+}
+
+proj_skeleton = function(path, type = 'book') {
+  dir_create(path)
+  file.copy(list.files(pkg_file('rstudio', type), full.names = TRUE), path)
+  invisible(path)
 }
 
 site_pattern = '[.][Rq]?md$'

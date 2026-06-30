@@ -1,0 +1,11 @@
+---
+title: "A Minimal Book Example"
+author: "Author Name"
+---
+
+# Preface {-}
+
+This is a minimal book example using **litedown**. You can build the book by
+calling `litedown::fuse_book()` in R.
+
+For more info, please read <https://pkg.yihui.org/litedown/book/#sec:books>.

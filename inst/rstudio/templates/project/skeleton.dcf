@@ -1,0 +1,9 @@
+Binding: proj_skeleton
+Title: Project using litedown
+OpenFiles: index.Rmd, _litedown.yml
+
+Parameter: type
+Widget: SelectInput
+Label: Project type
+Fields: book, site
+Default: book

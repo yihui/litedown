@@ -28,6 +28,27 @@ output:
       documentclass: "book"
 ```
 
+## Creating a new project
+
+If you use RStudio, you can create a new litedown book or website project from
+the menu `File` > `New Project` > `New Directory` > `Project using litedown`.
+You will be able to select the project type (book or site) from the dropdown
+menu.
+
+Alternatively, you can create a minimal project with the internal helper
+`litedown:::proj_skeleton()`:
+
+``` r
+litedown:::proj_skeleton("my-book", type = "book")
+litedown:::proj_skeleton("my-site", type = "site")
+```
+
+The book skeleton contains an `index.Rmd` (the first chapter with YAML
+metadata), a sample chapter `01-intro.Rmd`, and a `_litedown.yml` config file.
+The site skeleton contains `index.Rmd`, `about.Rmd`, and `_litedown.yml`. You
+can build the book with `fuse_book()` and the site with `fuse_site()`. The
+configuration options are documented in later sections of this chapter.
+
 ## Books
 
 The `_litedown.yml` file should contain a top-level field named `book`, which

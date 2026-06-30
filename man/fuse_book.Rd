@@ -78,3 +78,12 @@ current R session or a separate new R session; \code{chapter_before} and
 file, respectively, which accepts some variables (e.g., \verb{$input$} is the
 current input file path).
 }
+\examples{
+# create a minimal book example in the temp dir
+d = tempfile()
+litedown:::proj_skeleton(d, "book")
+fuse_book(d)
+if (interactive()) browseURL(file.path(d, "index.html"))
+# clean up
+if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
+}

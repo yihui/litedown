@@ -1,0 +1,7 @@
+---
+title: "Home"
+---
+
+Welcome to my website.
+
+For more info, please read <https://pkg.yihui.org/litedown/book/#sec:websites>.

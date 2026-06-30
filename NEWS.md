@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.10
 
+- Added minimal book and website project templates that can be discovered by RStudio from `File` > `New Project` > `New Directory` > `Project using litedown`. You can also create them programmatically with `litedown:::proj_skeleton(path, type)`, where `type` is `"book"` or `"site"` (thanks, @jangorecki, #97).
+
 - Added `fuse_exit()`, which can be called inside a code chunk to exit `fuse()` early and discard the rest of the document. It takes an optional `append` argument to add text after the current chunk (thanks, @TimTaylor, #117).
 
 - Added support for optimizing PNG plot files via the global option `litedown.tinypng`. When set to `TRUE` and the **tinyimg** package is installed, PNG images generated from code chunks will be optimized by `tinyimg::tinypng()` to reduce file size. For other PNG files (e.g., images manually included in the document), users can call `tinyimg::tinypng('.')` to optimize all PNG files under the current directory (thanks, @bastistician, #116).

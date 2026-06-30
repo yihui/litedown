@@ -1,0 +1,9 @@
+# Introduction
+
+This is the first chapter.
+
+## R Code
+
+```{r}
+1 + 1
+```

@@ -43,3 +43,12 @@ values are:
 output file is older than the input.
 }
 }
+\examples{
+# create a minimal book example in the temp dir
+d = tempfile()
+litedown:::proj_skeleton(d, "site")
+fuse_site(d)
+if (interactive()) browseURL(file.path(d, "index.html"))
+# clean up
+if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
+}
