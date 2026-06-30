@@ -1,0 +1,204 @@
+---
+title: litedown + clean theme
+subtitle: A minimalist and elegant presentation theme
+author: "Grant McDermott"
+date: "`{r} format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html:
+    meta:
+      css: ["@default", "@snap", "@snap-clean", "@callout"]
+      js: ["@snap", "@callout"]
+    options:
+      echo: false
+---
+
+```{r setup}
+#| include: false
+for (pkg in c("fixest", "modelsummary", "tinytable")) {
+  if (!requireNamespace(pkg, quietly = TRUE)) install.packages(pkg)
+}
+
+litedown::reactor(
+  echo = FALSE,
+  collapse = TRUE,
+  out.width = "90%",
+  fig.width = 12,
+  fig.asp = 0.625
+)
+```
+
+## Example slide
+
+### This is a subtitle
+
+Before we dive a bit deeper, here is a simple example of the
+`litedown clean` theme.
+
+- No pictures or anything fancy. Just text for the moment.
+
+Next, we'll take a brief tour of some theme components.
+
+- We'll use the same basic structure as the original
+[slides](https://grantmcdermott.com/quarto-revealjs-clean-demo/template.html)
+for the [Quarto reveal.js "clean"](https://github.com/grantmcdermott/quarto-revealjs-clean) theme.
+- Not all of the original theme features are available for this
+[litedown](https://github.com/yihui/litedown) implementation, but the main
+aesthetic highlights are supported. 
+
+## Components
+
+### Ordered and Unordered Lists
+
+Here we have an unordered list.
+
+- first item
+    - sub-item
+- second item
+
+And next we have an ordered one.
+
+1. first item
+    1. sub-item
+2. second item
+
+## Components
+
+### Alerts & Cross-refs {#sec-crossref}
+
+To emphasize specific words or text, you can:
+
+- Use the default `alert` class, e.g. <span class="alert">important note</span>.
+- Use the `fg` class for custom colour, e.g. <span class="fg" style="--col: #e64173">important note</span>.
+- Use the `bg` class for custom background, e.g. <span class="bg" style="--col: #e64173">important note</span>.
+
+## Components
+
+### Mathematics
+
+Use inline ($\alpha$, $\pi$) or display math as needed:
+
+$$P(E) = {n \choose k} p^k (2-p)^{n-k} \int^\infty_0 x dx$$
+
+$$\hat{\sigma} = \sqrt\frac{\sum(Y_i – \hat{Y}_i)^2} {n – 2}$$
+
+## Components
+
+### Multicolumn I: Text only
+
+<div class="columns5050">
+<div>
+
+#### Column 1
+
+Here is a long sentence that will wrap onto the next line as it hits the column
+width, and continue this way until it stops.
+
+</div>
+<div>
+
+#### Column 2
+
+Some other text in another column.
+
+A second paragraph.
+
+</div>
+</div>
+
+Multicolumn support is very flexible and we can continue with a single full
+span column in the same slide.
+
+## Components
+
+### Multicolumn II: Text and figures
+
+<div class="columns5050">
+<div>
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/960px-Tsunami_by_hokusai_19th_century.jpg)
+
+</div>
+<div>
+
+- A point about the figure that is potentially important.
+- Another point about the figure that is also potentially important.
+
+</div>
+</div>
+
+## Tables
+
+### Markdown
+
+The `clean` theme rolls its own minimalist aesthetic for tables. 
+This should interface directly with "manual" markdown tables...
+
+| Feature | Quarto | litedown |
+|---------|--------|----------|
+| Speed   | Slow   | Fast     |
+| Size    | Large  | Small    |
+| Deps    | Many   | Few      |
+
+... or "computed" tables (next slide).
+
+## Regression tables
+
+### modelsummary
+
+```{r}
+#| include: false
+library(fixest)
+
+mods = feols(
+  rating ~ complaints + #privileges + 
+    learning + csw0(raises + critical),
+  data = attitude
+)
+
+dict = c("rating"     = "Overall Rating",
+         "complaints" = "Handling of Complaints",
+        #  "privileges" = "No Special Priviledges",
+         "learning"   = "Opportunity to Learn",
+         "raises"     = "Performance-Based Raises",
+         "critical"   = "Too Critical")
+```
+
+```{r}
+library(modelsummary)
+
+modelsummary(
+  setNames(mods, c("(1)", "(2)")),
+  coef_map = dict, stars = TRUE,
+  gof_map = NA
+  ) |>
+  # some optional stylistic tweaks
+  tinytable::group_tt(j = list("Dep. variable: Overall Rating" = 2:3)) |>
+  tinytable::style_tt(i = 1:2, j = 2:3, background = "pink")
+```
+
+## Plots
+
+### Volcano plot
+
+```{r}
+filled.contour(volcano, color.palette = cm.colors)
+```
+
+## Summary
+
+### A minimalist and elegant presentation theme
+
+The litedown [clean theme](https://github.com/grantmcdermott/quarto-revealjs-clean) aims to be a
+minimalist and elegant presentation theme, ported from the original Quarto
+reveal.js version.
+
+- Same visual identity: colours, typography, and table styling.
+- Column layouts via `columns` classes.
+- Lightweight: no Quarto, Pandoc, or knitr dependencies.
+- See the [litedown](https://github.com/yihui/litedown) repo for more.
+
+Render with:
+
+```r
+litedown::fuse("clean.Rmd", output = "clean.html")
+```
