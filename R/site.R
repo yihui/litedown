@@ -66,17 +66,24 @@ fuse_site = function(input = '.') {
   opts[['options']] = merge_list(
     list(embed_resources = FALSE, toc = TRUE), opts[['options']]
   )
+  standalone = cfg[['standalone']]
   out = lapply(inputs[i], function(x) {
+    alone = length(standalone) && any(vapply(
+      standalone, function(p) grepl(glob2rx(p), basename(x)), logical(1)
+    ))
     res = if (grepl('[.]md$', x)) {
-      opts = set_site_options(opts, x, root); on.exit(options(opts))
+      if (!alone) {
+        opts = set_site_options(opts, x, root); on.exit(options(opts))
+      }
       mark(x, full_output)
     } else {
       Rscript_call(
         function(x, opts, set, root, flag, output) {
-          set(opts, x, root, list(litedown.roaming = flag))
+          if (!is.null(opts)) set(opts, x, root, list(litedown.roaming = flag))
           litedown::fuse(x, output, envir = globalenv())
         },
-        list(x, opts, set_site_options, root, is_roaming(), full_output),
+        list(x, if (!alone) opts, set_site_options,
+          root, is_roaming(), full_output),
         fail = paste('Failed to run litedown::fuse() on', x)
       )
     }

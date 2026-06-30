@@ -17,7 +17,7 @@ jobs:
           use-public-rspm: true
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
-          extra-packages: litedown xfun .
+          extra-packages: litedown xfun fixest modelsummary tinytable .
           r-universe: yihui
       - uses: yihui/actions/litedown-site@HEAD
         with:

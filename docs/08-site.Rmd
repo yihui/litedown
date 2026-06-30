@@ -113,6 +113,7 @@ are likely to customize the `meta` variables `css`, `include_before`, and
 site:
   rebuild: "outdated"
   pattern: "[.]R?md$"
+  standalone: ["slides-*.Rmd"]
 
 output:
   html:
@@ -124,6 +125,12 @@ output:
 
 Basically, `include_before` can take a file or text input that will be used as
 the header of each web page, and `include_after` will be the footer.
+
+The `standalone` option takes a character vector of filename patterns (supporting
+wildcards like `*` and `?`). Files matching any pattern will be built with a
+plain `fuse()` call without site-level CSS, JS, navigation, or footer being
+injected. This is useful for standalone pages such as slides that need their own
+self-contained styles and should not inherit the site layout.
 
 ## R package documentation {#sec:pkg-site}
 

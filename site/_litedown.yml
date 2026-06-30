@@ -1,0 +1,9 @@
+site:
+  standalone: ["026-snap-clean*"]
+
+output:
+  html:
+    meta:
+      include_after: "_footer.md"
+    options:
+      number_sections: true

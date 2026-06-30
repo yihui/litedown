@@ -278,6 +278,7 @@ assets = t(data.frame(
   pages = c('paginate HTML for printing', '@pages', '@pages'),
   'right-quote' = c('right-align quote footers', NA, '@right-quote'),
   snap = c('snap slides', '@snap', '@snap'),
+  'snap-clean' = c('clean slide theme', '@snap-clean', NA),
   tabsets = c('create tabsets from bullet lists or sections', '@tabsets', '@tabsets'),
   'toc-highlight' = c('highlight TOC items on scroll', NA, '@toc-highlight'),
   row.names = c('description', 'css', 'js'), check.names = FALSE
