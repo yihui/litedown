@@ -1,13 +1,13 @@
 ---
-title: litedown + clean theme
+title: litedown slides with the clean theme
 subtitle: A minimalist and elegant presentation theme
 author: "Grant McDermott"
 date: "`{r} format(Sys.Date(), '%B %d, %Y')`"
 output:
   html:
     meta:
-      css: ["@default", "@snap", "@snap-clean", "@callout"]
-      js: ["@snap", "@callout"]
+      css: ["@default", "@snap", "@snap-clean"]
+      js: ["@snap"]
     options:
       echo: false
 ---
@@ -25,6 +25,19 @@ litedown::reactor(
   fig.width = 12,
   fig.asp = 0.625
 )
+```
+
+## Get started
+
+Add the extra CSS asset
+[`@snap-clean`](https://github.com/yihui/lite.js/blob/main/css/snap-clean.css):
+
+```yaml
+output:
+  html:
+    meta:
+      css: ["@default", "@snap", "@snap-clean"]
+      js: ["@snap"]
 ```
 
 ## Example slide
@@ -197,8 +210,4 @@ reveal.js version.
 - Lightweight: no Quarto, Pandoc, or knitr dependencies.
 - See the [litedown](https://github.com/yihui/litedown) repo for more.
 
-Render with:
-
-```r
-litedown::fuse("clean.Rmd", output = "clean.html")
-```
+Render with `litedown::fuse()`.
