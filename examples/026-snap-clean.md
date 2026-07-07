@@ -12,15 +12,7 @@ output:
       echo: false
 ---
 
-```{r setup}
-#| include: false
-litedown::reactor(
-  collapse = TRUE,
-  out.width = "90%",
-  fig.width = 12,
-  fig.asp = 0.625
-)
-```
+
 
 ## Get started
 
@@ -155,7 +147,7 @@ This should interface directly with "manual" markdown tables...
 
 <!-- install these packages and remove eval = FALSE to render these tables -->
 
-```{r, eval = FALSE}
+``` {.r}
 library(fixest)
 
 mods = feols(
@@ -172,7 +164,7 @@ dict = c("rating"     = "Overall Rating",
          "critical"   = "Too Critical")
 ```
 
-```{r, eval = FALSE}
+``` {.r}
 library(modelsummary)
 
 modelsummary(
@@ -189,9 +181,10 @@ modelsummary(
 
 ### Volcano plot
 
-```{r, fig.alt = "Filled contour plot of the volcano elevation dataset"}
+``` {.r}
 filled.contour(volcano, color.palette = cm.colors)
 ```
+![Filled contour plot of the volcano elevation dataset](<026-snap-clean__files/chunk-4-1.png>)
 
 ## Summary
 
