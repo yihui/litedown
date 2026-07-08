@@ -189,7 +189,7 @@ modelsummary(
 
 ### Volcano plot
 
-```{r, fig.alt = "Filled contour plot of the volcano elevation dataset"}
+```{r, fig.alt = "Filled contour plot of the volcano elevation dataset", echo = FALSE}
 filled.contour(volcano, color.palette = cm.colors)
 ```
 

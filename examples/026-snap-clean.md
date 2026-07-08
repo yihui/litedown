@@ -181,9 +181,6 @@ modelsummary(
 
 ### Volcano plot
 
-``` {.r}
-filled.contour(volcano, color.palette = cm.colors)
-```
 ![Filled contour plot of the volcano elevation dataset](<026-snap-clean__files/chunk-4-1.png>)
 
 ## Summary
