@@ -15,7 +15,7 @@ by default are marked by a \code{+} prefix, and those disabled by default are
 marked by \code{-}.
 }
 \details{
-See \url{https://yihui.org/litedown/#sec:markdown-options} for the full list of
+See \url{https://pkg.yihui.org/litedown/book/#sec:markdown-options} for the full list of
 options and their documentation.
 }
 \examples{

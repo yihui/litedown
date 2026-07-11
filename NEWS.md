@@ -24,7 +24,7 @@
 
 # CHANGES IN litedown VERSION 0.9
 
-- Provided [a new chunk option `filter`](https://yihui.org/litedown/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).
+- Provided [a new chunk option `filter`](https://pkg.yihui.org/litedown/book/#sec:option-filter) to filter the output elements via a custom function. This makes it possible to re-order output elements. As a result, text output and plots from a `for`-loop can be interleaved (thanks, @reedacartwright, #106).
 
 - The chunk option `attr.source` will default to `.lang` (where `lang` is the engine name) only when it is not provided, i.e., `NULL`. Previously the value `.lang` would still be used when `attr.source` has been provided. Now it's possible to completely override it, e.g., `attr.source = 'language-r'` as in #107 (thanks, @ThomasSoeiro).
 
@@ -38,7 +38,7 @@
 
 # CHANGES IN litedown VERSION 0.8
 
-- Added a new chunk option `fig.keep` to select plots to be kept in a code chunk (thanks, @Gabrielforest, #99). See https://yihui.org/litedown/#sec:option-fig for documentation.
+- Added a new chunk option `fig.keep` to select plots to be kept in a code chunk (thanks, @Gabrielforest, #99). See https://pkg.yihui.org/litedown/book/#sec:option-fig for documentation.
 
 - Improved support for LaTeX footnotes. The footnote identifier no longer has to be a number, and the footnote can include arbitrary elements (not necessarily a single paragraph).
 
@@ -66,13 +66,13 @@
 
 # CHANGES IN litedown VERSION 0.6
 
-- Added a Markdown rendering option `offline` to download web resources when this option is set to true, so that the HTML output can be viewed offline (thanks, @TimTaylor, #73). See https://yihui.org/litedown/#sec:offline for more info.
+- Added a Markdown rendering option `offline` to download web resources when this option is set to true, so that the HTML output can be viewed offline (thanks, @TimTaylor, #73). See https://pkg.yihui.org/litedown/book/#sec:offline for more info.
 
 - Added a function `get_context()` to query the `fuse()` context such as the input file path or the output format (thanks, @MichaelChirico #67, @vincentarelbundock #70).
 
 - Added a function `raw_text()` to output raw text content in a code chunk (thanks, @vincentarelbundock, #69).
 
-- Dropped the chunk option `ref.label` and added a new chunk option `fill`, which is more general (`ref.label = "LABEL"` can be achieved by `` `<LABEL>` `` inside a chunk). See https://yihui.org/litedown/#sec:option-fill for more information.
+- Dropped the chunk option `ref.label` and added a new chunk option `fill`, which is more general (`ref.label = "LABEL"` can be achieved by `` `<LABEL>` `` inside a chunk). See https://pkg.yihui.org/litedown/book/#sec:option-fill for more information.
 
 - Fixed a bug that `fuse()` fails to print the error location when the whole input document consists of a single chunk that throws an error (thanks, @kevinushey, yihui/knitr#2387).
 
@@ -84,11 +84,11 @@
 
 - Added a new engine `embed` to embed text files via a code chunk.
 
-- Changed the meaning of the chunk option `order`: previously, higher values indicate earlier execution; now higher values indicate later execution. This is a breaking change, but the new meaning should feel more natural. For example, `order = i` means to execute the chunk in the i-th step, and `order = i - 1.5` means to move the chunk back 1.5 step in the queue so it will be executed earlier than its previous chunk. See https://yihui.org/litedown/#sec:option-order for details.
+- Changed the meaning of the chunk option `order`: previously, higher values indicate earlier execution; now higher values indicate later execution. This is a breaking change, but the new meaning should feel more natural. For example, `order = i` means to execute the chunk in the i-th step, and `order = i - 1.5` means to move the chunk back 1.5 step in the queue so it will be executed earlier than its previous chunk. See https://pkg.yihui.org/litedown/book/#sec:option-order for details.
 
 - Shortened the output format names `litedown::html_format` to `html`, and `litedown::latex_format` to `latex`. The names `litedown::*` can still be used if you like.
 
-- Added options `dollar`, `signif`, and `power` to format numbers from inline code. See https://yihui.org/litedown/#sec:inline-code for details.
+- Added options `dollar`, `signif`, and `power` to format numbers from inline code. See https://pkg.yihui.org/litedown/book/#sec:inline-code for details.
 
 - When embedding SVG images in HTML output, embed their raw XML content instead of base64 encoding them.
 
@@ -100,7 +100,7 @@
 
 - Added a new function `vest()` as another way to add CSS/JS assets to HTML output.
 
-- Provided templates and a Github action `yihui/litedown/site` to build package websites. See https://yihui.org/litedown/#sec:pkg-site for details.
+- Provided templates and a Github action `yihui/litedown/site` to build package websites. See https://pkg.yihui.org/litedown/book/#sec:pkg-site for details.
 
 - Added an argument `examples` to `pkg_manual()` to run examples and show their output (thanks, @TimTaylor, #54).
 

@@ -12,7 +12,7 @@ output_format = function(to, options, meta, ...) {
   if ('pkgdown' %in% loadedNamespaces()) {
     warning(
       msg, '\n\nIf you intend to build a package website, you can also use litedown:',
-      ' https://yihui.org/litedown/#sec:pkg-site', call. = FALSE
+      ' https://pkg.yihui.org/litedown/book/#sec:pkg-site', call. = FALSE
     )
     ns = asNamespace('rmarkdown')
     ag = merge_list(list(to = to), list(...))
@@ -56,7 +56,7 @@ output_format = function(to, options, meta, ...) {
 #'   values are `none`, `natbib`, and `biblatex`.
 #' @note If you want to use the `Knit` button in RStudio, you must add a
 #'   top-level field `knit: litedown:::knit` to the YAML metadata. See
-#'   \url{https://yihui.org/litedown/#sec:knit-button} for more information.
+#'   \url{https://pkg.yihui.org/litedown/book/#sec:knit-button} for more information.
 #' @export
 html_format = function(options = NULL, meta = NULL, template = NULL, keep_md = FALSE) {
   output_format('html', options, meta, template, keep_md)

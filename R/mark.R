@@ -37,7 +37,7 @@
 #'   to fill out the template by their names and values, e.g., `list(title =
 #'   ...)` will replace the `$title$` variable in the template. See the Section
 #'   \dQuote{YAML metadata} [in the
-#'   documentation](https://yihui.org/litedown/#sec:yaml-metadata) for supported
+#'   documentation](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) for supported
 #'   variables.
 #' @return The output file path if output is written to a file, otherwise a
 #'   character vector of the rendered output (wrapped in [xfun::raw_string()]
@@ -475,7 +475,7 @@ yaml_text = function(part, text) if (length(l <- part$lines) == 2) text[l[1]:l[2
 #' by default are marked by a `+` prefix, and those disabled by default are
 #' marked by `-`.
 #'
-#' See <https://yihui.org/litedown/#sec:markdown-options> for the full list of
+#' See <https://pkg.yihui.org/litedown/book/#sec:markdown-options> for the full list of
 #' options and their documentation.
 #' @return A character vector of all available options.
 #' @export

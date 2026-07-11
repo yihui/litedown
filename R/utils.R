@@ -299,7 +299,7 @@ feature_form = function(path) {
     ),
     '<p><b>Select HTML features</b></p>', '<p style="columns:20em;">',
     sprintf(
-      '<label><input name="%s" type="checkbox" /> <a href="https://yihui.org/litedown/#sec:%s" target="_blank"><code>%s</code></a>: %s</label>',
+      '<label><input name="%s" type="checkbox" /> <a href="https://pkg.yihui.org/litedown/book/#sec:%s" target="_blank"><code>%s</code></a>: %s</label>',
       nms, nms, nms, html_escape(assets[, 'description'])
     ), '</p>'
   ))

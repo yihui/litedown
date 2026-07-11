@@ -57,5 +57,5 @@ You can also use \code{litedown::html_format} instead of \code{html} (or
 \note{
 If you want to use the \code{Knit} button in RStudio, you must add a
 top-level field \code{knit: litedown:::knit} to the YAML metadata. See
-\url{https://yihui.org/litedown/#sec:knit-button} for more information.
+\url{https://pkg.yihui.org/litedown/book/#sec:knit-button} for more information.
 }
