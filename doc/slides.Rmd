@@ -614,7 +614,7 @@ when uncompressed) and have no dependencies. They were written from scratch.
 -   This simple presentation framework is highly customizable. Customizing
     slides can be addictive if you know HTML/CSS/JS.
 
--   Learn more about the Markdown syntax at <https://yihui.org/litedown/>.
+-   Learn more about the Markdown syntax at <https://pkg.yihui.org/litedown/book/>.
 
 -   Github repo: <https://github.com/yihui/litedown> (you can find the [Rmd
     source](https://github.com/yihui/litedown/blob/main/vignettes/slides.Rmd) of
