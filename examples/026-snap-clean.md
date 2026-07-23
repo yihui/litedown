@@ -143,26 +143,30 @@ This should interface directly with "manual" markdown tables...
 
 ## Regression tables
 
-### modelsummary
+### Regression example
 
-<!-- install these packages and remove eval = FALSE to render these tables -->
+<!-- install these packages, remove eval = FALSE from the first chunk,
+and uncomment the third slide to render the table -->
 
 ``` {.r}
 library(fixest)
 
 mods = feols(
-  rating ~ complaints + #privileges + 
+  rating ~ complaints +
     learning + csw0(raises + critical),
   data = attitude
 )
 
 dict = c("rating"     = "Overall Rating",
          "complaints" = "Handling of Complaints",
-        #  "privileges" = "No Special Priviledges",
          "learning"   = "Opportunity to Learn",
          "raises"     = "Performance-Based Raises",
          "critical"   = "Too Critical")
 ```
+
+## Regression tables
+
+### modelsummary
 
 ``` {.r}
 library(modelsummary)
@@ -176,6 +180,16 @@ modelsummary(
   tinytable::group_tt(j = list("Dep. variable: Overall Rating" = 2:3)) |>
   tinytable::style_tt(i = 1:2, j = 2:3, background = "pink")
 ```
+
+<!-- Uncomment the following slide to show the regression table -->
+<!--
+## Regression tables
+
+### modelsummary
+
+```{r modelsummary-table, echo = FALSE}
+```
+-->
 
 ## Plots
 
