@@ -313,8 +313,10 @@ site_pattern = '[.][Rq]?md$'
 find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
   if (!is.character(pattern)) pattern = site_pattern
   x = list.files(d, pattern, full.names = TRUE, recursive = deep)
-  # exclude .* and _* files/dirs
-  x = x[!grepl('(^|/)[_.]', gsub('^([.]+/)+', '', x))]
+  # exclude .* and _* files/dirs (test paths relative to d, so ancestor dirs
+  # like GHA's `_temp` don't accidentally match)
+  rel = if (deep) substr(x, nchar(d) + 2, nchar(x)) else basename(x)
+  x = x[!grepl('(^|/)[_.]', rel)]
   # exclude readme
   x = x[tolower(basename(sans_ext(x))) != 'readme']
   # for .md files, don't include them if they have .Rmd/.qmd files
