@@ -167,7 +167,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   find_prose()
   if (length(i <- grep('</[a-z0-9]+>\\s*$', text[p]))) {
     # if the next line is not prose but code block, append \n
-    k = p[!(p[i] + 1) %in% p]
+    k = p[i][!(p[i] + 1) %in% p]
     if (length(k)) text[k] = paste0(text[k], '\n')
   }
 

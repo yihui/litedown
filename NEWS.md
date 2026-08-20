@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.11
 
+- Fixed a bug in `mark()` that a trailing newline was appended to the wrong lines when a closing HTML tag was followed by a code block (thanks, @ben-schwen, #135).
+
 
 # CHANGES IN litedown VERSION 0.10
 
