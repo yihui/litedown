@@ -82,6 +82,12 @@ automatically add the type of reference before the reference number, e.g.,
 `\cref{sec:intro}` may generate `Section 1`, so you do not have to write
 `Section \ref{sec:intro}`.
 
+### `cross_refs`
+
+Whether to resolve cross-references (@sec:cross-references). This option is
+`true` by default. If you do not use any cross-references in the document, you
+can disable it to slightly speed up the rendering.
+
 ### `embed_cleanup`
 
 Whether to clean up plot files after they have been embedded in HTML output (see
@@ -622,6 +628,19 @@ output:
       lang: "zh-CN"
 ```
 
+#### The `plain-title` variable
+
+The plain-text version of the title, used in the `<title>` tag of the HTML
+output (which appears on the browser tab). It is automatically generated from
+the `title` variable by stripping the Markdown markups, but you can override it
+if you want a different browser-tab title from the document title.
+
+#### The `generator` variable
+
+The value of the `<meta name="generator">` tag in the HTML head, which
+indicates the software used to generate the document. By default, it is
+`litedown` and the package version.
+
 --------------------------------------------------------------------------------
 
 The following variables are for LaTeX templates:
@@ -669,13 +688,39 @@ output:
 
 ### Other fields in YAML
 
-See the help page `?litedown::html_format` for possible fields in addiction to
-`meta` and `options` that can be specified under the format name, e.g.,
+In addition to `meta` and `options`, a few other fields can be specified under
+the format name. These fields correspond to the arguments of the output format
+functions `litedown::html_format()` and `litedown::latex_format()`.
+
+The fields supported by both formats are:
+
+-   `template`: The path to a custom template file (@sec:templates). It can also
+    be a logical value: `true` means to use the default template, and `false`
+    means to generate only a fragment document without any template.
+
+-   `keep_md`: Whether to keep the intermediate `.md` file generated from the
+    `.Rmd` input (`false` by default).
+
+The LaTeX format supports these additional fields:
+
+-   `keep_tex`: Whether to keep the intermediate `.tex` file when the output is
+    a `.pdf` file (`false` by default).
+
+-   `latex_engine`: The LaTeX engine to compile the `.tex` file to PDF. The
+    default is `xelatex`. Other common choices include `pdflatex` and
+    `lualatex`.
+
+-   `citation_package`: The LaTeX package for processing citations
+    (@sec:citations). Possible values are `natbib` (the default), `biblatex`,
+    and `none`.
+
+For example:
 
 ``` yaml
 output:
   latex:
     latex_engine: xelatex
-    keep_md: true
+    keep_tex: true
+    citation_package: biblatex
     template: custom-template.tex
 ```

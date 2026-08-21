@@ -1316,6 +1316,112 @@ in your `.Rprofile` to make **litedown** recognize `` `r code` ``, but we
 recommend that you convert the document via `litedown:::convert_knitr()` instead
 if you decide to stay with **litedown** in the long run.
 
+## Helper functions {#sec:helpers}
+
+Inside a code chunk, you can call a few helper functions to interact with the
+`fuse()` process, such as querying the context, exiting early, adding raw
+output, and getting the timing data.
+
+### Query the context {#sec:get-context}
+
+The function `litedown::get_context()` returns information about the current
+`fuse()` process, which can be useful when you need to know things like the
+input file path or the output format inside a code chunk. Call
+`get_context('NAME')` to get a specific item, or `get_context()` to get the
+whole context environment.
+
+The most useful items include:
+
+-   `input`: The input file path (or the input name if the input is text).
+
+-   `full_input`: The full (normalized) path to the input file, if the input is
+    a file.
+
+-   `format`: The output format name, e.g., `html` or `latex`. This can be
+    useful when you want to generate different output according to the format,
+    e.g.,
+
+    ```` md
+    ```{r, results = 'asis', echo = FALSE}
+    if (litedown::get_context('format') == 'latex')
+      cat('This paragraph only appears in LaTeX output.')
+    ```
+    ````
+
+Other items are mostly for internal use, and you can see their names via
+`names(get_context())`.
+
+### The evaluation environment {#sec:fuse-env}
+
+The function `litedown::fuse_env()` returns the environment in which the code
+chunks and inline code expressions are evaluated (i.e., the `envir` argument of
+`fuse()`). Outside `fuse()`, it returns the global environment. This can be
+useful if you want to programmatically get or assign variables in the
+evaluation environment, e.g., `assign('x', 1, envir = litedown::fuse_env())`.
+
+### Exit early {#sec:fuse-exit}
+
+The function `litedown::fuse_exit()` stops `fuse()` from processing the
+remaining code chunks and text blocks, i.e., it ends the document early. This
+can be useful when you want to conditionally discard the rest of a document,
+e.g.,
+
+```` md
+```{r}
+if (nrow(data) == 0) litedown::fuse_exit()
+```
+````
+
+You can pass a character string to its `append` argument, which will be
+appended to the output after the current code chunk, e.g.,
+`fuse_exit('The data is empty, so the report ends here.')`.
+
+### Raw output {#sec:raw-text}
+
+The function `litedown::raw_text()` marks a character vector as raw output,
+which has the same effect as the chunk option `results = 'asis'`
+(@sec:option-results), i.e., the text is written to the output verbatim (and
+interpreted as Markdown). The advantage is that you do not have to set
+`results = 'asis'` for the whole chunk, so you can mix normal output with raw
+output in the same chunk. For example:
+
+```` md
+```{r}
+1 + 1  # normal output
+litedown::raw_text('A **raw** paragraph.')  # raw output
+```
+````
+
+If you provide a `format` argument (e.g., `html` or `latex`), the text will be
+wrapped in a raw block (@sec:raw-latex-html-blocks) for that format, so it will
+only appear in the corresponding output, e.g., `raw_text('<b>Bold</b>', 'html')`
+generates a raw HTML block that only appears in HTML output.
+
+`{r} c(.ex(27), .ex(27, '.md'))`
+
+### Timing data {#sec:timing-data}
+
+As mentioned in @sec:option-time, when the chunk option `time = TRUE` is set,
+the execution time of code chunks will be recorded, and you can retrieve the
+data via `litedown::timing_data()`, which returns a data frame containing the
+input file paths, line numbers, chunk labels, and time. It takes three
+arguments:
+
+-   `threshold`: Only chunks with time above this threshold (in seconds) are
+    returned. The default is `0` (i.e., all chunks are returned).
+
+-   `sort`: Whether to sort the data by time in the decreasing order (`TRUE` by
+    default), so the slowest chunks appear first.
+
+-   `total`: Whether to append a row for the total time (`TRUE` by default).
+
+By default, the timing data is cleared after each `fuse()` call and is not
+available outside `fuse()`. To store the data persistently, set the `time`
+option to a file path (instead of `TRUE`). This is necessary when you want to
+collect timing data across multiple documents, such as all chapters of a book
+(@sec:books)---each document should point the `time` option to the same file.
+When you no longer need the timing data, delete this file by yourself.
+
 ## R scripts
 
 Besides R Markdown, you can also pass an R script to `fuse()`. You can write
@@ -1584,6 +1690,12 @@ For commands that need flags before the file path, use `args1`. For example,
 BEGIN { print "Hello, world!" }
 ```
 ````
+
+Some commands require the temporary file to have a specific extension. You can
+set the chunk option `ext` to control it. For example, if a command only
+accepts `.py` files, you may use `ext = 'py'` so that the chunk body will be
+written to a temporary file with the extension `.py`. By default, the temporary
+file has no extension, except for the `powershell` engine, which uses `ps1`.
 
 ## Comparison to **knitr**
 
