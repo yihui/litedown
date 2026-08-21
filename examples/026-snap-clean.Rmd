@@ -9,11 +9,10 @@ output:
       css: ["@default", "@snap", "@snap-clean"]
       js: ["@snap"]
     options:
-      echo: false
+      embed_resources: null
 ---
 
-```{r setup}
-#| include: false
+```{r setup, include = FALSE}
 litedown::reactor(
   collapse = TRUE,
   out.width = "90%",

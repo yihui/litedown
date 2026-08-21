@@ -9,7 +9,7 @@ output:
       css: ["@default", "@snap", "@snap-clean"]
       js: ["@snap"]
     options:
-      echo: false
+      embed_resources: null
 ---
 
 

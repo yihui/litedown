@@ -808,11 +808,10 @@ output:
       css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]
       js: [&quot;@snap&quot;]
     options:
-      echo: false
+      embed_resources: null
 ---
 
-```{r setup}
-#| include: false
+```{r setup, include = FALSE}
 litedown::reactor(
   collapse = TRUE,
   out.width = &quot;90%&quot;,
