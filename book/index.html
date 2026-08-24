@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.10.2">
+<meta name="generator" content="litedown 0.10.3">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/article.min.css">
@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-08-21</h3></div>
+<div class="date"><h3>2026-08-24</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -3803,6 +3803,11 @@ databases in the YAML metadata, e.g.,</p>
   url = {https://www.R-project.org/},
 }
 </code></pre>
+<p>Alternatively, a bibliography database can be an R script (with the file
+extension <code>.R</code>) that contains <code>bibentry()</code> calls, e.g., <code>inst/REFERENCES.R</code> in
+an R package. You can mix <code>.bib</code> and <code>.R</code> files, e.g.,</p>
+<pre><code class="language-yaml">bibliography: [&quot;papers.bib&quot;, &quot;inst/REFERENCES.R&quot;]
+</code></pre>
 <p>Then you can use <code>[@R-base]</code> or <code>@R-base</code> to cite this item. The keywords must
 consist of only alphanumeric characters (<code>a-z</code>, <code>A-Z</code>, <code>0-9</code>) and <code>-</code>. You can
 include multiple keywords in <code>[ ]</code> separated by semicolons.</p>
@@ -3852,6 +3857,10 @@ the citation package, but will redefine them to <code>\cite</code> or <code>\par
 according to the citation package. For example, it will insert
 <code>\let\citep\parencite</code> in the LaTeX preamble when <code>citation_package</code> is
 <code>biblatex</code>.</p>
+<p>Note that the <code>.R</code> bibliography format is only supported for HTML output. For
+LaTeX/PDF output, the bibliography is processed by external tools (e.g., BibTeX
+or Biber) via <code>\bibliography{}</code> or <code>\addbibresource{}</code>, which only accept <code>.bib</code>
+files.</p>
 <h3 id="sec:smart-html-entities"><span class="section-number">3.3.10</span> Smart HTML entities</h3>
 <p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
 write fractions in the form <code>n/m</code>. Below are some example entities:</p>
@@ -6451,7 +6460,7 @@ R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https:/
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.10.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.10.3, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -6475,6 +6484,6 @@ R package version 0.60.1, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.0/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.1/dist/mermaid.min.js" defer></script>
 </body>
 </html>

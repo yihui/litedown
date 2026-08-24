@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.10.2">
+<meta name="generator" content="litedown 0.10.3">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/article.min.css">
@@ -42,7 +42,12 @@
 </div>
 <h2 id="sec:litedown-0-11" class="unnumbered">litedown 0.11</h2>
 <ul>
-<li>Fixed a bug in <code>mark()</code> that a trailing newline was appended to the wrong lines when a closing HTML tag was followed by a code block (thanks, <a href="https://github.com/ben-schwen">@ben-schwen</a>, <a href="https://github.com/yihui/litedown/issues/135">#135</a>).</li>
+<li>
+<p>The <code>bibliography</code> field can now point to an R file containing <code>bibentry()</code> calls (e.g., <code>inst/REFERENCES.R</code>) in addition to <code>.bib</code> files, and both types can be mixed (thanks, <a href="https://github.com/marberts">@marberts</a>, <a href="https://github.com/yihui/litedown/issues/136">#136</a>).</p>
+</li>
+<li>
+<p>Fixed a bug in <code>mark()</code> that a trailing newline was appended to the wrong lines when a closing HTML tag was followed by a code block (thanks, <a href="https://github.com/ben-schwen">@ben-schwen</a>, <a href="https://github.com/yihui/litedown/issues/135">#135</a>).</p>
+</li>
 </ul>
 <h2 id="sec:litedown-0-10" class="unnumbered">litedown 0.10</h2>
 <ul>
@@ -348,7 +353,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.10.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.10.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/appendix.min.js" defer></script>
