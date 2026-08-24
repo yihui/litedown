@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.11
 
+- The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).
+
 - Fixed a bug in `mark()` that a trailing newline was appended to the wrong lines when a closing HTML tag was followed by a code block (thanks, @ben-schwen, #135).
 
 

@@ -523,10 +523,16 @@ one_string = function(x, by = '\n', test = NULL) {
   paste(x, collapse = by)
 }
 
+# read a bib file: .R files contain bibentry() calls, others are BibTeX
+read_bib = function(x) {
+  if (grepl('[.][Rr]$', x)) rbibutils::readBibentry(x) else
+    rbibutils::readBib(x, direct = TRUE, texChars = 'convert')
+}
+
 # find @citation and resolve references
 add_citation = function(x, bib, format = 'html') {
   if (!format %in% c('html', 'latex')) return(x)
-  bib = do.call(c, lapply(bib, rbibutils::readBib, direct = TRUE, texChars = 'convert'))
+  bib = do.call(c, lapply(bib, read_bib))
   if (length(bib) == 0) return(x)
   cited = NULL
   is_html = format == 'html'

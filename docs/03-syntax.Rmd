@@ -692,6 +692,14 @@ Each `.bib` file contains entries that start with keywords. For example,
 }
 ```
 
+Alternatively, a bibliography database can be an R script (with the file
+extension `.R`) that contains `bibentry()` calls, e.g., `inst/REFERENCES.R` in
+an R package. You can mix `.bib` and `.R` files, e.g.,
+
+``` yaml
+bibliography: ["papers.bib", "inst/REFERENCES.R"]
+```
+
 Then you can use `[@R-base]` or `@R-base` to cite this item. The keywords must
 consist of only alphanumeric characters (`a-z`, `A-Z`, `0-9`) and `-`. You can
 include multiple keywords in `[ ]` separated by semicolons.
@@ -727,6 +735,11 @@ the citation package, but will redefine them to `\cite` or `\parencite`
 according to the citation package. For example, it will insert
 `\let\citep\parencite` in the LaTeX preamble when `citation_package` is
 `biblatex`.
+
+Note that the `.R` bibliography format is only supported for HTML output. For
+LaTeX/PDF output, the bibliography is processed by external tools (e.g., BibTeX
+or Biber) via `\bibliography{}` or `\addbibresource{}`, which only accept `.bib`
+files.
 
 ### Smart HTML entities
 
