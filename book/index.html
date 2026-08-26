@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-08-24</h3></div>
+<div class="date"><h3>2026-08-26</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -6084,6 +6084,12 @@ under the <code>with</code> field. In the above example workflow, we used the op
 <li>
 <p><code>cleanup</code>: Command to clean up the site directory before publishing, e.g., you can delete the <code>.Rmd</code> source files (default: <code>rm -f *.Rmd *.yml _*</code>).</p>
 </li>
+<li>
+<p><code>repo</code>: Whether to also publish the package as a minimal R package repository under the site (builds the source tarball into <code>src/contrib</code> and generates the <code>PACKAGES</code> index, so users can install via <code>install.packages()</code> with the site URL as <code>repos</code>) (default: <code>false</code>).</p>
+</li>
+<li>
+<p><code>repo-fields</code>: Additional DESCRIPTION fields to include in the <code>PACKAGES</code> index when <code>repo: true</code> (space- or comma-separated), passed to the <code>fields</code> argument of <code>tools::write_PACKAGES()</code>. For example, use <code>Revision</code> to surface a recorded git commit (default: ``).</p>
+</li>
 </ul>
 <p>By default, the site is built under the <code>site/</code> directory of the package. If you
 change this path, please remember to adjust the <code>path</code> option for the
@@ -6484,6 +6490,6 @@ R package version 0.60.1, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.1/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js" defer></script>
 </body>
 </html>
