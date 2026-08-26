@@ -1,3 +1,6 @@
+# CHANGES IN litedown VERSION 0.12
+
+
 # CHANGES IN litedown VERSION 0.11
 
 - The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).
