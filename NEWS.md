@@ -4,7 +4,6 @@
 
 - Fixed a bug in `mark()` that a trailing newline was appended to the wrong lines when a closing HTML tag was followed by a code block (thanks, @ben-schwen, #135).
 
-
 # CHANGES IN litedown VERSION 0.10
 
 - Added minimal book and website project templates that can be discovered by RStudio from `File` > `New Project` > `New Directory` > `Project using litedown`. You can also create them programmatically with `litedown:::proj_skeleton(path, type)`, where `type` is `"book"` or `"site"` (thanks, @jangorecki, #97).
