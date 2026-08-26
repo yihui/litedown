@@ -130,12 +130,7 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
     'Title', 'Version', 'Description', 'Depends', 'Imports', 'Suggests',
     'License', 'URL', 'BugReports', 'VignetteBuilder', 'Authors@R', 'Author'
   )
-  # read the DESCRIPTION file if pkg root is found, otherwise use installed info
-  d = if (is.character(p <- attr(name, 'path'))) {
-    as.list(read.dcf(file.path(p, 'DESCRIPTION'))[1, ][fields])
-  } else {
-    packageDescription(name, fields = fields)
-  }
+  d = read_desc(name, fields)
   names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
@@ -453,6 +448,17 @@ run_examples = function(html, config, path) {
     res = one_string(c('', format(res, 'markdown')))
     res
   })
+}
+
+# read package metadata: from the DESCRIPTION file if the package root is found,
+# otherwise from the installed package
+read_desc = function(name = detect_pkg(), fields = NULL) {
+  if (is.character(p <- attr(name, 'path'))) {
+    d = read.dcf(file.path(p, 'DESCRIPTION'))[1, ]
+    as.list(if (is.null(fields)) d else d[fields])
+  } else {
+    packageDescription(name, fields = fields)
+  }
 }
 
 # detect package name and root path from current and upper dirs
