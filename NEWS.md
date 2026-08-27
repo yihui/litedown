@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.12
 
+- `pkg_citation()` no longer requires the package to be installed. When the package source root is detected, it reads the `CITATION` file (or auto-generates the citation from `DESCRIPTION`) directly, instead of calling `citation()` on the installed package (thanks, @jangorecki, yihui/actions#15).
+
 
 # CHANGES IN litedown VERSION 0.11
 

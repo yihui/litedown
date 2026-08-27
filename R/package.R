@@ -290,11 +290,22 @@ github_link = function(path) {
 #' @rdname pkg_desc
 #' @export
 pkg_citation = function(name = detect_pkg()) {
-  res = uapply(citation(name), function(x) {
+  res = uapply(read_citation(name), function(x) {
     x = tweak_citation(x)
     unname(c(format(x, style = 'text'), fenced_block(toBibtex(x), 'latex')))
   })
   new_asis(res)
+}
+
+# get citation info from the source package root if found (so that the package
+# does not need to be installed), otherwise from the installed package
+read_citation = function(name = detect_pkg()) {
+  if (!is.character(p <- attr(name, 'path'))) return(citation(name))
+  meta = read_desc(name)
+  # read the CITATION file if present, otherwise auto-generate from DESCRIPTION
+  f = file.path(p, c('inst/CITATION', 'CITATION'))
+  if (any(i <- file_exists(f))) utils::readCitationFile(f[i][1], meta) else
+    citation(meta$Package, auto = meta)
 }
 
 # dirty hack to add year if missing
