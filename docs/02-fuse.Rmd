@@ -1351,14 +1351,6 @@ The most useful items include:
 Other items are mostly for internal use, and you can see their names via
 `names(get_context())`.
 
-### The evaluation environment {#sec:fuse-env}
-
-The function `litedown::fuse_env()` returns the environment in which the code
-chunks and inline code expressions are evaluated (i.e., the `envir` argument of
-`fuse()`). Outside `fuse()`, it returns the global environment. This can be
-useful if you want to programmatically get or assign variables in the
-evaluation environment, e.g., `assign('x', 1, envir = litedown::fuse_env())`.
-
 ### Exit early {#sec:fuse-exit}
 
 The function `litedown::fuse_exit()` stops `fuse()` from processing the

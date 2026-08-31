@@ -60,7 +60,7 @@ The site skeleton contains `index.Rmd`, `about.Rmd`, and `_litedown.yml`. You
 can build the book with `fuse_book()` and the site with `fuse_site()`. The
 configuration options are documented in later sections of this chapter.
 
-## Books
+## Books {#sec:books}
 
 The `_litedown.yml` file should contain a top-level field named `book`, which
 currently supports these options:
@@ -171,11 +171,10 @@ self-contained styles and should not inherit the site layout.
 When building a website, **litedown** applies a set of default CSS/JS assets and
 layout elements so that pages look reasonable without any configuration:
 
--   The default CSS assets are `@default`, `@article`, `@copy-button`,
-    `@heading-anchor`, and `@pages`; the default JS assets are `@sidenotes`,
-    `@appendix`, `@toc-highlight`, `@copy-button`, `@heading-anchor`, and
-    `@pages`. In other words, each page uses the article format (@sec:article)
-    by default.
+-   The default CSS assets are
+    `{r} xfun::join_words(litedown:::site_css, before = "\x60")`, and the default
+    JS assets are `{r} xfun::join_words(litedown:::site_js, before = "\x60")`. In
+    other words, each page uses the article format (@sec:article) by default.
 
 -   If `include_before` is not provided, a navigation menu is automatically
     generated from the top-level input files under the site root (plus any

@@ -58,7 +58,9 @@ You may also see @sec:offline and @sec:embed-resources for other ways.
 #| tab.cap = 'A reference of CSS/JS assets in the `lite.js` repository.'
 a = litedown:::assets
 for (i in c('css', 'js')) a[, i] = ifelse(is.na(a[, i]), NA, paste0('`', a[, i], '`'))
-a = cbind(feature = rownames(a), a, section = paste0(' @sec:', rownames(a)))
+sec = rownames(a)
+sec[sec == 'snap-clean'] = 'snap'  # snap-clean is documented in the slides section
+a = cbind(feature = rownames(a), a, section = paste0(' @sec:', sec))
 rownames(a) = NULL
 a
 ```

@@ -6,6 +6,8 @@ title: Raw output via raw_text()
 you can mix normal output with raw output in the same code chunk without setting
 `results = 'asis'` for the whole chunk:
 
+<!-- ... -->
+
 ```{r}
 1 + 1  # normal verbatim output
 litedown::raw_text(c('A **raw** Markdown paragraph, e.g.,',
