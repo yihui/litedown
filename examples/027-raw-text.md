@@ -1,0 +1,38 @@
+---
+title: Raw output via raw_text()
+---
+
+`raw_text()` writes text to the output verbatim (interpreted as Markdown), so
+you can mix normal output with raw output in the same code chunk without setting
+`results = 'asis'` for the whole chunk:
+
+<!-- ... -->
+
+``` {.r}
+1 + 1  # normal verbatim output
+```
+
+```
+#> [1] 2
+```
+
+``` {.r}
+litedown::raw_text(c('A **raw** Markdown paragraph, e.g.,',
+  'a bullet list:', '', '- one', '- two'))
+```
+A **raw** Markdown paragraph, e.g.,
+a bullet list:
+
+- one
+- two
+
+With the `format` argument, the text is wrapped in a raw block that only appears
+in the corresponding output format:
+
+```` {.r}
+litedown::raw_text('<span style="color: red;">Red (HTML only).</span>', 'html')
+````
+
+``` {=html}
+<span style="color: red;">Red (HTML only).</span>
+```

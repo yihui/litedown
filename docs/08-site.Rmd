@@ -14,6 +14,17 @@ Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named `_litedown.yml`.
 
+The project type (book or website) is determined by the presence of a top-level
+`book` or `site` field in `_litedown.yml`. If both fields exist, or you want to
+be explicit, you can set the top-level `type` field to either `book` or `site`,
+e.g.,
+
+``` yaml
+type: book
+book:
+  new_session: true
+```
+
 If you want to customize the output formats for books or websites, you should do
 it in `_litedown.yml`, e.g.,
 
@@ -49,7 +60,7 @@ The site skeleton contains `index.Rmd`, `about.Rmd`, and `_litedown.yml`. You
 can build the book with `fuse_book()` and the site with `fuse_site()`. The
 configuration options are documented in later sections of this chapter.
 
-## Books
+## Books {#sec:books}
 
 The `_litedown.yml` file should contain a top-level field named `book`, which
 currently supports these options:
@@ -62,6 +73,7 @@ book:
   pattern: "[.]R?md$"
   chapter_before: "Information before a chapter."
   chapter_after: "This chapter was generated from `$input$`."
+  time: null
 ```
 
 You can choose whether to render each input file in a new R session, whether to
@@ -69,6 +81,15 @@ search subdirectories for input files, the types of input files (e.g., you can
 use `.md` or `.R` files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 `$input$`, which is the path of each input file.
+
+The `time` option provides a convenient way to collect timing data
+(@sec:timing-data) across all chapters of a book. It takes a file path where
+the timing data is stored (a relative path is interpreted as relative to the
+first input file's cache directory). This is equivalent to setting the `time`
+chunk option to the same file path in every chapter, but easier to configure in
+one place. With this option set, you can print `litedown::timing_data()` in the
+last chapter to see the timing data for the whole book. Remember to delete the
+data file when you no longer need it.
 
 ### Previewing a single chapter
 
@@ -126,11 +147,63 @@ output:
 Basically, `include_before` can take a file or text input that will be used as
 the header of each web page, and `include_after` will be the footer.
 
+The `rebuild` option controls when a page should be rebuilt:
+
+-   `"outdated"` (default): Rebuild a page if the output file is older than the
+    input file (i.e., the input has been modified since the last build).
+
+-   `"newfile"`: Rebuild a page only if the output file does not exist yet
+    (i.e., never rebuild existing output).
+
+-   A number: Rebuild a page if the output file is older than the input file by
+    more than this number of seconds. This is a more relaxed version of
+    `"outdated"` (which is equivalent to `0`), useful to avoid rebuilding pages
+    for tiny modification-time differences.
+
 The `standalone` option takes a character vector of filename patterns (supporting
 wildcards like `*` and `?`). Files matching any pattern will be built with a
 plain `fuse()` call without site-level CSS, JS, navigation, or footer being
 injected. This is useful for standalone pages such as slides that need their own
 self-contained styles and should not inherit the site layout.
+
+### Default assets and layout {#sec:site-defaults}
+
+When building a website, **litedown** applies a set of default CSS/JS assets and
+layout elements so that pages look reasonable without any configuration:
+
+-   The default CSS assets are
+    `{r} xfun::join_words(litedown:::site_css, before = "\x60")`, and the default
+    JS assets are `{r} xfun::join_words(litedown:::site_js, before = "\x60")`. In
+    other words, each page uses the article format (@sec:article) by default.
+
+-   If `include_before` is not provided, a navigation menu is automatically
+    generated from the top-level input files under the site root (plus any
+    one-level subdirectories that contain an `index.html`, such as
+    `playground/index.html`). The menu titles are derived from the filenames
+    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home").
+
+-   If `include_after` is not provided, a copyright footer (`© <year>`) is
+    automatically added.
+
+-   The options `embed_resources` (@sec:embed-resources) and `toc` (@sec:toc)
+    default to `false` and `true`, respectively.
+
+If you want to customize the assets, you should provide the `css` and `js` meta
+variables as usual, which will *override* the defaults. If you want to *add* to
+the default assets instead of replacing them, use the `css2` and `js2` variables
+(which are appended to the built-in defaults), e.g.,
+
+``` yaml
+output:
+  html:
+    meta:
+      css2: ["custom.css"]
+      js2: ["custom.js"]
+```
+
+Absolute paths in links (i.e., paths starting with `/`) are automatically
+rewritten to relative paths, so a link like `[Home](/index.html)` will work
+correctly no matter which subdirectory the current page is in.
 
 ## R package documentation {#sec:pkg-site}
 
