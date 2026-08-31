@@ -25,6 +25,7 @@
 024-chart-js.Rmd
 025-option-filter.Rmd
 026-snap-clean.Rmd
+027-raw-text.Rmd
 test-collapse.Rmd
 test-inline.Rmd
 test-options.Rmd

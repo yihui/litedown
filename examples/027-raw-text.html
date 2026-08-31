@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.11.1">
-<title>Printing verbosity</title>
+<title>Raw output via raw_text()</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/article.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/copy-button.min.css">
@@ -22,43 +22,31 @@
 <a href="../book/">Book</a>
 <a href="../playground/">Playground</a></p></nav>
 <div class="frontmatter">
-<div class="title"><h1>Printing verbosity</h1></div>
+<div class="title"><h1>Raw output via raw_text()</h1></div>
 </div>
 <div class="body">
-<p>Default <code>verbose = 0</code>:</p>
-<pre><code class="language-r">1:5  # a visible value
-</code></pre>
-<pre><code>#&gt; [1] 1 2 3 4 5
-</code></pre>
-<pre><code class="language-r">x = 1 + 1  # invisible
-for (i in 1:10) i^2  # for loop returns invisible NULL
-y = x^2  # invisible
-</code></pre>
-<p><code>verbose = 1</code> always prints the last value:</p>
-<pre><code class="language-r">1:5  # a visible value
-</code></pre>
-<pre><code>#&gt; [1] 1 2 3 4 5
-</code></pre>
-<pre><code class="language-r">x = 1 + 1  # invisible
-for (i in 1:10) i^2  # for loop returns invisible NULL
-y = x^2  # invisible
-</code></pre>
-<pre><code>#&gt; [1] 4
-</code></pre>
-<p><code>verbose = 2</code> prints all invisible values (except for <code>NULL</code>):</p>
-<pre><code class="language-r">1:5  # a visible value
-</code></pre>
-<pre><code>#&gt; [1] 1 2 3 4 5
-</code></pre>
-<pre><code class="language-r">x = 1 + 1  # invisible
+<p><code>raw_text()</code> writes text to the output verbatim (interpreted as Markdown), so
+you can mix normal output with raw output in the same code chunk without setting
+<code>results = 'asis'</code> for the whole chunk:</p>
+<!-- ... -->
+<pre><code class="language-r">1 + 1  # normal verbatim output
 </code></pre>
 <pre><code>#&gt; [1] 2
 </code></pre>
-<pre><code class="language-r">for (i in 1:10) i^2  # for loop returns invisible NULL
-y = x^2  # invisible
+<pre><code class="language-r">litedown::raw_text(c('A **raw** Markdown paragraph, e.g.,',
+  'a bullet list:', '', '- one', '- two'))
 </code></pre>
-<pre><code>#&gt; [1] 4
+<p>A <strong>raw</strong> Markdown paragraph, e.g.,
+a bullet list:</p>
+<ul>
+<li>one</li>
+<li>two</li>
+</ul>
+<p>With the <code>format</code> argument, the text is wrapped in a raw block that only appears
+in the corresponding output format:</p>
+<pre><code class="language-r">litedown::raw_text('&lt;span style=&quot;color: red;&quot;&gt;Red (HTML only).&lt;/span&gt;', 'html')
 </code></pre>
+<span style="color: red;">Red (HTML only).</span>
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>

@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.11.1">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.5/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-08-26</h3></div>
+<div class="date"><h3>2026-08-31</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -113,17 +113,25 @@
 <li><a href="#sec:compatibility-with-knitr"><span class="section-number">2.3.3</span> Compatibility with knitr</a></li>
 </ul>
 </li>
-<li><a href="#sec:r-scripts"><span class="section-number">2.4</span> R scripts</a></li>
-<li><a href="#sec:engines"><span class="section-number">2.5</span> Language engines</a>
+<li><a href="#sec:helpers"><span class="section-number">2.4</span> Helper functions</a>
 <ul>
-<li><a href="#sec:the-markdown-engine"><span class="section-number">2.5.1</span> The Markdown engine</a></li>
-<li><a href="#sec:engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</a></li>
-<li><a href="#sec:the-mermaid-engine"><span class="section-number">2.5.3</span> The Mermaid engine</a></li>
-<li><a href="#sec:the-embed-engine"><span class="section-number">2.5.4</span> The embed engine</a></li>
-<li><a href="#sec:the-exec-engine"><span class="section-number">2.5.5</span> The <code>exec</code> engine</a></li>
+<li><a href="#sec:get-context"><span class="section-number">2.4.1</span> Query the context</a></li>
+<li><a href="#sec:fuse-exit"><span class="section-number">2.4.2</span> Exit early</a></li>
+<li><a href="#sec:raw-text"><span class="section-number">2.4.3</span> Raw output</a></li>
+<li><a href="#sec:timing-data"><span class="section-number">2.4.4</span> Timing data</a></li>
 </ul>
 </li>
-<li><a href="#sec:comparison-to-knitr"><span class="section-number">2.6</span> Comparison to <strong>knitr</strong></a></li>
+<li><a href="#sec:r-scripts"><span class="section-number">2.5</span> R scripts</a></li>
+<li><a href="#sec:engines"><span class="section-number">2.6</span> Language engines</a>
+<ul>
+<li><a href="#sec:the-markdown-engine"><span class="section-number">2.6.1</span> The Markdown engine</a></li>
+<li><a href="#sec:engine-css"><span class="section-number">2.6.2</span> The CSS/JS engines</a></li>
+<li><a href="#sec:the-mermaid-engine"><span class="section-number">2.6.3</span> The Mermaid engine</a></li>
+<li><a href="#sec:the-embed-engine"><span class="section-number">2.6.4</span> The embed engine</a></li>
+<li><a href="#sec:the-exec-engine"><span class="section-number">2.6.5</span> The <code>exec</code> engine</a></li>
+</ul>
+</li>
+<li><a href="#sec:comparison-to-knitr"><span class="section-number">2.7</span> Comparison to <strong>knitr</strong></a></li>
 </ul>
 </li>
 <li><a href="#chp:syntax"><span class="section-number main-number">3</span> Markdown Syntax</a>
@@ -169,20 +177,21 @@
 <ul>
 <li><a href="#sec:auto-identifiers"><span class="section-number">4.1.1</span> <code>auto_identifiers</code></a></li>
 <li><a href="#sec:cleveref"><span class="section-number">4.1.2</span> <code>cleveref</code></a></li>
-<li><a href="#sec:embed-cleanup"><span class="section-number">4.1.3</span> <code>embed_cleanup</code></a></li>
-<li><a href="#sec:embed-resources"><span class="section-number">4.1.4</span> <code>embed_resources</code></a></li>
-<li><a href="#sec:js-highlight"><span class="section-number">4.1.5</span> <code>js_highlight</code></a></li>
-<li><a href="#sec:js-math"><span class="section-number">4.1.6</span> <code>js_math</code></a></li>
-<li><a href="#sec:keep-yaml"><span class="section-number">4.1.7</span> <code>keep_yaml</code></a></li>
-<li><a href="#sec:latex-math"><span class="section-number">4.1.8</span> <code>latex_math</code></a></li>
-<li><a href="#sec:number-sections"><span class="section-number">4.1.9</span> <code>number_sections</code></a></li>
-<li><a href="#sec:offline"><span class="section-number">4.1.10</span> <code>offline</code></a></li>
-<li><a href="#sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></a></li>
-<li><a href="#sec:superscript"><span class="section-number">4.1.12</span> <code>superscript</code></a></li>
-<li><a href="#sec:subscript"><span class="section-number">4.1.13</span> <code>subscript</code></a></li>
-<li><a href="#sec:toc"><span class="section-number">4.1.14</span> <code>toc</code></a></li>
-<li><a href="#sec:top-level"><span class="section-number">4.1.15</span> <code>top_level</code></a></li>
-<li><a href="#sec:other-options"><span class="section-number">4.1.16</span> Other options</a></li>
+<li><a href="#sec:cross-refs"><span class="section-number">4.1.3</span> <code>cross_refs</code></a></li>
+<li><a href="#sec:embed-cleanup"><span class="section-number">4.1.4</span> <code>embed_cleanup</code></a></li>
+<li><a href="#sec:embed-resources"><span class="section-number">4.1.5</span> <code>embed_resources</code></a></li>
+<li><a href="#sec:js-highlight"><span class="section-number">4.1.6</span> <code>js_highlight</code></a></li>
+<li><a href="#sec:js-math"><span class="section-number">4.1.7</span> <code>js_math</code></a></li>
+<li><a href="#sec:keep-yaml"><span class="section-number">4.1.8</span> <code>keep_yaml</code></a></li>
+<li><a href="#sec:latex-math"><span class="section-number">4.1.9</span> <code>latex_math</code></a></li>
+<li><a href="#sec:number-sections"><span class="section-number">4.1.10</span> <code>number_sections</code></a></li>
+<li><a href="#sec:offline"><span class="section-number">4.1.11</span> <code>offline</code></a></li>
+<li><a href="#sec:smartypants"><span class="section-number">4.1.12</span> <code>smartypants</code></a></li>
+<li><a href="#sec:superscript"><span class="section-number">4.1.13</span> <code>superscript</code></a></li>
+<li><a href="#sec:subscript"><span class="section-number">4.1.14</span> <code>subscript</code></a></li>
+<li><a href="#sec:toc"><span class="section-number">4.1.15</span> <code>toc</code></a></li>
+<li><a href="#sec:top-level"><span class="section-number">4.1.16</span> <code>top_level</code></a></li>
+<li><a href="#sec:other-options"><span class="section-number">4.1.17</span> Other options</a></li>
 </ul>
 </li>
 <li><a href="#sec:templates"><span class="section-number">4.2</span> Templates</a></li>
@@ -195,8 +204,10 @@
 <li><a href="#sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</a></li>
 <li><a href="#sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</a></li>
 <li><a href="#sec:the-lang-variable"><span class="section-number">4.3.2.4</span> The <code>lang</code> variable</a></li>
-<li><a href="#sec:the-classoption-variable"><span class="section-number">4.3.2.5</span> The <code>classoption</code> variable</a></li>
-<li><a href="#sec:the-documentclass-variable"><span class="section-number">4.3.2.6</span> The <code>documentclass</code> variable</a></li>
+<li><a href="#sec:the-plain-title-variable"><span class="section-number">4.3.2.5</span> The <code>plain-title</code> variable</a></li>
+<li><a href="#sec:the-generator-variable"><span class="section-number">4.3.2.6</span> The <code>generator</code> variable</a></li>
+<li><a href="#sec:the-classoption-variable"><span class="section-number">4.3.2.7</span> The <code>classoption</code> variable</a></li>
+<li><a href="#sec:the-documentclass-variable"><span class="section-number">4.3.2.8</span> The <code>documentclass</code> variable</a></li>
 </ul>
 </li>
 <li><a href="#sec:naming-convention-of-variables"><span class="section-number">4.3.3</span> Naming convention of variables</a></li>
@@ -273,7 +284,9 @@
 <li><a href="#sec:live-reload"><span class="section-number">7.1.1</span> Live reload</a></li>
 <li><a href="#sec:the-file-listing"><span class="section-number">7.1.2</span> The file listing</a></li>
 <li><a href="#sec:the-buttons"><span class="section-number">7.1.3</span> The buttons</a></li>
-<li><a href="#sec:cleaning-up"><span class="section-number">7.1.4</span> Cleaning up</a></li>
+<li><a href="#sec:new-file"><span class="section-number">7.1.4</span> Creating new files</a></li>
+<li><a href="#sec:rendering-a-whole-project"><span class="section-number">7.1.5</span> Rendering a whole project</a></li>
+<li><a href="#sec:cleaning-up"><span class="section-number">7.1.6</span> Cleaning up</a></li>
 </ul>
 </li>
 <li><a href="#sec:visual-editor"><span class="section-number">7.2</span> Visual editor</a></li>
@@ -288,7 +301,11 @@
 <li><a href="#sec:previewing-a-single-chapter"><span class="section-number">8.2.1</span> Previewing a single chapter</a></li>
 </ul>
 </li>
-<li><a href="#sec:websites"><span class="section-number">8.3</span> Websites</a></li>
+<li><a href="#sec:websites"><span class="section-number">8.3</span> Websites</a>
+<ul>
+<li><a href="#sec:site-defaults"><span class="section-number">8.3.1</span> Default assets and layout</a></li>
+</ul>
+</li>
 <li><a href="#sec:pkg-site"><span class="section-number">8.4</span> R package documentation</a>
 <ul>
 <li><a href="#sec:the-pkg-helper-functions"><span class="section-number">8.4.1</span> The <code>pkg_*()</code> helper functions</a></li>
@@ -769,7 +786,7 @@ browser? The answer is: you should be fine if you do not have too many images.
 If you do, do not base64 encode them (which is the default), and you can also
 lazy-load images to make the book load faster.</p>
 <h3 id="sec:r-scripts-as-first-class-citizens">R scripts as first-class citizens</h3>
-<p>An R script has the same status as an R Markdown document (<a class="cross-ref-sec" href="#sec:r-scripts">2.4</a>). You
+<p>An R script has the same status as an R Markdown document (<a class="cross-ref-sec" href="#sec:r-scripts">2.5</a>). You
 can write Markdown in <code>#'</code> comments, and chunk options in <code>#|</code> comments (both
 are optional). These are the only two rules to remember. Compared to
 <code>knitr::spin()</code>, the rules are much simpler. Besides, R scripts are also
@@ -2956,7 +2973,144 @@ temporary workaround, you may set <code>options(litedown.enable.knitr_inline = T
 in your <code>.Rprofile</code> to make <strong>litedown</strong> recognize <code>`r code`</code>, but we
 recommend that you convert the document via <code>litedown:::convert_knitr()</code> instead
 if you decide to stay with <strong>litedown</strong> in the long run.</p>
-<h2 id="sec:r-scripts"><span class="section-number">2.4</span> R scripts</h2>
+<h2 id="sec:helpers"><span class="section-number">2.4</span> Helper functions</h2>
+<p>Inside a code chunk, you can call a few helper functions to interact with the
+<code>fuse()</code> process, such as querying the context, exiting early, adding raw
+output, and getting the timing data.</p>
+<h3 id="sec:get-context"><span class="section-number">2.4.1</span> Query the context</h3>
+<p>The function <code>litedown::get_context()</code> returns information about the current
+<code>fuse()</code> process, which can be useful when you need to know things like the
+input file path or the output format inside a code chunk. Call
+<code>get_context('NAME')</code> to get a specific item, or <code>get_context()</code> to get the
+whole context environment.</p>
+<p>The most useful items include:</p>
+<ul>
+<li>
+<p><code>input</code>: The input file path (or the input name if the input is text).</p>
+</li>
+<li>
+<p><code>full_input</code>: The full (normalized) path to the input file, if the input is
+a file.</p>
+</li>
+<li>
+<p><code>format</code>: The output format name, e.g., <code>html</code> or <code>latex</code>. This can be
+useful when you want to generate different output according to the format,
+e.g.,</p>
+<pre><code class="language-md">```{r, results = 'asis', echo = FALSE}
+if (litedown::get_context('format') == 'latex')
+  cat('This paragraph only appears in LaTeX output.')
+```
+</code></pre>
+</li>
+</ul>
+<p>Other items are mostly for internal use, and you can see their names via
+<code>names(get_context())</code>.</p>
+<h3 id="sec:fuse-exit"><span class="section-number">2.4.2</span> Exit early</h3>
+<p>The function <code>litedown::fuse_exit()</code> stops <code>fuse()</code> from processing the
+remaining code chunks and text blocks, i.e., it ends the document early. This
+can be useful when you want to conditionally discard the rest of a document,
+e.g.,</p>
+<pre><code class="language-md">```{r}
+if (nrow(data) == 0) litedown::fuse_exit()
+```
+</code></pre>
+<p>You can pass a character string to its <code>append</code> argument, which will be
+appended to the output after the current code chunk, e.g.,
+<code>fuse_exit('The data is empty, so the report ends here.')</code>.</p>
+<h3 id="sec:raw-text"><span class="section-number">2.4.3</span> Raw output</h3>
+<p>The function <code>litedown::raw_text()</code> marks a character vector as raw output,
+which has the same effect as the chunk option <code>results = 'asis'</code>
+(<a class="cross-ref-sec" href="#sec:option-results">2.2.21</a>), i.e., the text is written to the output verbatim (and
+interpreted as Markdown). The advantage is that you do not have to set
+<code>results = 'asis'</code> for the whole chunk, so you can mix normal output with raw
+output in the same chunk. For example:</p>
+<pre><code class="language-md">```{r}
+1 + 1  # normal output
+litedown::raw_text('A **raw** paragraph.')  # raw output
+```
+</code></pre>
+<p>If you provide a <code>format</code> argument (e.g., <code>html</code> or <code>latex</code>), the text will be
+wrapped in a raw block (<a class="cross-ref-sec" href="#sec:raw-latex-html-blocks">3.3.1</a>) for that format, so it will
+only appear in the corresponding output, e.g., <code>raw_text('&lt;b&gt;Bold&lt;/b&gt;', 'html')</code>
+generates a raw HTML block that only appears in HTML output.</p>
+<pre><code class="language-md" data-file="027.Rmd" data-output="027-raw-text.html">---
+title: Raw output via raw_text()
+---
+
+`raw_text()` writes text to the output verbatim (interpreted as Markdown), so
+you can mix normal output with raw output in the same code chunk without setting
+`results = 'asis'` for the whole chunk:
+
+```{r}
+1 + 1  # normal verbatim output
+litedown::raw_text(c('A **raw** Markdown paragraph, e.g.,',
+  'a bullet list:', '', '- one', '- two'))
+```
+
+With the `format` argument, the text is wrapped in a raw block that only appears
+in the corresponding output format:
+
+```{r}
+litedown::raw_text('&lt;span style=&quot;color: red;&quot;&gt;Red (HTML only).&lt;/span&gt;', 'html')
+```
+</code></pre>
+<pre><code class="language-md" data-file="027.md" data-output="027-raw-text.html">... ... ...
+
+``` {.r}
+1 + 1  # normal verbatim output
+```
+
+```
+#&gt; [1] 2
+```
+
+``` {.r}
+litedown::raw_text(c('A **raw** Markdown paragraph, e.g.,',
+  'a bullet list:', '', '- one', '- two'))
+```
+A **raw** Markdown paragraph, e.g.,
+a bullet list:
+
+- one
+- two
+
+With the `format` argument, the text is wrapped in a raw block that only appears
+in the corresponding output format:
+
+```` {.r}
+litedown::raw_text('&lt;span style=&quot;color: red;&quot;&gt;Red (HTML only).&lt;/span&gt;', 'html')
+````
+
+``` {=html}
+&lt;span style=&quot;color: red;&quot;&gt;Red (HTML only).&lt;/span&gt;
+```
+</code></pre>
+<h3 id="sec:timing-data"><span class="section-number">2.4.4</span> Timing data</h3>
+<p>As mentioned in <a class="cross-ref-sec" href="#sec:option-time">2.2.24</a>, when the chunk option <code>time = TRUE</code> is set,
+the execution time of code chunks will be recorded, and you can retrieve the
+data via <code>litedown::timing_data()</code>, which returns a data frame containing the
+input file paths, line numbers, chunk labels, and time. It takes three
+arguments:</p>
+<ul>
+<li>
+<p><code>threshold</code>: Only chunks with time above this threshold (in seconds) are
+returned. The default is <code>0</code> (i.e., all chunks are returned).</p>
+</li>
+<li>
+<p><code>sort</code>: Whether to sort the data by time in the decreasing order (<code>TRUE</code> by
+default), so the slowest chunks appear first.</p>
+</li>
+<li>
+<p><code>total</code>: Whether to append a row for the total time (<code>TRUE</code> by default).</p>
+</li>
+</ul>
+<p>By default, the timing data is cleared after each <code>fuse()</code> call and is not
+available outside <code>fuse()</code>. To store the data persistently, set the <code>time</code>
+option to a file path (instead of <code>TRUE</code>). This is necessary when you want to
+collect timing data across multiple documents, such as all chapters of a book
+(<a class="cross-ref-sec" href="#sec:books">8.2</a>)—each document should point the <code>time</code> option to the same file.
+When you no longer need the timing data, delete this file by yourself.</p>
+<h2 id="sec:r-scripts"><span class="section-number">2.5</span> R scripts</h2>
 <p>Besides R Markdown, you can also pass an R script to <code>fuse()</code>. You can write
 Markdown content in <code>#'</code> comments, and group lines of code into chunks by <code>#|</code>
 comments, e.g.,</p>
@@ -3001,7 +3155,7 @@ in the script, the whole script will be treated as a single code chunk.</p>
 An illustration of how scripts are rendered.</p>
 </div>
 </div>
-<h2 id="sec:engines"><span class="section-number">2.5</span> Language engines</h2>
+<h2 id="sec:engines"><span class="section-number">2.6</span> Language engines</h2>
 <p>Currently, the main computing language supported by <strong>litedown</strong> is R. You can
 check all supported languages via:</p>
 <pre><code class="language-r">sort(names(litedown::engines()))
@@ -3021,7 +3175,7 @@ check all supported languages via:</p>
 </code></pre>
 <p>The function’s argument <code>x</code> is an element in the list returned by
 <code>litedown::crack()</code>.</p>
-<h3 id="sec:the-markdown-engine"><span class="section-number">2.5.1</span> The Markdown engine</h3>
+<h3 id="sec:the-markdown-engine"><span class="section-number">2.6.1</span> The Markdown engine</h3>
 <p>The <code>md</code> engine will output Markdown text both verbatim and as-is, which can be
 useful for showing Markdown examples, e.g.,</p>
 <pre><code class="language-md">```{md}
@@ -3031,7 +3185,7 @@ this `md` chunk.
 
 You can also use `{md} the engine **inline**`.
 </code></pre>
-<h3 id="sec:engine-css"><span class="section-number">2.5.2</span> The CSS/JS engines</h3>
+<h3 id="sec:engine-css"><span class="section-number">2.6.2</span> The CSS/JS engines</h3>
 <p>You can insert CSS/JS to the output via the <code>css</code>/<code>js</code> engines, e.g.,</p>
 <pre><code class="language-md">```{css}
 a {
@@ -3066,7 +3220,7 @@ e.g.,</p>
 (i.e., they will not run until the full document has been parsed). If you want
 to run an external script immediately, you may set the chunk option
 <code>defer = FALSE</code>.</p>
-<h3 id="sec:the-mermaid-engine"><span class="section-number">2.5.3</span> The Mermaid engine</h3>
+<h3 id="sec:the-mermaid-engine"><span class="section-number">2.6.3</span> The Mermaid engine</h3>
 <p>The <code>mermaid</code> engine can be used to draw diagrams with
 <a href="https://mermaid.js.org">mermaid.js</a>, e.g.,</p>
 <pre><code class="language-md">```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
@@ -3092,7 +3246,7 @@ output:
 
 ```
 </code></pre>
-<h3 id="sec:the-embed-engine"><span class="section-number">2.5.4</span> The embed engine</h3>
+<h3 id="sec:the-embed-engine"><span class="section-number">2.6.4</span> The embed engine</h3>
 <p>The <code>embed</code> engine can be used to embed text files verbatim in the output. You
 can pass the file paths to the chunk option <code>file</code> or write the paths in the
 chunk body (with optional quotes), e.g.,</p>
@@ -3132,7 +3286,7 @@ hello world
 <p>You can use the chunk option <code>results = &quot;hide&quot;</code> to hide the output, or
 <code>results = &quot;asis&quot;</code> to output the file content as is (i.e., not wrapping it in a
 code block).</p>
-<h3 id="sec:the-exec-engine"><span class="section-number">2.5.5</span> The <code>exec</code> engine</h3>
+<h3 id="sec:the-exec-engine"><span class="section-number">2.6.5</span> The <code>exec</code> engine</h3>
 <p>The <code>exec</code> engine runs an arbitrary command and captures its output. It writes
 the chunk body to a temporary file and executes:</p>
 <pre><code class="language-sh">command [args1] file [args2]
@@ -3160,7 +3314,12 @@ output into the text.</p>
 BEGIN { print &quot;Hello, world!&quot; }
 ```
 </code></pre>
-<h2 id="sec:comparison-to-knitr"><span class="section-number">2.6</span> Comparison to <strong>knitr</strong></h2>
+<p>Some commands require the temporary file to have a specific extension. You can
+set the chunk option <code>ext</code> to control it. For example, if a command only
+accepts <code>.py</code> files, you may use <code>ext = 'py'</code> so that the chunk body will be
+written to a temporary file with the extension <code>.py</code>. By default, the temporary
+file has no extension, except for the <code>powershell</code> engine, which uses <code>ps1</code>.</p>
+<h2 id="sec:comparison-to-knitr"><span class="section-number">2.7</span> Comparison to <strong>knitr</strong></h2>
 <p>Major differences between <strong>knitr</strong> and <strong>litedown</strong> include:</p>
 <ul>
 <li>
@@ -3506,7 +3665,7 @@ blocks (<code>```{=latex}</code>), but we recommend that you use raw LaTeX block
 because they are more robust. LaTeX math environments work for both LaTeX and
 HTML output.</p>
 <p>For HTML output, it is up to the JavaScript library (MathJax or KaTeX) whether a
-math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">4.1.6</a>).</p>
+math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">4.1.7</a>).</p>
 <h3 id="sec:superscripts-and-subscripts"><span class="section-number">3.3.3</span> Superscripts and subscripts</h3>
 <p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
 Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
@@ -3592,7 +3751,7 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <h3 id="sec:appendices"><span class="section-number">3.3.6</span> Appendices</h3>
 <p>When a top-level heading has the attribute <code>.appendix</code>, the rest of the document
 will be treated as the appendix. If section numbering is enabled
-(<a class="cross-ref-sec" href="#sec:number-sections">4.1.9</a>), the appendix section headings will be numbered
+(<a class="cross-ref-sec" href="#sec:number-sections">4.1.10</a>), the appendix section headings will be numbered
 differently.</p>
 <h3 id="sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
@@ -3664,7 +3823,7 @@ it by its ID.</p>
 <h4 id="sec:sections-figures-and-tables"><span class="section-number">3.3.8.1</span> Sections, figures, and tables</h4>
 <p>Section heading IDs can be either manually assigned or automatically generated
 (<a class="cross-ref-sec" href="#sec:auto-identifiers">4.1.1</a>). Section numbers are automatically generated if the
-<code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">4.1.9</a>).</p>
+<code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">4.1.10</a>).</p>
 <p>Figures and tables are automatically numbered if their captions are provided
 (via the chunk options <code>fig.cap</code> / <code>tab.cap</code>), e.g.,</p>
 <pre><code class="language-md">```{r}
@@ -3973,10 +4132,14 @@ references will use the command <code>\cref{}</code> instead of <code>\ref{}</co
 automatically add the type of reference before the reference number, e.g.,
 <code>\cref{sec:intro}</code> may generate <code>Section 1</code>, so you do not have to write
 <code>Section \ref{sec:intro}</code>.</p>
-<h3 id="sec:embed-cleanup"><span class="section-number">4.1.3</span> <code>embed_cleanup</code></h3>
+<h3 id="sec:cross-refs"><span class="section-number">4.1.3</span> <code>cross_refs</code></h3>
+<p>Whether to resolve cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>). This option is
+<code>true</code> by default. If you do not use any cross-references in the document, you
+can disable it to slightly speed up the rendering.</p>
+<h3 id="sec:embed-cleanup"><span class="section-number">4.1.4</span> <code>embed_cleanup</code></h3>
 <p>Whether to clean up plot files after they have been embedded in HTML output (see
-<a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a>). This option is <code>true</code> by default.</p>
-<h3 id="sec:embed-resources"><span class="section-number">4.1.4</span> <code>embed_resources</code></h3>
+<a class="cross-ref-sec" href="#sec:embed-resources">4.1.5</a>). This option is <code>true</code> by default.</p>
+<h3 id="sec:embed-resources"><span class="section-number">4.1.5</span> <code>embed_resources</code></h3>
 <p>Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (all images except for SVG) or raw content (SVG/CSS/JS).
 Possible values are:</p>
@@ -3997,7 +4160,7 @@ Possible values are:</p>
 <p>The default is <code>&quot;local&quot;</code>, i.e., local resources are embedded, whereas <code>https</code>
 resources are not. This means the output document may not work offline. If you
 have to view the output offline, you may either use the option value <code>&quot;https&quot;</code>
-(or <code>&quot;all&quot;</code>) or set the option <code>offline</code> (<a class="cross-ref-sec" href="#sec:offline">4.1.10</a>) to <code>true</code>, and render
+(or <code>&quot;all&quot;</code>) or set the option <code>offline</code> (<a class="cross-ref-sec" href="#sec:offline">4.1.11</a>) to <code>true</code>, and render
 the document at least once before you go offline.</p>
 <p>For <code>https</code> resources, after you have embedded them successfully once, they will
 be cached locally (via <code>xfun::download_cache</code>) and will not require an Internet
@@ -4016,7 +4179,7 @@ styled.</p>
 </code></pre>
 <p>If an external CSS file contains <code>url()</code> resources, these resources will also be
 downloaded and embedded.</p>
-<h3 id="sec:js-highlight"><span class="section-number">4.1.5</span> <code>js_highlight</code></h3>
+<h3 id="sec:js-highlight"><span class="section-number">4.1.6</span> <code>js_highlight</code></h3>
 <p>Specify the JavaScript library to syntax highlight code blocks. Possible values
 are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
 (<a href="https://prismjs.com">Prism.js</a>). The default is <code>prism</code>. This option can also
@@ -4051,7 +4214,7 @@ the automatic detection fails.</p>
 and <code>js</code> in <a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>. If you want full control, you may disable this
 option (set it to <code>false</code> or <code>null</code>) and use metadata variables directly, which
 requires more familiarity with the JS libraries and the jsdelivr CDN.</p>
-<h3 id="sec:js-math"><span class="section-number">4.1.6</span> <code>js_math</code></h3>
+<h3 id="sec:js-math"><span class="section-number">4.1.7</span> <code>js_math</code></h3>
 <p>Specify the JavaScript library for rendering math expressions in HTML output.
 Possible values are <code>&quot;mathjax&quot;</code> and <code>&quot;katex&quot;</code> (the default). Like the
 <code>js_highlight</code> option, this option is also essentially a shorthand for setting
@@ -4101,19 +4264,19 @@ embedded and used offline, but currently only its fonts can be embedded, and
 extensions cannot. If you must view HTML output offline, we recommend using
 KaTeX, but please also note that KaTeX and MathJax do not fully cover each
 other’s features.</p>
-<h3 id="sec:keep-yaml"><span class="section-number">4.1.7</span> <code>keep_yaml</code></h3>
+<h3 id="sec:keep-yaml"><span class="section-number">4.1.8</span> <code>keep_yaml</code></h3>
 <p>Whether to keep the YAML metadata in the output (<code>false</code> by default). When
 <code>true</code>, the original YAML in the Markdown input (if exists) will be written to
 the output. Note that when this option is enabled, templates (<a class="cross-ref-sec" href="#sec:templates">4.2</a>)
 will be disabled and <code>mark()</code> will only generate a document fragment. This
 option was introduced mainly for Hugo websites to use <strong>litedown</strong> instead of
 Hugo’s Markdown engines to render pages.</p>
-<h3 id="sec:latex-math"><span class="section-number">4.1.8</span> <code>latex_math</code></h3>
+<h3 id="sec:latex-math"><span class="section-number">4.1.9</span> <code>latex_math</code></h3>
 <p>Whether to identify LaTeX math expressions in pairs of single (<code>$ $</code>) or double
 dollar signs (<code>$$ $$</code>), and transform them so that they could be correctly
 rendered by MathJax/KaTeX (HTML output) or LaTeX. This option is <code>true</code> by
 default.</p>
-<h3 id="sec:number-sections"><span class="section-number">4.1.9</span> <code>number_sections</code></h3>
+<h3 id="sec:number-sections"><span class="section-number">4.1.10</span> <code>number_sections</code></h3>
 <p>Whether to number section headings (<code>false</code> by default). To skip numbering a
 specific heading, add a class attribute <code>.unnumbered</code> (or use the shorthand <code>-</code>)
 to it. For example:</p>
@@ -4121,7 +4284,7 @@ to it. For example:</p>
 
 ## About the author {-}
 </code></pre>
-<h3 id="sec:offline"><span class="section-number">4.1.10</span> <code>offline</code></h3>
+<h3 id="sec:offline"><span class="section-number">4.1.11</span> <code>offline</code></h3>
 <p>Whether to download web resources (e.g., images and CSS/JS files) used in the
 HTML output so that the HTML file can be viewed offline later. This option is
 <code>false</code> by default. If enabled (<code>true</code>), resources are downloaded to the
@@ -4135,7 +4298,7 @@ purpose.</p>
 connection but the connection forbids access to external web resources (e.g., in
 certain corporate environments). In this case, you can ship the resources
 together with the HTML output so it will not rely on external resources.</p>
-<p>The option <code>embed_resources</code> in <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a> provides another way to
+<p>The option <code>embed_resources</code> in <a class="cross-ref-sec" href="#sec:embed-resources">4.1.5</a> provides another way to
 download and cache resources locally. The differences between these two options
 are:</p>
 <ol>
@@ -4154,16 +4317,16 @@ among any documents to be rendered via <code>fuse()</code> or <code>mark()</code
 system.</p>
 </li>
 </ol>
-<h3 id="sec:smartypants"><span class="section-number">4.1.11</span> <code>smartypants</code></h3>
+<h3 id="sec:smartypants"><span class="section-number">4.1.12</span> <code>smartypants</code></h3>
 <p>Whether to translate certain ASCII strings into smart typographic characters
 (see <code>?litedown::smartypants</code>). This option is <code>false</code> by default.</p>
-<h3 id="sec:superscript"><span class="section-number">4.1.12</span> <code>superscript</code></h3>
+<h3 id="sec:superscript"><span class="section-number">4.1.13</span> <code>superscript</code></h3>
 <p>Whether to translate strings between two carets into superscripts, e.g.,
 <code>text^foo^</code> to <code>text&lt;sup&gt;foo&lt;/sup&gt;</code>. This option is <code>true</code> by default.</p>
-<h3 id="sec:subscript"><span class="section-number">4.1.13</span> <code>subscript</code></h3>
+<h3 id="sec:subscript"><span class="section-number">4.1.14</span> <code>subscript</code></h3>
 <p>Whether to translate strings between two tildes into subscripts, e.g.,
 <code>text~foo~</code> to <code>text&lt;sub&gt;foo&lt;/sub&gt;</code>. This option is <code>true</code> by default.</p>
-<h3 id="sec:toc"><span class="section-number">4.1.14</span> <code>toc</code></h3>
+<h3 id="sec:toc"><span class="section-number">4.1.15</span> <code>toc</code></h3>
 <p>Whether to generate a table of contents (TOC) from section headings (<code>false</code> by
 default). If a heading has an <code>id</code> attribute, the corresponding TOC item will be
 a link to this heading. You can also set a sub-option:</p>
@@ -4180,12 +4343,12 @@ default). Setting <code>toc</code> to <code>true</code> is equivalent to:</p>
 For example:</p>
 <pre><code class="language-md">## Acknowledgments {.unlisted}
 </code></pre>
-<h3 id="sec:top-level"><span class="section-number">4.1.15</span> <code>top_level</code></h3>
+<h3 id="sec:top-level"><span class="section-number">4.1.16</span> <code>top_level</code></h3>
 <p>The desired type of the top-level headings in LaTeX output. Possible values are
 <code>'chapter'</code> and <code>'part'</code>. For example, if <code>top_level = 'chapter'</code>, <code># heading</code>
 will be rendered to <code>\chapter{heading}</code> instead of the default
 <code>\section{heading}</code>.</p>
-<h3 id="sec:other-options"><span class="section-number">4.1.16</span> Other options</h3>
+<h3 id="sec:other-options"><span class="section-number">4.1.17</span> Other options</h3>
 <p>Options not described above can be found on the help pages of <strong>commonmark</strong>,
 e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argument of
 <code>commonmark::markdown_*()</code> functions, and the <code>table</code> option is for the <code>table</code>
@@ -4470,7 +4633,7 @@ variable.</p>
 <p>This provides a way to reduce the output HTML file size by loading CSS from the
 web instead of embedding inside HTML, at the cost of requiring Internet
 connection when viewing the HTML file. If you need the external web resources to
-work after you go offline, please see <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a>.</p>
+work after you go offline, please see <a class="cross-ref-sec" href="#sec:embed-resources">4.1.5</a>.</p>
 <h4 id="sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</h4>
 <p>A vector of JavaScript files to be included in the output. The syntax is the
 same as the <code>css</code> variable, e.g., <code>snap</code> means <code>snap.js</code> in this package,
@@ -4490,11 +4653,20 @@ in YAML, e.g.,</p>
     meta:
       lang: &quot;zh-CN&quot;
 </code></pre>
+<h4 id="sec:the-plain-title-variable"><span class="section-number">4.3.2.5</span> The <code>plain-title</code> variable</h4>
+<p>The plain-text version of the title, used in the <code>&lt;title&gt;</code> tag of the HTML
+output (which appears on the browser tab). It is automatically generated from
+the <code>title</code> variable by stripping the Markdown markups, but you can override it
+if you want a different browser-tab title from the document title.</p>
+<h4 id="sec:the-generator-variable"><span class="section-number">4.3.2.6</span> The <code>generator</code> variable</h4>
+<p>The value of the <code>&lt;meta name=&quot;generator&quot;&gt;</code> tag in the HTML head, which
+indicates the software used to generate the document. By default, it is
+<code>litedown</code> and the package version.</p>
 <hr />
 <p>The following variables are for LaTeX templates:</p>
-<h4 id="sec:the-classoption-variable"><span class="section-number">4.3.2.5</span> The <code>classoption</code> variable</h4>
+<h4 id="sec:the-classoption-variable"><span class="section-number">4.3.2.7</span> The <code>classoption</code> variable</h4>
 <p>A string containing options for the document class.</p>
-<h4 id="sec:the-documentclass-variable"><span class="section-number">4.3.2.6</span> The <code>documentclass</code> variable</h4>
+<h4 id="sec:the-documentclass-variable"><span class="section-number">4.3.2.8</span> The <code>documentclass</code> variable</h4>
 <p>The document class (by default, <code>article</code>).</p>
 <h3 id="sec:naming-convention-of-variables"><span class="section-number">4.3.3</span> Naming convention of variables</h3>
 <p>A variable name must consist of alphanumeric characters and hyphens only. You
@@ -4522,12 +4694,44 @@ e.g.,</p>
         languages: [diff, latex]
 </code></pre>
 <h3 id="sec:other-fields-in-yaml"><span class="section-number">4.3.6</span> Other fields in YAML</h3>
-<p>See the help page <code>?litedown::html_format</code> for possible fields in addiction to
-<code>meta</code> and <code>options</code> that can be specified under the format name, e.g.,</p>
+<p>In addition to <code>meta</code> and <code>options</code>, a few other fields can be specified under
+the format name. These fields correspond to the arguments of the output format
+functions <code>litedown::html_format()</code> and <code>litedown::latex_format()</code>.</p>
+<p>The fields supported by both formats are:</p>
+<ul>
+<li>
+<p><code>template</code>: The path to a custom template file (<a class="cross-ref-sec" href="#sec:templates">4.2</a>). It can also
+be a logical value: <code>true</code> means to use the default template, and <code>false</code>
+means to generate only a fragment document without any template.</p>
+</li>
+<li>
+<p><code>keep_md</code>: Whether to keep the intermediate <code>.md</code> file generated from the
+<code>.Rmd</code> input (<code>false</code> by default).</p>
+</li>
+</ul>
+<p>The LaTeX format supports these additional fields:</p>
+<ul>
+<li>
+<p><code>keep_tex</code>: Whether to keep the intermediate <code>.tex</code> file when the output is
+a <code>.pdf</code> file (<code>false</code> by default).</p>
+</li>
+<li>
+<p><code>latex_engine</code>: The LaTeX engine to compile the <code>.tex</code> file to PDF. The
+default is <code>xelatex</code>. Other common choices include <code>pdflatex</code> and
+<code>lualatex</code>.</p>
+</li>
+<li>
+<p><code>citation_package</code>: The LaTeX package for processing citations
+(<a class="cross-ref-sec" href="#sec:citations">3.3.9</a>). Possible values are <code>natbib</code> (the default), <code>biblatex</code>,
+and <code>none</code>.</p>
+</li>
+</ul>
+<p>For example:</p>
 <pre><code class="language-yaml">output:
   latex:
     latex_engine: xelatex
-    keep_md: true
+    keep_tex: true
+    citation_package: biblatex
     template: custom-template.tex
 </code></pre>
 <div class="chapter-after side side-right">
@@ -4574,7 +4778,7 @@ it. One way is to clone the GitHub repo to your working directory, and use the
 files you need, e.g.,</p>
 <pre><code class="language-yaml">js: [&quot;repo/path/js/callout.js&quot;]
 </code></pre>
-<p>You may also see <a class="cross-ref-sec" href="#sec:offline">4.1.10</a> and <a class="cross-ref-sec" href="#sec:embed-resources">4.1.4</a> for other ways.</p>
+<p>You may also see <a class="cross-ref-sec" href="#sec:offline">4.1.11</a> and <a class="cross-ref-sec" href="#sec:embed-resources">4.1.5</a> for other ways.</p>
 <h2 id="sec:asset-reference"><span class="section-number">5.1</span> A quick reference</h2>
 <p><a class="cross-ref-tab" href="#tab:assets">4</a> provides a quick reference of existing CSS/JS assets in the
 <code>lite.js</code> repository. See <a class="cross-ref-sec" href="#sec:meta-css">4.3.2.1</a> for the meaning of the <code>@</code> character in
@@ -4698,7 +4902,7 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 <td>clean slide theme</td>
 <td><code>@snap-clean</code></td>
 <td></td>
-<td><a href="#sec:snap-clean">@sec:snap-clean</a></td>
+<td><a class="cross-ref-sec" href="#sec:snap">5.13</a></td>
 </tr>
 <tr>
 <td>tabsets</td>
@@ -4990,7 +5194,7 @@ the ID of the starting element of the tabset, e.g.,</p>
 ## Not a tab
 </code></pre>
 <p>When a tabset is created from sections, the tab titles (from section headings)
-will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-sec" href="#sec:toc">4.1.14</a>).</p>
+will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-sec" href="#sec:toc">4.1.15</a>).</p>
 <h2 id="sec:fold-details"><span class="section-number">5.5</span> Code folding</h2>
 <pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
 </code></pre>
@@ -5514,7 +5718,7 @@ the JS package name, e.g.,</p>
 </code></pre>
 <p>For the <code>js</code> code chunks, you may want to use the chunk option <code>echo = FALSE</code>
 (<a class="cross-ref-sec" href="#sec:option-echo">2.2.9</a>) to hide the JS source in the output. The chunk option
-<code>type = 'module'</code> (<a class="cross-ref-sec" href="#sec:engine-css">2.5.2</a>) means the JS code is generated to
+<code>type = 'module'</code> (<a class="cross-ref-sec" href="#sec:engine-css">2.6.2</a>) means the JS code is generated to
 <code>&lt;script type=&quot;module&quot;&gt;</code>, which has two nice benefits:</p>
 <ol>
 <li>
@@ -5793,7 +5997,7 @@ the back/forward buttons on web browser toolbars.</p>
 </li>
 <li>
 <p>The <code>add</code> button (with the plus icon, <span class="larger">+</span>): Create a new <code>.Rmd</code> /
-<code>.md</code> / <code>.R</code> file with selected HTML features.</p>
+<code>.md</code> / <code>.R</code> file with selected HTML features (<a class="cross-ref-sec" href="#sec:new-file">7.1.4</a>).</p>
 </li>
 <li>
 <p>The <code>refresh</code> button (with the refresh icon, <span class="larger">⟳</span>): Refresh the
@@ -5814,7 +6018,25 @@ source document.</p>
 before they can take effect. This is important when you are viewing a page
 inside RStudio or other IDEs, because the viewer may not gain focus
 automatically, and you will have to explicitly click on it.</p>
-<h3 id="sec:cleaning-up"><span class="section-number">7.1.4</span> Cleaning up</h3>
+<h3 id="sec:new-file"><span class="section-number">7.1.4</span> Creating new files</h3>
+<p>The <code>add</code> button (<span class="larger">+</span>) opens a dialog to create a new file. You type
+a filename in the input box (a dropdown list of existing files is provided, and
+existing filenames are marked with ❌ so that you do not accidentally overwrite
+them). If you do not provide a filename extension, <code>.Rmd</code> will be appended
+automatically.</p>
+<p>For <code>.Rmd</code> / <code>.md</code> / <code>.R</code> files, you can also select HTML features via
+checkboxes, such as callouts (<a class="cross-ref-sec" href="#sec:callout">5.6</a>), tabsets (<a class="cross-ref-sec" href="#sec:tabsets">5.4</a>), and the
+article format (<a class="cross-ref-sec" href="#sec:article">5.8</a>). See <a class="cross-ref-tab" href="#tab:assets">4</a> for the full list of features.
+The corresponding CSS/JS assets will be added to the YAML metadata of the new
+file automatically.</p>
+<p>The new file will be seeded with a YAML frontmatter containing a placeholder
+title, the author name (detected from the system username), and the current
+date, so you can start writing immediately.</p>
+<h3 id="sec:rendering-a-whole-project"><span class="section-number">7.1.5</span> Rendering a whole project</h3>
+<p>When you preview the index file of a book or website project (<a class="cross-ref-chp" href="#chp:sites">8</a>), the
+<code>render</code> button (<span class="larger">↯</span>) will render the whole project (via
+<code>fuse_book()</code> or <code>fuse_site()</code>) in a new R session and write the output to disk.</p>
+<h3 id="sec:cleaning-up"><span class="section-number">7.1.6</span> Cleaning up</h3>
 <p>Previewing <code>.Rmd</code> and <code>.R</code> files that generate plots will leave <code>*__files/</code>
 directories (containing plot files) on disk by default. If you want to clean up
 such directories when closing or navigating away from the preview page, you may
@@ -5869,6 +6091,14 @@ individual will be unable to tolerate.</p>
 <p>Books and websites are usually based on multiple input files under a directory.
 For a directory to be recognized as a book or website project, it needs to
 contain a configuration file named <code>_litedown.yml</code>.</p>
+<p>The project type (book or website) is determined by the presence of a top-level
+<code>book</code> or <code>site</code> field in <code>_litedown.yml</code>. If both fields exist, or you want to
+be explicit, you can set the top-level <code>type</code> field to either <code>book</code> or <code>site</code>,
+e.g.,</p>
+<pre><code class="language-yaml">type: book
+book:
+  new_session: true
+</code></pre>
 <p>If you want to customize the output formats for books or websites, you should do
 it in <code>_litedown.yml</code>, e.g.,</p>
 <pre><code class="language-yaml">output:
@@ -5905,12 +6135,21 @@ currently supports these options:</p>
   pattern: &quot;[.]R?md$&quot;
   chapter_before: &quot;Information before a chapter.&quot;
   chapter_after: &quot;This chapter was generated from `$input$`.&quot;
+  time: null
 </code></pre>
 <p>You can choose whether to render each input file in a new R session, whether to
 search subdirectories for input files, the types of input files (e.g., you can
 use <code>.md</code> or <code>.R</code> files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 <code>$input$</code>, which is the path of each input file.</p>
+<p>The <code>time</code> option provides a convenient way to collect timing data
+(<a class="cross-ref-sec" href="#sec:timing-data">2.4.4</a>) across all chapters of a book. It takes a file path where
+the timing data is stored (a relative path is interpreted as relative to the
+first input file’s cache directory). This is equivalent to setting the <code>time</code>
+chunk option to the same file path in every chapter, but easier to configure in
+one place. With this option set, you can print <code>litedown::timing_data()</code> in the
+last chapter to see the timing data for the whole book. Remember to delete the
+data file when you no longer need it.</p>
 <h3 id="sec:previewing-a-single-chapter"><span class="section-number">8.2.1</span> Previewing a single chapter</h3>
 <p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-08-site-1" id="fnref-08-site-1" data-footnote-ref>12</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
@@ -5958,11 +6197,67 @@ output:
 </code></pre>
 <p>Basically, <code>include_before</code> can take a file or text input that will be used as
 the header of each web page, and <code>include_after</code> will be the footer.</p>
+<p>The <code>rebuild</code> option controls when a page should be rebuilt:</p>
+<ul>
+<li>
+<p><code>&quot;outdated&quot;</code> (default): Rebuild a page if the output file is older than the
+input file (i.e., the input has been modified since the last build).</p>
+</li>
+<li>
+<p><code>&quot;newfile&quot;</code>: Rebuild a page only if the output file does not exist yet
+(i.e., never rebuild existing output).</p>
+</li>
+<li>
+<p>A number: Rebuild a page if the output file is older than the input file by
+more than this number of seconds. This is a more relaxed version of
+<code>&quot;outdated&quot;</code> (which is equivalent to <code>0</code>), useful to avoid rebuilding pages
+for tiny modification-time differences.</p>
+</li>
+</ul>
 <p>The <code>standalone</code> option takes a character vector of filename patterns (supporting
 wildcards like <code>*</code> and <code>?</code>). Files matching any pattern will be built with a
 plain <code>fuse()</code> call without site-level CSS, JS, navigation, or footer being
 injected. This is useful for standalone pages such as slides that need their own
 self-contained styles and should not inherit the site layout.</p>
+<h3 id="sec:site-defaults"><span class="section-number">8.3.1</span> Default assets and layout</h3>
+<p>When building a website, <strong>litedown</strong> applies a set of default CSS/JS assets and
+layout elements so that pages look reasonable without any configuration:</p>
+<ul>
+<li>
+<p>The default CSS assets are
+<code>@default</code>, <code>@article</code>, <code>@copy-button</code>, <code>@heading-anchor</code>, and <code>@pages</code>, and the default
+JS assets are <code>@sidenotes</code>, <code>@appendix</code>, <code>@toc-highlight</code>, <code>@copy-button</code>, <code>@heading-anchor</code>, and <code>@pages</code>. In
+other words, each page uses the article format (<a class="cross-ref-sec" href="#sec:article">5.8</a>) by default.</p>
+</li>
+<li>
+<p>If <code>include_before</code> is not provided, a navigation menu is automatically
+generated from the top-level input files under the site root (plus any
+one-level subdirectories that contain an <code>index.html</code>, such as
+<code>playground/index.html</code>). The menu titles are derived from the filenames
+(e.g., <code>about.Rmd</code> becomes “About”, and <code>index.Rmd</code> becomes “Home”).</p>
+</li>
+<li>
+<p>If <code>include_after</code> is not provided, a copyright footer (<code>© &lt;year&gt;</code>) is
+automatically added.</p>
+</li>
+<li>
+<p>The options <code>embed_resources</code> (<a class="cross-ref-sec" href="#sec:embed-resources">4.1.5</a>) and <code>toc</code> (<a class="cross-ref-sec" href="#sec:toc">4.1.15</a>)
+default to <code>false</code> and <code>true</code>, respectively.</p>
+</li>
+</ul>
+<p>If you want to customize the assets, you should provide the <code>css</code> and <code>js</code> meta
+variables as usual, which will <em>override</em> the defaults. If you want to <em>add</em> to
+the default assets instead of replacing them, use the <code>css2</code> and <code>js2</code> variables
+(which are appended to the built-in defaults), e.g.,</p>
+<pre><code class="language-yaml">output:
+  html:
+    meta:
+      css2: [&quot;custom.css&quot;]
+      js2: [&quot;custom.js&quot;]
+</code></pre>
+<p>Absolute paths in links (i.e., paths starting with <code>/</code>) are automatically
+rewritten to relative paths, so a link like <code>[Home](/index.html)</code> will work
+correctly no matter which subdirectory the current page is in.</p>
 <h2 id="sec:pkg-site"><span class="section-number">8.4</span> R package documentation</h2>
 <p>R package developers can build the full package documentation as either a book
 or a website.</p>
@@ -6041,7 +6336,7 @@ jobs:
           use-public-rspm: true
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
-          extra-packages: litedown xfun fixest modelsummary tinytable .
+          extra-packages: litedown xfun .
           r-universe: yihui
       - uses: yihui/actions/litedown-site@HEAD
         with:
@@ -6474,20 +6769,20 @@ R package version 0.60.1, <a href="https://github.com/yihui/xfun">https://github
 </p>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.18.4/dist/katex.min.js,npm/katex@0.18.4/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.69/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.18.5/dist/katex.min.js,npm/katex@0.18.5/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js" defer></script>
