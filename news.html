@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.1">
+<meta name="generator" content="litedown 0.11.2">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/article.min.css">
@@ -42,6 +42,9 @@
 </ul>
 </div>
 <h2 id="sec:litedown-0-12" class="unnumbered">litedown 0.12</h2>
+<ul>
+<li>Fixed a bug that a multi-backtick inline code expression (e.g., <code>`` `{r} code` ``</code>) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).</li>
+</ul>
 <h2 id="sec:litedown-0-11" class="unnumbered">litedown 0.11</h2>
 <ul>
 <li>
@@ -355,7 +358,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.1</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.2</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/appendix.min.js" defer></script>
