@@ -175,12 +175,13 @@ crack = function(input, text = NULL) {
       p = rbind(p[1, ] - 1, p[2, ] + 1)
       p = matrix(c(1, p, nchar(x)), nrow = 2)
       x2 = substring(x, p[1, ], p[2, ])  # text
-      # get rid of left-over backticks
+      # get rid of left-over backticks (and the padding space that a multi-
+      # backtick fence adds around the code, e.g., the spaces in `` `code` ``)
       N = length(x2)
-      x2[1] = gsub('`+$', '', x2[1])  # trailing ` of first
-      x2[N] = gsub('^`+', '', x2[N])  # leading ` of last
+      x2[1] = gsub('`+ ?$', '', x2[1])  # trailing ` of first
+      x2[N] = gsub('^ ?`+', '', x2[N])  # leading ` of last
       # ` at both ends for text in the middle
-      if (N > 2) x2[2:(N - 1)] = gsub('^`+|`+$', '', x2[2:(N - 1)])
+      if (N > 2) x2[2:(N - 1)] = gsub('^ ?`+|`+ ?$', '', x2[2:(N - 1)])
       # see if the code is wrapped in $ $
       d1 = substring(x2, nchar(x2), nchar(x2)) == '$'
       d2 = substring(x2, 1, 1) == '$'
