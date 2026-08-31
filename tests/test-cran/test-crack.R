@@ -69,6 +69,21 @@ assert('crack() handles inline code in text blocks', {
   (is.list(res[[1]]$source))
 })
 
+assert('crack() strips fence padding for multi-backtick inline code on indented lines', {
+  # `` `` ``-fences pad code with a space on each side; on an indented line,
+  # commonmark's sourcepos ignores the indentation, so the leftover text used to
+  # keep the fence and its padding space (yihui/litedown#132)
+  src = c('- item', '  `` {r} 1 + 1 `` and `` {r} 2 + 2 `` done')
+  res = crack(text=src)
+  x = res[[1]]$source
+  txt = unlist(x[!vapply(x, is.list, TRUE)])
+  # no leftover backticks in the surrounding text fragments
+  (!any(grepl('`', txt)))
+  # the code fragments are extracted verbatim
+  code = vapply(Filter(is.list, x), `[[`, '', 'source')
+  (code %==% c('1 + 1', '2 + 2'))
+})
+
 assert('crack() supports non-R engines', {
   src = c('```{python}', 'x = 1', '```')
   res = crack(text=src)

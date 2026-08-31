@@ -1,5 +1,6 @@
 # CHANGES IN litedown VERSION 0.12
 
+- Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).
 
 # CHANGES IN litedown VERSION 0.11
 
