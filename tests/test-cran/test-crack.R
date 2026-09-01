@@ -90,6 +90,113 @@ assert('crack() supports non-R engines', {
   (res[[1]]$options$engine %==% 'python')
 })
 
+assert('crack() parses comma-separated chunk options in the header', {
+  src = c('```{r, echo=TRUE, fig.width=7}', 'x = 1', '```')
+  o = crack(text=src)[[1]]$options
+  (o$echo %==% TRUE)
+  (o$fig.width %==% 7)
+  (o$engine %==% 'r')
+})
+
+assert('crack() keeps fences for double-brace (verbatim) chunks', {
+  src = c('```{{r}}', 'verbatim', '```')
+  b = crack(text=src)[[1]]
+  (b$type %==% 'code_chunk')
+  (b$source %==% 'verbatim')
+  # the {{...}} header is unwrapped to a single-brace fence written to output
+  (b$fences %==% c('```{r}', '```'))
+  (b$options$engine %==% 'r')
+})
+
+assert('crack() records the prefix of an indented code chunk', {
+  src = c('- item', '', '  ```{r}', '  1 + 1', '  ```')
+  res = crack(text=src)
+  chunk = res[[length(res)]]
+  (chunk$type %==% 'code_chunk')
+  (chunk$prefix %==% '  ')
+  (chunk$source %==% '1 + 1')  # indentation stripped from the body
+  (chunk$lines %==% c(3L, 5L))
+})
+
+assert('crack() records the prefix of a code chunk in a blockquote', {
+  src = c('> ```{r}', '> 1 + 1', '> ```')
+  b = crack(text=src)[[1]]
+  (b$prefix %==% '> ')
+  (b$source %==% '1 + 1')
+})
+
+assert('crack() supports tilde-fenced code chunks', {
+  src = c('~~~{r}', '1 + 1', '~~~')
+  b = crack(text=src)[[1]]
+  (b$type %==% 'code_chunk')
+  (b$source %==% '1 + 1')
+  (b$options$engine %==% 'r')
+})
+
+assert('crack() handles a code chunk with an empty body', {
+  src = c('```{r}', '```')
+  b = crack(text=src)[[1]]
+  (b$type %==% 'code_chunk')
+  (length(b$source) %==% 0L)
+})
+
+assert('crack() does not treat plain fenced blocks (no braces) as code chunks', {
+  # ```` ```python ```` (a language name, not `{...}`) is not a litedown chunk
+  for (src in list(c('```python', 'y = 2', '```'), c('```{.python}', 'y = 2', '```'))) {
+    res = crack(text=src)
+    (length(res) %==% 1L)
+    (res[[1]]$type %==% 'text_block')
+  }
+})
+
+assert('crack() splits inline code that spans multiple lines', {
+  src = c('wrap `{r}', 'x + 1` end')
+  x = crack(text=src)[[1]]$source
+  (is.list(x))
+  code = Filter(is.list, x)
+  (length(code) %==% 1L)
+  (code[[1]]$source %==% 'x + 1')
+  # position spans two source lines
+  (code[[1]]$pos[1] %==% 1L)
+  (code[[1]]$pos[3] %==% 2L)
+})
+
+assert('crack() flags inline code wrapped in $ $ as math', {
+  x = crack(text='a $`{r} x`$ b')[[1]]$source
+  code = Filter(is.list, x)[[1]]
+  (isTRUE(code$math))
+})
+
+assert('crack() does not flag ordinary inline code as math', {
+  x = crack(text='See `{r} pi` here.')[[1]]$source
+  code = Filter(is.list, x)[[1]]
+  (is.null(code$math))
+})
+
+assert('crack() handles multiple inline expressions and plain code spans', {
+  x = crack(text='a `{r} x` b `{r} y + 1` c `plain` d')[[1]]$source
+  code = Filter(is.list, x)
+  # only the `{r} ...` spans are code; `plain` stays as text
+  (length(code) %==% 2L)
+  (vapply(code, `[[`, '', 'source') %==% c('x', 'y + 1'))
+})
+
+assert('crack() leaves a nested-backtick literal as text, not inline code', {
+  # `` `{r} x` `` is a verbatim code span whose content is "`{r} x`" (with
+  # backticks), so it is not a litedown inline expression
+  x = crack(text='Use `` `{r} x` `` verbatim and `{r} y` real.')[[1]]$source
+  code = Filter(is.list, x)
+  (length(code) %==% 1L)
+  (code[[1]]$source %==% 'y')
+})
+
+assert('crack() interleaves inline code across paragraphs of one text block', {
+  src = c('para one `{r} a`', '', 'para two `{r} b`')
+  x = crack(text=src)[[1]]$source
+  code = Filter(is.list, x)
+  (vapply(code, `[[`, '', 'source') %==% c('a', 'b'))
+})
+
 assert('sieve() returns list for R scripts', {
   src = c("x = 1", "x + 1")
   res = sieve(text=src)
