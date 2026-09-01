@@ -42,159 +42,133 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' paste(unlist(txt), collapse = '')
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
-  rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
-  # collect code blocks and inline code from the parse tree as a table of equal-
-  # length columns: type ('code' or 'code_block'), start_line, start_col,
-  # end_line, end_col (integers), info (fenced info string) and literal (inline
-  # code text); see markdown_code_tokens()
+  if (length(text) == 0) return(list())
+  # assemble the block list in C: text_blocks (raw source) and code_chunks
+  # (fence-stripped code, engine, prefix, ...); see R_crack_blocks in src/parse.c
+  res = crack_blocks(text)
+
+  # inline code `{lang} expr` positions within text blocks, located by cmark
   d = markdown_code_tokens(text)
-  # code chunk engine name, extracted from a `{engine ...}` info string; a plain
-  # ```r fence (info not starting with `{`) yields '' and is dropped below
-  r = paste0('^[{]+', rx_engine, '.*')
-  info = d$info; info[is.na(info)] = ''
-  d$engine = ifelse(grepl(r, info), sub(r, '\\1', info), '')
-  # code blocks must have non-empty info strings
-  d = tok_subset(d, d$type != 'code_block' | d$engine != '')
-
-  res = list()
-  # add a block of text and the line range info
-  add_block = function(l1, l2, ...) {
-    res[[length(res) + 1]] <<- list(source = text[l1:l2], ..., lines = c(l1, l2))
-    res
-  }
-
-  n = length(text)
-  i = 1L  # the possible start line number of text blocks
-  for (j in which(d$type == 'code_block')) {
-    i1 = d$start_line[j]; i2 = d$end_line[j]  # start/end line numbers of the chunk
-    # add the possible text block before the current code chunk
-    if (i1 > i) add_block(i, i1 - 1L, type = 'text_block')
-    # add the code chunk
-    add_block(i1, i2, info = d$engine[j], type = 'code_chunk')
-    i = i2 + 1L  # the earliest line for the next text block is next line
-  }
-  # if there are lines remaining, they must be a text block
-  if (i <= n) add_block(i, n, type = 'text_block')
-
-  if (length(d$type) == 0) return(res)
-
-  set_error_handler(input)
-
   d = tok_subset(d, d$type == 'code')
+
+  has_chunk = any(vapply(res, function(b) b$type == 'code_chunk', logical(1)))
+  # if the document has no code chunks and no inline code, there is nothing to
+  # process: return text blocks with their raw source lines untouched
+  if (!has_chunk && length(d$type) == 0) {
+    return(lapply(res, function(b) {
+      list(source = text[b$lines[1]:b$lines[2]], type = 'text_block', lines = b$lines)
+    }))
+  }
+
+  if (has_chunk) set_error_handler(input)
+
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
   # look for `r expr` if `{lang}` not found (for compatibility with knitr)
-  if (!any(j <- grepl(rx_inline, d$literal)) && getOption('litedown.enable.knitr_inline', FALSE)) {
+  if (!any(grepl(rx_inline, d$literal)) && getOption('litedown.enable.knitr_inline', FALSE))
     rx_inline = '^(r) +(.+?)\\s*$'
-    j = grepl(rx_inline, d$literal)
-  }
-  d = tok_subset(d, j)
-  n_start = uapply(res, function(x) x$lines[1])  # starting line numbers
-  j = findInterval(d$start_line, n_start)  # find which block each inline code belongs to
-  for (i in seq_along(d$type)) {
-    b = res[[j[i]]]; l = b$lines
-    # column position is based on bytes instead of chars; needs to be adjusted to the latter
-    pos = char_pos(text, c(d$start_line[i], d$start_col[i], d$end_line[i], d$end_col[i]))
-    i1 = pos[1]; i2 = pos[3]
-    s = nchar(b$source)
-    # calculate new position of code after we concatenate all lines of this block by \n
-    b$col = c(b$col, c(
-      sum(s[seq_len(i1 - l[1])] + 1) + pos[2],
-      sum(s[seq_len(i2 - l[1])] + 1) + pos[4]
-    ))
-    b$pos = c(b$pos, pos)
-    res[[j[i]]] = b
-  }
+  # keep only inline code that matches the inline syntax (computed once)
+  d = tok_subset(d, grepl(rx_inline, d$literal))
 
   i1 = 0  # code chunk index
-  # remove code fences, and extract code in text blocks
-  for (j in seq_along(res)) {
-    b = res[[j]]
+  res = lapply(res, function(b) {
     if (b$type == 'code_chunk') {
-      code = b$source
-      N = length(code)
-      # a code block may be indented or inside a blockquote
-      p = grep_sub('^([\t >]*)(`{3,}|~{3,}).*', '\\1\\2', code[1])
-      if (length(p) == 0) stop('Possibly malformed code block fence: ', code[1])
-      if (!grepl(sub('^[\t >]*', '', p), code[N])) stop(
-        'The fences of the code block do not match:\n\n', code[1], '\n', code[N]
-      )
-      p = gsub('[`~]+$', '', p)
-      if (p != '') {
-        i = startsWith(code, p)
-        # remove indentation or >
-        code[i] = substr(code[i], nchar(p) + 1, nchar(code[i]))
-        # trailing spaces in the prefix may have been trimmed: yihui/knitr#1446
-        code[!i] = gsub(gsub('(.+?)\\s+$', '^\\1', p), '', code[!i])
-        b$prefix = p
-      }
-      # possible comma-separated chunk options in header
-      rx_opts = paste0('^(`{3,}|~{3,})\\s*([{]+)', rx_engine, '(.*?)\\s*[}]+\\s*$')
-      o = match_one(code[1], rx_opts)[[1]]
-      if (length(o)) {
-        # if two or more `{` is used, we will write chunk fences to output
-        if (nchar(o[3]) > 1) b$fences = c(
-          sub('{{', '{', sub('}}\\s*$', '}', code[1]), fixed = TRUE), code[N]
-        )
-        o = if (o[5] != '') csv_options(o[5])
-      }
-      code = code[-c(1, N)]  # remove fences
-      save_pos(b$lines)
-      code = split_chunk(b$info, code)
-      b[c('source', 'options', 'comments')] = code[c('code', 'options', 'src')]
-      # starting line number of code
-      b$code_start = b$lines[1] + 1L + length(b$comments)
-      # default label is chunk-i (or parent-label-i for child documents)
-      i1 = i1 + 1
-      # merge chunk options from header with pipe comment options
-      b$options = merge_list(list(
-        label = sprintf('%s-%d', (if (isTRUE(.env$child)) reactor('label')) %||% 'chunk', i1)
-      ), o, b$options)
-      b$options$engine = b$info
-      b$info = NULL  # the info is stored in chunk options as `engine`
-    } else if (length(p <- b$col) > 0) {
-      p = matrix(p, nrow = 2)
-      x = one_string(b$source)
-      x1 = substring(x, p[1, ], p[2, ])  # code
-      # then extract normal text
-      p = rbind(p[1, ] - 1, p[2, ] + 1)
-      p = matrix(c(1, p, nchar(x)), nrow = 2)
-      x2 = substring(x, p[1, ], p[2, ])  # text
-      # get rid of left-over backticks (and the padding space that a multi-
-      # backtick fence adds around the code, e.g., the spaces in `` `code` ``)
-      N = length(x2)
-      x2[1] = gsub('`+ ?$', '', x2[1])  # trailing ` of first
-      x2[N] = gsub('^ ?`+', '', x2[N])  # leading ` of last
-      # ` at both ends for text in the middle
-      if (N > 2) x2[2:(N - 1)] = gsub('^ ?`+|`+ ?$', '', x2[2:(N - 1)])
-      # see if the code is wrapped in $ $
-      d1 = substring(x2, nchar(x2), nchar(x2)) == '$'
-      d2 = substring(x2, 1, 1) == '$'
-      dollar = d1[-N] & d2[-1]
-      # position of code c(row1, col1, row2, col2)
-      pos = matrix(b$pos, nrow = 4)
-      x = as.list(head(c(rbind(x2, c(x1, ''))), -1))
-      # split all `{lang} expr` expressions at once (vectorized over x1)
-      zs = match_one(x1, rx_inline)
-      for (i in seq_len(N - 1)) {
-        z = zs[[i]][-1]
-        p2 = pos[, i]; save_pos(p2)
-        xi = list(source = z[2], pos = p2, options = inline_options(z[1]))
-        if (dollar[i]) xi$math = TRUE
-        x[[2 * i]] = xi
-      }
-      b$source = x
+      i1 <<- i1 + 1
+      finalize_chunk(b, i1)
     } else {
-      b$source = paste(b$source, collapse = '\n')
+      finalize_text(b, text, d, rx_inline)
     }
-    b$pos = b$col = NULL  # positions not useful anymore
-    res[[j]] = b
-  }
+  })
   res
 }
 
-# subset all columns of a code-token table (from markdown_code_tokens(), plus
-# the derived `engine` column added in crack()) by a row index/logical vector
+# finalize a code_chunk block from R_crack_blocks(): parse chunk options (which
+# we deliberately defer out of C) and pipe-comment options, and assign a label
+finalize_chunk = function(b, index) {
+  engine = b$engine
+  o = NULL
+  # comma-separated chunk options in the `{engine ...}` header; the `{...}` is in
+  # b$info as `{engine, opt=val}` (or `{{...}}` for a verbatim chunk)
+  opts = sub('^[{]+[a-zA-Z0-9_]+', '', sub('[}]+\\s*$', '', b$info))  # strip {engine and }
+  opts = str_trim(sub('^,', '', opts))
+  # if two or more `{` was used, write the chunk fences to output verbatim
+  if (b$double_brace) b$fences = c(
+    sub('{{', '{', sub('}}\\s*$', '}', b$fence1), fixed = TRUE), b$fence2
+  )
+  if (opts != '') o = csv_options(opts)
+  save_pos(b$lines)
+  code = split_chunk(engine, b$code)
+  # merge chunk options: default label, header options, pipe-comment options
+  options = merge_list(list(
+    label = sprintf('%s-%d', (if (isTRUE(.env$child)) reactor('label')) %||% 'chunk', index)
+  ), o, code$options)
+  options$engine = engine
+  # assemble fields in the order the rest of the package expects: source, type,
+  # lines, then prefix/fences (if any), options, comments, code_start
+  block = list(source = code$code, type = 'code_chunk', lines = b$lines)
+  if (b$prefix != '') block$prefix = b$prefix
+  if (!is.null(b$fences)) block$fences = b$fences
+  block$options = options
+  block['comments'] = list(code$src)  # keep the slot even when src is NULL
+  block$code_start = b$lines[1] + 1L + length(code$src)
+  block
+}
+
+# finalize a text_block: split its source into interleaved text strings and
+# inline-code sublists (`{lang} expr`) using the inline positions from cmark
+finalize_text = function(b, text, d, rx_inline) {
+  l = b$lines
+  # inline code expressions (already filtered to the inline syntax) that fall
+  # within this block's line range
+  k = which(d$start_line >= l[1] & d$start_line <= l[2])
+  if (length(k) == 0) {
+    return(list(source = paste(text[l[1]:l[2]], collapse = '\n'),
+                type = 'text_block', lines = l))
+  }
+  x = one_string(text[l[1]:l[2]])
+  # byte->char positions of each inline expression, mapped to the joined source
+  s = nchar(text[l[1]:l[2]])
+  cols = vapply(k, function(i) {
+    pos = char_pos(text, c(d$start_line[i], d$start_col[i], d$end_line[i], d$end_col[i]))
+    c(sum(s[seq_len(pos[1] - l[1])] + 1) + pos[2],
+      sum(s[seq_len(pos[3] - l[1])] + 1) + pos[4],
+      pos)
+  }, numeric(6))
+  p = cols[1:2, , drop = FALSE]  # code column ranges in the joined source
+  x1 = substring(x, p[1, ], p[2, ])  # code (with `{lang} expr` and surrounding `)
+  # normal text between/around the code spans
+  q = matrix(c(1, rbind(p[1, ] - 1, p[2, ] + 1), nchar(x)), nrow = 2)
+  x2 = substring(x, q[1, ], q[2, ])
+  # get rid of left-over backticks (and the padding space that a multi-backtick
+  # fence adds around the code, e.g., the spaces in `` `code` ``)
+  N = length(x2)
+  x2[1] = gsub('`+ ?$', '', x2[1])  # trailing ` of first
+  x2[N] = gsub('^ ?`+', '', x2[N])  # leading ` of last
+  if (N > 2) x2[2:(N - 1)] = gsub('^ ?`+|`+ ?$', '', x2[2:(N - 1)])  # both ends in the middle
+  # see if the code is wrapped in $ $
+  d1 = substring(x2, nchar(x2), nchar(x2)) == '$'
+  d2 = substring(x2, 1, 1) == '$'
+  dollar = d1[-N] & d2[-1]
+  # split each `{lang} expr` into its engine/options part and the expression
+  zs = match_one(x1, rx_inline)
+  pos = as.integer(cols[3:6, ])  # 4 rows x (N-1) cols, flattened by column
+  # build one inline-code sublist per code span
+  codes = lapply(seq_len(N - 1), function(i) {
+    z = zs[[i]][-1]
+    p2 = pos[(4 * i - 3):(4 * i)]; save_pos(p2)  # for error messages
+    xi = list(source = z[2], pos = p2, options = inline_options(z[1]))
+    if (dollar[i]) xi$math = TRUE
+    xi
+  })
+  # interleave text segments and code sublists: x2[1], code[1], x2[2], ...
+  x = vector('list', 2 * N - 1)
+  x[seq(1, by = 2, length.out = N)] = x2
+  x[seq(2, by = 2, length.out = N - 1)] = codes
+  list(source = x, type = 'text_block', lines = l)
+}
+
+# subset all columns of a code-token table (from markdown_code_tokens()) by a
+# row index/logical vector
 tok_subset = function(d, i) lapply(d, `[`, i)
 
 # parse the `{...}` part of an inline code expression `{lang} expr` into chunk

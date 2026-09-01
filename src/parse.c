@@ -8,6 +8,7 @@
 #include <Rinternals.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "parser.h"
 
 /* Build a nested R list for a node and all of its descendants. Each node is a
@@ -233,4 +234,222 @@ SEXP R_code_tokens(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
 
   UNPROTECT(9);
   return out;
+}
+
+/* --- crack(): assemble the block list in C ------------------------------- *
+ * R_crack_blocks() walks the document once and returns the ordered list of
+ * blocks that crack() produces, so R no longer needs positional for-loops to
+ * assemble them. Two block kinds:
+ *
+ *   code_chunk: a fenced code block whose info string is `{engine ...}`.
+ *     Fields: type, lines (c(start,end)), info (the raw `{...}` string),
+ *     engine, code (fence- and prefix-stripped body lines), prefix (leading
+ *     indentation / blockquote markers, "" if none), double_brace (TRUE if the
+ *     header used `{{...}}`), fence1/fence2 (the raw opening/closing fence
+ *     lines, used to reconstruct verbatim fences for double-brace chunks).
+ *   text_block: everything else, verbatim source lines.
+ *     Fields: type, lines, source (the raw lines joined by "\n").
+ *
+ * Inline code handling (splitting text_block source into text/code segments)
+ * stays in R: it is coupled to litedown's inline syntax rules and chunk-option
+ * parser, which we deliberately keep out of C. R still gets the inline code
+ * positions from R_code_tokens().
+ *
+ * A fenced block whose info is NOT `{engine ...}` (e.g. ```` ```python ```` or
+ * ```` ```{.python} ````) is not a chunk; its raw lines fall through into the
+ * surrounding text block, exactly as before. */
+
+/* Does `info` look like a chunk header, i.e. `{` + engine name (alnum/_)?
+ * If so, return the engine name via *engine_beg/*engine_len. */
+static int is_chunk_info(const char *info, const char **engine_beg, int *engine_len) {
+  if (!info) return 0;
+  const char *p = info;
+  while (*p == '{') p++;
+  if (p == info) return 0;               /* must start with at least one '{' */
+  const char *b = p;
+  while (*p && (isalnum((unsigned char)*p) || *p == '_')) p++;
+  if (p == b) return 0;                  /* need a non-empty engine name */
+  *engine_beg = b;
+  *engine_len = (int)(p - b);
+  return 1;
+}
+
+/* An index of line offsets into the source buffer, so we can slice raw lines
+ * by 1-based line number the way R's split text vector does. */
+typedef struct {
+  const char *buf;
+  bufsize_t len;
+  bufsize_t *off;   /* off[i] = byte offset where line i+1 starts */
+  int n;            /* number of lines */
+} line_index;
+
+static void line_index_init(line_index *ix, const char *buf, bufsize_t len) {
+  int cap = 64, n = 0;
+  bufsize_t *off = (bufsize_t *)malloc(cap * sizeof(bufsize_t));
+  off[n++] = 0;
+  for (bufsize_t i = 0; i < len; i++) {
+    if (buf[i] == '\n') {
+      if (n >= cap) { cap *= 2; off = (bufsize_t *)realloc(off, cap * sizeof(bufsize_t)); }
+      off[n++] = i + 1;
+    }
+  }
+  ix->buf = buf; ix->len = len; ix->off = off; ix->n = n;
+}
+
+static void line_index_free(line_index *ix) { free(ix->off); }
+
+/* Return the [start,end) byte range of 1-based line `ln` (without newline). */
+static void line_range(line_index *ix, int ln, bufsize_t *beg, bufsize_t *end) {
+  bufsize_t b = ix->off[ln - 1];
+  bufsize_t e = (ln < ix->n) ? ix->off[ln] - 1 : ix->len;   /* drop '\n' */
+  if (e > b && ix->buf[e - 1] == '\r') e--;                 /* drop '\r' */
+  *beg = b; *end = e;
+}
+
+/* mkChar for a byte range of the source buffer, as UTF-8. */
+static SEXP mkchar_range(const char *buf, bufsize_t beg, bufsize_t end) {
+  return Rf_mkCharLenCE(buf + beg, (int)(end - beg), CE_UTF8);
+}
+
+/* Build a code_chunk block list from a code_block node. */
+static SEXP make_code_chunk(line_index *ix, cmark_node *node,
+                            const char *info, const char *engine_beg, int engine_len) {
+  int sline = cmark_node_get_start_line(node);
+  int eline = cmark_node_get_end_line(node);
+
+  /* prefix: the bytes before the fence on the opening line (indentation or
+   * blockquote markers such as "> "). start_column is 1-based. */
+  int scol = cmark_node_get_start_column(node);
+  bufsize_t lb, le; line_range(ix, sline, &lb, &le);
+  bufsize_t fence_start = lb + (scol - 1);
+  if (fence_start > le) fence_start = le;
+
+  /* double_brace: header used {{...}} */
+  int double_brace = (info && info[0] == '{' && info[1] == '{');
+
+  /* code body: cmark's literal is already fence- and prefix-stripped; it has a
+   * trailing '\n' we drop, then split into lines. An empty body -> 0 lines. */
+  const char *lit = cmark_node_get_literal(node);
+  int ncode = 0;
+  SEXP code;
+  if (lit && lit[0]) {
+    size_t L = strlen(lit);
+    if (L && lit[L - 1] == '\n') L--;
+    /* count lines */
+    ncode = (L == 0) ? 0 : 1;
+    for (size_t i = 0; i < L; i++) if (lit[i] == '\n') ncode++;
+    code = PROTECT(Rf_allocVector(STRSXP, ncode));
+    size_t start = 0; int k = 0;
+    for (size_t i = 0; i <= L; i++) {
+      if (i == L || lit[i] == '\n') {
+        SET_STRING_ELT(code, k++, Rf_mkCharLenCE(lit + start, (int)(i - start), CE_UTF8));
+        start = i + 1;
+      }
+    }
+  } else {
+    code = PROTECT(Rf_allocVector(STRSXP, 0));
+  }
+
+  const char *nms[] = {"type", "lines", "info", "engine", "code", "prefix",
+                       "double_brace", "fence1", "fence2"};
+  int nf = 9;
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, nf));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, nf));
+  for (int i = 0; i < nf; i++) SET_STRING_ELT(names, i, Rf_mkChar(nms[i]));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+  UNPROTECT(1);
+
+  SET_VECTOR_ELT(out, 0, Rf_mkString("code_chunk"));
+  SEXP lines = Rf_allocVector(INTSXP, 2);
+  INTEGER(lines)[0] = sline; INTEGER(lines)[1] = eline;
+  SET_VECTOR_ELT(out, 1, lines);
+  SET_VECTOR_ELT(out, 2, Rf_ScalarString(Rf_mkCharCE(info, CE_UTF8)));
+  SET_VECTOR_ELT(out, 3, Rf_ScalarString(Rf_mkCharLenCE(engine_beg, engine_len, CE_UTF8)));
+  SET_VECTOR_ELT(out, 4, code);
+  SET_VECTOR_ELT(out, 5, Rf_ScalarString(mkchar_range(ix->buf, lb, fence_start)));
+  SET_VECTOR_ELT(out, 6, Rf_ScalarLogical(double_brace));
+  /* raw opening / closing fence lines (needed only for double-brace chunks) */
+  { bufsize_t b, e; line_range(ix, sline, &b, &e);
+    SET_VECTOR_ELT(out, 7, Rf_ScalarString(mkchar_range(ix->buf, b, e))); }
+  { bufsize_t b, e; line_range(ix, eline, &b, &e);
+    SET_VECTOR_ELT(out, 8, Rf_ScalarString(mkchar_range(ix->buf, b, e))); }
+
+  UNPROTECT(2);  /* code, out */
+  return out;
+}
+
+/* Build a text_block covering source lines l1..l2 (1-based, inclusive). Only
+ * the line range is recorded; crack() slices the raw source lines itself (and
+ * splits out inline code) in R. */
+static SEXP make_text_block(line_index *ix, int l1, int l2) {
+  (void) ix;
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, Rf_mkChar("type"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("lines"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+  UNPROTECT(1);
+  SET_VECTOR_ELT(out, 0, Rf_mkString("text_block"));
+  SEXP lines = Rf_allocVector(INTSXP, 2);
+  INTEGER(lines)[0] = l1; INTEGER(lines)[1] = l2;
+  SET_VECTOR_ELT(out, 1, lines);
+  UNPROTECT(1);
+  return out;
+}
+
+SEXP R_crack_blocks(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
+                    SEXP footnotes, SEXP extensions) {
+  if (!Rf_isString(text))
+    Rf_error("Argument 'text' must be string.");
+
+  int options = parse_options(hardbreaks, smart, normalize, footnotes);
+  cmark_parser *parser;
+  cmark_node *doc = parse_document(text, extensions, options, &parser);
+
+  SEXP input = STRING_ELT(text, 0);
+  line_index ix;
+  line_index_init(&ix, CHAR(input), LENGTH(input));
+
+  /* Collect blocks into a growable list. */
+  int cap = 32, nb = 0;
+  SEXP *blocks = (SEXP *)malloc(cap * sizeof(SEXP));
+  int nprot = 0;                 /* number of blocks PROTECTed */
+  int next_line = 1;             /* next source line not yet emitted */
+
+  cmark_iter *iter = cmark_iter_new(doc);
+  cmark_event_type ev;
+  while ((ev = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+    if (ev != CMARK_EVENT_ENTER) continue;
+    cmark_node *node = cmark_iter_get_node(iter);
+    if (cmark_node_get_type(node) != CMARK_NODE_CODE_BLOCK) continue;
+    const char *info = cmark_node_get_fence_info(node);
+    const char *eng_beg; int eng_len;
+    if (!is_chunk_info(info, &eng_beg, &eng_len)) continue;   /* not a chunk */
+
+    int sline = cmark_node_get_start_line(node);
+    int eline = cmark_node_get_end_line(node);
+    if (sline > next_line) {
+      if (nb >= cap) { cap *= 2; blocks = (SEXP *)realloc(blocks, cap * sizeof(SEXP)); }
+      blocks[nb++] = PROTECT(make_text_block(&ix, next_line, sline - 1)); nprot++;
+    }
+    if (nb >= cap) { cap *= 2; blocks = (SEXP *)realloc(blocks, cap * sizeof(SEXP)); }
+    blocks[nb++] = PROTECT(make_code_chunk(&ix, node, info, eng_beg, eng_len)); nprot++;
+    next_line = eline + 1;
+  }
+  cmark_iter_free(iter);
+
+  if (next_line <= ix.n) {
+    if (nb >= cap) { cap *= 2; blocks = (SEXP *)realloc(blocks, cap * sizeof(SEXP)); }
+    blocks[nb++] = PROTECT(make_text_block(&ix, next_line, ix.n)); nprot++;
+  }
+
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, nb));
+  for (int i = 0; i < nb; i++) SET_VECTOR_ELT(res, i, blocks[i]);
+
+  UNPROTECT(1 + nprot);
+  free(blocks);
+  line_index_free(&ix);
+  cmark_parser_free(parser);
+  cmark_node_free(doc);
+  return res;
 }
