@@ -174,13 +174,12 @@ crack = function(input, text = NULL) {
       # position of code c(row1, col1, row2, col2)
       pos = matrix(b$pos, nrow = 4)
       x = as.list(head(c(rbind(x2, c(x1, ''))), -1))
+      # split all `{lang} expr` expressions at once (vectorized over x1)
+      zs = match_one(x1, rx_inline)
       for (i in seq_len(N - 1)) {
-        z = match_one(x1[i], rx_inline)[[1]][-1]
+        z = zs[[i]][-1]
         p2 = pos[, i]; save_pos(p2)
-        xi = list(
-          source = z[2], pos = p2,
-          options = csv_options(gsub('^([^,]+)', 'engine="\\1"', z[1]))
-        )
+        xi = list(source = z[2], pos = p2, options = inline_options(z[1]))
         if (dollar[i]) xi$math = TRUE
         x[[2 * i]] = xi
       }
@@ -197,6 +196,15 @@ crack = function(input, text = NULL) {
 # subset all columns of a code-token table (from markdown_code_tokens(), plus
 # the derived `engine` column added in crack()) by a row index/logical vector
 tok_subset = function(d, i) lapply(d, `[`, i)
+
+# parse the `{...}` part of an inline code expression `{lang} expr` into chunk
+# options. The common case is a bare engine name (e.g. `{r}`), which we turn
+# into list(engine = "r") directly; only fall back to the full csv_options()
+# parser when there are actual options (a comma or `=`).
+inline_options = function(x) {
+  if (grepl('^[[:alnum:]_]+$', x)) list(engine = x) else
+    csv_options(sub('^([^,]+)', 'engine="\\1"', x))
+}
 
 set_error_handler = function(input) {
   opts = options(xfun.handle_error.loc_fun = get_loc)
