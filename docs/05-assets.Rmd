@@ -310,9 +310,13 @@ will appear in the TOC of the document if TOC is enabled (@sec:toc).
 js: ["@fold-details"]
 ```
 
-You can fold any element with the JS. See [this
-post](https://yihui.org/en/2023/09/code-folding/) for how to configure the
-script.
+The `fold-details.js` script wraps elements in a `<details>` container so they
+can be folded (collapsed) and unfolded by clicking on the summary line. By
+default, it folds code blocks (`<pre>`). You can configure it with `data-*`
+attributes on the `<script>` tag, e.g., to fold a different set of elements, or
+to add a button that toggles all foldable elements at once. See [this
+post](https://yihui.org/en/2023/09/code-folding/) for the full list of options
+and how to configure the script.
 
 ## Callout blocks {#sec:callout}
 
@@ -450,13 +454,18 @@ define the border color, background, and icon of a callout, e.g.,
 
 ## Add anchor links to headings {#sec:heading-anchor}
 
-The CSS is necessary only if you want to hide the anchors by default and reveal
-them on hover.
+The `heading-anchor.js` script appends an anchor link to every section heading
+(`<h1>` to `<h6>`) that has a nonempty `id` attribute, so readers can click on
+the anchor to get a direct link to that section. The CSS is necessary only if
+you want to hide the anchors by default and reveal them on hover.
 
 ``` yaml
 css: ["@heading-anchor"]
 js: ["@heading-anchor"]
 ```
+
+The anchors in this book are added exactly this way; hover over any heading and
+you will see the anchor symbol appear next to it.
 
 ## HTML articles {#sec:article}
 
@@ -665,9 +674,34 @@ margin, which you can see if the browser window is wide enough.
 
 ## HTML books {#sec:book}
 
+The book style builds on top of the article style (@sec:article) to turn a
+document with multiple first-level headings (`#`) into a book, in which each
+`<h1>` starts a new chapter. You typically load it together with the default and
+article assets:
+
 ``` yaml
-css: ["@book"]
+css: ["@default", "@article", "@book"]
+js: ["@sidenotes", "@appendix"]
 ```
+
+The web version of this book is rendered exactly this way. The `book.css`
+stylesheet mainly does the following:
+
+-   Uses a serif typeface (Palatino / Georgia) for the body.
+
+-   Turns the frontmatter (the part before the first chapter) into a full-height
+    cover page with a dotted background.
+
+-   Makes each chapter occupy at least the full height of the viewport, and adds
+    a `Chapter N` prefix to the chapter number and a bottom border under the
+    chapter title.
+
+-   Styles the per-chapter TOC box (@sec:chapter-toc).
+
+The book style is intended for longer documents that are split into chapters. A
+common way to author a book is to write each chapter in a separate `.Rmd` file
+and combine them via a `_litedown.yml` config file. See @chp:sites for the
+details of building multi-file books and websites.
 
 ## Chapter TOC {#sec:chapter-toc}
 
@@ -675,10 +709,35 @@ css: ["@book"]
 js: ["@chapter-toc"]
 ```
 
+For books (@sec:book) with a full-document TOC (@sec:toc), the `chapter-toc.js`
+script copies the sub-items of each chapter in the main TOC to the beginning of
+that chapter (right under the `<h1>`, or after the epigraph if the chapter
+starts with one). This gives readers a local outline of the chapter they are
+about to read, without having to scroll back to the main TOC.
+
+On wide screens, `book.css` hides this in-chapter copy by default (since the
+main TOC is already visible in the margin), and only shows it on narrow screens
+or when the page is paginated for printing (@sec:pages).
+
 ## Highlight TOC items {#sec:toc-highlight}
 
 ``` yaml
 js: ["@toc-highlight"]
+```
+
+As you scroll through a document, `toc-highlight.js` adds the class `active` to
+the TOC link (`<a>`) that corresponds to the section heading currently in view,
+so readers always know where they are. If the TOC itself is scrollable and the
+active item is out of view, the TOC will be scrolled smoothly to reveal it.
+
+The script looks for a TOC with the ID `TOC` or `TableOfContents` that contains
+links to headings on the same page (`<a href="#...">`). You can style the active
+item with CSS, e.g., to make it bold:
+
+``` css
+#TOC a.active {
+  font-weight: bold;
+}
 ```
 
 ## Paged HTML {#sec:pages}
@@ -687,6 +746,48 @@ js: ["@toc-highlight"]
 css: ["@pages"]
 js: ["@pages"]
 ```
+
+Normally an HTML page is one long continuous scroll. The `pages` assets split
+the page into discrete pages of a fixed size (A4 paper by default), which is
+mainly useful for printing the HTML to PDF (e.g., via a browser's print dialog)
+with proper page headers, footers, and page numbers.
+
+Pagination is not applied by default because it can be expensive for long
+documents. There are three ways to trigger it:
+
+-   Press the `p` key on the page to toggle pagination on and off.
+
+-   Append the query parameter `?paged=1` to the page URL.
+
+-   Print the page (or use the browser's print preview), which fires the
+    `beforeprint` event that automatically paginates the content.
+
+The `pages.js` script moves elements into page boxes so that each page holds as
+much content as possible without overflowing. Elements that are too tall to fit
+on the current page (such as long paragraphs, lists, tables, and code blocks)
+are fragmented across pages. Each page gets a header showing the document title
+and the current section title, and a footer showing the page number. If the
+document has a TOC, dot leaders and page numbers are added to it.
+
+The `pages.css` stylesheet defines the paper geometry through CSS variables,
+which you can override to change the paper size and margins, e.g., for US Letter
+paper:
+
+``` css
+:root {
+  --paper-width: 8.5in;
+  --paper-height: 11in;
+  --paper-margin-top: 1in;
+  --paper-margin-right: 1in;
+  --paper-margin-bottom: 1in;
+  --paper-margin-left: 1in;
+}
+```
+
+If **litedown** does not estimate the number of pages for a tall element
+correctly, you can specify the number manually via the `data-pages-offset`
+attribute on a page element, e.g., `<div class="pagesjs-page"
+data-pages-offset="3">`.
 
 ## HTML slides {#sec:snap}
 
@@ -697,12 +798,118 @@ css: ["@default", "@snap"]
 js: ["@snap"]
 ```
 
-You can learn more in `vignette('slides', package = 'litedown')`.
+The slides are based on the [CSS Scroll
+Snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts)
+technique: each slide is a full-screen section, and scrolling snaps from one
+slide to the next. The `snap.js` script does the work of grouping the content
+into slide containers, and `snap.css` styles them.
+
+### Creating slides
+
+Once the assets are loaded, the document is split into slides. There are two
+ways to start a new slide: a horizontal rule (`---`), or a level-two section
+heading (`##`). Pick only one way in a document. For example, with horizontal
+rules, each `---` starts a new slide (and a slide need not begin with a
+heading):
+
+``` md
+## First slide
+
+**Content** of the first slide.
+
+---
+
+More _content_ on the next slide.
+
+---
+
+## Another slide
+```
+
+Or with section headings, where each `##` begins a new slide:
+
+``` md
+## First slide
+
+Content.
+
+## Second slide
+
+Content.
+```
+
+The page shows slides only when the window is wide enough (roughly, wider than
+it is tall, and at least 992px wide). On narrower windows or mobile devices, it
+falls back to a normal continuous article, so the same document reads fine on a
+phone.
+
+### Navigating and presenting
+
+Since slides are just a scrollable page, you can navigate with the usual scroll
+wheel, arrow keys, or `PageUp` / `PageDown`. In addition, `snap.js` provides a
+few keyboard shortcuts:
+
+-   `f`: toggle fullscreen mode (press `Esc` to exit).
+
+-   `o`: toggle overview mode, which shrinks all slides into a thumbnail grid so
+    you can glance over them and click one to jump to it. You can also
+    `Alt + Click` a slide to zoom in/out.
+
+-   `m`: toggle mirror mode (slides are flipped horizontally).
+
+Each slide gets a page number at the bottom right. Clicking a page number
+appends `#N` to the URL, so you can link directly to a specific slide. A timer
+is shown at the bottom left (starting when you go fullscreen); click it to
+restart. You can turn it into a countdown timer by adding your own
+`<span class="timer" data-total="1200"></span>` (seconds).
+
+### Styling slides
+
+You can add attributes to an individual slide with an HTML comment that starts
+with `#`, whose content is plain HTML attributes applied to the slide container,
+e.g.,
+
+``` html
+<!--# class="inverse center" style="color: red;" -->
+```
+
+A few classes are built into `snap.css`:
+
+-   `inverse`: dark background with inverted (light) text.
+
+-   `center`: center all elements horizontally.
+
+-   `middle`: center all elements vertically.
+
+-   `fade`: dim the slide to 50% opacity, e.g., to de-emphasize it.
+
+You can also define your own classes and CSS rules, pass extra CSS files via the
+`css` meta variable, or embed CSS in a `css` code chunk. A slide can carry a
+background image through its `style` attribute, and a slide with the
+`contenteditable` attribute can be edited live during a presentation (edits are
+not saved).
+
+### Printing and themes
+
+When printed, slides are rendered as a continuous document with a smaller font
+to save paper; if you want one slide per page, print from the overview mode or
+add print CSS (`@media print`). For a fixed aspect ratio (useful when presenting
+on an unknown screen), set the CSS variable `--slide-ratio`, e.g.,
+`:root { --slide-ratio: .75; }`.
+
+The alternative theme `snap-clean.css` provides a cleaner, more minimal slide
+style; load it after `snap.css`, e.g., `css: ["@default", "@snap",
+"@snap-clean"]`.
+
+There are more features and caveats than can be covered here. For the full
+guide, see `vignette('slides', package = 'litedown')`.
 
 ## Right-align a quote footer {#sec:right-quote}
 
 You can use the script `right-quote.js` to right-align a blockquote footer if it
-starts with an em-dash (`---`).
+starts with an em-dash (`---`). More precisely, the script right-aligns any
+paragraph (`<p>`) whose text starts with an em-dash (`—`, `―`, or `---`), which
+is a common convention for attributing a quote to its author.
 
 ``` yaml
 js: ["@right-quote"]
@@ -720,22 +927,50 @@ js: ["@right-quote"]
 js: ["@center-img"]
 ```
 
+The `center-img.js` script horizontally centers an image (`<img>`), video
+(`<embed>`), or object (`<object>`) when it is the only child of its parent
+paragraph. For a standalone `<img>` that is not already wrapped in a link, the
+script also wraps it in a link pointing to the image source, so readers can
+click on it to open the full image. In addition, a paragraph containing only the
+horizontal rule marker `* * *` is centered.
+
 ## Open external links in new windows {#sec:external-link}
 
 ``` yaml
 js: ["@external-link"]
 ```
 
+The `external-link.js` script identifies external links (those whose `href`
+starts with `http://`, `https://`, or `//`) and adds `target="_blank"` to them
+so they open in a new tab or window. Links that do not have a `title` attribute
+get one set to their (decoded) URL, which shows as a tooltip on hover. For a
+bare link whose text is identical to its URL, the leading protocol (and a
+trailing hash) is stripped from the displayed text to make it shorter.
+
 ## Style keyboard shortcuts {#sec:key-buttons}
 
-The script `key-button.js` identifies keys and the CSS styles them, which can be
-useful for [showing keyboard
+The script `key-buttons.js` identifies keys and the CSS styles them, which can
+be useful for [showing keyboard
 shortcuts](https://yihui.org/en/2023/02/key-buttons/).
 
 ``` yaml
 css: ["@key-buttons"]
 js: ["@key-buttons"]
 ```
+
+You write the keys in inline code (i.e., inside a pair of backticks), and the
+script converts recognized keys from `<code>` to `<kbd>`, which `key-buttons.css`
+styles as raised buttons. It recognizes:
+
+-   Single keys, such as `Esc`, `Tab`, `Space`, `Enter`, `PageUp`, the function
+    keys `F1`--`F12`, and the arrow keys `Up`, `Down`, `Left`, `Right` (arrow
+    keys are rendered as the arrow symbols ↑ ↓ ← →).
+
+-   Key combinations joined by `+` or `/`, such as `` `Ctrl + C` `` or
+    `` `Shift / A` ``, where each key becomes a separate `<kbd>` and the
+    separator is kept between them.
+
+For example, `` `Ctrl + Alt + Delete` `` becomes `Ctrl + Alt + Delete`.
 
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
