@@ -43,11 +43,7 @@ new_env = function(...) new.env(..., parent = emptyenv())
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
-  # collect code blocks and inline code from the parse tree; m has 9 rows to
-  # mirror the matrix previously produced by regex over markdown_xml(): row 2 is
-  # the node type ('code' or 'code_block'), rows 3-6 are the source position
-  # (start line, start column, end line, end column), row 8 is the code chunk
-  # engine name, and row 9 is the (inline) code text; rows 1 and 7 are unused
+  # collect code blocks and inline code from the parse tree (see code_tokens())
   m = code_tokens(text, rx_engine)
   # code blocks must have non-empty info strings
   m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
@@ -191,39 +187,29 @@ crack = function(input, text = NULL) {
   res
 }
 
-# walk the parse tree and collect code blocks (fenced code) and inline code into
-# a 9-row character matrix compatible with the one crack() used to build via
-# regex over markdown_xml(sourcepos = TRUE). Only rows 2-6, 8, 9 are meaningful:
+# collect code blocks (fenced code) and inline code from the parse tree into a
+# 9-row character matrix, one column per token. Rows:
 #   2: node type, 'code' (inline) or 'code_block' (fenced)
 #   3-6: source position (start line, start column, end line, end column)
 #   8: code chunk engine name (extracted from a `{engine ...}` info string)
 #   9: inline code text
-# Rows 1 and 7 are placeholders kept for backward compatibility with the
-# original matrix layout.
+# Rows 1 and 7 are unused (empty strings); crack() indexes columns by these row
+# numbers.
 code_tokens = function(text, rx_engine) {
-  ast = markdown_ast(text)
-  rows = list()
+  d = markdown_code_tokens(text)
+  n = length(d$type)
+  if (n == 0) return(matrix(character(), 9))
   # info string like `{r, echo=TRUE}` -> engine name `r`; anything not starting
   # with `{` (e.g. a plain ```r fence) yields '' and is dropped later
-  engine = function(info) {
-    if (is.na(info)) return('')
-    grep_sub(paste0('^[{]+', rx_engine, '.*'), '\\1', info) %|% ''
-  }
-  walk = function(node) {
-    type = node$type
-    if (type %in% c('code', 'code_block')) {
-      p = as.character(node$sourcepos)
-      rows[[length(rows) + 1]] <<- c(
-        '', type, p[1], p[2], p[3], p[4], '',
-        if (type == 'code_block') engine(node$info) else '',
-        if (type == 'code') node$literal else ''
-      )
-    }
-    for (child in node$children) walk(child)
-  }
-  walk(ast)
-  if (!length(rows)) return(matrix(character(), 9))
-  matrix(unlist(rows), nrow = 9)
+  r = paste0('^[{]+', rx_engine, '.*')
+  info = d$info; info[is.na(info)] = ''
+  engine = ifelse(grepl(r, info), sub(r, '\\1', info), '')
+  # row 9 holds inline code text only (code blocks leave it empty)
+  literal = ifelse(d$type == 'code' & !is.na(d$literal), d$literal, '')
+  e = character(n)  # empty rows 1 and 7
+  matrix(rbind(
+    e, d$type, d$start_line, d$start_col, d$end_line, d$end_col, e, engine, literal
+  ), nrow = 9)
 }
 
 set_error_handler = function(input) {

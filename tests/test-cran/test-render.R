@@ -1,9 +1,5 @@
 library(testit)
 
-ns = asNamespace('litedown')
-markdown_ast = ns$markdown_ast
-markdown_html = ns$markdown_html
-
 # find the first node of a given type via a depth-first walk
 find_node = function(node, type) {
   if (identical(node$type, type)) return(node)
@@ -42,6 +38,16 @@ assert('inline sourcepos is correct inside an indented blockquote', {
   x = markdown_ast('> line one\n>    with `code` here\n')
   code = find_node(x, 'code')
   (code$sourcepos %==% c(2L, 12L, 2L, 15L))
+})
+
+assert('markdown_code_tokens() collects code blocks and inline code', {
+  d = markdown_code_tokens(c('`{r} x` and `y`', '', '```{r}', '1', '```'))
+  (d$type %==% c('code', 'code', 'code_block'))
+  (d$literal[1:2] %==% c('{r} x', 'y'))
+  (d$info %==% c(NA_character_, NA_character_, '{r}'))
+  # the fix above must also hold on the path crack() actually uses
+  d2 = markdown_code_tokens('A paragraph that wraps\n   with `code` here.\n')
+  (c(d2$start_line, d2$start_col, d2$end_line, d2$end_col) %==% c(2L, 10L, 2L, 13L))
 })
 
 assert('markdown_html() still renders correctly', {

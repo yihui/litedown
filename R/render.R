@@ -2,7 +2,7 @@
 # 'commonmark' package (from which the C code and R wrappers are derived) so
 # that litedown can call them internally without depending on 'commonmark'.
 
-#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown
+#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens
 NULL
 
 markdown_html = function(
@@ -69,6 +69,17 @@ markdown_ast = function(
   text = enc2utf8(paste(text, collapse = '\n'))
   extensions = get_extensions(extensions)
   .Call(R_parse_markdown, text, hardbreaks, smart, normalize, footnotes, 0L, extensions)
+}
+
+# collect code blocks and inline code from the parse tree as a data frame with
+# columns type, start_line, start_col, end_line, end_col, info, literal
+markdown_code_tokens = function(
+  text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
+  extensions = FALSE
+) {
+  text = enc2utf8(paste(text, collapse = '\n'))
+  extensions = get_extensions(extensions)
+  .Call(R_code_tokens, text, hardbreaks, smart, normalize, footnotes, extensions)
 }
 
 list_extensions = function() .Call(R_list_extensions)

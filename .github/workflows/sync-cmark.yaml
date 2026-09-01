@@ -38,13 +38,11 @@ jobs:
       - uses: yihui/actions/setup-r-dependencies@HEAD
         if: steps.diff.outputs.changed == 'true'
         with:
-          extra-packages: rcmdcheck .
+          extra-packages: .
 
-      - name: Build and test with the synced sources
+      - name: Test with the synced sources
         if: steps.diff.outputs.changed == 'true'
-        run: |
-          R CMD INSTALL --no-multiarch --no-byte-compile .
-          Rscript -e 'testit::test_pkg("litedown", "test-cran")'
+        run: for f in tests/*.R; do Rscript "$f"; done
 
       - name: Create Pull Request
         if: steps.diff.outputs.changed == 'true'

@@ -32,8 +32,8 @@ Other contributors:
 \itemize{
   \item Tim Taylor (\href{https://orcid.org/0000-0002-8587-7113}{ORCID}) [contributor]
   \item John MacFarlane (Author of cmark) [copyright holder]
-  \item Jeroen Ooms (Author of the R bindings to cmark in the commonmark package) [copyright holder]
-  \item Github, Inc (Author of the cmark-gfm extensions) [copyright holder]
+  \item Jeroen Ooms (Author of the R bindings to cmark in the commonmark package, from which the C glue code was adapted) [contributor, copyright holder]
+  \item GitHub, Inc. (Author of the cmark-gfm extensions) [copyright holder]
 }
 
 }

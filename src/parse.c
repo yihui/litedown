@@ -93,29 +93,11 @@ static SEXP build_node(cmark_node *node) {
   return out;
 }
 
-SEXP R_parse_markdown(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
-                      SEXP footnotes, SEXP width, SEXP extensions) {
-  if (!Rf_isString(text))
-    Rf_error("Argument 'text' must be string.");
-  if (!Rf_isLogical(hardbreaks))
-    Rf_error("Argument 'hardbreaks' must be logical.");
-  if (!Rf_isLogical(smart))
-    Rf_error("Argument 'smart' must be logical.");
-  if (!Rf_isLogical(normalize))
-    Rf_error("Argument 'normalize' must be logical.");
-  if (!Rf_isLogical(footnotes))
-    Rf_error("Argument 'footnotes' must be logical.");
-  (void) width;
-
-  int options = CMARK_OPT_DEFAULT;
-  options += CMARK_OPT_SOURCEPOS;
-  options += CMARK_OPT_STRIKETHROUGH_DOUBLE_TILDE;
-  options += Rf_asLogical(hardbreaks) * CMARK_OPT_HARDBREAKS;
-  options += Rf_asLogical(smart) * CMARK_OPT_SMART;
-  options += Rf_asLogical(normalize) * CMARK_OPT_NORMALIZE;
-  options += Rf_asLogical(footnotes) * CMARK_OPT_FOOTNOTES;
-  options += CMARK_OPT_UNSAFE;
-
+/* Parse `text` into a cmark document, attaching the named `extensions`. The
+ * caller must free both the returned document (cmark_node_free) and the parser
+ * (cmark_parser_free) it stores via `*out_parser`. */
+static cmark_node *parse_document(SEXP text, SEXP extensions, int options,
+                                  cmark_parser **out_parser) {
   SEXP input = STRING_ELT(text, 0);
   cmark_parser *parser = cmark_parser_new(options);
   for (int i = 0; i < Rf_length(extensions); i++) {
@@ -128,7 +110,34 @@ SEXP R_parse_markdown(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
     cmark_parser_attach_syntax_extension(parser, ext);
   }
   cmark_parser_feed(parser, CHAR(input), LENGTH(input));
-  cmark_node *doc = cmark_parser_finish(parser);
+  *out_parser = parser;
+  return cmark_parser_finish(parser);
+}
+
+static int parse_options(SEXP hardbreaks, SEXP smart, SEXP normalize, SEXP footnotes) {
+  if (!Rf_isLogical(hardbreaks) || !Rf_isLogical(smart) ||
+      !Rf_isLogical(normalize) || !Rf_isLogical(footnotes))
+    Rf_error("Arguments 'hardbreaks', 'smart', 'normalize', 'footnotes' must be logical.");
+  int options = CMARK_OPT_DEFAULT;
+  options += CMARK_OPT_SOURCEPOS;
+  options += CMARK_OPT_STRIKETHROUGH_DOUBLE_TILDE;
+  options += Rf_asLogical(hardbreaks) * CMARK_OPT_HARDBREAKS;
+  options += Rf_asLogical(smart) * CMARK_OPT_SMART;
+  options += Rf_asLogical(normalize) * CMARK_OPT_NORMALIZE;
+  options += Rf_asLogical(footnotes) * CMARK_OPT_FOOTNOTES;
+  options += CMARK_OPT_UNSAFE;
+  return options;
+}
+
+SEXP R_parse_markdown(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
+                      SEXP footnotes, SEXP width, SEXP extensions) {
+  if (!Rf_isString(text))
+    Rf_error("Argument 'text' must be string.");
+  (void) width;
+
+  int options = parse_options(hardbreaks, smart, normalize, footnotes);
+  cmark_parser *parser;
+  cmark_node *doc = parse_document(text, extensions, options, &parser);
 
   /* build_node() returns an already-protected value */
   SEXP res = build_node(doc);
@@ -137,4 +146,91 @@ SEXP R_parse_markdown(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
   cmark_node_free(doc);
   UNPROTECT(1);
   return res;
+}
+
+/* Collect just the code blocks and inline code from the document into a flat
+ * table, which is much cheaper than building the whole AST as a nested R list
+ * and walking it in R. Returns a data-frame-ready list of equal-length columns:
+ *   type       : "code" (inline) or "code_block" (fenced)
+ *   start_line, start_col, end_line, end_col : source position (integers)
+ *   info       : fenced code info string (NA for inline code)
+ *   literal    : code text
+ * crack() uses this to locate code chunks and inline code expressions. */
+SEXP R_code_tokens(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
+                   SEXP footnotes, SEXP extensions) {
+  if (!Rf_isString(text))
+    Rf_error("Argument 'text' must be string.");
+
+  int options = parse_options(hardbreaks, smart, normalize, footnotes);
+  cmark_parser *parser;
+  cmark_node *doc = parse_document(text, extensions, options, &parser);
+
+  /* first pass: count matching nodes so we can allocate exact-size columns */
+  int n = 0;
+  cmark_iter *iter = cmark_iter_new(doc);
+  cmark_event_type ev;
+  while ((ev = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+    if (ev != CMARK_EVENT_ENTER) continue;
+    cmark_node_type t = cmark_node_get_type(cmark_iter_get_node(iter));
+    if (t == CMARK_NODE_CODE || t == CMARK_NODE_CODE_BLOCK) n++;
+  }
+  cmark_iter_free(iter);
+
+  SEXP type    = PROTECT(Rf_allocVector(STRSXP, n));
+  SEXP sline   = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP scol    = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP eline   = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP ecol    = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP info    = PROTECT(Rf_allocVector(STRSXP, n));
+  SEXP literal = PROTECT(Rf_allocVector(STRSXP, n));
+
+  /* second pass: fill the columns */
+  int i = 0;
+  iter = cmark_iter_new(doc);
+  while ((ev = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+    if (ev != CMARK_EVENT_ENTER) continue;
+    cmark_node *node = cmark_iter_get_node(iter);
+    cmark_node_type t = cmark_node_get_type(node);
+    if (t != CMARK_NODE_CODE && t != CMARK_NODE_CODE_BLOCK) continue;
+
+    SET_STRING_ELT(type, i, Rf_mkChar(t == CMARK_NODE_CODE ? "code" : "code_block"));
+    INTEGER(sline)[i] = cmark_node_get_start_line(node);
+    INTEGER(scol)[i]  = cmark_node_get_start_column(node);
+    INTEGER(eline)[i] = cmark_node_get_end_line(node);
+    INTEGER(ecol)[i]  = cmark_node_get_end_column(node);
+
+    if (t == CMARK_NODE_CODE_BLOCK) {
+      const char *fi = cmark_node_get_fence_info(node);
+      SET_STRING_ELT(info, i, (fi && fi[0]) ? Rf_mkCharCE(fi, CE_UTF8) : NA_STRING);
+    } else {
+      SET_STRING_ELT(info, i, NA_STRING);
+    }
+    const char *lit = cmark_node_get_literal(node);
+    SET_STRING_ELT(literal, i, lit ? Rf_mkCharCE(lit, CE_UTF8) : NA_STRING);
+    i++;
+  }
+  cmark_iter_free(iter);
+  cmark_parser_free(parser);
+  cmark_node_free(doc);
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 7));
+  SET_VECTOR_ELT(out, 0, type);
+  SET_VECTOR_ELT(out, 1, sline);
+  SET_VECTOR_ELT(out, 2, scol);
+  SET_VECTOR_ELT(out, 3, eline);
+  SET_VECTOR_ELT(out, 4, ecol);
+  SET_VECTOR_ELT(out, 5, info);
+  SET_VECTOR_ELT(out, 6, literal);
+  SEXP nms = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(nms, 0, Rf_mkChar("type"));
+  SET_STRING_ELT(nms, 1, Rf_mkChar("start_line"));
+  SET_STRING_ELT(nms, 2, Rf_mkChar("start_col"));
+  SET_STRING_ELT(nms, 3, Rf_mkChar("end_line"));
+  SET_STRING_ELT(nms, 4, Rf_mkChar("end_col"));
+  SET_STRING_ELT(nms, 5, Rf_mkChar("info"));
+  SET_STRING_ELT(nms, 6, Rf_mkChar("literal"));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  UNPROTECT(9);
+  return out;
 }
