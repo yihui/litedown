@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-08-31</h3></div>
+<div class="date"><h3>2026-09-01</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -260,7 +260,14 @@
 <li><a href="#sec:chapter-toc"><span class="section-number">5.10</span> Chapter TOC</a></li>
 <li><a href="#sec:toc-highlight"><span class="section-number">5.11</span> Highlight TOC items</a></li>
 <li><a href="#sec:pages"><span class="section-number">5.12</span> Paged HTML</a></li>
-<li><a href="#sec:snap"><span class="section-number">5.13</span> HTML slides</a></li>
+<li><a href="#sec:snap"><span class="section-number">5.13</span> HTML slides</a>
+<ul>
+<li><a href="#sec:creating-slides"><span class="section-number">5.13.1</span> Creating slides</a></li>
+<li><a href="#sec:navigating-and-presenting"><span class="section-number">5.13.2</span> Navigating and presenting</a></li>
+<li><a href="#sec:styling-slides"><span class="section-number">5.13.3</span> Styling slides</a></li>
+<li><a href="#sec:printing-and-themes"><span class="section-number">5.13.4</span> Printing and themes</a></li>
+</ul>
+</li>
 <li><a href="#sec:right-quote"><span class="section-number">5.14</span> Right-align a quote footer</a></li>
 <li><a href="#sec:center-img"><span class="section-number">5.15</span> Center images</a></li>
 <li><a href="#sec:external-link"><span class="section-number">5.16</span> Open external links in new windows</a></li>
@@ -5198,9 +5205,13 @@ will appear in the TOC of the document if TOC is enabled (<a class="cross-ref-se
 <h2 id="sec:fold-details"><span class="section-number">5.5</span> Code folding</h2>
 <pre><code class="language-yaml">js: [&quot;@fold-details&quot;]
 </code></pre>
-<p>You can fold any element with the JS. See <a href="https://yihui.org/en/2023/09/code-folding/">this
-post</a> for how to configure the
-script.</p>
+<p>The <code>fold-details.js</code> script wraps elements in a <code>&lt;details&gt;</code> container so they
+can be folded (collapsed) and unfolded by clicking on the summary line. By
+default, it folds code blocks (<code>&lt;pre&gt;</code>). You can configure it with <code>data-*</code>
+attributes on the <code>&lt;script&gt;</code> tag, e.g., to fold a different set of elements, or
+to add a button that toggles all foldable elements at once. See <a href="https://yihui.org/en/2023/09/code-folding/">this
+post</a> for the full list of options
+and how to configure the script.</p>
 <h2 id="sec:callout"><span class="section-number">5.6</span> Callout blocks</h2>
 <p>A callout block is a fenced Div with the class name <code>callout-*</code>. Callouts
 require <code>callout.css</code> and <code>callout.js</code>:</p>
@@ -5312,11 +5323,15 @@ define the border color, background, and icon of a callout, e.g.,</p>
 }
 </code></pre>
 <h2 id="sec:heading-anchor"><span class="section-number">5.7</span> Add anchor links to headings</h2>
-<p>The CSS is necessary only if you want to hide the anchors by default and reveal
-them on hover.</p>
+<p>The <code>heading-anchor.js</code> script appends an anchor link to every section heading
+(<code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code>) that has a nonempty <code>id</code> attribute, so readers can click on
+the anchor to get a direct link to that section. The CSS is necessary only if
+you want to hide the anchors by default and reveal them on hover.</p>
 <pre><code class="language-yaml">css: [&quot;@heading-anchor&quot;]
 js: [&quot;@heading-anchor&quot;]
 </code></pre>
+<p>The anchors in this book are added exactly this way; hover over any heading and
+you will see the anchor symbol appear next to it.</p>
 <h2 id="sec:article"><span class="section-number">5.8</span> HTML articles</h2>
 <p>You can style an HTML page in an article format via the following CSS and JS:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;]
@@ -5529,27 +5544,208 @@ text.</p>
 <p>We have embedded a table of the first 4 rows of the <code>mtcars</code> data on the right
 margin, which you can see if the browser window is wide enough.</p>
 <h2 id="sec:book"><span class="section-number">5.9</span> HTML books</h2>
-<pre><code class="language-yaml">css: [&quot;@book&quot;]
+<p>The book style builds on top of the article style (<a class="cross-ref-sec" href="#sec:article">5.8</a>) to turn a
+document with multiple first-level headings (<code>#</code>) into a book, in which each
+<code>&lt;h1&gt;</code> starts a new chapter. You typically load it together with the default and
+article assets:</p>
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@article&quot;, &quot;@book&quot;]
+js: [&quot;@sidenotes&quot;, &quot;@appendix&quot;]
 </code></pre>
+<p>The web version of this book is rendered exactly this way. The <code>book.css</code>
+stylesheet mainly does the following:</p>
+<ul>
+<li>
+<p>Uses a serif typeface (Palatino / Georgia) for the body.</p>
+</li>
+<li>
+<p>Turns the frontmatter (the part before the first chapter) into a full-height
+cover page with a dotted background.</p>
+</li>
+<li>
+<p>Makes each chapter occupy at least the full height of the viewport, and adds
+a <code>Chapter N</code> prefix to the chapter number and a bottom border under the
+chapter title.</p>
+</li>
+<li>
+<p>Styles the per-chapter TOC box (<a class="cross-ref-sec" href="#sec:chapter-toc">5.10</a>).</p>
+</li>
+</ul>
+<p>The book style is intended for longer documents that are split into chapters. A
+common way to author a book is to write each chapter in a separate <code>.Rmd</code> file
+and combine them via a <code>_litedown.yml</code> config file. See <a class="cross-ref-chp" href="#chp:sites">8</a> for the
+details of building multi-file books and websites.</p>
 <h2 id="sec:chapter-toc"><span class="section-number">5.10</span> Chapter TOC</h2>
 <pre><code class="language-yaml">js: [&quot;@chapter-toc&quot;]
 </code></pre>
+<p>For books (<a class="cross-ref-sec" href="#sec:book">5.9</a>) with a full-document TOC (<a class="cross-ref-sec" href="#sec:toc">4.1.15</a>), the <code>chapter-toc.js</code>
+script copies the sub-items of each chapter in the main TOC to the beginning of
+that chapter (right under the <code>&lt;h1&gt;</code>, or after the epigraph if the chapter
+starts with one). This gives readers a local outline of the chapter they are
+about to read, without having to scroll back to the main TOC.</p>
+<p>On wide screens, <code>book.css</code> hides this in-chapter copy by default (since the
+main TOC is already visible in the margin), and only shows it on narrow screens
+or when the page is paginated for printing (<a class="cross-ref-sec" href="#sec:pages">5.12</a>).</p>
 <h2 id="sec:toc-highlight"><span class="section-number">5.11</span> Highlight TOC items</h2>
 <pre><code class="language-yaml">js: [&quot;@toc-highlight&quot;]
+</code></pre>
+<p>As you scroll through a document, <code>toc-highlight.js</code> adds the class <code>active</code> to
+the TOC link (<code>&lt;a&gt;</code>) that corresponds to the section heading currently in view,
+so readers always know where they are. If the TOC itself is scrollable and the
+active item is out of view, the TOC will be scrolled smoothly to reveal it.</p>
+<p>The script looks for a TOC with the ID <code>TOC</code> or <code>TableOfContents</code> that contains
+links to headings on the same page (<code>&lt;a href=&quot;#...&quot;&gt;</code>). You can style the active
+item with CSS, e.g., to make it bold:</p>
+<pre><code class="language-css">#TOC a.active {
+  font-weight: bold;
+}
 </code></pre>
 <h2 id="sec:pages"><span class="section-number">5.12</span> Paged HTML</h2>
 <pre><code class="language-yaml">css: [&quot;@pages&quot;]
 js: [&quot;@pages&quot;]
 </code></pre>
+<p>Normally an HTML page is one long continuous scroll. The <code>pages</code> assets split
+the page into discrete pages of a fixed size (A4 paper by default), which is
+mainly useful for printing the HTML to PDF (e.g., via a browser’s print dialog)
+with proper page headers, footers, and page numbers.</p>
+<p>Pagination is not applied by default because it can be expensive for long
+documents. There are three ways to trigger it:</p>
+<ul>
+<li>
+<p>Press the <code>p</code> key on the page to toggle pagination on and off.</p>
+</li>
+<li>
+<p>Append the query parameter <code>?paged=1</code> to the page URL.</p>
+</li>
+<li>
+<p>Print the page (or use the browser’s print preview), which fires the
+<code>beforeprint</code> event that automatically paginates the content.</p>
+</li>
+</ul>
+<p>The <code>pages.js</code> script moves elements into page boxes so that each page holds as
+much content as possible without overflowing. Elements that are too tall to fit
+on the current page (such as long paragraphs, lists, tables, and code blocks)
+are fragmented across pages. Each page gets a header showing the document title
+and the current section title, and a footer showing the page number. If the
+document has a TOC, dot leaders and page numbers are added to it.</p>
+<p>The <code>pages.css</code> stylesheet defines the paper geometry through CSS variables,
+which you can override to change the paper size and margins, e.g., for US Letter
+paper:</p>
+<pre><code class="language-css">:root {
+  --paper-width: 8.5in;
+  --paper-height: 11in;
+  --paper-margin-top: 1in;
+  --paper-margin-right: 1in;
+  --paper-margin-bottom: 1in;
+  --paper-margin-left: 1in;
+}
+</code></pre>
+<p>If <strong>litedown</strong> does not estimate the number of pages for a tall element
+correctly, you can specify the number manually via the <code>data-pages-offset</code>
+attribute on a page element, e.g., <code>&lt;div class=&quot;pagesjs-page&quot; data-pages-offset=&quot;3&quot;&gt;</code>.</p>
 <h2 id="sec:snap"><span class="section-number">5.13</span> HTML slides</h2>
 <p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
 js: [&quot;@snap&quot;]
 </code></pre>
-<p>You can learn more in <code>vignette('slides', package = 'litedown')</code>.</p>
+<p>The slides are based on the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts">CSS Scroll
+Snap</a>
+technique: each slide is a full-screen section, and scrolling snaps from one
+slide to the next. The <code>snap.js</code> script does the work of grouping the content
+into slide containers, and <code>snap.css</code> styles them.</p>
+<h3 id="sec:creating-slides"><span class="section-number">5.13.1</span> Creating slides</h3>
+<p>Once the assets are loaded, the document is split into slides. There are two
+ways to start a new slide: a horizontal rule (<code>---</code>), or a level-two section
+heading (<code>##</code>). Pick only one way in a document. For example, with horizontal
+rules, each <code>---</code> starts a new slide (and a slide need not begin with a
+heading):</p>
+<pre><code class="language-md">## First slide
+
+**Content** of the first slide.
+
+---
+
+More _content_ on the next slide.
+
+---
+
+## Another slide
+</code></pre>
+<p>Or with section headings, where each <code>##</code> begins a new slide:</p>
+<pre><code class="language-md">## First slide
+
+Content.
+
+## Second slide
+
+Content.
+</code></pre>
+<p>The page shows slides only when the window is wide enough (roughly, wider than
+it is tall, and at least 992px wide). On narrower windows or mobile devices, it
+falls back to a normal continuous article, so the same document reads fine on a
+phone.</p>
+<h3 id="sec:navigating-and-presenting"><span class="section-number">5.13.2</span> Navigating and presenting</h3>
+<p>Since slides are just a scrollable page, you can navigate with the usual scroll
+wheel, arrow keys, or <code>PageUp</code> / <code>PageDown</code>. In addition, <code>snap.js</code> provides a
+few keyboard shortcuts:</p>
+<ul>
+<li>
+<p><code>f</code>: toggle fullscreen mode (press <code>Esc</code> to exit).</p>
+</li>
+<li>
+<p><code>o</code>: toggle overview mode, which shrinks all slides into a thumbnail grid so
+you can glance over them and click one to jump to it. You can also
+<code>Alt + Click</code> a slide to zoom in/out.</p>
+</li>
+<li>
+<p><code>m</code>: toggle mirror mode (slides are flipped horizontally).</p>
+</li>
+</ul>
+<p>Each slide gets a page number at the bottom right. Clicking a page number
+appends <code>#N</code> to the URL, so you can link directly to a specific slide. A timer
+is shown at the bottom left (starting when you go fullscreen); click it to
+restart. You can turn it into a countdown timer by adding your own
+<code>&lt;span class=&quot;timer&quot; data-total=&quot;1200&quot;&gt;&lt;/span&gt;</code> (seconds).</p>
+<h3 id="sec:styling-slides"><span class="section-number">5.13.3</span> Styling slides</h3>
+<p>You can add attributes to an individual slide with an HTML comment that starts
+with <code>#</code>, whose content is plain HTML attributes applied to the slide container,
+e.g.,</p>
+<pre><code class="language-html">&lt;!--# class=&quot;inverse center&quot; style=&quot;color: red;&quot; --&gt;
+</code></pre>
+<p>A few classes are built into <code>snap.css</code>:</p>
+<ul>
+<li>
+<p><code>inverse</code>: dark background with inverted (light) text.</p>
+</li>
+<li>
+<p><code>center</code>: center all elements horizontally.</p>
+</li>
+<li>
+<p><code>middle</code>: center all elements vertically.</p>
+</li>
+<li>
+<p><code>fade</code>: dim the slide to 50% opacity, e.g., to de-emphasize it.</p>
+</li>
+</ul>
+<p>You can also define your own classes and CSS rules, pass extra CSS files via the
+<code>css</code> meta variable, or embed CSS in a <code>css</code> code chunk. A slide can carry a
+background image through its <code>style</code> attribute, and a slide with the
+<code>contenteditable</code> attribute can be edited live during a presentation (edits are
+not saved).</p>
+<h3 id="sec:printing-and-themes"><span class="section-number">5.13.4</span> Printing and themes</h3>
+<p>When printed, slides are rendered as a continuous document with a smaller font
+to save paper; if you want one slide per page, print from the overview mode or
+add print CSS (<code>@media print</code>). For a fixed aspect ratio (useful when presenting
+on an unknown screen), set the CSS variable <code>--slide-ratio</code>, e.g.,
+<code>:root { --slide-ratio: .75; }</code>.</p>
+<p>The alternative theme <code>snap-clean.css</code> provides a cleaner, more minimal slide
+style; load it after <code>snap.css</code>, e.g., <code>css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]</code>.</p>
+<p>There are more features and caveats than can be covered here. For the full
+guide, see <code>vignette('slides', package = 'litedown')</code>.</p>
 <h2 id="sec:right-quote"><span class="section-number">5.14</span> Right-align a quote footer</h2>
 <p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
-starts with an em-dash (<code>---</code>).</p>
+starts with an em-dash (<code>---</code>). More precisely, the script right-aligns any
+paragraph (<code>&lt;p&gt;</code>) whose text starts with an em-dash (<code>—</code>, <code>―</code>, or <code>---</code>), which
+is a common convention for attributing a quote to its author.</p>
 <pre><code class="language-yaml">js: [&quot;@right-quote&quot;]
 </code></pre>
 <blockquote>
@@ -5561,16 +5757,44 @@ on a sensible frying pan?</p>
 <h2 id="sec:center-img"><span class="section-number">5.15</span> Center images</h2>
 <pre><code class="language-yaml">js: [&quot;@center-img&quot;]
 </code></pre>
+<p>The <code>center-img.js</code> script horizontally centers an image (<code>&lt;img&gt;</code>), video
+(<code>&lt;embed&gt;</code>), or object (<code>&lt;object&gt;</code>) when it is the only child of its parent
+paragraph. For a standalone <code>&lt;img&gt;</code> that is not already wrapped in a link, the
+script also wraps it in a link pointing to the image source, so readers can
+click on it to open the full image. In addition, a paragraph containing only the
+horizontal rule marker <code>* * *</code> is centered.</p>
 <h2 id="sec:external-link"><span class="section-number">5.16</span> Open external links in new windows</h2>
 <pre><code class="language-yaml">js: [&quot;@external-link&quot;]
 </code></pre>
+<p>The <code>external-link.js</code> script identifies external links (those whose <code>href</code>
+starts with <code>http://</code>, <code>https://</code>, or <code>//</code>) and adds <code>target=&quot;_blank&quot;</code> to them
+so they open in a new tab or window. Links that do not have a <code>title</code> attribute
+get one set to their (decoded) URL, which shows as a tooltip on hover. For a
+bare link whose text is identical to its URL, the leading protocol (and a
+trailing hash) is stripped from the displayed text to make it shorter.</p>
 <h2 id="sec:key-buttons"><span class="section-number">5.17</span> Style keyboard shortcuts</h2>
-<p>The script <code>key-button.js</code> identifies keys and the CSS styles them, which can be
-useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
+<p>The script <code>key-buttons.js</code> identifies keys and the CSS styles them, which can
+be useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
 shortcuts</a>.</p>
 <pre><code class="language-yaml">css: [&quot;@key-buttons&quot;]
 js: [&quot;@key-buttons&quot;]
 </code></pre>
+<p>You write the keys in inline code (i.e., inside a pair of backticks), and the
+script converts recognized keys from <code>&lt;code&gt;</code> to <code>&lt;kbd&gt;</code>, which <code>key-buttons.css</code>
+styles as raised buttons. It recognizes:</p>
+<ul>
+<li>
+<p>Single keys, such as <code>Esc</code>, <code>Tab</code>, <code>Space</code>, <code>Enter</code>, <code>PageUp</code>, the function
+keys <code>F1</code>–<code>F12</code>, and the arrow keys <code>Up</code>, <code>Down</code>, <code>Left</code>, <code>Right</code> (arrow
+keys are rendered as the arrow symbols ↑ ↓ ← →).</p>
+</li>
+<li>
+<p>Key combinations joined by <code>+</code> or <code>/</code>, such as <code>`Ctrl + C`</code> or
+<code>`Shift / A`</code>, where each key becomes a separate <code>&lt;kbd&gt;</code> and the
+separator is kept between them.</p>
+</li>
+</ul>
+<p>For example, <code>`Ctrl + Alt + Delete`</code> becomes <code>Ctrl + Alt + Delete</code>.</p>
 <p>Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.</p>
 <h2 id="sec:arbitrary-assets"><span class="section-number">5.18</span> Include arbitrary CSS/JS</h2>
