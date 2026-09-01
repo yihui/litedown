@@ -139,7 +139,7 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
     if (i %in% c('Description', 'URL', 'BugReports', 'Author')) {
-      sans_p(commonmark::markdown_html(d[[i]], extensions = 'autolink'))
+      sans_p(markdown_html(d[[i]], extensions = 'autolink'))
     } else html_escape(d[[i]])
   }
   d = unlist(d)

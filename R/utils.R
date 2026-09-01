@@ -638,7 +638,7 @@ build_toc = function(html, n = 3) {
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
   s = strrep('  ', seq_len(n) - 1)  # indent
   x = paste0(s[h], '- ', x)  # create an unordered list
-  x = commonmark::markdown_html(x)
+  x = markdown_html(x)
   # add anchors on TOC items
   x = gsub('<toc id="([^"]+)">(.+?)</toc>', '<a href="#\\1">\\2</a>', x)
   x = gsub('</?toc>', '', x)

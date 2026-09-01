@@ -5,11 +5,14 @@ Version: 0.11.2
 Authors@R: c(
     person("Yihui", "Xie", role = c("aut", "cre"), email = "xie@yihui.name", comment = c(ORCID = "0000-0003-0645-5666", URL = "https://yihui.org")),
     person("Tim", "Taylor", role = "ctb", comment = c(ORCID = "0000-0002-8587-7113")),
+    person("John MacFarlane", role = "cph", comment = "Author of cmark"),
+    person("Jeroen Ooms", role = "cph", comment = "Author of the R bindings to cmark in the commonmark package"),
+    person("Github, Inc", role = "cph", comment = "Author of the cmark-gfm extensions"),
     person()
     )
 Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
-    to lightweight HTML or 'LaTeX' documents with the 'commonmark' package (instead
-    of 'Pandoc'). Some missing Markdown features in 'commonmark' are also
+    to lightweight HTML or 'LaTeX' documents via the bundled 'cmark-gfm' library
+    (instead of 'Pandoc'). Some missing Markdown features in 'cmark-gfm' are also
     supported, such as raw HTML or 'LaTeX' blocks, 'LaTeX' math, superscripts,
     subscripts, footnotes, element attributes, and appendices,
     but not all 'Pandoc' Markdown features are (or will be) supported. With
@@ -21,7 +24,6 @@ Description: Render R Markdown to Markdown (without using 'knitr'), and Markdown
 Depends: R (>= 3.2.0)
 Imports:
     utils,
-    commonmark (>= 2.0.0),
     xfun (>= 0.55)
 Suggests:
     rbibutils,

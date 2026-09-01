@@ -76,8 +76,8 @@ the final output format, such as HTML or LaTeX (similar to
 \code{knitr::spin()}. The function \code{fiss()} extracts code from the input, and is
 similar to \code{knitr::purl()}.
 
-The function \code{mark()} renders Markdown to an output format via the
-\pkg{commonmark} package.
+The function \code{mark()} renders Markdown to an output format via the bundled
+'cmark-gfm' library.
 }
 \note{
 For \code{fuse()}, you can generate the intermediate Markdown output via

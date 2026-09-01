@@ -303,7 +303,7 @@ dir_title = function(f, preview = '1') {
     )
   }
   txt = one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
-  move_attrs(commonmark::markdown_html(txt, smart = TRUE))
+  move_attrs(markdown_html(txt, smart = TRUE))
 }
 
 btn = function(t, u = '#', a = character()) {

@@ -42,13 +42,13 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' paste(unlist(txt), collapse = '')
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
-  xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
-  r = paste0(
-    '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
-    rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
-  )
-  m = match_all(xml, r, perl = TRUE)[[1]] %|% matrix(character(), 9)
+  # collect code blocks and inline code from the parse tree; m has 9 rows to
+  # mirror the matrix previously produced by regex over markdown_xml(): row 2 is
+  # the node type ('code' or 'code_block'), rows 3-6 are the source position
+  # (start line, start column, end line, end column), row 8 is the code chunk
+  # engine name, and row 9 is the (inline) code text; rows 1 and 7 are unused
+  m = code_tokens(text, rx_engine)
   # code blocks must have non-empty info strings
   m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
 
@@ -93,24 +93,6 @@ crack = function(input, text = NULL) {
     # column position is based on bytes instead of chars; needs to be adjusted to the latter
     pos = char_pos(text, as.integer(m[3:6, i]))
     i1 = pos[1]; i2 = pos[3]
-    # commonmark::markdown_xml(sourcepos = TRUE) gives wrong column info when
-    # the line has leading spaces (which are ignored), so doublecheck here (in
-    # theory we also need to consider the case i1 != i2 but that's a little too
-    # complicated and may be rare, too)
-    if (i1 == i2 && grepl('^\\s+', ti <- text[i1])) {
-      mi = restore_html(m[9, i])
-      if (substring(ti, pos[2], pos[4]) != mi) {
-        p = base::gregexpr(mi, ti, fixed = TRUE)[[1]]
-        if (length(p) > 1 || p < 1) {
-          save_pos(c(i1, i2)); stop(
-            'Unable to locate the inline code expression ', mi,
-            '. Please file an issue to https://github.com/yihui/litedown/issues ',
-            'with a minimal reproducible example.'
-          )
-        }
-        pos[2] = p; pos[4] = p + attr(p, 'match.length') - 1
-      }
-    }
     s = nchar(b$source)
     # calculate new position of code after we concatenate all lines of this block by \n
     b$col = c(b$col, c(
@@ -207,6 +189,41 @@ crack = function(input, text = NULL) {
     res[[j]] = b
   }
   res
+}
+
+# walk the parse tree and collect code blocks (fenced code) and inline code into
+# a 9-row character matrix compatible with the one crack() used to build via
+# regex over markdown_xml(sourcepos = TRUE). Only rows 2-6, 8, 9 are meaningful:
+#   2: node type, 'code' (inline) or 'code_block' (fenced)
+#   3-6: source position (start line, start column, end line, end column)
+#   8: code chunk engine name (extracted from a `{engine ...}` info string)
+#   9: inline code text
+# Rows 1 and 7 are placeholders kept for backward compatibility with the
+# original matrix layout.
+code_tokens = function(text, rx_engine) {
+  ast = markdown_ast(text)
+  rows = list()
+  # info string like `{r, echo=TRUE}` -> engine name `r`; anything not starting
+  # with `{` (e.g. a plain ```r fence) yields '' and is dropped later
+  engine = function(info) {
+    if (is.na(info)) return('')
+    grep_sub(paste0('^[{]+', rx_engine, '.*'), '\\1', info) %|% ''
+  }
+  walk = function(node) {
+    type = node$type
+    if (type %in% c('code', 'code_block')) {
+      p = as.character(node$sourcepos)
+      rows[[length(rows) + 1]] <<- c(
+        '', type, p[1], p[2], p[3], p[4], '',
+        if (type == 'code_block') engine(node$info) else '',
+        if (type == 'code') node$literal else ''
+      )
+    }
+    for (child in node$children) walk(child)
+  }
+  walk(ast)
+  if (!length(rows)) return(matrix(character(), 9))
+  matrix(unlist(rows), nrow = 9)
 }
 
 set_error_handler = function(input) {
