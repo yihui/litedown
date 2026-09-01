@@ -1,0 +1,65 @@
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'cmark-gfm ref to sync (tag/branch/commit); empty = latest release tag'
+        required: false
+        default: ''
+
+name: Sync vendored cmark-gfm
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@HEAD
+
+      - name: Sync with upstream cmark-gfm
+        run: sh src/patches/sync.sh ${{ github.event.inputs.ref }}
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes in the vendored cmark-gfm sources."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install R
+        if: steps.diff.outputs.changed == 'true'
+        uses: r-lib/actions/setup-r@HEAD
+        with:
+          use-public-rspm: true
+
+      - uses: yihui/actions/setup-r-dependencies@HEAD
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          extra-packages: rcmdcheck .
+
+      - name: Build and test with the synced sources
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          R CMD INSTALL --no-multiarch --no-byte-compile .
+          Rscript -e 'testit::test_pkg("litedown", "test-cran")'
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.gfm\.[0-9]+' src/cmark/cmark-gfm_version.h | head -1)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="sync-cmark-gfm"
+          git checkout -B "$branch"
+          git add -A
+          git commit -m "Sync vendored cmark-gfm ($version)"
+          git push -f origin "$branch"
+          if ! gh pr view "$branch" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr create --title "Sync vendored cmark-gfm ($version)" \
+              --body "Automated sync of the vendored cmark-gfm sources via \`src/patches/sync.sh\`. Patches under \`src/patches/\` were re-applied and the test suite ran on the synced sources. Review the diff and re-render the examples before merging."
+          fi

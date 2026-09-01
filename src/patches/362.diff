@@ -1,7 +1,7 @@
-diff --git a/src/node.c b/src/node.c
+diff --git a/cmark/node.c b/cmark/node.c
 index e7a9606d5..c7e62d25b 100644
---- a/src/node.c
-+++ b/src/node.c
+--- a/cmark/node.c
++++ b/cmark/node.c
 @@ -288,6 +288,10 @@ const char *cmark_node_get_type_string(cmark_node *node) {
      return "link";
    case CMARK_NODE_IMAGE:
@@ -13,10 +13,10 @@ index e7a9606d5..c7e62d25b 100644
    }
  
    return "<unknown>";
-diff --git a/src/xml.c b/src/xml.c
+diff --git a/cmark/xml.c b/cmark/xml.c
 index 5753e5ab9..c9a79cfd6 100644
---- a/src/xml.c
-+++ b/src/xml.c
+--- a/cmark/xml.c
++++ b/cmark/xml.c
 @@ -134,6 +134,25 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
        escape_xml(xml, node->as.link.title.data, node->as.link.title.len);
        cmark_strbuf_putc(xml, '"');

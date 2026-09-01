@@ -1,7 +1,7 @@
-diff --git a/src/cmark/latex.c b/src/cmark/latex.c
+diff --git a/cmark/latex.c b/cmark/latex.c
 index 1a6367a..5fab7ee 100644
---- a/src/cmark/latex.c
-+++ b/src/cmark/latex.c
+--- a/cmark/latex.c
++++ b/cmark/latex.c
 @@ -447,8 +447,20 @@ static int S_render_node(cmark_renderer *renderer, cmark_node *node,
      break;
  

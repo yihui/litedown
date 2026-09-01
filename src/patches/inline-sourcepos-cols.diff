@@ -10,8 +10,8 @@ content line (blocks.c) and corrects the inline column offset per line
 
 Reported upstream / to be submitted to github/cmark-gfm.
 
---- a/node.h
-+++ b/node.h
+--- a/cmark/node.h
++++ b/cmark/node.h
 @@ -77,6 +77,14 @@
    int end_line;
    int end_column;
@@ -27,8 +27,8 @@ Reported upstream / to be submitted to github/cmark-gfm.
    uint16_t type;
    cmark_node_internal_flags flags;
  
---- a/node.c
-+++ b/node.c
+--- a/cmark/node.c
++++ b/cmark/node.c
 @@ -180,6 +180,9 @@
    while (e != NULL) {
      cmark_strbuf_free(&e->content);
@@ -39,8 +39,8 @@ Reported upstream / to be submitted to github/cmark-gfm.
      if (e->user_data && e->user_data_free_func)
        e->user_data_free_func(NODE_MEM(e), e->user_data);
  
---- a/blocks.c
-+++ b/blocks.c
+--- a/cmark/blocks.c
++++ b/cmark/blocks.c
 @@ -204,10 +204,28 @@
            node->type == CMARK_NODE_HEADING);
  }
@@ -70,8 +70,8 @@ Reported upstream / to be submitted to github/cmark-gfm.
    if (parser->partially_consumed_tab) {
      parser->offset += 1; // skip over tab
      // add space characters:
---- a/inlines.c
-+++ b/inlines.c
+--- a/cmark/inlines.c
++++ b/cmark/inlines.c
 @@ -57,6 +57,12 @@
    bufsize_t pos;
    int block_offset;
