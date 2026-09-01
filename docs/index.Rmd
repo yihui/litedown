@@ -52,19 +52,6 @@ document.querySelectorAll('pre > code[data-output]').forEach(el => {
 
 # Preface {.unnumbered}
 
-::: callout-important
-The **litedown** package is still new and experimental. The documentation is
-only about 50% complete at the moment. Besides, **litedown** was designed for
-minimalists with a limited scope. Average users should perhaps consider using
-**rmarkdown** or Quarto instead.
-
-If you do wish to try **litedown**, please install from r-universe:
-
-``` r
-install.packages(c('litedown', 'xfun'), repos = 'https://yihui.r-universe.dev')
-```
-:::
-
 ::: epigraph
 > You may say I'm a dreamer\
 > But I'm not the only one\
