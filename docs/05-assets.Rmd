@@ -834,8 +834,7 @@ of all slides as thumbnails, and the arrow keys (or `PageUp` / `PageDown`) to
 navigate between slides. The clean theme `snap-clean.css` provides a minimal
 alternative style.
 
-You can learn more (including the full list of keyboard shortcuts) in
-`vignette('slides', package = 'litedown')`.
+You can learn more in `vignette('slides', package = 'litedown')`.
 
 ## Right-align a quote footer {#sec:right-quote}
 
