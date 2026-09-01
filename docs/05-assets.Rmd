@@ -700,9 +700,8 @@ stylesheet mainly does the following:
 
 The book style is intended for longer documents that are split into chapters. A
 common way to author a book is to write each chapter in a separate `.Rmd` file
-and combine them via a `_litedown.yml` config file. See
-`vignette('litedown', package = 'litedown')` and @chp:sites for the details of
-building multi-file books and websites.
+and combine them via a `_litedown.yml` config file. See @chp:sites for the
+details of building multi-file books and websites.
 
 ## Chapter TOC {#sec:chapter-toc}
 
@@ -716,11 +715,9 @@ that chapter (right under the `<h1>`, or after the epigraph if the chapter
 starts with one). This gives readers a local outline of the chapter they are
 about to read, without having to scroll back to the main TOC.
 
-The copied TOC is placed in a `<div>` with the class and ID `chapter-toc`. On
-wide screens, `book.css` hides this in-chapter copy by default (since the main
-TOC is already visible in the margin), and only shows it on narrow screens or
-when the page is paginated for printing (@sec:pages). You can override this
-behavior with your own CSS if you always want the chapter TOC to be visible.
+On wide screens, `book.css` hides this in-chapter copy by default (since the
+main TOC is already visible in the margin), and only shows it on narrow screens
+or when the page is paginated for printing (@sec:pages).
 
 ## Highlight TOC items {#sec:toc-highlight}
 
@@ -801,7 +798,44 @@ css: ["@default", "@snap"]
 js: ["@snap"]
 ```
 
-You can learn more in `vignette('slides', package = 'litedown')`.
+Once these assets are loaded, the document is split into slides. There are two
+ways to start a new slide: a horizontal rule (`---`), or a level-two section
+heading (`##`). You should pick only one way in a document. For example, using
+horizontal rules:
+
+``` md
+## First slide
+
+**Content** of the first slide.
+
+---
+
+More _content_ on the next slide.
+
+---
+
+## Another slide
+```
+
+Or using section headings, where each `##` begins a new slide:
+
+``` md
+## First slide
+
+Content.
+
+## Second slide
+
+Content.
+```
+
+When presenting, you can press `f` to enter fullscreen mode, `o` for an overview
+of all slides as thumbnails, and the arrow keys (or `PageUp` / `PageDown`) to
+navigate between slides. The clean theme `snap-clean.css` provides a minimal
+alternative style.
+
+You can learn more (including the full list of keyboard shortcuts and speaker
+notes) in `vignette('slides', package = 'litedown')`.
 
 ## Right-align a quote footer {#sec:right-quote}
 
@@ -869,7 +903,7 @@ styles as raised buttons. It recognizes:
     `` `Shift / A` ``, where each key becomes a separate `<kbd>` and the
     separator is kept between them.
 
-For example, `` `Ctrl + Alt + Delete` `` becomes Ctrl + Alt + Delete.
+For example, `` `Ctrl + Alt + Delete` `` becomes `Ctrl + Alt + Delete`.
 
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
