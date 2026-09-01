@@ -798,10 +798,19 @@ css: ["@default", "@snap"]
 js: ["@snap"]
 ```
 
-Once these assets are loaded, the document is split into slides. There are two
+The slides are based on the [CSS Scroll
+Snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap/Basic_concepts)
+technique: each slide is a full-screen section, and scrolling snaps from one
+slide to the next. The `snap.js` script does the work of grouping the content
+into slide containers, and `snap.css` styles them.
+
+### Creating slides
+
+Once the assets are loaded, the document is split into slides. There are two
 ways to start a new slide: a horizontal rule (`---`), or a level-two section
-heading (`##`). You should pick only one way in a document. For example, using
-horizontal rules:
+heading (`##`). Pick only one way in a document. For example, with horizontal
+rules, each `---` starts a new slide (and a slide need not begin with a
+heading):
 
 ``` md
 ## First slide
@@ -817,7 +826,7 @@ More _content_ on the next slide.
 ## Another slide
 ```
 
-Or using section headings, where each `##` begins a new slide:
+Or with section headings, where each `##` begins a new slide:
 
 ``` md
 ## First slide
@@ -829,12 +838,71 @@ Content.
 Content.
 ```
 
-When presenting, you can press `f` to enter fullscreen mode, `o` for an overview
-of all slides as thumbnails, and the arrow keys (or `PageUp` / `PageDown`) to
-navigate between slides. The clean theme `snap-clean.css` provides a minimal
-alternative style.
+The page shows slides only when the window is wide enough (roughly, wider than
+it is tall, and at least 992px wide). On narrower windows or mobile devices, it
+falls back to a normal continuous article, so the same document reads fine on a
+phone.
 
-You can learn more in `vignette('slides', package = 'litedown')`.
+### Navigating and presenting
+
+Since slides are just a scrollable page, you can navigate with the usual scroll
+wheel, arrow keys, or `PageUp` / `PageDown`. In addition, `snap.js` provides a
+few keyboard shortcuts:
+
+-   `f`: toggle fullscreen mode (press `Esc` to exit).
+
+-   `o`: toggle overview mode, which shrinks all slides into a thumbnail grid so
+    you can glance over them and click one to jump to it. You can also
+    `Alt + Click` a slide to zoom in/out.
+
+-   `m`: toggle mirror mode (slides are flipped horizontally).
+
+Each slide gets a page number at the bottom right. Clicking a page number
+appends `#N` to the URL, so you can link directly to a specific slide. A timer
+is shown at the bottom left (starting when you go fullscreen); click it to
+restart. You can turn it into a countdown timer by adding your own
+`<span class="timer" data-total="1200"></span>` (seconds).
+
+### Styling slides
+
+You can add attributes to an individual slide with an HTML comment that starts
+with `#`, whose content is plain HTML attributes applied to the slide container,
+e.g.,
+
+``` html
+<!--# class="inverse center" style="color: red;" -->
+```
+
+A few classes are built into `snap.css`:
+
+-   `inverse`: dark background with inverted (light) text.
+
+-   `center`: center all elements horizontally.
+
+-   `middle`: center all elements vertically.
+
+-   `fade`: dim the slide to 50% opacity, e.g., to de-emphasize it.
+
+You can also define your own classes and CSS rules, pass extra CSS files via the
+`css` meta variable, or embed CSS in a `css` code chunk. A slide can carry a
+background image through its `style` attribute, and a slide with the
+`contenteditable` attribute can be edited live during a presentation (edits are
+not saved).
+
+### Printing and themes
+
+When printed, slides are rendered as a continuous document with a smaller font
+to save paper; if you want one slide per page, print from the overview mode or
+add print CSS (`@media print`). For a fixed aspect ratio (useful when presenting
+on an unknown screen), set the CSS variable `--slide-ratio`, e.g.,
+`:root { --slide-ratio: .75; }`.
+
+The alternative theme `snap-clean.css` provides a cleaner, more minimal slide
+style; load it after `snap.css`, e.g., `css: ["@default", "@snap",
+"@snap-clean"]`.
+
+There are more features and caveats than can be covered here. For the full
+guide, see `vignette('slides', package = 'litedown')`.
 
 ## Right-align a quote footer {#sec:right-quote}
 
