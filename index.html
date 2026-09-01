@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.2">
+<meta name="generator" content="litedown 0.11.3">
 <title>litedown: A Lightweight Version of R Markdown</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/article.min.css">
@@ -49,13 +49,13 @@
 </tr>
 <tr>
 <td>Version</td>
-<td>0.11.2</td>
+<td>0.11.3</td>
 </tr>
 <tr>
 <td>Description</td>
 <td>Render R Markdown to Markdown (without using knitr), and Markdown
-to lightweight HTML or LaTeX documents with the commonmark package (instead
-of Pandoc). Some missing Markdown features in commonmark are also
+to lightweight HTML or LaTeX documents via the bundled cmark-gfm library
+(instead of Pandoc). Some missing Markdown features in cmark-gfm are also
 supported, such as raw HTML or LaTeX blocks, LaTeX math, superscripts,
 subscripts, footnotes, element attributes, and appendices,
 but not all Pandoc Markdown features are (or will be) supported. With
@@ -72,7 +72,6 @@ projects of multiple input documents are also supported.</td>
 <tr>
 <td>Imports</td>
 <td>utils,
-commonmark (&gt;= 2.0.0),
 xfun (&gt;= 0.55)</td>
 </tr>
 <tr>
@@ -101,7 +100,7 @@ tinytex</td>
 </tr>
 <tr>
 <td>Author</td>
-<td><a href="https://yihui.org">Yihui Xie</a> <a href="https://orcid.org/0000-0003-0645-5666"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [aut, cre], Tim Taylor <a href="https://orcid.org/0000-0002-8587-7113"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [ctb]</td>
+<td><a href="https://yihui.org">Yihui Xie</a> <a href="https://orcid.org/0000-0003-0645-5666"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [aut, cre], Tim Taylor <a href="https://orcid.org/0000-0002-8587-7113"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [ctb], John MacFarlane [cph], Jeroen Ooms [ctb, cph], GitHub, Inc.  [cph]</td>
 </tr>
 </tbody></table>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/manual.min.css">
@@ -166,19 +165,19 @@ please upvote features you like).</p>
 <h2 id="sec:appendix" class="appendix">Appendix</h2>
 <p>To cite the package <strong>litedown</strong> in publications, please use:</p>
 <p>Xie Y (2026). <em>litedown: A Lightweight Version of R Markdown</em>. R
-package version 0.11.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>.</p>
+package version 0.11.3, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>.</p>
 <pre><code class="language-latex">@Manual{,
   title = {litedown: A Lightweight Version of R Markdown},
   author = {Yihui Xie},
   year = {2026},
-  note = {R package version 0.11.2},
+  note = {R package version 0.11.3},
   url = {https://github.com/yihui/litedown},
 }
 </code></pre>
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/appendix.min.js" defer></script>

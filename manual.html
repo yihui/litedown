@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.2">
+<meta name="generator" content="litedown 0.11.3">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/article.min.css">
@@ -135,6 +135,15 @@ dependencies), and it also has fewer Markdown features.
 </p>
 <ul>
 <li><p> Tim Taylor (<a href="https://orcid.org/0000-0002-8587-7113">ORCID</a>) [contributor]
+</p>
+</li>
+<li><p> John MacFarlane (Author of cmark) [copyright holder]
+</p>
+</li>
+<li><p> Jeroen Ooms (Author of the R bindings to cmark in the commonmark package, from which the C glue code was adapted) [contributor, copyright holder]
+</p>
+</li>
+<li><p> GitHub, Inc. (Author of the cmark-gfm extensions) [copyright holder]
 </p>
 </li></ul>
 <h3 id="sec:see-also_1" class="unnumbered unlisted">See Also</h3>
@@ -617,8 +626,8 @@ the final output format, such as HTML or LaTeX (similar to
 <code>knitr::spin()</code>. The function <code>fiss()</code> extracts code from the input, and is
 similar to <code>knitr::purl()</code>.
 </p>
-<p>The function <code>mark()</code> renders Markdown to an output format via the
-<span class="pkg">commonmark</span> package.
+<p>The function <code>mark()</code> renders Markdown to an output format via the bundled
+'cmark-gfm' library.
 </p>
 <h3 id="sec:usage_9" class="unnumbered unlisted">Usage</h3>
 <pre><code class="language-r">fuse(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE)
@@ -756,7 +765,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/tmp/Rtmp6Ekkpa/file187c48cdd207&quot;
+<pre><code>#&gt; [1] &quot;/tmp/Rtmp4yQNZP/file1ade5e9d68b6&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -1197,7 +1206,7 @@ litedown::vest(css = &quot;@tabsets&quot;, js = c(&quot;@tabsets&quot;, &quot;@f
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/appendix.min.js" defer></script>
