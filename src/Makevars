@@ -1,0 +1,30 @@
+PKG_CPPFLAGS = -Icmark -I. -DCMARK_GFM_STATIC_DEFINE -DCMARK_GFM_EXTENSIONS_STATIC_DEFINE \
+	-DR_NO_REMAP -DSTRICT_R_HEADERS
+
+PKG_CFLAGS = $(C_VISIBILITY)
+
+LIBCMARK = cmark/cmark.o cmark/node.o cmark/iterator.o cmark/blocks.o cmark/inlines.o \
+	cmark/scanners.o cmark/utf8.o cmark/buffer.o cmark/references.o cmark/render.o \
+	cmark/man.o cmark/xml.o cmark/html.o cmark/commonmark.o cmark/latex.o cmark/houdini_href_e.o \
+	cmark/houdini_html_e.o cmark/houdini_html_u.o cmark/cmark_ctype.o cmark/arena.o \
+	cmark/linked_list.o cmark/plugin.o cmark/registry.o cmark/syntax_extension.o \
+	cmark/plaintext.o cmark/footnotes.o cmark/map.o \
+	extensions/autolink.o extensions/core-extensions.o extensions/ext_scanners.o \
+	extensions/strikethrough.o extensions/table.o extensions/tagfilter.o extensions/tasklist.o
+
+PKG_LIBS = -Lcmark -lstatcmark
+STATLIB = cmark/libstatcmark.a
+
+# For development only
+all: $(SHLIB) cleanup
+
+$(SHLIB): $(STATLIB)
+
+$(STATLIB): $(LIBCMARK)
+
+cleanup: $(SHLIB)
+	@rm -f $(LIBCMARK) $(STATLIB)
+
+# On Windows this rule is masked by Makeconf in base R
+%.a:
+	@$(AR) crs $@ $^

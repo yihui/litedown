@@ -9,3 +9,8 @@
 /docs/packages.bib
 *.Rcheck/
 *.tar.gz
+src/*.o
+src/*.so
+src/cmark/*.o
+src/cmark/*.a
+src/extensions/*.o

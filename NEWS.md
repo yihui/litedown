@@ -1,5 +1,9 @@
 # CHANGES IN litedown VERSION 0.12
 
+- The Markdown library ('cmark-gfm', the GitHub fork of the reference CommonMark implementation) is now bundled with **litedown** (as C code under `src/`) instead of being provided by the **commonmark** package. This allows fixing bugs and adding features at the C level rather than working around them in R. The **commonmark** package is no longer a dependency (#141).
+
+- Fixed a bug in 'cmark-gfm' that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under `src/patches/` and will be submitted upstream.
+
 - Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).
 
 # CHANGES IN litedown VERSION 0.11

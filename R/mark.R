@@ -1,7 +1,7 @@
 #' Render Markdown, R Markdown, and R scripts
 #'
-#' The function `mark()` renders Markdown to an output format via the
-#' \pkg{commonmark} package.
+#' The function `mark()` renders Markdown to an output format via the bundled
+#' 'cmark-gfm' library.
 #' @param input A character vector to provide the input file path or text. If
 #'   not provided, the `text` argument must be provided instead. The `input`
 #'   vector will be treated as a file path if it is a single string, and points
@@ -83,16 +83,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   meta = normalize_meta(meta)
 
   render_fun = tryCatch(
-    getFromNamespace(paste0('markdown_', tolower(format)), 'commonmark'),
+    get(paste0('markdown_', tolower(format)), envir = asNamespace('litedown')),
     error = function(e) {
-      stop("Output format '", format, "' is not supported in commonmark.")
+      stop("Output format '", format, "' is not supported.")
     }
   )
 
   options = merge_list(yaml_field(yaml, format, 'options'), option2list(options))
   options = normalize_options(options, format)
   options$extensions = intersect(
-    names(Filter(isTRUE, options)), commonmark::list_extensions()
+    names(Filter(isTRUE, options)), list_extensions()
   )
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
@@ -437,7 +437,7 @@ build_output = function(format, options, template, meta, ...) {
     defaults = list(
       'css' = 'default',
       'lang' = locale_lang(),
-      'plain-title' = I(str_trim(commonmark::markdown_text(meta[['title']])))
+      'plain-title' = I(str_trim(markdown_text(meta[['title']])))
     )
     for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
     # special handling for css/js "files" that have no extensions
@@ -487,7 +487,7 @@ markdown_options = function() {
   x1 = c(
     'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
     'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
-    setdiff(commonmark::list_extensions(), 'tagfilter')
+    setdiff(list_extensions(), 'tagfilter')
   )
   # options disabled by default
   x2 = c(

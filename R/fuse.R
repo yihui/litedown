@@ -42,15 +42,11 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' paste(unlist(txt), collapse = '')
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
-  xml = commonmark::markdown_xml(text, sourcepos = TRUE)
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
-  r = paste0(
-    '<(code|code_block) sourcepos="(\\d+):(\\d+)-(\\d+):(\\d+)"( info="[{]+',
-    rx_engine, '[^"]*?[}]")? xml:space="[^>]*>([^<]*)<'
-  )
-  m = match_all(xml, r, perl = TRUE)[[1]] %|% matrix(character(), 9)
+  # collect code blocks and inline code from the parse tree (see code_tokens())
+  m = code_tokens(text, rx_engine)
   # code blocks must have non-empty info strings
-  m = m[, m[2, ] != 'code_block' | m[8, ] != '', drop = FALSE]
+  m = m[, m[1, ] != 'code_block' | m[6, ] != '', drop = FALSE]
 
   res = list()
   # add a block of text and the line range info
@@ -61,13 +57,13 @@ crack = function(input, text = NULL) {
 
   n = length(text)
   i = 1L  # the possible start line number of text blocks
-  for (j in which(m[2, ] == 'code_block')) {
-    # start (3) and end (5) line numbers for code chunks
-    pos = as.integer(m[c(3, 5), j]); i1 = pos[1]; i2 = pos[2]
+  for (j in which(m[1, ] == 'code_block')) {
+    # start (row 2) and end (row 4) line numbers for code chunks
+    pos = as.integer(m[c(2, 4), j]); i1 = pos[1]; i2 = pos[2]
     # add the possible text block before the current code chunk
     if (i1 > i) add_block(i, i1 - 1L, type = 'text_block')
     # add the code chunk
-    add_block(i1, i2, info = m[8, j], type = 'code_chunk')
+    add_block(i1, i2, info = m[6, j], type = 'code_chunk')
     i = i2 + 1L  # the earliest line for the next text block is next line
   }
   # if there are lines remaining, they must be a text block
@@ -77,40 +73,22 @@ crack = function(input, text = NULL) {
 
   set_error_handler(input)
 
-  m = m[, m[2, ] == 'code', drop = FALSE]
+  m = m[, m[1, ] == 'code', drop = FALSE]
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
   # look for `r expr` if `{lang}` not found (for compatibility with knitr)
-  if (!any(j <- grepl(rx_inline, m[9, ])) && getOption('litedown.enable.knitr_inline', FALSE)) {
+  if (!any(j <- grepl(rx_inline, m[7, ])) && getOption('litedown.enable.knitr_inline', FALSE)) {
     rx_inline = '^(r) +(.+?)\\s*$'
-    j = grepl(rx_inline, m[9, ])
+    j = grepl(rx_inline, m[7, ])
   }
   m = m[, j, drop = FALSE]
   n_start = uapply(res, function(x) x$lines[1])  # starting line numbers
-  j = findInterval(m[3, ], n_start)  # find which block each inline code belongs to
+  j = findInterval(m[2, ], n_start)  # find which block each inline code belongs to
   for (i in seq_len(ncol(m))) {
     b = res[[j[i]]]; l = b$lines
     # column position is based on bytes instead of chars; needs to be adjusted to the latter
-    pos = char_pos(text, as.integer(m[3:6, i]))
+    pos = char_pos(text, as.integer(m[2:5, i]))
     i1 = pos[1]; i2 = pos[3]
-    # commonmark::markdown_xml(sourcepos = TRUE) gives wrong column info when
-    # the line has leading spaces (which are ignored), so doublecheck here (in
-    # theory we also need to consider the case i1 != i2 but that's a little too
-    # complicated and may be rare, too)
-    if (i1 == i2 && grepl('^\\s+', ti <- text[i1])) {
-      mi = restore_html(m[9, i])
-      if (substring(ti, pos[2], pos[4]) != mi) {
-        p = base::gregexpr(mi, ti, fixed = TRUE)[[1]]
-        if (length(p) > 1 || p < 1) {
-          save_pos(c(i1, i2)); stop(
-            'Unable to locate the inline code expression ', mi,
-            '. Please file an issue to https://github.com/yihui/litedown/issues ',
-            'with a minimal reproducible example.'
-          )
-        }
-        pos[2] = p; pos[4] = p + attr(p, 'match.length') - 1
-      }
-    }
     s = nchar(b$source)
     # calculate new position of code after we concatenate all lines of this block by \n
     b$col = c(b$col, c(
@@ -207,6 +185,28 @@ crack = function(input, text = NULL) {
     res[[j]] = b
   }
   res
+}
+
+# collect code blocks (fenced code) and inline code from the parse tree into a
+# 7-row character matrix, one column per token. Rows:
+#   1: node type, 'code' (inline) or 'code_block' (fenced)
+#   2-5: source position (start line, start column, end line, end column)
+#   6: code chunk engine name (extracted from a `{engine ...}` info string)
+#   7: inline code text
+code_tokens = function(text, rx_engine) {
+  d = markdown_code_tokens(text)
+  n = length(d$type)
+  if (n == 0) return(matrix(character(), 7))
+  # info string like `{r, echo=TRUE}` -> engine name `r`; anything not starting
+  # with `{` (e.g. a plain ```r fence) yields '' and is dropped later
+  r = paste0('^[{]+', rx_engine, '.*')
+  info = d$info; info[is.na(info)] = ''
+  engine = ifelse(grepl(r, info), sub(r, '\\1', info), '')
+  # last row holds inline code text only (code blocks leave it empty)
+  literal = ifelse(d$type == 'code' & !is.na(d$literal), d$literal, '')
+  matrix(rbind(
+    d$type, d$start_line, d$start_col, d$end_line, d$end_col, engine, literal
+  ), nrow = 7)
 }
 
 set_error_handler = function(input) {

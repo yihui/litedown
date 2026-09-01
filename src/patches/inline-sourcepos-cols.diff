@@ -1,0 +1,147 @@
+Fix inline source positions (columns and end lines) on continuation lines.
+
+cmark-gfm strips leading indentation / blockquote markers from each line when
+building a block's content buffer, but the inline parser applies only the
+first line's offset to every line. As a result, inline nodes (code spans,
+text, raw HTML) on indented continuation lines report columns that are short by
+the stripped indentation. This records the stripped visual column of each
+content line (blocks.c) and corrects the inline column offset per line
+(inlines.c), storing the data on the node (node.h/node.c).
+
+Reported upstream / to be submitted to github/cmark-gfm.
+
+--- a/cmark/node.h
++++ b/cmark/node.h
+@@ -77,6 +77,14 @@
+   int end_line;
+   int end_column;
+   int internal_offset;
++  /* For blocks whose content spans multiple source lines (paragraphs,
++   * headings), this records the visual column width stripped from the front of
++   * each content line (leading indentation / blockquote markers that were
++   * removed when building `content`). The inline parser uses it to report
++   * correct source columns on continuation lines. NULL when unused. */
++  int *line_offsets;
++  int n_line_offsets;
++  int cap_line_offsets;
+   uint16_t type;
+   cmark_node_internal_flags flags;
+ 
+--- a/cmark/node.c
++++ b/cmark/node.c
+@@ -180,6 +180,9 @@
+   while (e != NULL) {
+     cmark_strbuf_free(&e->content);
+ 
++    if (e->line_offsets)
++      NODE_MEM(e)->free(e->line_offsets);
++
+     if (e->user_data && e->user_data_free_func)
+       e->user_data_free_func(NODE_MEM(e), e->user_data);
+ 
+--- a/cmark/blocks.c
++++ b/cmark/blocks.c
+@@ -204,10 +204,28 @@
+           node->type == CMARK_NODE_HEADING);
+ }
+ 
++// Record the visual column at which this content line begins (i.e. the amount
++// of leading indentation / block markers that were stripped before the content
++// was appended to node->content). The inline parser uses these to report
++// correct source columns on continuation lines; see adjust_column_for_line()
++// in inlines.c.
++static void record_line_offset(cmark_node *node, int column) {
++  if (node->n_line_offsets >= node->cap_line_offsets) {
++    int cap = node->cap_line_offsets ? node->cap_line_offsets * 2 : 8;
++    int *p = (int *)node->content.mem->realloc(node->line_offsets,
++                                               cap * sizeof(int));
++    node->line_offsets = p;
++    node->cap_line_offsets = cap;
++  }
++  node->line_offsets[node->n_line_offsets++] = column;
++}
++
+ static void add_line(cmark_node *node, cmark_chunk *ch, cmark_parser *parser) {
+   int chars_to_tab;
+   int i;
+   assert(node->flags & CMARK_NODE__OPEN);
++  // the visual column where this line's content starts in the source
++  record_line_offset(node, (int)parser->column);
+   if (parser->partially_consumed_tab) {
+     parser->offset += 1; // skip over tab
+     // add space characters:
+--- a/cmark/inlines.c
++++ b/cmark/inlines.c
+@@ -57,6 +57,12 @@
+   bufsize_t pos;
+   int block_offset;
+   int column_offset;
++  /* Per-content-line stripped indentation (see record_line_offset() in
++   * blocks.c), used to correct source columns on continuation lines.
++   * base_line is the source line number of the first content line. */
++  int *line_offsets;
++  int n_line_offsets;
++  int base_line;
+   cmark_map *refmap;
+   delimiter *last_delim;
+   bracket *last_bracket;
+@@ -81,6 +87,19 @@
+                              cmark_chunk *buffer, cmark_map *refmap);
+ static bufsize_t subject_find_special_char(subject *subj, int options);
+ 
++// Extra visual indentation stripped from the current content line relative to
++// the first content line of the block. Continuation lines of a paragraph or
++// heading have their leading indentation removed when the block content is
++// built, so source columns computed from positions in that buffer are short by
++// this amount. Returns 0 on the first line (where block_offset already accounts
++// for the indentation).
++static CMARK_INLINE int line_indent_delta(subject *subj) {
++  int k = subj->line - subj->base_line;
++  if (k > 0 && subj->line_offsets && k < subj->n_line_offsets)
++    return subj->line_offsets[k] - subj->line_offsets[0];
++  return 0;
++}
++
+ // Create an inline with a literal string value.
+ static CMARK_INLINE cmark_node *make_literal(subject *subj, cmark_node_type t,
+                                              int start_column, int end_column,
+@@ -192,6 +211,9 @@
+   e->pos = 0;
+   e->block_offset = block_offset;
+   e->column_offset = 0;
++  e->line_offsets = NULL;
++  e->n_line_offsets = 0;
++  e->base_line = line_number;
+   e->refmap = refmap;
+   e->last_delim = NULL;
+   e->last_bracket = NULL;
+@@ -299,8 +321,8 @@
+   if (newlines) {
+     subj->line += newlines;
+     node->end_line += newlines;
+-    node->end_column = since_newline;
+-    subj->column_offset = -subj->pos + since_newline + extra;
++    node->end_column = since_newline + line_indent_delta(subj);
++    subj->column_offset = -subj->pos + since_newline + extra + line_indent_delta(subj);
+   }
+ }
+ 
+@@ -1363,7 +1385,7 @@
+     advance(subj);
+   }
+   ++subj->line;
+-  subj->column_offset = -subj->pos;
++  subj->column_offset = -subj->pos + line_indent_delta(subj);
+   // skip spaces at beginning of line
+   skip_spaces(subj);
+   if (nlpos > 1 && peek_at(subj, nlpos - 1) == ' ' &&
+@@ -1537,6 +1559,9 @@
+   subject subj;
+   cmark_chunk content = {parent->content.ptr, parent->content.size, 0};
+   subject_from_buf(parser->mem, parent->start_line, parent->start_column - 1 + parent->internal_offset, &subj, &content, refmap);
++  subj.line_offsets = parent->line_offsets;
++  subj.n_line_offsets = parent->n_line_offsets;
++  subj.base_line = parent->start_line;
+   cmark_chunk_rtrim(&subj.input);
+ 
+   while (!is_eof(&subj) && parse_inline(parser, &subj, parent, options))
