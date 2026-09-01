@@ -43,10 +43,18 @@ new_env = function(...) new.env(..., parent = emptyenv())
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
-  # collect code blocks and inline code from the parse tree (see code_tokens())
-  m = code_tokens(text, rx_engine)
+  # collect code blocks and inline code from the parse tree as a table of equal-
+  # length columns: type ('code' or 'code_block'), start_line, start_col,
+  # end_line, end_col (integers), info (fenced info string) and literal (inline
+  # code text); see markdown_code_tokens()
+  d = markdown_code_tokens(text)
+  # code chunk engine name, extracted from a `{engine ...}` info string; a plain
+  # ```r fence (info not starting with `{`) yields '' and is dropped below
+  r = paste0('^[{]+', rx_engine, '.*')
+  info = d$info; info[is.na(info)] = ''
+  d$engine = ifelse(grepl(r, info), sub(r, '\\1', info), '')
   # code blocks must have non-empty info strings
-  m = m[, m[1, ] != 'code_block' | m[6, ] != '', drop = FALSE]
+  d = tok_subset(d, d$type != 'code_block' | d$engine != '')
 
   res = list()
   # add a block of text and the line range info
@@ -57,37 +65,36 @@ crack = function(input, text = NULL) {
 
   n = length(text)
   i = 1L  # the possible start line number of text blocks
-  for (j in which(m[1, ] == 'code_block')) {
-    # start (row 2) and end (row 4) line numbers for code chunks
-    pos = as.integer(m[c(2, 4), j]); i1 = pos[1]; i2 = pos[2]
+  for (j in which(d$type == 'code_block')) {
+    i1 = d$start_line[j]; i2 = d$end_line[j]  # start/end line numbers of the chunk
     # add the possible text block before the current code chunk
     if (i1 > i) add_block(i, i1 - 1L, type = 'text_block')
     # add the code chunk
-    add_block(i1, i2, info = m[6, j], type = 'code_chunk')
+    add_block(i1, i2, info = d$engine[j], type = 'code_chunk')
     i = i2 + 1L  # the earliest line for the next text block is next line
   }
   # if there are lines remaining, they must be a text block
   if (i <= n) add_block(i, n, type = 'text_block')
 
-  if (!length(m)) return(res)
+  if (length(d$type) == 0) return(res)
 
   set_error_handler(input)
 
-  m = m[, m[1, ] == 'code', drop = FALSE]
+  d = tok_subset(d, d$type == 'code')
   # find out inline code `{lang} expr`
   rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
   # look for `r expr` if `{lang}` not found (for compatibility with knitr)
-  if (!any(j <- grepl(rx_inline, m[7, ])) && getOption('litedown.enable.knitr_inline', FALSE)) {
+  if (!any(j <- grepl(rx_inline, d$literal)) && getOption('litedown.enable.knitr_inline', FALSE)) {
     rx_inline = '^(r) +(.+?)\\s*$'
-    j = grepl(rx_inline, m[7, ])
+    j = grepl(rx_inline, d$literal)
   }
-  m = m[, j, drop = FALSE]
+  d = tok_subset(d, j)
   n_start = uapply(res, function(x) x$lines[1])  # starting line numbers
-  j = findInterval(m[2, ], n_start)  # find which block each inline code belongs to
-  for (i in seq_len(ncol(m))) {
+  j = findInterval(d$start_line, n_start)  # find which block each inline code belongs to
+  for (i in seq_along(d$type)) {
     b = res[[j[i]]]; l = b$lines
     # column position is based on bytes instead of chars; needs to be adjusted to the latter
-    pos = char_pos(text, as.integer(m[2:5, i]))
+    pos = char_pos(text, c(d$start_line[i], d$start_col[i], d$end_line[i], d$end_col[i]))
     i1 = pos[1]; i2 = pos[3]
     s = nchar(b$source)
     # calculate new position of code after we concatenate all lines of this block by \n
@@ -187,27 +194,9 @@ crack = function(input, text = NULL) {
   res
 }
 
-# collect code blocks (fenced code) and inline code from the parse tree into a
-# 7-row character matrix, one column per token. Rows:
-#   1: node type, 'code' (inline) or 'code_block' (fenced)
-#   2-5: source position (start line, start column, end line, end column)
-#   6: code chunk engine name (extracted from a `{engine ...}` info string)
-#   7: inline code text
-code_tokens = function(text, rx_engine) {
-  d = markdown_code_tokens(text)
-  n = length(d$type)
-  if (n == 0) return(matrix(character(), 7))
-  # info string like `{r, echo=TRUE}` -> engine name `r`; anything not starting
-  # with `{` (e.g. a plain ```r fence) yields '' and is dropped later
-  r = paste0('^[{]+', rx_engine, '.*')
-  info = d$info; info[is.na(info)] = ''
-  engine = ifelse(grepl(r, info), sub(r, '\\1', info), '')
-  # last row holds inline code text only (code blocks leave it empty)
-  literal = ifelse(d$type == 'code' & !is.na(d$literal), d$literal, '')
-  matrix(rbind(
-    d$type, d$start_line, d$start_col, d$end_line, d$end_col, engine, literal
-  ), nrow = 7)
-}
+# subset all columns of a code-token table (from markdown_code_tokens(), plus
+# the derived `engine` column added in crack()) by a row index/logical vector
+tok_subset = function(d, i) lapply(d, `[`, i)
 
 set_error_handler = function(input) {
   opts = options(xfun.handle_error.loc_fun = get_loc)
