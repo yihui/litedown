@@ -2,7 +2,7 @@
 # 'commonmark' package (from which the C code and R wrappers are derived) so
 # that litedown can call them internally without depending on 'commonmark'.
 
-#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens
+#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens R_prose_lines
 NULL
 
 markdown_html = function(
@@ -83,6 +83,15 @@ markdown_code_tokens = function(
 }
 
 list_extensions = function() .Call(R_list_extensions)
+
+# Indices of the "prose" elements of a character vector (one element per line):
+# those not inside a code block. Backed by a single cmark parse in C (exact
+# block structure, including indented code and unbalanced fences), replacing the
+# fragile/slow regex in xfun::prose_index().
+prose_index = function(text) {
+  if (length(text) == 0) return(integer())
+  .Call(R_prose_lines, enc2utf8(as.character(text)))
+}
 
 get_extensions = function(x) {
   if (identical(x, FALSE)) return(NULL)

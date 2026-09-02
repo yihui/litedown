@@ -58,7 +58,6 @@ importFrom(xfun,
   new_record,
   normalize_path,
   parse_only,
-  prose_index,
   raw_string,
   read_all,
   read_utf8,
@@ -76,4 +75,5 @@ importFrom(xfun,
 useDynLib(litedown,R_code_tokens)
 useDynLib(litedown,R_list_extensions)
 useDynLib(litedown,R_parse_markdown)
+useDynLib(litedown,R_prose_lines)
 useDynLib(litedown,R_render_markdown)

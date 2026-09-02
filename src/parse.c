@@ -232,3 +232,104 @@ SEXP R_code_tokens(SEXP text, SEXP hardbreaks, SEXP smart, SEXP normalize,
   UNPROTECT(9);
   return out;
 }
+
+/* Return the 1-based indices of the "prose" elements of `text` (a character
+ * vector, one element per source line): those not covered by any code block
+ * (fenced or indented). This replaces the regex-based xfun::prose_index(): a
+ * single cmark parse locates code blocks exactly, including indented code and
+ * unbalanced fences (which the regex mis-handles), and is faster.
+ *
+ * Elements are joined with '\n' exactly as the renderers do before parsing.
+ * The join is done here (rather than taking a pre-collapsed string) so the
+ * mapping from cmark line numbers back to vector elements stays exact even when
+ * an element already contains embedded newlines (e.g. mark() appends "\n" to
+ * some lines before calling this): an element that contains c internal newlines
+ * spans c+1 lines, and it is prose unless any of those lines is a code line.
+ *
+ * Only code blocks are excluded (raw HTML blocks such as <pre> or <div> remain
+ * prose), matching what the callers need (locating ::: fences, @refs, and
+ * smart-typography targets, none of which occur inside code). */
+SEXP R_prose_lines(SEXP text) {
+  if (!Rf_isString(text))
+    Rf_error("Argument 'text' must be string.");
+
+  int n = Rf_length(text);
+  if (n == 0)
+    return Rf_allocVector(INTSXP, 0);
+
+  /* per-element starting line (1-based) in the joined document, plus the total
+   * byte length needed for the join */
+  int *start_line = (int *) R_alloc(n, sizeof(int));
+  int line = 1;
+  size_t total = 0;
+  for (int i = 0; i < n; i++) {
+    SEXP s = STRING_ELT(text, i);
+    const char *d = CHAR(s);
+    int len = LENGTH(s), nl = 0;
+    start_line[i] = line;
+    for (int k = 0; k < len; k++)
+      if (d[k] == '\n') nl++;
+    line += nl + 1;             /* next element starts after this one's join '\n' */
+    total += (size_t) len + 1;  /* element bytes + one join '\n' */
+  }
+  int nlines = line - 1;
+
+  /* join elements with '\n' */
+  char *buf = (char *) R_alloc(total + 1, 1);
+  size_t off = 0;
+  for (int i = 0; i < n; i++) {
+    SEXP s = STRING_ELT(text, i);
+    int len = LENGTH(s);
+    memcpy(buf + off, CHAR(s), (size_t) len);
+    off += (size_t) len;
+    if (i < n - 1)
+      buf[off++] = '\n';
+  }
+
+  /* parse the joined document (sourcepos gives exact code-block line numbers;
+   * no extensions are needed, as prose detection only depends on code blocks) */
+  SEXP joined = PROTECT(Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(joined, 0, Rf_mkCharLenCE(buf, (int) off, CE_UTF8));
+  cmark_parser *parser;
+  cmark_node *doc = parse_document(
+    joined, R_NilValue, CMARK_OPT_DEFAULT | CMARK_OPT_SOURCEPOS, &parser
+  );
+
+  /* mark every line covered by a code block (1-based; index 0 unused) */
+  char *is_code = (char *) R_alloc((size_t) nlines + 1, 1);
+  memset(is_code, 0, (size_t) nlines + 1);
+  cmark_iter *iter = cmark_iter_new(doc);
+  cmark_event_type ev;
+  while ((ev = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+    if (ev != CMARK_EVENT_ENTER) continue;
+    cmark_node *node = cmark_iter_get_node(iter);
+    if (cmark_node_get_type(node) != CMARK_NODE_CODE_BLOCK) continue;
+    int s = cmark_node_get_start_line(node), e = cmark_node_get_end_line(node);
+    if (s < 1) s = 1;
+    if (e > nlines) e = nlines;
+    for (int L = s; L <= e; L++) is_code[L] = 1;
+  }
+  cmark_iter_free(iter);
+  cmark_parser_free(parser);
+  cmark_node_free(doc);
+
+  /* an element is prose unless any of its lines is a code line */
+  int nprose = 0;
+  for (int i = 0; i < n; i++) {
+    int s = start_line[i], e = (i < n - 1) ? start_line[i + 1] - 1 : nlines, code = 0;
+    for (int L = s; L <= e; L++)
+      if (is_code[L]) { code = 1; break; }
+    if (!code) nprose++;
+  }
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, nprose));
+  int j = 0;
+  for (int i = 0; i < n; i++) {
+    int s = start_line[i], e = (i < n - 1) ? start_line[i + 1] - 1 : nlines, code = 0;
+    for (int L = s; L <= e; L++)
+      if (is_code[L]) { code = 1; break; }
+    if (!code) INTEGER(out)[j++] = i + 1;
+  }
+
+  UNPROTECT(2);
+  return out;
+}

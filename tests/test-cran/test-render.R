@@ -53,3 +53,39 @@ assert('markdown_code_tokens() collects code blocks and inline code', {
 assert('markdown_html() still renders correctly', {
   (markdown_html('Hello _World_!\n') %==% '<p>Hello <em>World</em>!</p>\n')
 })
+
+# a bare closing tag opens a type 6/7 HTML block that, per CommonMark, ends only
+# at a blank line; litedown patches cmark so an opening code fence ends it too,
+# and the fence is parsed as a code block instead of being absorbed as HTML
+assert('an opening code fence ends a preceding HTML block', {
+  (markdown_html('</p>\n```\nx\n```\n') %==%
+     '</p>\n<pre><code>x\n</code></pre>\n')
+  # a tilde fence works the same way
+  (markdown_html('</p>\n~~~\nx\n~~~\n') %==%
+     '</p>\n<pre><code>x\n</code></pre>\n')
+  # an HTML block not followed by a fence is still a single block
+  (markdown_html('<div>\nhi\n</div>\nmore\n') %==% '<div>\nhi\n</div>\nmore\n')
+})
+
+assert('prose_index() returns the lines that are not inside a code block', {
+  pidx = getFromNamespace('prose_index', 'litedown')
+  # plain prose: every line
+  (pidx(c('a', 'b', 'c')) %==% 1:3)
+  # fenced code block: the fence and its body are excluded
+  (pidx(c('a', '```', 'x', '```', 'b')) %==% c(1L, 5L))
+  (pidx(c('a', '```r', 'x', '```', 'b')) %==% c(1L, 5L))
+  # a tilde fence is a code fence too
+  (pidx(c('a', '~~~', '```', '~~~', 'b')) %==% c(1L, 5L))
+  # indented (4-space) code blocks are excluded (xfun::prose_index missed these);
+  # cmark includes the trailing blank line in the block, so line 4 is code too
+  (pidx(c('a', '', '    code', '', 'b')) %==% c(1L, 2L, 5L))
+  # an unclosed fence runs to the end of the document (no all-prose fallback)
+  (pidx(c('a', '```', 'x')) %==% 1L)
+  # raw HTML blocks remain prose (only code blocks are excluded)
+  (pidx(c('a', '<pre>', 'x', '</pre>', 'b')) %==% 1:5)
+  # edge cases
+  (pidx(character(0)) %==% integer(0))
+  (pidx(c('```', 'x', '```')) %==% integer(0))
+  # an element carrying an embedded newline still maps to a single index
+  (pidx(c('a\nb', '```', 'x', '```')) %==% 1L)
+})

@@ -147,27 +147,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # source would load a math library unnecessarily. See the html branch below.
   has_math = FALSE
 
-  p = NULL  # indices of prose
-  find_prose = local({
-    t = NULL
-    function() {
-      # return early if text has not changed
-      if (!is.null(p) && identical(text, t)) return(p)
-      t <<- text
-      p <<- prose_index(text)
-    }
-  })
-  # ensure a blank line after an HTML tag if followed by a code block,
-  # otherwise the code block may be considered part of HTML, e.g.,
-  # for <p></p>\n```\n```, the code block after </p> won't be recognized
-  find_prose()
-  if (length(i <- grep('</[a-z0-9]+>\\s*$', text[p]))) {
-    # if the next line is not prose but code block, append \n
-    k = p[i][!(p[i] + 1) %in% p]
-    if (length(k)) text[k] = paste0(text[k], '\n')
-  }
-
-  find_prose()
+  p = prose_index(text)  # indices of prose
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks
   text[p] = sub('^([ >]*:::+ )([^ {]+)$', '\\1{.\\2}', text[p]) # ::: foo -> ::: {.foo}

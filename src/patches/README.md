@@ -21,8 +21,10 @@ overwrite them with upstream `src/` files:
 - `src/wrapper.c`    — `R_render_markdown()`, renders to a string. Adapted from
   the commonmark package.
 - `src/extensions.c` — `R_list_extensions()`. Adapted from the commonmark package.
-- `src/parse.c`      — `R_parse_markdown()`, returns the parse tree (AST) to R as
-  a nested list. Written for litedown.
+- `src/parse.c`      — `R_parse_markdown()` (parse tree as a nested list),
+  `R_code_tokens()` (flat table of code blocks / inline code), and
+  `R_prose_lines()` (indices of lines not inside a code block, replacing
+  `xfun::prose_index()`). Written for litedown.
 - `src/extensions/litedown-extensions.c` / `.h` — registration of litedown's own
   cmark syntax extensions (kept separate from upstream's `core-extensions.c`,
   which `sync.sh` overwrites). Written for litedown.
@@ -67,6 +69,10 @@ Current patches (see `apply.sh`):
 - `inline-sourcepos-cols.diff` — litedown: fix inline source positions
   (columns / end lines) on indented continuation lines. To be submitted
   upstream to github/cmark-gfm.
+- `html-block-code-fence-end.diff` — litedown: end a type 6/7 HTML block at an
+  opening code fence, so `</p>` followed by a ```` ``` ```` line parses as an
+  HTML block plus a separate code block (rather than the fence being absorbed
+  into the HTML block). To be submitted upstream to github/cmark-gfm.
 
 Prefer adding new features as standalone files under `src/extensions/` rather
 than as patches to core files: extensions survive upstream syncs untouched,
