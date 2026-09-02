@@ -6,9 +6,7 @@
 
 - Superscript (`^x^`) and subscript (`~x~`) are now recognized by a 'cmark-gfm' syntax extension (C code under `src/extensions/`) instead of the previous token round-trip in R, and their content is parsed as inline Markdown so nesting works (e.g., `a^b*c*^` gives `a<sup>b<em>c</em></sup>`). Because a single delimiter character can be owned by only one extension, this same extension also provides strikethrough (`~~x~~`); the `superscript`, `subscript`, and `strikethrough` options can still be toggled independently. Matching now follows the same left/right-flanking rules as `*`/`_` emphasis rather than the old restricted character class, which is a small behavior change: a delimiter is recognized only when it "hugs" its content (e.g., `a ^x^ b` still works, but a `^` immediately adjacent to punctuation such as in `a^*b*^` is treated literally). Part of #142.
 
-- Fixed a bug that a math library (KaTeX/MathJax) could be loaded into an HTML page that contains no actual math, e.g., when a `$` appears only in inline code (`` `$x$` ``), as a currency symbol, or when math has been disabled via the `-latex_math` option. The presence of math is now detected from the rendered output rather than the source.
-
-- Fixed a bug in 'cmark-gfm' that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under `src/patches/` and will be submitted upstream.
+- Fixed a bug in 'cmark-gfm' that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under `src/patches/`.
 
 - Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).
 
