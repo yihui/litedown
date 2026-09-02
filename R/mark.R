@@ -147,17 +147,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # source would load a math library unnecessarily. See the html branch below.
   has_math = FALSE
 
-  p = NULL  # indices of prose
-  find_prose = local({
-    t = NULL
-    function() {
-      # return early if text has not changed
-      if (!is.null(p) && identical(text, t)) return(p)
-      t <<- text
-      p <<- prose_index(text)
-    }
-  })
-  find_prose()
+  p = prose_index(text)  # indices of prose
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks
   text[p] = sub('^([ >]*:::+ )([^ {]+)$', '\\1{.\\2}', text[p]) # ::: foo -> ::: {.foo}
