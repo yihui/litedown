@@ -127,3 +127,40 @@ assert('mark() toggles superscript/subscript/strikethrough independently', {
   (mark2('~~x~~', 'html', options = '-subscript') %==% '<p><del>x</del></p>')
   (mark2('x^2^', 'html', options = '-superscript') %==% '<p>x^2^</p>')
 })
+
+assert('mark() renders raw content blocks via the C extension', {
+  raw = function(lang, body) c(sprintf('```{=%s}', lang), body, '```')
+  # ```{=html} -> verbatim in HTML output, discarded in LaTeX output
+  (mark2(raw('html', '<hr class="x">'), 'html') %==% '<hr class="x">')
+  (mark2(raw('html', '<hr>'), 'latex') %==% '')
+  # ```{=latex} / ```{=tex} -> verbatim in LaTeX output, discarded in HTML output
+  (mark2(raw('latex', '\\textbf{x}'), 'latex') %==% '\\textbf{x}')
+  (mark2(raw('tex', '\\foo'), 'latex') %==% '\\foo')
+  (mark2(raw('latex', '\\textbf{x}'), 'html') %==% '')
+  # an unknown target (e.g. {=markdown}) is discarded in every format
+  (mark2(raw('markdown', '*x*'), 'html') %==% '')
+  (mark2(raw('markdown', '*x*'), 'latex') %==% '')
+  # raw blocks don't escape their body and sit between surrounding prose
+  (mark2(c('before', '', raw('html', '<hr>'), '', 'after'), 'html') %==%
+     '<p>before</p>\n<hr>\n<p>after</p>')
+})
+
+assert('mark() renders a raw LaTeX math environment as math in HTML too', {
+  # documented exception: a raw {=latex}/{=tex} block that is a math environment
+  # is wrapped in <p>...</p> for HTML so the JS math library can typeset it
+  env = c('```{=latex}', '\\begin{align}', 'a &= b', '\\end{align}', '```')
+  (mark2(env, 'html') %==% '<p>\n\\begin{align}\na &amp;= b\n\\end{align}\n</p>')
+  # in LaTeX output it is emitted verbatim (no <p> wrapper, no escaping)
+  (mark2(env, 'latex') %==% '\\begin{align}\na &= b\n\\end{align}')
+  # it loads a math library even when latex_math is disabled, because the raw
+  # block is rendered as math regardless of that option
+  has_katex = function(x, options = NULL) {
+    out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
+    any(grepl('katex', out, ignore.case = TRUE))
+  }
+  (has_katex(env))
+  (has_katex(env, options = '-latex_math'))
+  # a raw HTML block or a non-math raw LaTeX block must NOT load a math library
+  (!has_katex(c('```{=html}', '<hr>', '```')))
+  (!has_katex(c('```{=latex}', '\\textbf{x}', '```')))
+})

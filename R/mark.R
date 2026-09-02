@@ -98,6 +98,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # \begin{}...\end{} environments) for html/latex output
   if (isTRUE(options[['latex_math']]) && format %in% c('html', 'latex'))
     options$extensions = union(options$extensions, 'math')
+  # raw content blocks (```{=html}/```{=latex}/```{=tex}) are handled by the C
+  # 'rawblock' extension for html/latex output; it is always on (raw blocks are
+  # not an optional feature), so it is not exposed as a markdown_options() toggle
+  if (format %in% c('html', 'latex'))
+    options$extensions = union(options$extensions, 'rawblock')
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -177,9 +182,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   id4 = id_string(text)
   if (format == 'latex') {
-    # put info string inside code blocks so the info won't be lost, e.g., ```r -> ```\nr
+    # put info string inside code blocks so the info won't be lost, e.g., ```r -> ```\nr;
+    # skip raw content blocks (```{=html}/```{=latex}/```{=tex}), whose info
+    # string must reach the C 'rawblock' extension intact
     text = gsub(
-      '^([> ]*)(```+)([^`].*)$', sprintf('\\1\\2\n\\1%s\\3%s', id4, id4), text
+      '^([> ]*)(```+)(?! *\\{=)([^`].*)$', sprintf('\\1\\2\n\\1%s\\3%s', id4, id4),
+      text, perl = TRUE
     )
   } else if (format == 'html' && length(p) < length(text)) {
     # hide spaces so that attributes won't be dropped: {.lang foo} -> {.lang!id!foo}
@@ -214,24 +222,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
     # class="foo"></span>
     ret = gsub('<a href="" ([^>]+>.*?</)a>', '<span \\1span>', ret)
-    r4 = '<pre><code class="language-\\{=([^}]+)}">(.+?)</code></pre>\n'
-    ret = match_replace(ret, r4, function(x) {
-      lang = gsub(r4, '\\1', x)
-      code = gsub(r4, '\\2', x)
-      # restore raw html content from ```{=html}
-      i1 = lang == 'html'
-      x[i1] = restore_html(code[i1])
-      # possible math environments
-      i2 = (lang %in% c('tex', 'latex')) &
-        grepl('^\\\\begin\\{[a-zA-Z*]+\\}.+\\\\end\\{[a-zA-Z*]+\\}\n$', code)
-      if (any(i2)) {
-        x[i2] = sprintf('<p>\n%s</p>\n', code[i2])
-        has_math <<- TRUE
-      }
-      # discard other types of raw content blocks
-      x[!(i1 | i2)] = ''
-      x
-    }, perl = FALSE)  # for perl = TRUE, we'd need (?s) before (.+?)
     # support mermaid
     r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
     if (has_mermaid <- length(grep(r_mmd, ret))) {
@@ -262,6 +252,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
     ret = add_toc(ret, options)
+    # a raw LaTeX/TeX math environment (```{=latex} \begin{...} ... ```) is
+    # rendered as math in HTML by the C 'rawblock' extension regardless of the
+    # 'latex_math' option, so it must load a math library even when math is off.
+    # It emits the distinctive `<p>\n\begin{...}` signature (a newline right
+    # after <p>), which the 'math' extension's environment output (`<p>\begin{`)
+    # does not have, so this check is safe to run ungated.
+    if (!has_math) has_math = isTRUE(any(grepl('<p>\n\\\\begin\\{', ret)))
     # math: detect the delimiters actually emitted into the output (inline
     # \(...\), display $$...$$, and \begin{} environments) instead of scanning
     # the source, which avoids loading a math library for a bare `$`, inline
@@ -290,16 +287,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     r4 = sprintf(
       '(\\\\begin\\{verbatim}\n)%s(.+?)%s\n(.*?\n)(\\\\end\\{verbatim}\n)', id4, id4
     )
+    # raw content blocks (```{=latex}/```{=tex}/```{=html}) are handled by the C
+    # 'rawblock' extension, so only ordinary code blocks reach this verbatim
+    # post-processing (which strips the id4-smuggled info string).
     ret = match_replace(ret, r4, function(x) {
-      info = gsub(r4, '\\2', x)
-      info = gsub('^\\{|}$', '', info)
-      i = info %in% c('=latex', '=tex')
-      x[i] = gsub(r4, '\\3', x[i])  # restore raw ```{=latex} content
-      i = !i & grepl('^=', info)
-      x[i] = ''  # discard other raw content
       # TODO: support code highlighting for latex (listings or highr::hi_latex)
-      x = gsub(r4, '\\1\\3\\4', x)
-      x
+      gsub(r4, '\\1\\3\\4', x)
     }, perl = FALSE)
     # for nested verbatim code blocks, the inner blocks may have leftover ```\nid4
     ret = gsub(sprintf('(```)\n%s(.*?)%s', id4, id4), '\\1\\2', ret)
@@ -457,9 +450,10 @@ markdown_options = function() {
     'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
     'latex_math', 'auto_identifiers', 'cross_refs',
     # superscript/subscript/strikethrough are C extensions, so they appear in
-    # list_extensions(); 'math' is exposed via the 'latex_math' option (not its
-    # extension name), so exclude it from the auto-enabled extension list
-    setdiff(list_extensions(), c('tagfilter', 'math'))
+    # list_extensions(); 'math' (via the 'latex_math' option) and 'rawblock'
+    # (always on for html/latex) are not user-facing option names, so exclude
+    # them from the auto-enabled extension list
+    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock'))
   )
   # options disabled by default
   x2 = c(
