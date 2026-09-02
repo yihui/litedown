@@ -135,11 +135,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       length(grep(pattern, text, perl = TRUE))
   }
 
-  # LaTeX math ($...$, $$...$$, and \begin{}...\end{} environments) is handled by
-  # the C 'math' extension (enabled above via options$extensions). We only need
-  # to know whether any math is present, to decide whether to load KaTeX/MathJax.
-  has_math = 'math' %in% options$extensions &&
-    length(grep('[$]|\\\\begin\\{', text, perl = TRUE)) > 0
+  # Whether any LaTeX math is present, to decide whether to load KaTeX/MathJax.
+  # We detect this from the *rendered* output (below) rather than the source,
+  # because a bare `$` in the source may just be a dollar sign, inline code
+  # (`$x$`), or math that has been disabled (-latex_math); detecting on the
+  # source would load a math library unnecessarily. See the html branch below.
+  has_math = FALSE
 
   p = NULL  # indices of prose
   find_prose = local({
@@ -261,10 +262,23 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
     ret = add_toc(ret, options)
-    # math
-    if (!has_math) has_math = length(ret) && (
-      grepl('$$</p>', ret, fixed = TRUE) || grepl('\\)</span>', ret, fixed = TRUE)
-    )  # math may be from pkg_manual()'s HTML
+    # math: detect the delimiters actually emitted into the output (inline
+    # \(...\), display $$...$$, and \begin{} environments) instead of scanning
+    # the source, which avoids loading a math library for a bare `$`, inline
+    # code (`$x$`), or currency. This is gated on the 'math' extension being
+    # enabled: when math is disabled (-latex_math), $$ / \begin{ in the output
+    # is literal text, not math, and looks identical to real math. pkg_manual()
+    # emits the same delimiters (\(...\), <p>$$...$$</p>) and runs with math
+    # enabled by default, so it is covered too. Code blocks/spans are stripped
+    # first because a math library ignores <code>/<pre> (a literal \( or $$
+    # inside code is not rendered as math, so it must not trigger loading it).
+    if (!has_math && 'math' %in% options$extensions) {
+      r0 = gsub('(?s)<(pre|code)[ >].*?</\\1>', '', ret, perl = TRUE)
+      has_math = length(r0) && (
+        grepl('\\(', r0, fixed = TRUE) || grepl('$$', r0, fixed = TRUE) ||
+        grepl('\\begin{', r0, fixed = TRUE)
+      )
+    }
     is_katex = TRUE
     if (has_math && length(js_math <- js_options(options[['js_math']], 'katex'))) {
       is_katex = js_math$package == 'katex'

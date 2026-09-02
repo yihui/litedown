@@ -83,6 +83,25 @@ assert('mark() disables math when the latex_math option is off', {
   (mark2('a $x$ b', 'html', options = '-latex_math') %==% '<p>a $x$ b</p>')
 })
 
+assert('mark() loads a math library only when math is actually rendered', {
+  # render a full HTML document (with a template) and check whether KaTeX is
+  # loaded; it should be loaded iff real math ends up in the output
+  has_katex = function(x, options = NULL) {
+    out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
+    any(grepl('katex', out, ignore.case = TRUE))
+  }
+  # real math -> load
+  (has_katex('a $x$ b'))
+  (has_katex(c('d:', '', '$$x + y$$')))
+  (has_katex(c('\\begin{align}', 'a &= b', '\\end{align}')))
+  # false positives that must NOT load a math library
+  (!has_katex('inline code `$x$` here'))       # $ inside inline code
+  (!has_katex('it costs $5 and $6 total'))      # currency
+  (!has_katex(c('```', 'f \\(x)', '```')))      # \( inside a code block
+  (!has_katex(c('`$x$` $x$!', '', '$$x + y$$'), options = '-latex_math'))  # disabled
+  (!has_katex('no math at all'))
+})
+
 assert('mark() renders superscript, subscript, and strikethrough via the C extension', {
   # ^x^ -> <sup>, ~x~ -> <sub>, ~~x~~ -> <del>
   (mark2('H~2~O and E=mc^2^', 'html') %==% '<p>H<sub>2</sub>O and E=mc<sup>2</sup></p>')
