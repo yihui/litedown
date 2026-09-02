@@ -161,28 +161,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (length(k)) text[k] = paste0(text[k], '\n')
   }
 
-  # superscript and subscript; for now, we allow only characters alnum|*|(|) for
-  # script text but can consider changing this rule upon users' request
-  r2 = '(?<!`)\\^([[:alnum:]*(),.]+?)\\^(?!`)'
-  if (has_sup <- test_feature('superscript', r2)) {
-    id2 = id_string(text)
-    find_prose()
-    text[p] = match_replace(text[p], r2, function(x) {
-      # place superscripts inside !id...id!
-      x = gsub('^\\^|\\^$', id2, x)
-      sprintf('!%s!', x)
-    })
-  }
-  r3 = '(?<![~`[:space:]])~([[:alnum:]*(),.]+?)~(?!`)'
-  if (has_sub <- test_feature('subscript', r3)) {
-    id3 = id_string(text)
-    find_prose()
-    text[p]= match_replace(text[p], r3, function(x) {
-      # place subscripts inside !id...id!
-      x = gsub('^~|~$', id3, x)
-      sprintf('!%s!', x)
-    })
-  }
+  # superscript (^x^), subscript (~x~), and strikethrough (~~x~~) are handled by
+  # the C 'superscript'/'subscript' extensions (attached above via
+  # options$extensions), so no token round-trip is needed here.
   find_prose()
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks
@@ -232,10 +213,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
     # class="foo"></span>
     ret = gsub('<a href="" ([^>]+>.*?</)a>', '<span \\1span>', ret)
-    if (has_sup)
-      ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '<sup>\\1</sup>', ret)
-    if (has_sub)
-      ret = gsub(sprintf('!%s(.+?)%s!', id3, id3), '<sub>\\1</sub>', ret)
     r4 = '<pre><code class="language-\\{=([^}]+)}">(.+?)</code></pre>\n'
     ret = match_replace(ret, r4, function(x) {
       lang = gsub(r4, '\\1', x)
@@ -296,10 +273,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
     if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
-    if (has_sup)
-      ret = gsub(sprintf('!%s(.+?)%s!', id2, id2), '\\\\textsuperscript{\\1}', ret)
-    if (has_sub)
-      ret = gsub(sprintf('!%s(.+?)%s!', id3, id3), '\\\\textsubscript{\\1}', ret)
     r4 = sprintf(
       '(\\\\begin\\{verbatim}\n)%s(.+?)%s\n(.*?\n)(\\\\end\\{verbatim}\n)', id4, id4
     )
@@ -468,9 +441,10 @@ markdown_options = function() {
   # options enabled by default
   x1 = c(
     'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
-    'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
-    # 'math' is exposed to users via the 'latex_math' option, not by its
-    # extension name, so exclude it from the auto-enabled extension list
+    'latex_math', 'auto_identifiers', 'cross_refs',
+    # superscript/subscript/strikethrough are C extensions, so they appear in
+    # list_extensions(); 'math' is exposed via the 'latex_math' option (not its
+    # extension name), so exclude it from the auto-enabled extension list
     setdiff(list_extensions(), c('tagfilter', 'math'))
   )
   # options disabled by default
