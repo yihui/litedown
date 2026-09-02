@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/heading-anchor.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/pages.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.5/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/css/prism-xcode.min.css">
 </head>
 <body>
@@ -45,6 +46,9 @@
 <ul>
 <li>
 <p>The Markdown library (‘cmark-gfm’, the GitHub fork of the reference CommonMark implementation) is now bundled with <strong>litedown</strong> (as C code under <code>src/</code>) instead of being provided by the <strong>commonmark</strong> package. This allows fixing bugs and adding features at the C level rather than working around them in R. The <strong>commonmark</strong> package is no longer a dependency (#141).</p>
+</li>
+<li>
+<p>LaTeX math (<code>$...$</code>, <code>$$...$$</code>, and <code>\begin{}...\end{}</code> environments) is now recognized by a ‘cmark-gfm’ syntax extension (C code under <code>src/extensions/</code>) instead of the previous token round-trip in R. Math bodies are real nodes in the parse tree, so Markdown special characters inside math (e.g., <code>_</code>, <code>*</code>, <code>[]</code>) are no longer misinterpreted (#33, part of <a href="https://github.com/yihui/litedown/issues/142">#142</a>).</p>
 </li>
 <li>
 <p>Fixed a bug in ‘cmark-gfm’ that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under <code>src/patches/</code> and will be submitted upstream.</p>
@@ -374,6 +378,8 @@ graph TD;
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/copy-button.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/heading-anchor.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.18.5/dist/katex.min.js,npm/katex@0.18.5/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.72/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 </body>
