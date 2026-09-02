@@ -94,6 +94,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   options$extensions = intersect(
     names(Filter(isTRUE, options)), list_extensions()
   )
+  # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$, and
+  # \begin{}...\end{} environments) for html/latex output
+  if (isTRUE(options[['latex_math']]) && format %in% c('html', 'latex'))
+    options$extensions = union(options$extensions, 'math')
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -131,25 +135,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       length(grep(pattern, text, perl = TRUE))
   }
 
-  # protect $ $ and $$ $$ math expressions for html/latex output
-  if (has_math <- test_feature('latex_math', '[$]')) {
-    id = id_string(text); maths = NULL
-    text = xfun::protect_math(text, id)
-    if (has_math <- any(grepl(paste0('`', id), text, fixed = TRUE))) {
-      # temporarily replace math expressions with tokens so render() won't seem
-      # them (to avoid issues like #33) and restore them later
-      text = one_string(text)
-      text = match_replace(text, sprintf('`%s(?s).{3,}?%s`', id, id), function(x) {
-        # replace math with !id-n-id! where n is the index of the math
-        tokens = sprintf('!%s-%d-%s!', id, length(maths) + seq_along(x), id)
-        math = gsub(sprintf('`%s|%s`', id, id), '', x)
-        maths <<- c(maths, set_names(math, tokens))
-        tokens
-      })
-      if (format == 'html') maths = html_escape(maths)
-      text = split_lines(text)
-    }
-  }
+  # LaTeX math ($...$, $$...$$, and \begin{}...\end{} environments) is handled by
+  # the C 'math' extension (enabled above via options$extensions). We only need
+  # to know whether any math is present, to decide whether to load KaTeX/MathJax.
+  has_math = 'math' %in% options$extensions &&
+    length(grep('[$]|\\\\begin\\{', text, perl = TRUE)) > 0
 
   p = NULL  # indices of prose
   find_prose = local({
@@ -232,14 +222,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
-
-  if (has_math) ret = match_replace(ret, sprintf('!%s-\\d+-%s!', id, id), function(x) {
-    if (length(maths) != length(x)) warning(
-      'LaTeX math expressions cannot be restored correctly (expected ',
-      length(maths), ' expression(s) but found ', length(x), ' in the output).'
-    )
-    maths[x]
-  })
 
   has_mermaid = FALSE
 
@@ -487,7 +469,9 @@ markdown_options = function() {
   x1 = c(
     'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
     'superscript', 'subscript', 'latex_math', 'auto_identifiers', 'cross_refs',
-    setdiff(list_extensions(), 'tagfilter')
+    # 'math' is exposed to users via the 'latex_math' option, not by its
+    # extension name, so exclude it from the auto-enabled extension list
+    setdiff(list_extensions(), c('tagfilter', 'math'))
   )
   # options disabled by default
   x2 = c(
