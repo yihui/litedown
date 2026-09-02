@@ -235,6 +235,10 @@ static void plaintext_render(cmark_syntax_extension *extension,
  * every line participates in a balanced sequence of environments with no stray
  * text at depth 0. */
 static int is_math_env(const char *s) {
+  return litedown_is_math_env(s);
+}
+
+int litedown_is_math_env(const char *s) {
   const char *p = s;
   int depth = 0;
   int saw_env = 0;
