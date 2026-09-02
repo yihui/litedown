@@ -8,6 +8,7 @@
 
 /* Github extensions */
 #include "parser.h"
+#include "extensions/litedown-extensions.h"
 
 typedef enum {
   FORMAT_NONE,
@@ -61,7 +62,6 @@ SEXP R_render_markdown(SEXP text, SEXP format, SEXP sourcepos, SEXP hardbreaks, 
 
   /* combine options */
   int options = CMARK_OPT_DEFAULT;
-  options += CMARK_OPT_STRIKETHROUGH_DOUBLE_TILDE;
   options += Rf_asLogical(sourcepos) * CMARK_OPT_SOURCEPOS;
   options += Rf_asLogical(hardbreaks) * CMARK_OPT_HARDBREAKS;
   options += Rf_asLogical(smart) * CMARK_OPT_SMART;
@@ -76,10 +76,8 @@ SEXP R_render_markdown(SEXP text, SEXP format, SEXP sourcepos, SEXP hardbreaks, 
   cmark_parser *parser = cmark_parser_new(options);
   for(int i = 0; i < Rf_length(extensions); i++){
     const char *extname = CHAR(STRING_ELT(extensions, i));
-    cmark_syntax_extension *syntax_extension = cmark_find_syntax_extension(extname);
-    if(!syntax_extension)
+    if(!litedown_attach_extension(parser, extname))
       Rf_error("Failed to load extension '%s'", extname);
-    cmark_parser_attach_syntax_extension(parser, syntax_extension);
   }
   cmark_parser_feed(parser, CHAR(input), LENGTH(input));
   cmark_node *doc = cmark_parser_finish(parser);

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "extensions/litedown-extensions.h"
 
 /* Build a nested R list for a node and all of its descendants. Each node is a
  * named list with fields:
@@ -102,12 +103,10 @@ static cmark_node *parse_document(SEXP text, SEXP extensions, int options,
   cmark_parser *parser = cmark_parser_new(options);
   for (int i = 0; i < Rf_length(extensions); i++) {
     const char *extname = CHAR(STRING_ELT(extensions, i));
-    cmark_syntax_extension *ext = cmark_find_syntax_extension(extname);
-    if (!ext) {
+    if (!litedown_attach_extension(parser, extname)) {
       cmark_parser_free(parser);
       Rf_error("Failed to load extension '%s'", extname);
     }
-    cmark_parser_attach_syntax_extension(parser, ext);
   }
   cmark_parser_feed(parser, CHAR(input), LENGTH(input));
   *out_parser = parser;
@@ -120,7 +119,6 @@ static int parse_options(SEXP hardbreaks, SEXP smart, SEXP normalize, SEXP footn
     Rf_error("Arguments 'hardbreaks', 'smart', 'normalize', 'footnotes' must be logical.");
   int options = CMARK_OPT_DEFAULT;
   options += CMARK_OPT_SOURCEPOS;
-  options += CMARK_OPT_STRIKETHROUGH_DOUBLE_TILDE;
   options += Rf_asLogical(hardbreaks) * CMARK_OPT_HARDBREAKS;
   options += Rf_asLogical(smart) * CMARK_OPT_SMART;
   options += Rf_asLogical(normalize) * CMARK_OPT_NORMALIZE;

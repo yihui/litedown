@@ -82,3 +82,29 @@ assert('mark() renders LaTeX environments verbatim via the C extension', {
 assert('mark() disables math when the latex_math option is off', {
   (mark2('a $x$ b', 'html', options = '-latex_math') %==% '<p>a $x$ b</p>')
 })
+
+assert('mark() renders superscript, subscript, and strikethrough via the C extension', {
+  # ^x^ -> <sup>, ~x~ -> <sub>, ~~x~~ -> <del>
+  (mark2('H~2~O and E=mc^2^', 'html') %==% '<p>H<sub>2</sub>O and E=mc<sup>2</sup></p>')
+  (mark2('~~gone~~', 'html') %==% '<p><del>gone</del></p>')
+  # content between delimiters is parsed as inline Markdown (nesting works)
+  (mark2('a^b*c*^', 'html') %==% '<p>a<sup>b<em>c</em></sup></p>')
+  # LaTeX output
+  (mark2('H~2~O', 'latex') %==% 'H\\textsubscript{2}O')
+  (mark2('E=mc^2^', 'latex') %==% 'E=mc\\textsuperscript{2}')
+  (mark2('~~gone~~', 'latex') %==% '\\sout{gone}')
+})
+
+assert('mark() keeps [^x] as a footnote reference, not a superscript', {
+  out = mark2(c('text[^1]', '', '[^1]: note.'), 'html')
+  (grepl('<sup class="footnote-ref">', out, fixed = TRUE))
+})
+
+assert('mark() toggles superscript/subscript/strikethrough independently', {
+  # each option controls only its own feature, even though ~ drives two of them
+  (mark2('~~x~~', 'html', options = '-strikethrough') %==% '<p>~~x~~</p>')
+  (mark2('~x~', 'html', options = '-strikethrough') %==% '<p><sub>x</sub></p>')
+  (mark2('~x~', 'html', options = '-subscript') %==% '<p>~x~</p>')
+  (mark2('~~x~~', 'html', options = '-subscript') %==% '<p><del>x</del></p>')
+  (mark2('x^2^', 'html', options = '-superscript') %==% '<p>x^2^</p>')
+})

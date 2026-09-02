@@ -331,12 +331,16 @@ math environment can be rendered (@sec:js-math).
 ### Superscripts and subscripts
 
 Write superscripts in `^text^` and subscripts in `~text~` (same syntax as
-Pandoc's Markdown), e.g., 2^10^ and H~2~O. Currently only alphanumeric
-characters, `*`, `(`, and `)` are allowed in the scripts. For example, `a^b c^`
-will not be recognized as a superscript (because the space is not allowed). Note
-that GFM supports striking out text via `~text~`, but this feature has been
-disabled and replaced by the feature of subscripts in **litedown**. To strike
-out text, you must use a pair of *double* tildes.
+Pandoc's Markdown), e.g., 2^10^ and H~2~O. The `text` is parsed as inline
+Markdown, so it may contain other formatting (e.g., `a^b*c*^` gives a
+superscript containing emphasized text). The delimiters follow the same
+"flanking" rules as the `*` and `_` used for emphasis: an opening delimiter must
+be immediately followed by non-space content and a closing delimiter must be
+immediately preceded by non-space content, so `a^b ^c` is not a superscript
+(there is a space right before the closing `^`), and a delimiter that sits right
+next to punctuation may be treated literally. A single `~` is used for
+subscripts in **litedown**; to strike out text, use a pair of *double* tildes,
+i.e., `~~text~~`.
 
 ### Footnotes
 
