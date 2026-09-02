@@ -54,6 +54,19 @@ assert('markdown_html() still renders correctly', {
   (markdown_html('Hello _World_!\n') %==% '<p>Hello <em>World</em>!</p>\n')
 })
 
+# a bare closing tag opens a type 6/7 HTML block that, per CommonMark, ends only
+# at a blank line; litedown patches cmark so an opening code fence ends it too,
+# and the fence is parsed as a code block instead of being absorbed as HTML
+assert('an opening code fence ends a preceding HTML block', {
+  (markdown_html('</p>\n```\nx\n```\n') %==%
+     '</p>\n<pre><code>x\n</code></pre>\n')
+  # a tilde fence works the same way
+  (markdown_html('</p>\n~~~\nx\n~~~\n') %==%
+     '</p>\n<pre><code>x\n</code></pre>\n')
+  # an HTML block not followed by a fence is still a single block
+  (markdown_html('<div>\nhi\n</div>\nmore\n') %==% '<div>\nhi\n</div>\nmore\n')
+})
+
 assert('prose_index() returns the lines that are not inside a code block', {
   pidx = getFromNamespace('prose_index', 'litedown')
   # plain prose: every line

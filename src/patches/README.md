@@ -69,6 +69,10 @@ Current patches (see `apply.sh`):
 - `inline-sourcepos-cols.diff` — litedown: fix inline source positions
   (columns / end lines) on indented continuation lines. To be submitted
   upstream to github/cmark-gfm.
+- `html-block-code-fence-end.diff` — litedown: end a type 6/7 HTML block at an
+  opening code fence, so `</p>` followed by a ```` ``` ```` line parses as an
+  HTML block plus a separate code block (rather than the fence being absorbed
+  into the HTML block). To be submitted upstream to github/cmark-gfm.
 
 Prefer adding new features as standalone files under `src/extensions/` rather
 than as patches to core files: extensions survive upstream syncs untouched,

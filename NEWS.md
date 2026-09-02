@@ -12,6 +12,8 @@
 
 - Fixed a bug in 'cmark-gfm' that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under `src/patches/`.
 
+- A fenced code block immediately following a closing HTML tag (e.g., a ```` ``` ```` line right after `</p>`) is now parsed as a code block instead of being absorbed into the preceding HTML block. Previously this required inserting a blank line between them in R; 'cmark-gfm' has been patched (see `src/patches/`) to end such an HTML block at an opening code fence, which removes the fragile R workaround (#135).
+
 - Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).
 
 # CHANGES IN litedown VERSION 0.11

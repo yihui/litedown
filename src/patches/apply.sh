@@ -21,3 +21,7 @@ apply latex-footnotes.diff
 # Fix inline source positions on indented continuation lines (litedown).
 # To be submitted upstream to github/cmark-gfm.
 apply inline-sourcepos-cols.diff
+# End a type 6/7 HTML block at an opening code fence (litedown), so that
+# </p>\n``` is parsed as HTML followed by a code block. To be submitted
+# upstream to github/cmark-gfm.
+apply html-block-code-fence-end.diff

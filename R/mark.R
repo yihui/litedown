@@ -157,19 +157,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       p <<- prose_index(text)
     }
   })
-  # ensure a blank line after an HTML tag if followed by a code block,
-  # otherwise the code block may be considered part of HTML, e.g.,
-  # for <p></p>\n```\n```, the code block after </p> won't be recognized
-  find_prose()
-  if (length(i <- grep('</[a-z0-9]+>\\s*$', text[p]))) {
-    # append \n when the next line opens a fenced code block (checked directly on
-    # the source, not via prose membership: cmark would otherwise absorb the
-    # fence into the HTML block, so the fence line is not distinguishable as code)
-    k = p[i]
-    k = k[k < length(text) & grepl('^\\s*(`{3,}|~{3,})', text[pmin(k + 1, length(text))])]
-    if (length(k)) text[k] = paste0(text[k], '\n')
-  }
-
   find_prose()
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks

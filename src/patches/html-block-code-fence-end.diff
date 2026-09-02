@@ -1,0 +1,36 @@
+diff --git a/cmark/blocks.c b/cmark/blocks.c
+index 00b8e4a..88e4bf8 100644
+--- a/cmark/blocks.c
++++ b/cmark/blocks.c
+@@ -1012,7 +1012,7 @@ static bool parse_code_block_prefix(cmark_parser *parser, cmark_chunk *input,
+   return res;
+ }
+ 
+-static bool parse_html_block_prefix(cmark_parser *parser,
++static bool parse_html_block_prefix(cmark_parser *parser, cmark_chunk *input,
+                                     cmark_node *container) {
+   bool res = false;
+   int html_block_type = container->as.html_block_type;
+@@ -1029,7 +1029,12 @@ static bool parse_html_block_prefix(cmark_parser *parser,
+     break;
+   case 6:
+   case 7:
+-    res = !parser->blank;
++    // litedown: a type 6/7 HTML block (e.g. one opened by a bare </p>) ends
++    // only at a blank line per CommonMark, which means a code fence on the
++    // next line (</p>\n```) would be absorbed as HTML. Treat an opening code
++    // fence as a terminator too, so it is parsed as a code block.
++    res = !parser->blank &&
++          !scan_open_code_fence(input, parser->first_nonspace);
+     break;
+   }
+ 
+@@ -1095,7 +1100,7 @@ static cmark_node *check_open_blocks(cmark_parser *parser, cmark_chunk *input,
+       // a heading can never contain more than one line
+       goto done;
+     case CMARK_NODE_HTML_BLOCK:
+-      if (!parse_html_block_prefix(parser, container))
++      if (!parse_html_block_prefix(parser, input, container))
+         goto done;
+       break;
+     case CMARK_NODE_PARAGRAPH:
