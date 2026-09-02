@@ -167,9 +167,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (length(k)) text[k] = paste0(text[k], '\n')
   }
 
-  # superscript (^x^), subscript (~x~), and strikethrough (~~x~~) are handled by
-  # the C 'superscript'/'subscript' extensions (attached above via
-  # options$extensions), so no token round-trip is needed here.
   find_prose()
   # add line breaks before/after fenced Div's to wrap ::: tokens into separate
   # paragraphs or code blocks
