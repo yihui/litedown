@@ -3666,12 +3666,16 @@ HTML output.</p>
 math environment can be rendered (<a class="cross-ref-sec" href="#sec:js-math">4.1.7</a>).</p>
 <h3 id="sec:superscripts-and-subscripts"><span class="section-number">3.3.3</span> Superscripts and subscripts</h3>
 <p>Write superscripts in <code>^text^</code> and subscripts in <code>~text~</code> (same syntax as
-Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. Currently only alphanumeric
-characters, <code>*</code>, <code>(</code>, and <code>)</code> are allowed in the scripts. For example, <code>a^b c^</code>
-will not be recognized as a superscript (because the space is not allowed). Note
-that GFM supports striking out text via <code>~text~</code>, but this feature has been
-disabled and replaced by the feature of subscripts in <strong>litedown</strong>. To strike
-out text, you must use a pair of <em>double</em> tildes.</p>
+Pandoc’s Markdown), e.g., 2<sup>10</sup> and H<sub>2</sub>O. The <code>text</code> is parsed as inline
+Markdown, so it may contain other formatting (e.g., <code>a^b*c*^</code> gives a
+superscript containing emphasized text). The delimiters follow the same
+“flanking” rules as the <code>*</code> and <code>_</code> used for emphasis: an opening delimiter must
+be immediately followed by non-space content and a closing delimiter must be
+immediately preceded by non-space content, so <code>a^b ^c</code> is not a superscript
+(there is a space right before the closing <code>^</code>), and a delimiter that sits right
+next to punctuation may be treated literally. A single <code>~</code> is used for
+subscripts in <strong>litedown</strong>; to strike out text, use a pair of <em>double</em> tildes,
+i.e., <code>~~text~~</code>.</p>
 <h3 id="sec:footnotes"><span class="section-number">3.3.4</span> Footnotes</h3>
 <p>Insert footnotes via <code>[^n]</code>, where <code>n</code> is a unique footnote
 identifier.<sup class="footnote-ref"><a href="#fn-03-syntax-4" id="fnref-03-syntax-4" data-footnote-ref>9</a></sup> The footnote content should be defined in a separate
