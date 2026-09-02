@@ -21,8 +21,10 @@ overwrite them with upstream `src/` files:
 - `src/wrapper.c`    — `R_render_markdown()`, renders to a string. Adapted from
   the commonmark package.
 - `src/extensions.c` — `R_list_extensions()`. Adapted from the commonmark package.
-- `src/parse.c`      — `R_parse_markdown()`, returns the parse tree (AST) to R as
-  a nested list. Written for litedown.
+- `src/parse.c`      — `R_parse_markdown()` (parse tree as a nested list),
+  `R_code_tokens()` (flat table of code blocks / inline code), and
+  `R_prose_lines()` (indices of lines not inside a code block, replacing
+  `xfun::prose_index()`). Written for litedown.
 - `src/extensions/litedown-extensions.c` / `.h` — registration of litedown's own
   cmark syntax extensions (kept separate from upstream's `core-extensions.c`,
   which `sync.sh` overwrites). Written for litedown.

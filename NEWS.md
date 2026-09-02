@@ -8,6 +8,8 @@
 
 - Raw content blocks (```` ```{=html} ````, ```` ```{=latex} ````, and ```` ```{=tex} ````) are now recognized by a 'cmark-gfm' syntax extension (C code under `src/extensions/`) instead of the previous post-processing regex in R. A raw HTML block appears verbatim in HTML output (and is dropped elsewhere), and a raw LaTeX/TeX block appears verbatim in LaTeX output (and is dropped elsewhere); a raw LaTeX/TeX block that is a LaTeX math environment is still rendered as math in HTML output too. Part of #142.
 
+- The internal detection of "prose" lines (lines not inside a code block, used when rewriting fenced Divs and cross-references) is now backed by a single 'cmark-gfm' parse in C instead of the regex-based `xfun::prose_index()`. This is faster and more accurate: indented code blocks and unbalanced/tilde code fences are recognized correctly.
+
 - Fixed a bug in 'cmark-gfm' that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under `src/patches/`.
 
 - Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).

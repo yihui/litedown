@@ -162,8 +162,11 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # for <p></p>\n```\n```, the code block after </p> won't be recognized
   find_prose()
   if (length(i <- grep('</[a-z0-9]+>\\s*$', text[p]))) {
-    # if the next line is not prose but code block, append \n
-    k = p[i][!(p[i] + 1) %in% p]
+    # append \n when the next line opens a fenced code block (checked directly on
+    # the source, not via prose membership: cmark would otherwise absorb the
+    # fence into the HTML block, so the fence line is not distinguishable as code)
+    k = p[i]
+    k = k[k < length(text) & grepl('^\\s*(`{3,}|~{3,})', text[pmin(k + 1, length(text))])]
     if (length(k)) text[k] = paste0(text[k], '\n')
   }
 
