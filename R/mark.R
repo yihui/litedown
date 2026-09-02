@@ -222,10 +222,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
     # class="foo"></span>
     ret = gsub('<a href="" ([^>]+>.*?</)a>', '<span \\1span>', ret)
-    # raw content blocks (```{=html}/```{=latex}/```{=tex}) are emitted directly
-    # by the C 'rawblock' extension (raw HTML verbatim; a raw LaTeX/TeX math
-    # environment wrapped in <p>...</p>; everything else discarded), so no
-    # post-processing of <pre><code class="language-{=...}"> is needed here.
     # support mermaid
     r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
     if (has_mermaid <- length(grep(r_mmd, ret))) {
