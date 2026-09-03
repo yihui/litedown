@@ -109,20 +109,6 @@ merge_list = function(...) {
   res
 }
 
-CHARS = c(letters, LETTERS, 0:9, '!', ',', '/', ':', ';', '=', '@')
-
-# generate a random string that is not present in provided text
-id_string = function(text, lens = c(5:10, 20), times = 20) {
-  for (i in lens) {
-    for (j in seq_len(times)) {
-      id = paste(sample(CHARS, i, replace = TRUE), collapse = '')
-      if (length(grep(id, text, fixed = TRUE)) == 0) return(id)
-    }
-  }
-  # failure should be very rare
-  stop('Failed to generate a unique ID string. You may try again.')
-}
-
 # a shorthand for gregexpr() and regmatches()
 match_replace = function(x, r, replace = identity, ...) {
   m = gregexpr(r, x, ...)
