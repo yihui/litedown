@@ -73,6 +73,7 @@ importFrom(xfun,
   write_utf8
 )
 useDynLib(litedown,R_code_tokens)
+useDynLib(litedown,R_convert_attrs)
 useDynLib(litedown,R_list_extensions)
 useDynLib(litedown,R_parse_markdown)
 useDynLib(litedown,R_prose_lines)

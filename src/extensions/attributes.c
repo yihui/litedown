@@ -83,10 +83,94 @@ static void attr_body(cmark_chunk *info, bufsize_t *start, bufsize_t *end) {
   *end = n - 1;     /* index of closing '}' */
 }
 
-/* Emit a class/id token value, HTML-escaping it (matching cmark's own
- * escape_html for the language class). */
-static void put_value(cmark_strbuf *html, const unsigned char *s, bufsize_t len) {
-  houdini_escape_html0(html, s, len, 0);
+/* Advance past one whitespace-separated token in d[*i, len), treating a
+ * double-quoted run as part of the token (so a quoted value may contain
+ * spaces). On return *tok/*tend bound the token and *i points past it; returns
+ * 0 when no token remains. */
+static int next_token(const unsigned char *d, bufsize_t len, bufsize_t *i,
+                      bufsize_t *tok, bufsize_t *tend) {
+  bufsize_t k = *i;
+  while (k < len && (d[k] == ' ' || d[k] == '\t'))
+    k++;
+  if (k >= len)
+    return 0;
+  *tok = k;
+  while (k < len && d[k] != ' ' && d[k] != '\t') {
+    if (d[k] == '"') {
+      k++;
+      while (k < len && d[k] != '"')
+        k++;
+    }
+    k++;
+  }
+  *tend = k;
+  *i = k;
+  return 1;
+}
+
+/* Build an HTML attribute string from a Pandoc-style attribute list body
+ * d[0, len) (the text inside the braces, e.g. `.r .js #foo k="v"`), appending
+ * to `out`. Attributes are emitted in the canonical order class, id, then the
+ * remaining key=value tokens in source order, each separated from the previous
+ * content by a single space (including from any content already in `out`):
+ *
+ *   .class tokens (and the `{-}`/`.unnumbered` shorthand) -> one class="..."
+ *     attribute, each class prefixed by `class_prefix` on the FIRST class only
+ *     (pass "language-" for code blocks, "" elsewhere);
+ *   #id (first one wins)                                  -> id="...";
+ *   key=value (or bare key)                               -> emitted verbatim.
+ *
+ * This is the single source of truth shared by the code-block render func here
+ * and R's convert_attrs() (via the R_convert_attrs binding in parse.c). */
+void litedown_render_attrs(cmark_strbuf *out, const unsigned char *d,
+                           bufsize_t len, const char *class_prefix) {
+  bufsize_t i, tok, tend;
+  int n_class = 0;
+
+  /* class attribute: all .class tokens (and {-}/.unnumbered), in source order */
+  for (i = 0; next_token(d, len, &i, &tok, &tend);) {
+    int is_class = d[tok] == '.' && tend - tok > 1;
+    int is_dash = d[tok] == '-' && tend - tok == 1;
+    if (!is_class && !is_dash)
+      continue;
+    if (n_class == 0) {
+      if (out->size)
+        cmark_strbuf_putc(out, ' ');
+      cmark_strbuf_puts(out, "class=\"");
+      cmark_strbuf_puts(out, class_prefix);
+    } else {
+      cmark_strbuf_putc(out, ' ');
+    }
+    if (is_dash)
+      cmark_strbuf_puts(out, "unnumbered");
+    else
+      houdini_escape_html0(out, d + tok + 1, tend - tok - 1, 0);
+    n_class++;
+  }
+  if (n_class > 0)
+    cmark_strbuf_putc(out, '"');
+
+  /* id attribute (first #id wins) */
+  for (i = 0; next_token(d, len, &i, &tok, &tend);) {
+    if (d[tok] == '#' && tend - tok > 1) {
+      if (out->size)
+        cmark_strbuf_putc(out, ' ');
+      cmark_strbuf_puts(out, "id=\"");
+      houdini_escape_html0(out, d + tok + 1, tend - tok - 1, 0);
+      cmark_strbuf_putc(out, '"');
+      break;
+    }
+  }
+
+  /* remaining key=value (or bare key) attributes, verbatim, in source order */
+  for (i = 0; next_token(d, len, &i, &tok, &tend);) {
+    if (d[tok] == '.' || d[tok] == '#' ||
+        (d[tok] == '-' && tend - tok == 1))
+      continue;
+    if (out->size)
+      cmark_strbuf_putc(out, ' ');
+    cmark_strbuf_put(out, d + tok, tend - tok);
+  }
 }
 
 /* Render func: build the opening <pre><code ...> tag from the attribute list,
@@ -97,99 +181,25 @@ static void html_render(cmark_syntax_extension *extension,
   cmark_strbuf *html = renderer->html;
   cmark_chunk *info = &node->as.code.info;
   cmark_chunk *lit = &node->as.code.literal;
-  const unsigned char *d = info->data;
-  bufsize_t start, end, i;
-  int n_class = 0, have_id = 0;
-  /* buffer for the remaining (key=value) attributes, emitted after class/id */
-  cmark_strbuf rest = CMARK_BUF_INIT(renderer->html->mem);
+  cmark_strbuf attrs = CMARK_BUF_INIT(html->mem);
+  bufsize_t start, end;
   (void)extension;
 
   if (ev_type != CMARK_EVENT_ENTER)
     return;
 
   attr_body(info, &start, &end);
+  litedown_render_attrs(&attrs, info->data + start, end - start, "language-");
 
   cmark_html_render_cr(html);
   cmark_strbuf_puts(html, "<pre");
   cmark_html_render_sourcepos(node, html, options);
   cmark_strbuf_puts(html, "><code");
-
-  /* First pass: emit the class attribute, collecting all .class tokens (and the
-   * {-} / .unnumbered shorthand). We scan the whole body, skipping non-class
-   * tokens, so classes always come first regardless of source order. */
-  i = start;
-  while (i < end) {
-    bufsize_t tok, tend;
-    /* skip spaces */
-    while (i < end && (d[i] == ' ' || d[i] == '\t'))
-      i++;
-    if (i >= end)
-      break;
-    tok = i;
-    /* a token runs to the next space, but a quoted value may contain spaces */
-    while (i < end && d[i] != ' ' && d[i] != '\t') {
-      if (d[i] == '"') {
-        i++;
-        while (i < end && d[i] != '"')
-          i++;
-      }
-      i++;
-    }
-    tend = i;
-    if (d[tok] == '.' && tend - tok > 1) {
-      if (n_class == 0)
-        cmark_strbuf_puts(html, " class=\"language-");
-      else
-        cmark_strbuf_putc(html, ' ');
-      put_value(html, d + tok + 1, tend - tok - 1);
-      n_class++;
-    } else if (d[tok] == '-' && tend - tok == 1) {
-      /* {-} is shorthand for .unnumbered */
-      if (n_class == 0)
-        cmark_strbuf_puts(html, " class=\"language-");
-      else
-        cmark_strbuf_putc(html, ' ');
-      cmark_strbuf_puts(html, "unnumbered");
-      n_class++;
-    }
+  if (attrs.size) {
+    cmark_strbuf_putc(html, ' ');
+    cmark_strbuf_put(html, attrs.ptr, attrs.size);
   }
-  if (n_class > 0)
-    cmark_strbuf_putc(html, '"');
-
-  /* Second pass: id (#id, first one wins) and remaining key=value attributes,
-   * in source order, buffered in `rest`. */
-  i = start;
-  while (i < end) {
-    bufsize_t tok, tend;
-    while (i < end && (d[i] == ' ' || d[i] == '\t'))
-      i++;
-    if (i >= end)
-      break;
-    tok = i;
-    while (i < end && d[i] != ' ' && d[i] != '\t') {
-      if (d[i] == '"') {
-        i++;
-        while (i < end && d[i] != '"')
-          i++;
-      }
-      i++;
-    }
-    tend = i;
-    if (d[tok] == '#' && tend - tok > 1) {
-      if (!have_id) {
-        cmark_strbuf_puts(html, " id=\"");
-        put_value(html, d + tok + 1, tend - tok - 1);
-        cmark_strbuf_putc(html, '"');
-        have_id = 1;
-      }
-    } else if (d[tok] != '.' && !(d[tok] == '-' && tend - tok == 1)) {
-      /* a key=value (or bare key) attribute: emit verbatim, space-separated */
-      cmark_strbuf_putc(&rest, ' ');
-      cmark_strbuf_put(&rest, d + tok, tend - tok);
-    }
-  }
-  cmark_strbuf_put(html, rest.ptr, rest.size);
-  cmark_strbuf_free(&rest);
+  cmark_strbuf_free(&attrs);
 
   cmark_strbuf_putc(html, '>');
   houdini_escape_html0(html, lit->data, lit->len, 0);

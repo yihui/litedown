@@ -348,7 +348,7 @@ mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 `````
 
 ````` {.html .plain}
-<div id="baz" class="foo bar" style="color: red;">
+<div class="foo bar" id="baz" style="color: red;">
 <p>asdf</p>
 </div>
 `````
@@ -694,7 +694,7 @@ mark('::: foo\nasdf\n:::')
 ````` {.r}
 mark('::: {.foo .bar #baz style="color: red;"}\nasdf\n:::')
 `````
-<div id="baz" class="foo bar" style="color: red;">
+<div class="foo bar" id="baz" style="color: red;">
 <p>asdf</p>
 </div>
 

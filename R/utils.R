@@ -759,7 +759,6 @@ move_attrs = function(x, format = 'html') {
 }
 
 convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
-  r2 = '(?<=^| )[.#]([-:[:alnum:]]+)(?= |$)'  # should we allow other chars in ID/class?
   match_replace(x, r, function(y) {
     z = sub(r, s, y, perl = TRUE)
     if (format == 'html') {
@@ -770,26 +769,11 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
       z = gsub('\\\\([#%])', '\\1', z)
     }
     z2 = f2(z)
-    # {-} is a shorthand of {.unnumbered}
-    z2[z2 == '-'] = '.unnumbered'
-    # convert #id to id="" and .class to class=""
-    z2 = match_replace(z2, r2, function(a) {
-      i = grep('^[.]', a)
-      if ((n <- length(i))) {
-        # merge multiple classes into one class attribute
-        a[i] = sub('^[.]', '', a[i])
-        a[i] = c(sprintf('class="%s"', paste(a[i], collapse = ' ')), rep('', n - 1))
-        a = c(a[i], a[-i])
-      }
-      if (length(i <- grep('^#', a))) {
-        a[i] = gsub(r2, 'id="\\1"', a[i], perl = TRUE)
-        a = c(a[i], a[-i])  # make sure id is the first attribute
-      }
-      a
-    })
-    # remove spaces after class="..." (caused by merging multiple classes)
-    z2 = sub('(^| )(class="[^"]+")  +', '\\1\\2 ', z2)
-    f(r, y, str_trim(z2))
+    # build the HTML attribute string in C (shared with the code block
+    # 'attributes' extension): .class -> class="", #id -> id="", {-} ->
+    # .unnumbered, key=value verbatim, in the order class, id, then the rest
+    z2 = .Call(R_convert_attrs, z2, '')
+    f(r, y, z2)
   })
 }
 
