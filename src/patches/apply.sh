@@ -15,9 +15,6 @@ apply() { patch -p1 --no-backup-if-mismatch -d .. < "$1"; }
 # Expose footnote ids in XML/HTML. Upstream PR:
 # https://github.com/github/cmark-gfm/pull/362
 apply 362.diff
-# Support footnotes for LaTeX. From commonmark PR:
-# https://github.com/r-lib/commonmark/pull/32
-apply latex-footnotes.diff
 # Fix inline source positions on indented continuation lines (litedown).
 # To be submitted upstream to github/cmark-gfm.
 apply inline-sourcepos-cols.diff

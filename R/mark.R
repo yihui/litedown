@@ -94,21 +94,14 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   options$extensions = intersect(
     names(Filter(isTRUE, options)), list_extensions()
   )
-  # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$, and
-  # \begin{}...\end{} environments) for html/latex output
-  if (isTRUE(options[['latex_math']]) && format %in% c('html', 'latex'))
-    options$extensions = union(options$extensions, 'math')
-  # raw content blocks (```{=html}/```{=latex}/```{=tex}) are handled by the C
-  # 'rawblock' extension for html/latex output; it is always on (raw blocks are
-  # not an optional feature), so it is not exposed as a markdown_options() toggle
-  if (format %in% c('html', 'latex'))
-    options$extensions = union(options$extensions, 'rawblock')
-  # Pandoc-style code block attributes (```{.class #id key="val"}) are rendered
-  # by the C 'attributes' extension for html output; it only sets an HTML render
-  # func (LaTeX/other formats ignore the info string via cmark's built-in code
-  # rendering, matching the old behavior), and is always on
-  if (format == 'html')
-    options$extensions = union(options$extensions, 'attributes')
+  options$extensions = union(options$extensions, if (format %in% c('html', 'latex')) c(
+    # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$,
+    # and \begin{}...\end{} environments)
+    if (isTRUE(options[['latex_math']])) 'math',
+    'rawblock',  # raw content blocks (```{=html}/```{=latex}/```{=tex})
+    if (format == 'html') 'attributes' else
+      if (isTRUE(options[['footnotes']])) 'latexfootnotes'
+  ))
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -147,10 +140,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   # Whether any LaTeX math is present, to decide whether to load KaTeX/MathJax.
-  # We detect this from the *rendered* output (below) rather than the source,
-  # because a bare `$` in the source may just be a dollar sign, inline code
-  # (`$x$`), or math that has been disabled (-latex_math); detecting on the
-  # source would load a math library unnecessarily. See the html branch below.
   has_math = FALSE
 
   p = prose_index(text)  # indices of prose
@@ -232,7 +221,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # number figures and tables, etc.
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
-    if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
@@ -389,8 +377,10 @@ markdown_options = function() {
     # superscript/subscript/strikethrough are C extensions, so they appear in
     # list_extensions(); 'math' (via the 'latex_math' option) and 'rawblock'
     # (always on for html/latex) are not user-facing option names, so exclude
-    # them from the auto-enabled extension list
-    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock'))
+    # them from the auto-enabled extension list; 'latexfootnotes' is attached
+    # internally for latex output (driven by the 'footnotes' option), so it is
+    # excluded too
+    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock', 'latexfootnotes'))
   )
   # options disabled by default
   x2 = c(

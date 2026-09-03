@@ -445,20 +445,8 @@ static int S_render_node(cmark_renderer *renderer, cmark_node *node,
     break;
 
   case CMARK_NODE_FOOTNOTE_DEFINITION:
-    if (entering) {
-      LIT("\\footnotetext[");
-      OUT(cmark_chunk_to_cstr(renderer->mem, &node->as.literal), false, LITERAL);
-      LIT("]{");
-    } else {
-      LIT("}");
-    }
-    break;
   case CMARK_NODE_FOOTNOTE_REFERENCE:
-    if (entering) {
-      LIT("\\footnotemark[");
-      OUT(cmark_chunk_to_cstr(renderer->mem, &node->parent_footnote_def->as.literal), false, LITERAL);
-      LIT("]");
-    }
+    // TODO
     break;
 
   default:
