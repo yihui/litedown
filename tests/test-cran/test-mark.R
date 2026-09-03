@@ -119,6 +119,23 @@ assert('mark() keeps [^x] as a footnote reference, not a superscript', {
   (grepl('<sup class="footnote-ref">', out, fixed = TRUE))
 })
 
+assert('mark() renders LaTeX footnotes inline via the C extension', {
+  # the definition body is moved inline to the first reference as \footnote{}
+  # (cmark otherwise moves definitions to the end of the document)
+  (mark2(c('Hi[^a] there.', '', '[^a]: A _note_.'), 'latex') %==%
+     'Hi\\footnote{A \\emph{note}.} there.')
+  # two distinct footnotes each render as their own \footnote{}
+  (mark2(c('A[^a] B[^b].', '', '[^a]: first.', '', '[^b]: second.'), 'latex') %==%
+     'A\\footnote{first.} B\\footnote{second.}.')
+  # a repeated reference reuses the number via \footnotemark[N] (N is the
+  # footnote index), so LaTeX's footnote counter is not advanced twice
+  (mark2(c('A[^a] again[^a].', '', '[^a]: shared.'), 'latex') %==%
+     'A\\footnote{shared.} again\\footnotemark[1].')
+  # footnotes disabled: no \footnote is emitted (the reference stays literal)
+  (!grepl('\\footnote', mark2(c('A[^a].', '', '[^a]: x.'), 'latex', options = '-footnotes'),
+          fixed = TRUE))
+})
+
 assert('mark() toggles superscript/subscript/strikethrough independently', {
   # each option controls only its own feature, even though ~ drives two of them
   (mark2('~~x~~', 'html', options = '-strikethrough') %==% '<p>~~x~~</p>')

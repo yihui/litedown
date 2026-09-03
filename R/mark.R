@@ -109,6 +109,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # rendering, matching the old behavior), and is always on
   if (format == 'html')
     options$extensions = union(options$extensions, 'attributes')
+  # LaTeX footnotes: cmark moves footnote definitions to the end of the document
+  # (right for HTML, wrong for LaTeX). The C 'latexfootnotes' extension rewrites
+  # the tree so the first reference renders as \footnote{body} inline and repeat
+  # references as \footnotemark[N]. Only a LaTeX render func is set, so it is
+  # attached for latex output only (and only when footnotes are enabled)
+  if (format == 'latex' && isTRUE(options[['footnotes']]))
+    options$extensions = union(options$extensions, 'latexfootnotes')
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -232,7 +239,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # number figures and tables, etc.
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
-    if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
+    # footnotes are rendered inline as \footnote{}/\footnotemark by the C
+    # 'latexfootnotes' extension (attached above), so no post-processing here
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
@@ -389,8 +397,10 @@ markdown_options = function() {
     # superscript/subscript/strikethrough are C extensions, so they appear in
     # list_extensions(); 'math' (via the 'latex_math' option) and 'rawblock'
     # (always on for html/latex) are not user-facing option names, so exclude
-    # them from the auto-enabled extension list
-    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock'))
+    # them from the auto-enabled extension list; 'latexfootnotes' is attached
+    # internally for latex output (driven by the 'footnotes' option), so it is
+    # excluded too
+    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock', 'latexfootnotes'))
   )
   # options disabled by default
   x2 = c(

@@ -777,24 +777,6 @@ latex_envir = function(x, env = NULL) {
   c(if (x1 == '') paste0('\\end', env2) else paste0('\\begin', x1), latex_envir(x[-1], env))
 }
 
-# fix footnotes for LaTeX output: convert `\footnotemark[1] \footnotetext[1]{*}`
-# to `\footnote{*}` (see r-lib/commonmark#32)
-fix_footnotes = function(x) {
-  f1 = f2 = NULL
-  r = '\n\\\\footnotetext\\[(.+?)]\\{(.+?)\n\n}\n'
-  x = match_replace(x, r, function(z) {
-    f1 <<- c(f1, sub(r, '\\1', z))
-    f2 <<- c(f2, sub(r, '\\2', z))
-    ''
-  }, perl = FALSE)
-  f1 = sprintf('\\footnotemark[%s]', f1)
-  f2 = sprintf('\\footnote{%s}', f2)
-  for (i in seq_along(f1)) {
-    x = sub(f1[i], f2[i], x, fixed = TRUE)
-  }
-  x
-}
-
 # add auto identifiers to headings
 auto_identifier = function(x) {
   r = '<(h[1-6])([^>]*)>(.+?)</\\1>'
