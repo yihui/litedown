@@ -233,9 +233,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
     if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
-    # TODO: support code highlighting for latex (listings or highr::hi_latex); the
-    # info string of a fenced code block is currently dropped by cmark's built-in
-    # verbatim rendering, so ```r and ``` produce the same \begin{verbatim} block
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
