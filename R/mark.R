@@ -96,7 +96,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   )
   options$extensions = union(options$extensions, if (format %in% c('html', 'latex')) c(
     # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$,
-    # and \begin{}...\end{} environments) for html/latex output
+    # and \begin{}...\end{} environments)
     if (isTRUE(options[['latex_math']])) 'math',
     'rawblock',  # raw content blocks (```{=html}/```{=latex}/```{=tex})
     if (format == 'html') 'attributes' else
@@ -140,10 +140,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   # Whether any LaTeX math is present, to decide whether to load KaTeX/MathJax.
-  # We detect this from the *rendered* output (below) rather than the source,
-  # because a bare `$` in the source may just be a dollar sign, inline code
-  # (`$x$`), or math that has been disabled (-latex_math); detecting on the
-  # source would load a math library unnecessarily. See the html branch below.
   has_math = FALSE
 
   p = prose_index(text)  # indices of prose
