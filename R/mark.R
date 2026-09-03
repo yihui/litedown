@@ -163,17 +163,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     text[p]
   )
 
-  if (format == 'latex') {
-    id4 = id_string(text)
-    # put info string inside code blocks so the info won't be lost, e.g., ```r -> ```\nr;
-    # skip raw content blocks (```{=html}/```{=latex}/```{=tex}), whose info
-    # string must reach the C 'rawblock' extension intact
-    text = gsub(
-      '^([> ]*)(```+)(?! *\\{=)([^`].*)$', sprintf('\\1\\2\n\\1%s\\3%s', id4, id4),
-      text, perl = TRUE
-    )
-  }
-
   # turn @ref into [@ref](#ref) and resolve cross-references later in JS; for
   # latex output, turn @ref to \ref{}
   r_ref = '(([a-z]+)[-:][-_[:alnum:]]+)'  # must start with letters followed by - or :
@@ -244,18 +233,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
     if (isTRUE(options[['footnotes']])) ret = fix_footnotes(ret)  # fix footnotes
-    r4 = sprintf(
-      '(\\\\begin\\{verbatim}\n)%s(.+?)%s\n(.*?\n)(\\\\end\\{verbatim}\n)', id4, id4
-    )
-    # raw content blocks (```{=latex}/```{=tex}/```{=html}) are handled by the C
-    # 'rawblock' extension, so only ordinary code blocks reach this verbatim
-    # post-processing (which strips the id4-smuggled info string).
-    ret = match_replace(ret, r4, function(x) {
-      # TODO: support code highlighting for latex (listings or highr::hi_latex)
-      gsub(r4, '\\1\\3\\4', x)
-    }, perl = FALSE)
-    # for nested verbatim code blocks, the inner blocks may have leftover ```\nid4
-    ret = gsub(sprintf('(```)\n%s(.*?)%s', id4, id4), '\\1\\2', ret)
+    # TODO: support code highlighting for latex (listings or highr::hi_latex); the
+    # info string of a fenced code block is currently dropped by cmark's built-in
+    # verbatim rendering, so ```r and ``` produce the same \begin{verbatim} block
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
