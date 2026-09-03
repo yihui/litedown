@@ -94,28 +94,14 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   options$extensions = intersect(
     names(Filter(isTRUE, options)), list_extensions()
   )
-  # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$, and
-  # \begin{}...\end{} environments) for html/latex output
-  if (isTRUE(options[['latex_math']]) && format %in% c('html', 'latex'))
-    options$extensions = union(options$extensions, 'math')
-  # raw content blocks (```{=html}/```{=latex}/```{=tex}) are handled by the C
-  # 'rawblock' extension for html/latex output; it is always on (raw blocks are
-  # not an optional feature), so it is not exposed as a markdown_options() toggle
-  if (format %in% c('html', 'latex'))
-    options$extensions = union(options$extensions, 'rawblock')
-  # Pandoc-style code block attributes (```{.class #id key="val"}) are rendered
-  # by the C 'attributes' extension for html output; it only sets an HTML render
-  # func (LaTeX/other formats ignore the info string via cmark's built-in code
-  # rendering, matching the old behavior), and is always on
-  if (format == 'html')
-    options$extensions = union(options$extensions, 'attributes')
-  # LaTeX footnotes: cmark moves footnote definitions to the end of the document
-  # (right for HTML, wrong for LaTeX). The C 'latexfootnotes' extension rewrites
-  # the tree so the first reference renders as \footnote{body} inline and repeat
-  # references as \footnotemark[N]. Only a LaTeX render func is set, so it is
-  # attached for latex output only (and only when footnotes are enabled)
-  if (format == 'latex' && isTRUE(options[['footnotes']]))
-    options$extensions = union(options$extensions, 'latexfootnotes')
+  options$extensions = union(options$extensions, if (format %in% c('html', 'latex')) c(
+    # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$,
+    # and \begin{}...\end{} environments) for html/latex output
+    if (isTRUE(options[['latex_math']])) 'math',
+    'rawblock',  # raw content blocks (```{=html}/```{=latex}/```{=tex})
+    if (format == 'html') 'attributes' else
+      if (isTRUE(options[['footnotes']])) 'latexfootnotes'
+  ))
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -239,8 +225,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # number figures and tables, etc.
     ret = number_refs(ret, r_ref, is_katex)
   } else if (format == 'latex') {
-    # footnotes are rendered inline as \footnote{}/\footnotemark by the C
-    # 'latexfootnotes' extension (attached above), so no post-processing here
     # fix horizontal rules from --- (\linethickness doesn't work)
     ret = gsub('{\\linethickness}', '{1pt}', ret, fixed = TRUE)
     ret = redefine_level(ret, options[['top_level']])
