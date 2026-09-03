@@ -468,7 +468,7 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 <p>\(J\) = Lightweight <a href="https://github.com/yihui/lite.js">vanilla JS/CSS</a></p>
 </li>
 </ul>
-<div id="fig:scope-litedown" class="figure">
+<div class="figure" id="fig:scope-litedown">
 <pre class="mermaid">classDiagram
   class litedown {
     +HTML/LaTeX
@@ -528,7 +528,7 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 A minimal partial re-implementation of the R Markdown ecosystem as <strong>litedown</strong>, via <a href="https://naruto.fandom.com/wiki/Chibaku_Tensei">Chibaku Tensei</a> (to <a href="https://youtu.be/IqAD4np1g1s">seal the nine tailed beasts</a>).</p>
 </div>
 </div>
-<div id="fig:scope-rmarkdown" class="figure">
+<div class="figure" id="fig:scope-rmarkdown">
 <pre class="mermaid">classDiagram
   direction BT
   class htmlwidgets {
@@ -821,7 +821,7 @@ target output format such as HTML and LaTeX.</p>
 <code>litedown::fuse()</code> as the new <code>knitr::knit()</code>, <code>litedown::fiss()</code> as the new
 <code>knitr::purl()</code>, and <code>litedown::mark()</code> as the new Pandoc. <a class="cross-ref-fig" href="#fig:fuse-flow">3</a> shows
 the conversion process from R Markdown to a target format.</p>
-<div id="fig:fuse-flow" class="figure">
+<div class="figure" id="fig:fuse-flow">
 <pre class="mermaid">flowchart LR
   A@{ shape: doc, label: &quot;*.Rmd&quot; }-. &lt;code&gt;fuse()&lt;/code&gt; .-o F@{ shape: bolt }
   F o--- B@{ shape: doc, label: &quot;*.md&quot; }
@@ -914,7 +914,7 @@ outcome manually from one place to another.</p>
 <p>A computational document contains both text narratives and code for computing.
 <a class="cross-ref-fig" href="#fig:flow-concepts">4</a> shows the basic components of a document and how they work
 together.</p>
-<div id="fig:flow-concepts" class="figure">
+<div class="figure" id="fig:flow-concepts">
 <pre class="mermaid">flowchart TD
   O@{ shape: lin-doc, label: &quot;Input document&quot; }--&quot;crack()&quot;--&gt; A@{ shape: f-circ } -.-o B[[YAML]]
   A -.-o C[[Text chunk]]
@@ -964,7 +964,7 @@ behavior of the computing and output.</p>
 <p>After all code has been executed, the output blocks will be merged to a Markdown
 document, which can be further rendered to a target output format such as HTML
 and LaTeX.</p>
-<div id="fig:humpty-dumpty" class="figure">
+<div class="figure" id="fig:humpty-dumpty">
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg" alt="Humpty Dumpty" width="250px" /></p>
 <div class="caption">
 <p><span class="ref-number-fig">5</span> After raising two kids for a few years, I have been so
@@ -1299,7 +1299,7 @@ actual output but for illustration only).</p>
   }
 }
 </style>
-<div id="fig:attr-structure" class="figure">
+<div class="figure" id="fig:attr-structure">
 <div class="attr-blocks fenced-chunk">
 <pre><code class="language-md open-fence code-fence">:::: {.chunk}
 </code></pre>
@@ -1478,7 +1478,7 @@ global variables, and other dependencies will be summarized into a hash (a
 character string), which will be used to check if the cache exists. Any change
 in the input of the hash will lead to a change in the hash value, which in turn
 invalidates the old cache and creates new cache.</p>
-<div id="fig:flow-cache" class="figure">
+<div class="figure" id="fig:flow-cache">
 <pre class="mermaid">flowchart TD
   A[[Code chunk]]--&quot;parse()&quot;--&gt; B1&gt;Expression]
   A--&quot;xfun::find_globals()&quot;--&gt; B2&gt;Global variables]
@@ -1601,7 +1601,7 @@ placed below figures, and table captions are placed above tables.
 </code></pre>
 <pre><code class="language-r">head(cars, 4)
 </code></pre>
-<div id="tab:tab-bottom" class="table">
+<div class="table" id="tab:tab-bottom">
 <table>
 <thead>
 <tr>
@@ -3128,7 +3128,7 @@ plot(cars)
 </code></pre>
 <p>Both <code>#'</code> and <code>#|</code> comments are optional. If no <code>#'</code> or <code>#|</code> comments are found
 in the script, the whole script will be treated as a single code chunk.</p>
-<div id="fig:flow-sieve" class="figure">
+<div class="figure" id="fig:flow-sieve">
 <pre class="mermaid">flowchart TD
   O@{ shape: lin-doc, label: &quot;Input script&quot; }--&quot;sieve()&quot;--&gt; A@{ shape: f-circ } -.-o B[[&quot;#' YAML&quot;]]
   A -.-o C[[&quot;#' Text&quot;]]
@@ -3898,7 +3898,7 @@ document.querySelectorAll('pre').forEach(pre =&gt; {
 We can cross-reference @lst:example.
 </code></pre>
 <div class="callout-output">
-<div id="lst:example" class="box">
+<div class="box" id="lst:example">
 <div class="caption">
 <p><span class="ref-number-lst">1</span> A code listing demonstrating how to fold code blocks with JS.</p>
 </div>
@@ -4785,7 +4785,7 @@ files you need, e.g.,</p>
 <p><a class="cross-ref-tab" href="#tab:assets">4</a> provides a quick reference of existing CSS/JS assets in the
 <code>lite.js</code> repository. See <a class="cross-ref-sec" href="#sec:meta-css">4.3.2.1</a> for the meaning of the <code>@</code> character in
 <code>css</code> / <code>js</code> names.</p>
-<div id="tab:assets" class="table no-ref-label">
+<div class="table no-ref-label" id="tab:assets">
 <div class="caption">
 <p><span class="ref-number-tab">4</span>
 A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
@@ -6786,7 +6786,7 @@ the intermediate Markdown text for the target output format, e.g.,</p>
 different, e.g., for <code>html</code> output, the default graphical device is PNG, whereas
 for <code>latex</code> output, the default device is PDF.</p>
 <p><a class="cross-ref-tab" href="#tab:input-output">6</a> provides a summary of the above rules.</p>
-<div id="tab:input-output" class="table">
+<div class="table" id="tab:input-output">
 <div class="caption">
 <p><span class="ref-number-tab">6</span> The returned value for different combinations of <code>input</code>
 and <code>output</code> arguments of <code>mark()</code> / <code>fuse()</code>.</p>
