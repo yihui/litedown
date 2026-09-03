@@ -69,7 +69,7 @@ static int is_attr_info(cmark_chunk *info) {
 }
 
 /* Locate the attribute-list body (the text between the outer braces), trimming
- * surrounding spaces on the whole info string first. Sets *start/*end to the
+ * surrounding spaces on the whole info string first. Sets *start / *end to the
  * byte range [start, end) of the body. Assumes is_attr_info() returned true. */
 static void attr_body(cmark_chunk *info, bufsize_t *start, bufsize_t *end) {
   const unsigned char *d = info->data;
@@ -85,7 +85,7 @@ static void attr_body(cmark_chunk *info, bufsize_t *start, bufsize_t *end) {
 
 /* Advance past one whitespace-separated token in d[*i, len), treating a
  * double-quoted run as part of the token (so a quoted value may contain
- * spaces). On return *tok/*tend bound the token and *i points past it; returns
+ * spaces). On return *tok / *tend bound the token and *i points past it; returns
  * 0 when no token remains. */
 static int next_token(const unsigned char *d, bufsize_t len, bufsize_t *i,
                       bufsize_t *tok, bufsize_t *tend) {
