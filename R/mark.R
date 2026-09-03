@@ -193,8 +193,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   has_mermaid = FALSE
 
   if (format == 'html') {
-    # don't disable check boxes
-    ret = gsub('(<li><input type="checkbox" [^>]*?)disabled="" (/>)', '\\1\\2', ret)
     # replace <a> with <span> if href is empty but other attrs exist, so we have
     # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
     # class="foo"></span>

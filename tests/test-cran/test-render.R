@@ -54,6 +54,18 @@ assert('markdown_html() still renders correctly', {
   (markdown_html('Hello _World_!\n') %==% '<p>Hello <em>World</em>!</p>\n')
 })
 
+# litedown patches the tasklist extension to render checkboxes without the
+# disabled="" attribute (upstream cmark-gfm emits it), so they are interactive;
+# this replaces a gsub() workaround that used to strip disabled="" in mark()
+assert('task list checkboxes are rendered without disabled=""', {
+  (markdown_html('- [x] a\n- [ ] b\n', extensions = 'tasklist') %==% paste0(
+    '<ul>\n',
+    '<li><input type="checkbox" checked="" /> a</li>\n',
+    '<li><input type="checkbox" /> b</li>\n',
+    '</ul>\n'
+  ))
+})
+
 # a bare closing tag opens a type 6/7 HTML block that, per CommonMark, ends only
 # at a blank line; litedown patches cmark so an opening code fence ends it too,
 # and the fence is parsed as a code block instead of being absorbed as HTML

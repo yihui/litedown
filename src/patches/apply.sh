@@ -25,3 +25,6 @@ apply inline-sourcepos-cols.diff
 # </p>\n``` is parsed as HTML followed by a code block. To be submitted
 # upstream to github/cmark-gfm.
 apply html-block-code-fence-end.diff
+# Render task list checkboxes without disabled="" (litedown), so they are
+# interactive. litedown-specific (GitHub renders them disabled), not for upstream.
+apply tasklist-no-disable.diff

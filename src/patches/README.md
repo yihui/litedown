@@ -73,6 +73,9 @@ Current patches (see `apply.sh`):
   opening code fence, so `</p>` followed by a ```` ``` ```` line parses as an
   HTML block plus a separate code block (rather than the fence being absorbed
   into the HTML block). To be submitted upstream to github/cmark-gfm.
+- `tasklist-no-disable.diff` — litedown: render task list checkboxes without the
+  `disabled=""` attribute so they are interactive. litedown-specific (GitHub
+  renders task lists as disabled), not intended for upstream.
 
 Prefer adding new features as standalone files under `src/extensions/` rather
 than as patches to core files: extensions survive upstream syncs untouched,
