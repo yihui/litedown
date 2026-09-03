@@ -163,8 +163,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     text[p]
   )
 
-  id4 = id_string(text)
   if (format == 'latex') {
+    id4 = id_string(text)
     # put info string inside code blocks so the info won't be lost, e.g., ```r -> ```\nr;
     # skip raw content blocks (```{=html}/```{=latex}/```{=tex}), whose info
     # string must reach the C 'rawblock' extension intact
@@ -173,9 +173,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       text, perl = TRUE
     )
   }
-  # for html, Pandoc-style code block attributes (```{.class #id key="val"}) are
-  # rendered by the C 'attributes' extension, so the info string is passed to
-  # cmark verbatim (no space-hiding / post-render conversion needed here)
 
   # turn @ref into [@ref](#ref) and resolve cross-references later in JS; for
   # latex output, turn @ref to \ref{}
