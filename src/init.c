@@ -9,6 +9,7 @@ extern SEXP R_render_markdown(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SE
 extern SEXP R_parse_markdown(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP R_code_tokens(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP R_prose_lines(SEXP);
+extern SEXP R_convert_attrs(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
   {"R_list_extensions", (DL_FUNC) &R_list_extensions, 0},
@@ -16,6 +17,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_parse_markdown",  (DL_FUNC) &R_parse_markdown,  7},
   {"R_code_tokens",     (DL_FUNC) &R_code_tokens,     6},
   {"R_prose_lines",     (DL_FUNC) &R_prose_lines,     1},
+  {"R_convert_attrs",   (DL_FUNC) &R_convert_attrs,   2},
   {NULL, NULL, 0}
 };
 

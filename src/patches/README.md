@@ -41,8 +41,12 @@ overwrite them with upstream `src/` files:
   extension (```` ```{.class #id key="val"} ````): a postprocess pass tags the
   matching code blocks and its HTML render func emits the attributes on
   `<pre><code>` (`.class` → `class`, `#id` → `id`, `{-}` → `.unnumbered`,
-  `key=value` verbatim). Only the HTML render func is set, so other output
-  formats keep cmark's built-in code-block rendering. Written for litedown.
+  `key=value` verbatim, in the order class, id, rest). Only the HTML render func
+  is set, so other output formats keep cmark's built-in code-block rendering.
+  The attribute-string builder (`litedown_render_attrs()`) is also exposed to R
+  via the `R_convert_attrs` binding in `parse.c`, so R's `convert_attrs()`
+  (which handles the same syntax on headings/links/divs/images) shares this one
+  implementation. Written for litedown.
 - `src/extensions/rawblock.c` / `.h` — raw content block extension
   (```` ```{=html} ````, ```` ```{=latex} ````, ```` ```{=tex} ````): a
   postprocess pass tags the matching code blocks with the extension so its

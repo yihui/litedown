@@ -145,6 +145,25 @@ assert('mark() renders raw content blocks via the C extension', {
      '<p>before</p>\n<hr>\n<p>after</p>')
 })
 
+assert('mark() applies {.class #id key=val} attributes in a canonical order', {
+  # convert_attrs() (headings/links/divs) and the code block 'attributes'
+  # extension share one C implementation, so all of them emit attributes in the
+  # order class, id, then the remaining key=value tokens (in source order),
+  # regardless of the order the tokens appear in the source
+  (mark2('# Hi {.foo .bar #baz style="x"}') %==%
+     '<h1 class="foo bar" id="baz" style="x">Hi</h1>')
+  # tokens in a scrambled order still come out class, id, rest
+  (mark2('# Hi {style="a" .foo k="b" #id}') %==%
+     '<h1 class="foo" id="id" style="a" k="b">Hi</h1>')
+  # a fenced Div and an inline link use the same ordering
+  (mark2(c('::: {#baz .foo}', 'x', ':::')) %==%
+     '<div class="foo" id="baz">\n<p>x</p>\n</div>')
+  (mark2('[t](u){#baz .foo}') %==% '<p><a href="u" class="foo" id="baz">t</a></p>')
+  # a code block goes through the same C core (with the language- class prefix)
+  (mark2(c('```{#baz .foo}', 'x', '```')) %==%
+     '<pre><code class="language-foo" id="baz">x\n</code></pre>')
+})
+
 assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   # documented exception: a raw {=latex}/{=tex} block that is a math environment
   # is wrapped in <p>...</p> for HTML so the JS math library can typeset it

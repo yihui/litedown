@@ -9,7 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "buffer.h"
 #include "extensions/litedown-extensions.h"
+#include "extensions/attributes.h"
 
 /* Build a nested R list for a node and all of its descendants. Each node is a
  * named list with fields:
@@ -331,5 +333,47 @@ SEXP R_prose_lines(SEXP text) {
   }
 
   UNPROTECT(2);
+  return out;
+}
+
+/* Convert Pandoc-style attribute list bodies to HTML attribute strings, sharing
+ * the C implementation used to render code block attributes (see
+ * litedown_render_attrs in extensions/attributes.c). This is the engine behind
+ * R's convert_attrs(): `specs` is a character vector where each element is the
+ * text inside the braces (e.g. `.r .js #foo k="v"`), already stripped of the
+ * curly braces and preprocessed by R (curly-quote / LaTeX-escape normalization).
+ * Returns a character vector of the same length, each the assembled attribute
+ * string in the canonical order class, id, then key=value tokens. `prefix` is
+ * the string prepended to the first class (e.g. "" for headings/links/divs;
+ * the code-block render func passes "language-" directly). NA inputs map to NA. */
+SEXP R_convert_attrs(SEXP specs, SEXP prefix) {
+  if (!Rf_isString(specs))
+    Rf_error("Argument 'specs' must be a character vector.");
+  if (!Rf_isString(prefix) || Rf_length(prefix) != 1)
+    Rf_error("Argument 'prefix' must be a single string.");
+
+  const char *pfx = Rf_translateCharUTF8(STRING_ELT(prefix, 0));
+  int n = Rf_length(specs);
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, n));
+  cmark_mem *mem = cmark_get_default_mem_allocator();
+
+  for (int i = 0; i < n; i++) {
+    SEXP s = STRING_ELT(specs, i);
+    if (s == NA_STRING) {
+      SET_STRING_ELT(out, i, NA_STRING);
+      continue;
+    }
+    {
+      const char *d = Rf_translateCharUTF8(s);
+      cmark_strbuf buf = CMARK_BUF_INIT(mem);
+      litedown_render_attrs(&buf, (const unsigned char *) d,
+                            (bufsize_t) strlen(d), pfx);
+      cmark_strbuf_putc(&buf, '\0');
+      SET_STRING_ELT(out, i, Rf_mkCharCE((const char *) buf.ptr, CE_UTF8));
+      cmark_strbuf_free(&buf);
+    }
+  }
+
+  UNPROTECT(1);
   return out;
 }

@@ -2,7 +2,7 @@
 # 'commonmark' package (from which the C code and R wrappers are derived) so
 # that litedown can call them internally without depending on 'commonmark'.
 
-#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens R_prose_lines
+#' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens R_prose_lines R_convert_attrs
 NULL
 
 markdown_html = function(
