@@ -54,6 +54,34 @@ assert('markdown_html() still renders correctly', {
   (markdown_html('Hello _World_!\n') %==% '<p>Hello <em>World</em>!</p>\n')
 })
 
+# the 'attributes' extension renders Pandoc-style code block attributes
+# (```{.class #id key="val"}) as HTML attributes on <pre><code>, replacing the
+# id_string()/convert_attrs() smuggling that mark() used to do in R
+assert('the attributes extension renders code block attributes', {
+  cb = function(x) markdown_html(x, extensions = 'attributes')
+  # a single class becomes the language- class (same as a plain info string)
+  (cb('```{.r}\n1\n```\n') %==% '<pre><code class="language-r">1\n</code></pre>\n')
+  # multiple classes are space-joined; #id and key="val" follow class, in order
+  (cb('```{.r .js #foo style="color: red;"}\n1\n```\n') %==% paste0(
+    '<pre><code class="language-r js" id="foo" style="color: red;">1\n',
+    '</code></pre>\n'
+  ))
+  # {-} is shorthand for .unnumbered
+  (cb('```{-}\n1\n```\n') %==% '<pre><code class="language-unnumbered">1\n</code></pre>\n')
+  # an id with no class emits no class attribute (no empty language- class)
+  (cb('```{#foo}\n1\n```\n') %==% '<pre><code id="foo">1\n</code></pre>\n')
+  # class/id values are HTML-escaped (matching cmark's language class escaping)
+  (cb('```{.a<b #c>d}\n1\n```\n') %==%
+     '<pre><code class="language-a&lt;b" id="c&gt;d">1\n</code></pre>\n')
+  # key=value attributes are emitted verbatim (as the old R path did; litedown
+  # runs cmark in UNSAFE mode and treats the input as trusted)
+  (cb('```{style="width: 50%"}\n1\n```\n') %==%
+     '<pre><code style="width: 50%">1\n</code></pre>\n')
+  # a raw content block ({=...}) is left to the rawblock extension, not claimed
+  (markdown_html('```{=html}\n<hr>\n```\n', extensions = c('rawblock', 'attributes')) %==%
+     '<hr>\n')
+})
+
 # litedown patches the tasklist extension to render checkboxes without the
 # disabled="" attribute (upstream cmark-gfm emits it), so they are interactive;
 # this replaces a gsub() workaround that used to strip disabled="" in mark()

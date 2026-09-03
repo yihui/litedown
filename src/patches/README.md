@@ -37,6 +37,12 @@ overwrite them with upstream `src/` files:
   set in `wrapper.c` / `parse.c` through `litedown_attach_extension()`. The
   upstream `strikethrough` extension is therefore never attached. Written for
   litedown.
+- `src/extensions/attributes.c` / `.h` — Pandoc-style code block attributes
+  extension (```` ```{.class #id key="val"} ````): a postprocess pass tags the
+  matching code blocks and its HTML render func emits the attributes on
+  `<pre><code>` (`.class` → `class`, `#id` → `id`, `{-}` → `.unnumbered`,
+  `key=value` verbatim). Only the HTML render func is set, so other output
+  formats keep cmark's built-in code-block rendering. Written for litedown.
 - `src/extensions/rawblock.c` / `.h` — raw content block extension
   (```` ```{=html} ````, ```` ```{=latex} ````, ```` ```{=tex} ````): a
   postprocess pass tags the matching code blocks with the extension so its
