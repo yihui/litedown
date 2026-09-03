@@ -103,6 +103,12 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   # not an optional feature), so it is not exposed as a markdown_options() toggle
   if (format %in% c('html', 'latex'))
     options$extensions = union(options$extensions, 'rawblock')
+  # Pandoc-style code block attributes (```{.class #id key="val"}) are rendered
+  # by the C 'attributes' extension for html output; it only sets an HTML render
+  # func (LaTeX/other formats ignore the info string via cmark's built-in code
+  # rendering, matching the old behavior), and is always on
+  if (format == 'html')
+    options$extensions = union(options$extensions, 'attributes')
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
   is_pdf = is_output_file(output) && format == 'latex' &&
@@ -157,8 +163,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     text[p]
   )
 
-  id4 = id_string(text)
   if (format == 'latex') {
+    id4 = id_string(text)
     # put info string inside code blocks so the info won't be lost, e.g., ```r -> ```\nr;
     # skip raw content blocks (```{=html}/```{=latex}/```{=tex}), whose info
     # string must reach the C 'rawblock' extension intact
@@ -166,15 +172,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       '^([> ]*)(```+)(?! *\\{=)([^`].*)$', sprintf('\\1\\2\n\\1%s\\3%s', id4, id4),
       text, perl = TRUE
     )
-  } else if (format == 'html' && length(p) < length(text)) {
-    # hide spaces so that attributes won't be dropped: {.lang foo} -> {.lang!id!foo}
-    r4 = '^([> ]*```+\\s*)(\\{.+})\\s*$'
-    text = match_replace(text, r4, function(x) {
-      x1 = sub(r4, '\\1', x)
-      x2 = sub(r4, '\\2', x)
-      x2 = gsub(' ', id4, x2, fixed = TRUE)
-      paste0(x1, x2)
-    })
   }
 
   # turn @ref into [@ref](#ref) and resolve cross-references later in JS; for
@@ -202,18 +199,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (has_mermaid <- length(grep(r_mmd, ret))) {
       ret = gsub(r_mmd, '<pre class="mermaid">\\1</pre>', ret)
     }
-    r4 = '(<pre><code class="language-)\\{([^"]+)}">'
-    # deal with ```{.class1 .class2 attrs}, which is not supported by commonmark
-    ret = convert_attrs(ret, r4, '\\2', function(r, z, z2) {
-      z1 = sub(r, '\\1', z)
-      # make sure `class` is the first attribute
-      z2 = gsub('^(.+?)( +)(class="[^"]+")(.*)$', '\\3 \\1\\4', z2)
-      i = grepl('^class="', z2)
-      z2 = ifelse(i, sub('^class="', '', z2), paste0('"', z2))
-      paste0(z1, z2, '>')
-    }, 'html', function(z2) gsub(id4, ' ', restore_html(z2)))
-    # some code blocks with "attributes" are verbatim ones
-    ret = match_replace(ret, '```+\\s*\\{.+}', function(x) gsub(id4, ' ', x, fixed = TRUE))
     # remove empty table header
     ret = gsub('<thead>\n<tr>\n(<th[^>]*></th>\n)+</tr>\n</thead>\n', '', ret)
     # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
