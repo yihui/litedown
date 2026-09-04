@@ -673,6 +673,21 @@ By default, the source code blocks are displayed in the output with the chunk
 option `echo = TRUE`. To suppress source code blocks, you can use
 `echo = FALSE`.
 
+The `echo` option can also take a numeric vector of line numbers to select which
+lines of the source code to display. Positive numbers indicate the lines to
+include, and negative numbers indicate the lines to exclude. For example,
+`echo = -1` hides the first line of the source code, which can be useful when a
+line is not interesting to readers, e.g., a `set.seed()` call:
+
+```{{r, echo = -1}}
+set.seed(108)
+rnorm(3)
+```
+
+Similarly, `echo = 2:3` shows only the second and third lines. The line numbers
+are relative to the whole code chunk (counting from 1), and out-of-range numbers
+are ignored.
+
 ### `error`: error behavior {#sec:option-error}
 
 You can specify how errors in a code chunk should be handled with the `error`
