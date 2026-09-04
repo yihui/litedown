@@ -7,6 +7,10 @@ pkg = 'litedown'
 # functions (Rd_aliases(), pkg_manual()) can't run there; gate those tests.
 has_rd = !inherits(try(tools::Rd_db(pkg), silent = TRUE), 'try-error')
 
+# NEWS.md is not always installed (e.g., older R versions don't ship it in the
+# package's installed dir), so gate NEWS-based tests on its presence.
+has_news = file_exists(detect_news(pkg))
+
 assert('header_class() builds the {.unlisted .unnumbered} attribute string', {
   # both off -> both classes (Markdown form)
   (header_class(FALSE, FALSE) %==% ' {.unlisted .unnumbered}')
@@ -53,7 +57,7 @@ assert('tweak_citation() fills in a missing year', {
   (!is.null(unclass(x)[[1]]$year))
 })
 
-assert('detect_news() finds NEWS.md via the package path or installed package', {
+if (has_news) assert('detect_news() finds NEWS.md via the package path or installed package', {
   # installed package: falls back to system.file()
   p = detect_news(pkg)
   (is.character(p))
@@ -86,7 +90,7 @@ assert('pkg_citation() returns text and BibTeX citations', {
   (any(grepl('@Manual|@Misc|@Article', ci)))
 })
 
-assert('pkg_news() returns news entries with lowered heading levels', {
+if (has_news) assert('pkg_news() returns news entries with lowered heading levels', {
   n = suppressWarnings(pkg_news(pkg, recent = 1))
   (length(n) > 0L)
   # NEWS.md top-level '# ' headings are lowered to '## '
