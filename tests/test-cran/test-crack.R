@@ -71,7 +71,7 @@ assert('crack() handles inline code in text blocks', {
 
 assert('crack() strips fence padding for multi-backtick inline code on indented lines', {
   # `` `` ``-fences pad code with a space on each side; on an indented line,
-  # commonmark's sourcepos ignores the indentation, so the leftover text used to
+  # cmark's sourcepos ignores the indentation, so the leftover text used to
   # keep the fence and its padding space (yihui/litedown#132)
   src = c('- item', '  `` {r} 1 + 1 `` and `` {r} 2 + 2 `` done')
   res = crack(text=src)

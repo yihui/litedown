@@ -341,21 +341,21 @@ will be rendered to `\chapter{heading}` instead of the default
 
 ### Other options
 
-Options not described above can be found on the help pages of **commonmark**,
-e.g., the `hardbreaks` option is for the `hardbreaks` argument of
-`commonmark::markdown_*()` functions, and the `table` option is for the `table`
-extension in **commonmark**'s extensions.
+Options not described above are passed to the underlying cmark-gfm renderer,
+e.g., the `hardbreaks` option is for the `hardbreaks` argument of the internal
+`markdown_*()` renderers, and the `table` option is for the `table` extension in
+cmark-gfm's extensions.
 
 ```{r}
 #| collapse = TRUE
 
 litedown::markdown_options()
-# commonmark's arguments
-opts = formals(commonmark::markdown_html)
+# renderer arguments
+opts = formals(litedown:::markdown_html)
 opts = opts[setdiff(names(opts), c('text', 'extensions'))]
 unlist(opts)
-# commonmark's extensions
-commonmark::list_extensions()
+# cmark-gfm's extensions (some were added by litedown)
+litedown:::list_extensions()
 ```
 
 ## Templates

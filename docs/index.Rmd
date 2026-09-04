@@ -38,7 +38,7 @@ options(width = 80)
   xfun::fenced_div(c(x1, x2), '.flex-col')
 }
 
-xfun::pkg_bib(c('litedown', 'commonmark', 'xfun', 'rbibutils'), 'packages.bib')
+xfun::pkg_bib(c('litedown', 'xfun', 'rbibutils'), 'packages.bib')
 ```
 
 ```{js, echo = FALSE, type = 'module'}
@@ -146,9 +146,10 @@ No Word, RTF, PowerPoint, or EPUB.
 
 R Markdown is rendered via `litedown::fuse()`, which is similar to
 `rmarkdown::render()` and `knitr::knit()`. Markdown is rendered via
-`litedown::mark()`, which uses **commonmark** [@R-commonmark] instead of Pandoc.
+`litedown::mark()`, which uses the [cmark-gfm](https://github.com/github/cmark-gfm)
+C library (bundled with the package) instead of Pandoc.
 
-The **commonmark** package follows the GFM (GitHub Flavored Markdown) spec,
+The cmark-gfm library follows the GFM (GitHub Flavored Markdown) spec,
 which can be seen as a subset of Pandoc's Markdown. Therefore the **litedown**
 package can be viewed as a small subset of the existing R Markdown ecosystem
 (the latter is based on Pandoc). It aims at simplicity, lightweight, and speed,
@@ -176,7 +177,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
     **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
     **distill** + **htmlwidgets**
 
--   $D_i$ = (internal dependencies) **commonmark** + **xfun**
+-   $D_i$ = (internal dependencies) **xfun**
 
 -   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
     Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
@@ -190,7 +191,7 @@ classDiagram
   class litedown {
     +HTML/LaTeX
     +min [ * ]
-    R-dep (xfun, commonmark)
+    R-dep (xfun)
     web-dep (lite.js)
   }
   class rmarkdown {
@@ -318,7 +319,7 @@ Output formats besides HTML and LaTeX are unlikely to be supported.[^2] If other
 output formats are desired, you may use Pandoc to do the conversion.
 
 [^2]: In fact, `xml,` `man`, `text`, and `commonmark` output formats are
-    supported (thanks to the **commonmark** package), but perhaps they are not
+    supported (thanks to the cmark-gfm library), but perhaps they are not
     very useful to average users.
 
 For tables, only pipe tables are supported. Other table formats are not
@@ -340,19 +341,20 @@ JavaScript, yet it is quite flexible (@chp:widgets).
 ### Small footprint
 
 Almost everything in **litedown** was written from scratch. The package is very
-lightweight, with only two R package dependencies: **commonmark** and **xfun**
-[@R-xfun].
+lightweight, with only one R package dependency: **xfun** [@R-xfun]. The
+Markdown parser and renderer are provided by the
+[cmark-gfm](https://github.com/github/cmark-gfm) C library bundled with the
+package.
 
 It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions `mark()` and
 `fuse()` can be viewed as significantly trimmed-down versions of Pandoc and
 **knitr**, respectively.
 
-Just to give you a better idea about the "lightweight" (the numbers below refer
-to *uncompressed* software and source code as of today):
+Just to give you a better idea about the "lightweight", as of today:
 
--   As the Markdown converter, Pandoc 3.5 is about 180Mb, and **commonmark** is
-    about 1Mb on my macOS.
+-   As the Markdown converter, Pandoc 3.8.3 binary is about 186Mb, and the 
+    **litedown** binary is under 1Mb on my macOS.
 
 -   Bootstrap's CSS is about 12,000 lines (plus 1500 lines of JS), and
     **litedown**'s base CSS is about 100 lines (no JS).
@@ -366,7 +368,7 @@ to *uncompressed* software and source code as of today):
 Admittedly, pursuing lightweight requires sacrifice in features and quality
 (e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
 the trade-off should be reasonable to those who prefer minimalism. With a 2Mb
-footprint (the total file size of **litedown**, **commonmark**, and **xfun**),
+footprint (the total file size of **litedown** and **xfun**),
 you can:
 
 -   Write basic components of Pandoc's Markdown (@chp:syntax), including
@@ -414,7 +416,7 @@ When previewing `.Rmd` documents with `roam()`, you will see line numbers on the
 left side of code blocks. Clicking on these numbers will bring you to the lines
 in the source.
 
-Due to the fact that the parser is based on **commonmark** (instead of solely on
+Due to the fact that the parser is based on cmark-gfm (instead of solely on
 regular expressions like **knitr**'s parser), it can precisely recognize code
 chunks and inline code, which means code within other verbatim code blocks or
 comments will be untouched. For example:

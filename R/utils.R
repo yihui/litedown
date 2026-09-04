@@ -762,7 +762,7 @@ move_attrs = function(x, format = 'html') {
       z3 = gsub('\\end{caption}', '}', z3, fixed = TRUE)
       z3
     }, format)
-    # remove table env generated from commonmark and use those from fenced Divs
+    # remove table env generated from cmark and use those from fenced Divs
     x = gsub('\\\\begin\\{table\\}\n(?=\\\\begin\\{tabular\\})', '', x, perl = TRUE)
     x = gsub('(?<=\\\\end\\{tabular\\}\n)\\\\end\\{table}', '', x, perl = TRUE)
   } else {

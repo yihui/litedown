@@ -1716,7 +1716,7 @@ Major differences between **knitr** and **litedown** include:
 
 -   The document parser of **knitr** is based solely on regular expressions and
     not robust. Code chunks and inline expressions are not aware of their
-    contexts. The parser of **litedown** is based on **commonmark**, which is
+    contexts. The parser of **litedown** is based on cmark-gfm, which is
     more robust and makes it straightforward to write verbatim code or comment
     out code (@sec:skipped-chunks).
 

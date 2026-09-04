@@ -226,7 +226,7 @@ ends means the column is center-aligned.
 
 ## Add-on features {#sec:markdown-addon}
 
-In addition to the basic features above (supported by **commonmark**), the
+In addition to the basic features above (supported by cmark-gfm), the
 **litedown** package also supports the following features.
 
 ### Raw LaTeX/HTML blocks

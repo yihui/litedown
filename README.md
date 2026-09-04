@@ -41,10 +41,10 @@ install.packages('litedown', repos = c('https://yihui.r-universe.dev', 'https://
 
 ### Markdown rendering
 
-The function `litedown::mark()` is based on the R package
-[**commonmark**](https://github.com/r-lib/commonmark), and renders Markdown to
-various output formats supported by **commonmark**, which are primarily HTML and
-LaTeX. MS Office formats are not supported.
+The function `litedown::mark()` is based on the C library
+[cmark-gfm](https://github.com/github/cmark-gfm) (bundled with the package), and
+renders Markdown to various output formats, which are primarily HTML and LaTeX.
+MS Office formats are not supported.
 
 ### Knitting
 
@@ -70,7 +70,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
     **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
     **distill** + **htmlwidgets**
 
--   $D_i$ = (internal dependencies) **commonmark** + **xfun**
+-   $D_i$ = (internal dependencies) **xfun**
 
 -   $D_e$ = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
     Hugo + paged.js + remark.js + tufte.css + distill.js/.css + ...
