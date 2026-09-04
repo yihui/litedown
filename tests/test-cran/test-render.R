@@ -129,3 +129,11 @@ assert('prose_index() returns the lines that are not inside a code block', {
   # an element carrying an embedded newline still maps to a single index
   (pidx(c('a\nb', '```', 'x', '```')) %==% 1L)
 })
+
+assert('GFM extensions are inert unless explicitly enabled', {
+  # exact renderer output for enabled extensions is pinned in test-render.md;
+  # here we only check that the features stay off by default
+  (!grepl('<table', markdown_html('|a|b|\n|-|-|\n|1|2|\n')))
+  (!grepl('<del>', markdown_html('~~x~~\n')))
+  (!grepl('<a href', markdown_html('see https://x.com\n')))
+})
