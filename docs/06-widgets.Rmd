@@ -15,7 +15,7 @@
 came up with the idea [in
 2014](https://github.com/ramnathv/htmlwidgets/graphs/contributors). I often find
 it hard to resist playing with things that are interactive. Although it feels a
-little embarassing to confess, I have clicked the buttons in @sec:new-road for
+little embarrassing to confess, I have clicked the buttons in @sec:new-road for
 more than 20 times, knowing clearly what will happen every time but still...
 There is certainly a lot more fun interacting with HTML widgets.
 

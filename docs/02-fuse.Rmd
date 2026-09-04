@@ -310,7 +310,7 @@ actual output but for illustration only).
 ``` {.output}
 ```
 
-```         
+```
 #> [1] 2 4 4
 ```
 
@@ -1167,7 +1167,7 @@ are:
 -   `1`: Always print the last value in the code chunk, no matter if it is
     visible.
 
--   `2`: Print all invisble values in the code, except for invisible `NULL`
+-   `2`: Print all invisible values in the code, except for invisible `NULL`
     (which is often not useful).
 
 Below are examples for different values of `verbose`:
@@ -1425,7 +1425,7 @@ comments, e.g.,
 #' title: An R script
 #' output: latex
 #' ---
-#' 
+#'
 #' A _paragraph_.
 
 #| eval = FALSE
