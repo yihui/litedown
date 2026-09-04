@@ -339,7 +339,7 @@ build_output = function(format, options, template, meta, ...) {
 # substitute all variables in template with their values
 sub_vars = function(tpl, meta, ...) {
   # find all variables in the template
-  vars = unlist(match_full(tpl, '[$][-_[:alnum:]]+[$]'))
+  vars = match_full(tpl, '[$][-_[:alnum:]]+[$]')
   # insert $body$ at last in case the body contain any $variables$ accidentally
   if (!is.na(i <- match('$body$', vars))) vars = c(vars[-i], vars[i])
   for (v in vars) {

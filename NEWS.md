@@ -16,6 +16,8 @@
 
 - Fixed a bug that a multi-backtick inline code expression (e.g., ``` `` `{r} code` `` ```) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).
 
+- Post-processing of the rendered HTML (adding section numbers, auto identifiers, resolving cross-references, building the table of contents, etc.) is substantially faster for documents containing multibyte (e.g., CJK) characters. These passes apply regular expressions line by line instead of to the whole document at once, which avoids the quadratic cost of mapping byte offsets to character offsets in long multibyte strings (for a document with ~1600 sections, the post-processing time dropped from ~73s to ~16s).
+
 # CHANGES IN litedown VERSION 0.11
 
 - The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).
