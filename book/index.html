@@ -4360,12 +4360,12 @@ cmark-gfm’s extensions.</p>
 <pre><code class="language-r">litedown::markdown_options()
 #&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
 #&gt;  [4] &quot;-offline&quot;          &quot;-smartypants&quot;      &quot;-tagfilter&quot;       
-#&gt;  [7] &quot;-toc&quot;              &quot;+attributes&quot;       &quot;+auto_identifiers&quot;
-#&gt; [10] &quot;+autolink&quot;         &quot;+cross_refs&quot;       &quot;+embed_cleanup&quot;   
-#&gt; [13] &quot;+embed_resources&quot;  &quot;+footnotes&quot;        &quot;+js_highlight&quot;    
-#&gt; [16] &quot;+js_math&quot;          &quot;+latex_math&quot;       &quot;+smart&quot;           
-#&gt; [19] &quot;+strikethrough&quot;    &quot;+subscript&quot;        &quot;+superscript&quot;     
-#&gt; [22] &quot;+table&quot;            &quot;+tasklist&quot;        
+#&gt;  [7] &quot;-toc&quot;              &quot;+auto_identifiers&quot; &quot;+autolink&quot;        
+#&gt; [10] &quot;+cross_refs&quot;       &quot;+embed_cleanup&quot;    &quot;+embed_resources&quot; 
+#&gt; [13] &quot;+footnotes&quot;        &quot;+js_highlight&quot;     &quot;+js_math&quot;         
+#&gt; [16] &quot;+latex_math&quot;       &quot;+smart&quot;            &quot;+strikethrough&quot;   
+#&gt; [19] &quot;+subscript&quot;        &quot;+superscript&quot;      &quot;+table&quot;           
+#&gt; [22] &quot;+tasklist&quot;        
 # renderer arguments
 opts = formals(litedown:::markdown_html)
 opts = opts[setdiff(names(opts), c('text', 'extensions'))]
