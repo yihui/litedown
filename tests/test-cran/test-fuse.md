@@ -36,6 +36,30 @@ fuse(text = c('```{r, echo=FALSE}', '2 * 3', '```'), output = 'markdown')
 ```
 `````
 
+## echo = -1 hides the first source line (#93)
+
+`````r
+fuse(text = c('```{r, echo=-1}', 'a = 1', 'b = 2', 'c = 3', '```'), output = 'markdown')
+`````
+`````
+``` {.r}
+b = 2
+c = 3
+```
+`````
+
+## echo = c(1, 3) shows only the selected source lines (#93)
+
+`````r
+fuse(text = c('```{r, echo=c(1, 3)}', 'a = 1', 'b = 2', 'c = 3', '```'), output = 'markdown')
+`````
+`````
+``` {.r}
+a = 1
+c = 3
+```
+`````
+
 ## eval = FALSE doesn't run code
 
 `````r

@@ -21,21 +21,6 @@ assert('code blocks after asis HTML output are rendered correctly (regression)',
   (as.character(gsub('.*<pre><code class="language-r">1:2.*', '', out)) %==% '')
 })
 
-assert('fuse() echo option selects source lines by number (#93)', {
-  src = c('```{r}', 'a = 1', 'b = 2', 'c = 3', '```')
-  # negative numbers exclude lines
-  out = one_string(fuse(text = sub('r', 'r, echo = -1', src, fixed = TRUE), output = 'markdown'))
-  (!grepl('a = 1', out, fixed = TRUE))
-  (grepl('b = 2', out, fixed = TRUE) && grepl('c = 3', out, fixed = TRUE))
-  # positive numbers include only those lines
-  out = one_string(fuse(text = sub('r', 'r, echo = c(1, 3)', src, fixed = TRUE), output = 'markdown'))
-  (grepl('a = 1', out, fixed = TRUE) && grepl('c = 3', out, fixed = TRUE))
-  (!grepl('b = 2', out, fixed = TRUE))
-  # echo = FALSE still hides all source
-  out = one_string(fuse(text = sub('r', 'r, echo = FALSE', src, fixed = TRUE), output = 'markdown'))
-  (!grepl('a = 1', out, fixed = TRUE))
-})
-
 assert('fuse() fig.path option controls plot file location', {
   src = c(
     '---', 'output:', '  html:', '    options:', '      embed_resources: false',
