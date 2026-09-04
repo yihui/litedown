@@ -818,8 +818,14 @@ fuse_code = function(x, blocks) {
     type = grep_sub('^record_', '', class(x))[1]
     if (is.na(type)) type = 'output'
     if (type == 'source') {
-      if (!opts$echo) return()
       l2 = attr(x, 'lines')[1]  # starting line number of a code block
+      # `echo` can be a logical value or a numeric vector of line numbers to
+      # include (positive) or exclude (negative) from the source
+      if (is.numeric(e <- opts$echo)) {
+        idx = l2 + seq_along(x) - 1L  # line number of each source line
+        x = x[if (any(e < 0)) !(idx %in% -e) else idx %in% e]
+        if (length(x) == 0) return()
+      } else if (!e) return()
       x = one_string(x)
       if (opts$strip.white) x = trim_blank(x)
     }
