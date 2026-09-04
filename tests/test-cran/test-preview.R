@@ -10,12 +10,13 @@ assert('is_lite_ext() recognizes extensions litedown can render', {
 })
 
 assert('is_text_file() detects text files by extension or MIME type', {
+  # the extension branch (js/tex/xml/...) doesn't need the file to exist
   (is_text_file(file = 'a.js'))
   (is_text_file(file = 'a.tex'))
   (is_text_file(file = 'a.xml'))
-  # a .txt is text/plain via mime_type()
-  (is_text_file(file = 'a.txt'))
-  (!is_text_file(file = 'a.png'))
+  # otherwise it falls back to the MIME type
+  (is_text_file('txt', 'text/plain', 'a.txt'))
+  (!is_text_file('png', 'image/png', 'a.png'))
 })
 
 assert('is_roaming() reflects the litedown.roaming option', {
