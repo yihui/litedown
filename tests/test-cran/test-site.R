@@ -49,11 +49,11 @@ assert('find_input() drops a .md file shadowed by a same-stem .Rmd', {
 
 assert('filter_outdated() flags inputs whose output is missing or stale', {
   f1 = tempfile(); f2 = tempfile()
-  writeLines('a', f1); Sys.sleep(1.05); writeLines('b', f2)
+  writeLines('a', f1); Sys.sleep(.05); writeLines('b', f2)
   # output (f2) is newer than input (f1) -> not outdated
   (isFALSE(filter_outdated(f1, f2, 0)))
   # output newer than input (f1) but input rewritten later -> outdated
-  Sys.sleep(1.05); writeLines('a2', f1)
+  Sys.sleep(.05); writeLines('a2', f1)
   (isTRUE(filter_outdated(f1, f2, 0)))
   # a missing output is always outdated
   (isTRUE(filter_outdated(f1, tempfile(), 0)))
