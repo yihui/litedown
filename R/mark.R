@@ -99,6 +99,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # and \begin{}...\end{} environments)
     if (isTRUE(options[['latex_math']])) 'math',
     'rawblock',  # raw content blocks (```{=html}/```{=latex}/```{=tex})
+    'inlineattrs',  # {#id .class key=val} on links/images (both html and latex)
     if (format == 'html') 'attributes' else
       if (isTRUE(options[['footnotes']])) 'latexfootnotes'
   ))
@@ -168,10 +169,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   has_mermaid = FALSE
 
   if (format == 'html') {
-    # replace <a> with <span> if href is empty but other attrs exist, so we have
-    # a way to create SPANs with attributes, e.g., [text](){.foo} -> <span
-    # class="foo"></span>
-    ret = gsub('<a href="" ([^>]+>.*?</)a>', '<span \\1span>', ret)
     # support mermaid
     r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
     if (has_mermaid <- length(grep(r_mmd, ret))) {
@@ -380,7 +377,7 @@ markdown_options = function() {
     # them from the auto-enabled extension list; 'latexfootnotes' is attached
     # internally for latex output (driven by the 'footnotes' option), so it is
     # excluded too
-    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock', 'latexfootnotes'))
+    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock', 'inlineattrs', 'latexfootnotes'))
   )
   # options disabled by default
   x2 = c(

@@ -935,7 +935,7 @@ mark('[a b](#){.red}')
 `````
 
 ````` {.latex .plain}
-\protect\hyperlink{}{a b}\{.red\}
+\protect\hyperlink{}{a b}
 `````
 
 ````` {.r}
@@ -944,7 +944,7 @@ mark('[a\nb](){.red}')
 
 ````` {.latex .plain}
 {a
-b}\{.red\}
+b}
 `````
 
 ````` {.r}

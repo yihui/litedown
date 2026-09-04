@@ -12,7 +12,7 @@ LIBCMARK = cmark/cmark.o cmark/node.o cmark/iterator.o cmark/blocks.o cmark/inli
 	extensions/autolink.o extensions/core-extensions.o extensions/ext_scanners.o \
 	extensions/strikethrough.o extensions/table.o extensions/tagfilter.o extensions/tasklist.o \
 	extensions/math.o extensions/subsup.o extensions/rawblock.o extensions/attributes.o \
-	extensions/latexfootnotes.o extensions/litedown-extensions.o
+	extensions/inlineattrs.o extensions/latexfootnotes.o extensions/litedown-extensions.o
 
 PKG_LIBS = -Lcmark -lstatcmark
 STATLIB = cmark/libstatcmark.a
