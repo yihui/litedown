@@ -686,23 +686,12 @@ redefine_level = function(x, top) {
 # LaTeX commands
 move_attrs = function(x, format = 'html') {
   if (format == 'html') {
-    # images
-    x = convert_attrs(x, '(<img src="[^>]+ )/>\\{([^}]+)\\}', '\\2', function(r, z, z2) {
-      z1 = sub(r, '\\1', z)
-      paste0(z1, z2, ' />')
-    }, lines = TRUE)
     # headings
     x = convert_attrs(x, '(<h[1-6])(>.+?) \\{([^}]+)\\}(</h[1-6]>)', '\\3', function(r, z, z3) {
       z1 = sub(r, '\\1 ', z)
       z24 = sub(r, '\\2\\4', z)
       paste0(z1, z3, z24)
     }, lines = TRUE)
-    # links
-    x = convert_attrs(x, '(<a[^>]+)(>(?s).*?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
-      z1 = sub(r, '\\1', z, perl = TRUE)
-      z2 = sub(r, '\\2', z, perl = TRUE)
-      paste0(z1, ifelse(z3 == '', '', ' '), z3, z2)
-    })
     # fenced Div's
     x = convert_attrs(x, '<p>:::+ \\{(.*?)\\}</p>', '\\1', function(r, z, z1) {
       # add attributes to the div but remove the data-latex attribute
@@ -711,20 +700,6 @@ move_attrs = function(x, format = 'html') {
     }, lines = TRUE)
     x = gsub('<p>:::+</p>', '</div>', x)
   } else if (format == 'latex') {
-    # only support image width
-    x = convert_attrs(x, '(\\\\includegraphics)(\\{[^}]+\\})\\\\\\{([^}]+)\\\\\\}', '\\3', function(r, z, z3) {
-      r2 = '(^|.* )width="([^"]+)"( .*|$)'
-      j = grepl(r2, z3)
-      w = gsub(r2, '\\2', z3[j])
-      w = gsub('\\\\', '\\', w, fixed = TRUE)
-      k = grep('%$', w)
-      w[k] = paste0(as.numeric(sub('%$', '', w[k])) / 100, '\\linewidth')
-      z3[j] = paste0('[width=', w, ']')
-      z3[!j] = ''
-      z1 = sub(r, '\\1', z)
-      z2 = sub(r, '\\2', z)
-      paste0(z1, z3, z2)
-    }, format)
     # discard most attributes for headings
     r = sprintf('(\\\\(%s)\\{.+?) \\\\\\{([^}]+)\\\\\\}(\\})', paste(sec_levels, collapse = '|'))
     x = convert_attrs(x, r, '\\3', function(r, z, z3) {

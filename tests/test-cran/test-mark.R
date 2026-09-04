@@ -181,6 +181,26 @@ assert('mark() applies {.class #id key=val} attributes in a canonical order', {
      '<pre><code class="language-foo" id="baz">x\n</code></pre>')
 })
 
+assert('mark() attaches inline attributes to links, images, and spans in C', {
+  # the 'inlineattrs' extension handles {...} after a link/image at the C level
+  # image: class first, then remaining key=value tokens; width kept verbatim
+  (mark2('![alt](a.png){.round width="400"}') %==%
+     '<p><img src="a.png" alt="alt" class="round" width="400" /></p>')
+  # an empty link href becomes a <span> carrying the attributes
+  (mark2('[t](){.foo}') %==% '<p><span class="foo">t</span></p>')
+  # a link with no trailing {...} is untouched
+  (mark2('[t](u)') %==% '<p><a href="u">t</a></p>')
+  # smart quotes inside the attribute list are normalized back to straight quotes
+  (mark2('[t](u){k="v"}') %==% '<p><a href="u" k="v">t</a></p>')
+
+  # LaTeX: image percent width -> \linewidth; other attributes dropped, and no
+  # stray brace text is left behind on links/spans
+  (mark2('![alt](a.png){width="40%" .foo}', 'latex') %==%
+     '\\protect\\includegraphics[width=0.4\\linewidth]{a.png}')
+  (mark2('[t](u){.foo}', 'latex') %==% '\\href{u}{t}')
+  (mark2('[t](){.foo}', 'latex') %==% '{t}')
+})
+
 assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   # documented exception: a raw {=latex}/{=tex} block that is a math environment
   # is wrapped in <p>...</p> for HTML so the JS math library can typeset it
