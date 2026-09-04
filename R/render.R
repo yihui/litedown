@@ -5,12 +5,25 @@
 #' @useDynLib litedown R_list_extensions R_render_markdown R_parse_markdown R_code_tokens R_prose_lines R_convert_attrs
 NULL
 
+# Extensions that used to be unconditional R post-processing and must now always
+# be enabled at the C level, regardless of the caller's `extensions` argument, so
+# that direct markdown_*() callers (not just mark()) get them. Keyed by output
+# format. These are hidden from users (excluded in markdown_options()):
+#   rawblock     raw content blocks ```{=html} / ```{=latex} / ```{=tex}
+#   inlineattrs  {#id .class key=val} on links and images
+#   attributes   {.class #id key=val} on fenced code blocks (html only)
+# Extensions that are enabled conditionally (math via latex_math, latexfootnotes
+# via footnotes) are NOT here; mark() adds those based on the relevant options.
+always_on = function(format = 'html') {
+  c('rawblock', 'inlineattrs', if (format == 'html') 'attributes')
+}
+
 markdown_html = function(
   text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, sourcepos = FALSE,
   footnotes = FALSE, extensions = FALSE
 ) {
   text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
+  extensions = union(get_extensions(extensions), always_on('html'))
   .Call(R_render_markdown, text, 1L, sourcepos, hardbreaks, smart, normalize, footnotes, 0L, extensions)
 }
 
@@ -55,7 +68,7 @@ markdown_latex = function(
   width = 0, extensions = FALSE
 ) {
   text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
+  extensions = union(get_extensions(extensions), always_on('latex'))
   .Call(R_render_markdown, text, 6L, FALSE, hardbreaks, smart, normalize, footnotes, as.integer(width), extensions)
 }
 

@@ -98,10 +98,9 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # the 'latex_math' option enables the C 'math' extension ($...$, $$...$$,
     # and \begin{}...\end{} environments)
     if (isTRUE(options[['latex_math']])) 'math',
-    'rawblock',  # raw content blocks (```{=html}/```{=latex}/```{=tex})
-    'inlineattrs',  # {#id .class key=val} on links/images (both html and latex)
-    if (format == 'html') 'attributes' else
-      if (isTRUE(options[['footnotes']])) 'latexfootnotes'
+    # rawblock/inlineattrs/attributes are always enabled by the markdown_*()
+    # wrappers themselves (see always_on()); only latexfootnotes is conditional
+    if (format == 'latex' && isTRUE(options[['footnotes']])) 'latexfootnotes'
   ))
 
   # build PDF for LaTeX output when the output file is .pdf or latex_engine is specified
@@ -372,12 +371,12 @@ markdown_options = function() {
     'smart', 'embed_resources', 'embed_cleanup', 'js_math', 'js_highlight', 'footnotes',
     'latex_math', 'auto_identifiers', 'cross_refs',
     # superscript/subscript/strikethrough are C extensions, so they appear in
-    # list_extensions(); 'math' (via the 'latex_math' option) and 'rawblock'
-    # (always on for html/latex) are not user-facing option names, so exclude
-    # them from the auto-enabled extension list; 'latexfootnotes' is attached
-    # internally for latex output (driven by the 'footnotes' option), so it is
-    # excluded too
-    setdiff(list_extensions(), c('tagfilter', 'math', 'rawblock', 'inlineattrs', 'latexfootnotes'))
+    # list_extensions() and are user-facing option names. Exclude extensions that
+    # are not user-toggleable: 'math' (driven by the 'latex_math' option),
+    # 'latexfootnotes' (driven by 'footnotes' for latex), and the always_on()
+    # ones (rawblock/inlineattrs/attributes, unconditionally enabled by the
+    # markdown_*() wrappers)
+    setdiff(list_extensions(), c('tagfilter', 'math', 'latexfootnotes', always_on('html')))
   )
   # options disabled by default
   x2 = c(
