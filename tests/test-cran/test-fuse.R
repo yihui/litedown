@@ -77,81 +77,16 @@ assert('fiss() respects purl = FALSE chunk option', {
   (c('public = 2', '') %==% as.character(out))
 })
 
-# fuse() code chunk output ---------------------------------------------------
+# fuse() code chunk / inline output is snapshot-tested in test-fuse.md; the
+# asserts below cover behavior that isn't a simple output comparison (S3
+# classes, and the register/restore lifecycle of a custom engine).
 
-md = function(...) as.character(fuse(..., output = 'markdown'))
-
-assert('fuse() echoes source and prints the value of a code chunk', {
-  out = md(text = c('```{r}', '1 + 1', '```'))
-  (grepl('1 + 1', out, fixed = TRUE))          # source echoed
-  (grepl('#> [1] 2', out, fixed = TRUE))  # printed value with default comment
-})
-
-assert('fuse() honors echo=FALSE and eval=FALSE', {
-  # echo=FALSE hides the source but keeps the output
-  out = md(text = c('```{r echo=FALSE}', '1 + 1', '```'))
-  (!grepl('1 + 1', out, fixed = TRUE))
-  (grepl('#> [1] 2', out, fixed = TRUE))
-  # eval=FALSE keeps the source but produces no output
-  out = md(text = c('```{r eval=FALSE}', '1 + 1', '```'))
-  (grepl('1 + 1', out, fixed = TRUE))
-  (!grepl('#>', out, fixed = TRUE))
-})
-
-assert('fuse() captures errors, warnings, and messages with error=TRUE', {
-  # error=TRUE turns a stop() into an error block instead of aborting
-  out = md(text = c('```{r error=TRUE}', 'stop("boom")', '```'))
-  (grepl('.error', out, fixed = TRUE))
-  (grepl('boom', out))
-  # warnings and messages get their own labeled blocks
-  (grepl('.warning', md(text = c('```{r}', 'warning("careful")', '```')), fixed = TRUE))
-  (grepl('.message', md(text = c('```{r}', 'message("hi")', '```')), fixed = TRUE))
-})
-
-assert('fuse() supports results="hide" and results="asis"', {
-  # hide: source kept, printed value suppressed
-  out = md(text = c('```{r results="hide"}', '1 + 1', '```'))
-  (!grepl('#>', out, fixed = TRUE))
-  # asis: cat() output is emitted as raw Markdown (a real heading)
-  out = md(text = c('```{r results="asis"}', 'cat("# Heading")', '```'))
-  (grepl('# Heading', out, fixed = TRUE))
-})
-
-assert('fuse() collapses source and output when collapse=TRUE', {
-  out = md(text = c('```{r collapse=TRUE}', '1 + 1', '2 + 2', '```'))
-  # a single fenced block holds both the code and the interleaved output
-  (grepl('1 + 1\n#> [1] 2', out, fixed = TRUE))
-  (grepl('2 + 2\n#> [1] 4', out, fixed = TRUE))
-})
-
-assert('fuse() uses a custom output comment prefix', {
-  out = md(text = c('```{r comment="##"}', '1 + 1', '```'))
-  (grepl('##[1] 2', out, fixed = TRUE))
-})
-
-assert('fuse() evaluates inline code and formats numbers as LaTeX math', {
-  # a large number switches to scientific notation rendered as math
-  (grepl('$10^{6}$', md(text = 'Val: `{r} 1e6`.'), fixed = TRUE))
-  # a small integer is printed verbatim
-  (grepl('Val: 42.', md(text = 'Val: `{r} 42`.'), fixed = TRUE))
-  # a character result is inserted as-is
-  (grepl('Name: ab.', md(text = 'Name: `{r} paste0("a", "b")`.'), fixed = TRUE))
-})
-
-assert('fuse() exposes fuse_env() and get_context() during evaluation', {
-  # fuse_env() returns the chunk evaluation environment
-  out = md(text = c('```{r}', 'is.environment(fuse_env())', '```'))
-  (grepl('#> [1] TRUE', out, fixed = TRUE))
-  # get_context('format') returns the current output format inside fuse()
-  out = md(text = c('```{r results="asis"}', 'cat(get_context("format"))', '```'))
-  (grepl('markdown', out))
-})
-
-assert('engines() allows registering a custom block/inline engine used by fuse()', {
-  old = engines(foo = function(x, inline = FALSE, ...) if (inline) 'INLINE' else 'BLOCK')
-  on.exit(engines(old), add = TRUE)
-  (grepl('BLOCK', md(text = c('```{foo}', 'anything', '```'))))
-  (grepl('x INLINE z', md(text = 'x `{foo} y` z')))
+assert('engines() registers a custom engine and restores the old value', {
+  (is.null(engines('foo')))
+  old = engines(foo = function(x, inline = FALSE, ...) 'x')
+  (is.function(engines('foo')))
+  engines(old)  # restore
+  (is.null(engines('foo')))
 })
 
 assert('raw_text() wraps content in a raw block for a given format', {
@@ -161,9 +96,4 @@ assert('raw_text() wraps content in a raw block for a given format', {
   (grepl('<b>hi</b>', x, fixed = TRUE))
   # no format leaves the content unfenced
   (as.character(raw_text('plain')) %==% 'plain')
-})
-
-assert('fuse() renders raw_text() output verbatim (not as a code block)', {
-  out = md(text = c('```{r results="asis"}', 'litedown::raw_text("<hr/>", "html")', '```'))
-  (grepl('<hr/>', out, fixed = TRUE))
 })
