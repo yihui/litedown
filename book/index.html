@@ -1831,6 +1831,24 @@ plot(cars)
 <p>By default, the source code blocks are displayed in the output with the chunk
 option <code>echo = TRUE</code>. To suppress source code blocks, you can use
 <code>echo = FALSE</code>.</p>
+<p>The <code>echo</code> option can also take a numeric vector of line numbers to select which
+lines of the source code to display. Positive numbers indicate the lines to
+include, and negative numbers indicate the lines to exclude. For example,
+<code>echo = -1</code> hides the first line of the source code, which can be useful when a
+line is not interesting to readers, e.g., a <code>set.seed()</code> call:</p>
+<div class="fenced-chunk">
+<pre><code class="language-md code-fence">```{r, echo = -1}
+</code></pre>
+<pre><code class="language-r">rnorm(3)
+</code></pre>
+<pre><code>#&gt; [1] -0.11289212 -0.38181937 -0.09169176
+</code></pre>
+<pre><code class="language-md code-fence">```
+</code></pre>
+</div>
+<p>Similarly, <code>echo = 2:3</code> shows only the second and third lines. The line numbers
+are relative to the whole code chunk (counting from 1), and out-of-range numbers
+are ignored.</p>
 <h3 id="sec:option-error"><span class="section-number">2.2.10</span> <code>error</code>: error behavior</h3>
 <p>You can specify how errors in a code chunk should be handled with the <code>error</code>
 option. Its possible values are:</p>
