@@ -109,8 +109,34 @@ merge_list = function(...) {
   res
 }
 
+# match_full() and match_all() split `x` into lines before matching:
+# gregexpr()/regmatches() map each match's byte offset to a character offset by
+# walking the string from the start, which is O(n^2) on a long multibyte string
+# with many matches; splitting on newlines first bounds each conversion to one
+# short line, making the whole pass linear. This is transparent because their
+# callers' regexes never match across a newline, so per-line matching yields the
+# same matches. match_replace() also supports this via `lines = TRUE`, but it
+# rejoins the lines afterwards, so it is opt-in (only line-safe regexes qualify).
+
 # a shorthand for gregexpr() and regmatches()
-match_replace = function(x, r, replace = identity, ...) {
+match_replace = function(x, r, replace = identity, ..., lines = FALSE) {
+  if (lines) {
+    if (length(x) == 0) return(x)  # keep length-0 input as-is (don't inflate to "")
+    v = split_lines(x)
+    m = gregexpr(r, v, ...)
+    z = regmatches(v, m)
+    flat = unlist(z)
+    # replace() sees ALL matches at once (not per line) so it can keep
+    # cross-match state (e.g. de-duping ids, running counters); relist the
+    # result back per line to write matches back with regmatches<-
+    if (length(flat)) {
+      flat = replace(flat)
+      end = cumsum(lengths(z)); start = end - lengths(z) + 1L
+      regmatches(v, m) = lapply(seq_along(z), function(i)
+        if (length(z[[i]])) flat[start[i]:end[i]] else z[[i]])
+    }
+    return(one_string(v))
+  }
   m = gregexpr(r, x, ...)
   regmatches(x, m) = lapply(regmatches(x, m), function(z) {
     if (length(z)) replace(z) else z
@@ -118,22 +144,27 @@ match_replace = function(x, r, replace = identity, ...) {
   x
 }
 
-# gregexec() + regmatches() to greedy-match all substrings in regex groups
+# gregexec() + regmatches() to greedy-match all substrings in regex groups;
+# returns a single matrix (full match in row 1, capture groups in the rest)
 match_all = function(x, r, ...) {
-  regmatches(x, base::gregexec(r, x, ...))
+  do.call(cbind, regmatches(v <- split_lines(x), base::gregexec(r, v, ...)))
 }
 # for R < 4.1.0
 if (!exists('gregexec', baseenv(), inherits = TRUE)) match_all = function(x, r, ...) {
-  lapply(match_full(x, r, ...), function(z) {
+  res = lapply(regmatches(v <- split_lines(x), gregexpr(r, v, ...)), function(z) {
     if (length(z)) do.call(cbind, match_one(z, r, ...)) else z
   })
+  do.call(cbind, res)
 }
 
 # regexec() + regmatches() to match the regex once and capture substrings
 match_one = function(x, r, ...) regmatches(x, regexec(r, x, ...))
 
-# gregexpr() + regmatches() to match full strings but not substrings in regex groups
-match_full = function(x, r, ...) regmatches(x, gregexpr(r, x, ...))
+# gregexpr() + regmatches() to match full strings but not substrings in regex
+# groups; returns a flat vector of matches (all callers want that)
+match_full = function(x, r, ...) {
+  unlist(regmatches(v <- split_lines(x), gregexpr(r, v, ...)))
+}
 
 # if `text` is NULL and `input` is a file, read it; otherwise use the `text`
 # argument as input
@@ -391,7 +422,7 @@ set_highlight = function(options, html) {
   autoloader = 'plugins/autoloader/prism-autoloader.min.js'
   o$js = c(o$js, if (!is.null(l <- o$languages)) get_lang(l) else {
     # detect <code> languages in html and load necessary language components
-    lang = unlist(match_full(html, r))
+    lang = match_full(html, r)
     lang = gsub(' .*', '', lang)  # only use the first class name
     lang = setdiff(lang, 'plain')  # exclude known non-existent names
     f = switch(p, highlight = js_libs[[c(p, 'js')]], prism = autoloader)
@@ -429,11 +460,8 @@ lang_files = function(package, path, langs) {
     x = grep(r, x, value = TRUE)
     l = gsub(r, '\\1', x)
     # then find their aliases
-    a = lapply(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), function(z) {
-      z = unlist(strsplit(z, '[",]'))
-      z[!is_blank(z)]
-    })
-    l = c(l, unlist(a))  # all possible languages that can be highlighted
+    a = unlist(strsplit(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), '[",]'))
+    l = c(l, a[!is_blank(a)])  # all possible languages that can be highlighted
     l = setdiff(langs, l)  # languages not supported by default
     if (length(l) == 0) return()
     # check if language files exist on CDN
@@ -446,7 +474,7 @@ lang_files = function(package, path, langs) {
     l1
   } else {
     # dependencies and aliases (the arrays should be more than 1000 characters)
-    x = unlist(match_full(x, '(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})'))
+    x = match_full(x, '(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})')
     if (length(x) < 2) {
       warning(
         "Unable to process Prism's autoloader plugin (", u, ") to figure out ",
@@ -455,9 +483,8 @@ lang_files = function(package, path, langs) {
       )
       return()
     }
-    x = x[1:2]
-    x = lapply(match_full(x, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'), function(z) {
-      z = gsub('[]["]', '', z)
+    x = lapply(x[1:2], function(s) {
+      z = gsub('[]["]', '', match_full(s, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'))
       uapply(strsplit(z, '[:,]'), function(y) {
         set_names(list(y[-1]), y[1])
       }, recursive = FALSE)
@@ -615,7 +642,7 @@ build_toc = function(html, n = 3) {
   if (n <= 0) return()
   if (n > 6) n = 6
   r = sprintf('<(h[1-%d])( id="[^"]+")?[^>]*>(.+?)</\\1>', n)
-  items = unlist(match_full(html, r))
+  items = match_full(html, r)
   # ignore headings with class="unlisted"
   items = items[!has_class(items, 'unlisted')]
   if (length(items) <= 1) return()  # require at least 2 items in TOC
@@ -663,13 +690,13 @@ move_attrs = function(x, format = 'html') {
     x = convert_attrs(x, '(<img src="[^>]+ )/>\\{([^}]+)\\}', '\\2', function(r, z, z2) {
       z1 = sub(r, '\\1', z)
       paste0(z1, z2, ' />')
-    })
+    }, lines = TRUE)
     # headings
     x = convert_attrs(x, '(<h[1-6])(>.+?) \\{([^}]+)\\}(</h[1-6]>)', '\\3', function(r, z, z3) {
       z1 = sub(r, '\\1 ', z)
       z24 = sub(r, '\\2\\4', z)
       paste0(z1, z3, z24)
-    })
+    }, lines = TRUE)
     # links
     x = convert_attrs(x, '(<a[^>]+)(>(?s).*?</a>)(\\{([^}]+)\\})?', '\\4', function(r, z, z3) {
       z1 = sub(r, '\\1', z, perl = TRUE)
@@ -681,7 +708,7 @@ move_attrs = function(x, format = 'html') {
       # add attributes to the div but remove the data-latex attribute
       z1 = str_trim(gsub('(^| )data-latex="[^"]*"( |$)', ' ', z1))
       sprintf('<div%s%s>', ifelse(z1 == '', '', ' '), z1)
-    })
+    }, lines = TRUE)
     x = gsub('<p>:::+</p>', '</div>', x)
   } else if (format == 'latex') {
     # only support image width
@@ -744,7 +771,9 @@ move_attrs = function(x, format = 'html') {
   x
 }
 
-convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
+# `lines = TRUE` processes `x` line by line (only valid when `r` cannot match
+# across a newline); see match_replace()
+convert_attrs = function(x, r, s, f, format = 'html', f2 = identity, lines = FALSE) {
   match_replace(x, r, function(y) {
     z = sub(r, s, y, perl = TRUE)
     if (format == 'html') {
@@ -760,7 +789,7 @@ convert_attrs = function(x, r, s, f, format = 'html', f2 = identity) {
     # .unnumbered, key=value verbatim, in the order class, id, then the rest
     z2 = .Call(R_convert_attrs, z2, '')
     f(r, y, z2)
-  })
+  }, lines = lines)
 }
 
 str_trim = function(x) gsub('^\\s+|\\s+$', '', x)
@@ -789,7 +818,7 @@ auto_identifier = function(x) {
     id = unique_id(paste0(p[i], alnum_id(z3[i])), 'section')
     z[i] = sprintf('<%s id="%s"%s>%s</%s>', z1[i], id, z2[i], z3[i], z1[i])
     z
-  })
+  }, lines = TRUE)
 }
 
 # add a number suffix to an id if it is duplicated
@@ -810,7 +839,7 @@ has_class = function(x, class) {
 
 # number sections in HTML output
 number_sections = function(x) {
-  h = sub('</h([1-6])>', '\\1', unlist(match_full(x, '</h[1-6]>')))
+  h = sub('</h([1-6])>', '\\1', match_full(x, '</h[1-6]>'))
   if (length(h) == 0) return(x)  # no headings
   h = min(as.integer(h))  # highest level of headings
   r = '<h([1-6])([^>]*)>(?!<span class="section-number)'
@@ -871,7 +900,7 @@ number_sections = function(x) {
       ))
     }
     z
-  })
+  }, lines = TRUE)
 }
 
 # number elements such as headings and figures, etc and resolve cross-references
@@ -881,7 +910,7 @@ number_refs = function(x, r, katex = TRUE) {
 
   # first, find numbered section headings
   r2 = '<h[1-6][^>]*? id="([^"]+)"[^>]*><span class="section-number[^"]*">([A-Z0-9.]+)</span>'
-  m = match_all(x, r2)[[1]]
+  m = match_all(x, r2)
   if (length(m)) {
     ids = m[2, ]
     db = as.list(set_names(m[3, ], ids))
@@ -899,7 +928,7 @@ number_refs = function(x, r, katex = TRUE) {
     ids = split(id, type)
     db2 <<- unlist(unname(lapply(ids, function(id) set_names(seq_along(id), id))))
     sprintf('<span class="ref-number-%s">%d</span>', type, db2[id])
-  })
+  }, lines = TRUE)
   db = unlist(if (is.character(b)) merge_list(db, as.list(db2)) else c(db, db2))
   ids = names(db)
   if (any(i <- duplicated(ids))) warning('Duplicated IDs: ', one_string(ids[i], ', '))
@@ -932,7 +961,7 @@ number_refs = function(x, r, katex = TRUE) {
     )
     if (any(i4)) warning('Reference key(s) not found: ', one_string(id[i4], ', '))
     z
-  })
+  }, lines = TRUE)
 }
 
 # add a special anchor [](#@id) to text, to be used to resolved cross-references
