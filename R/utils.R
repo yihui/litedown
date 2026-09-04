@@ -121,6 +121,7 @@ merge_list = function(...) {
 # a shorthand for gregexpr() and regmatches()
 match_replace = function(x, r, replace = identity, ..., lines = FALSE) {
   if (lines) {
+    if (length(x) == 0) return(x)  # keep length-0 input as-is (don't inflate to "")
     v = split_lines(x)
     m = gregexpr(r, v, ...)
     z = regmatches(v, m)
