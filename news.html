@@ -67,6 +67,9 @@
 <li>
 <p>Fixed a bug that a multi-backtick inline code expression (e.g., <code>`` `{r} code` ``</code>) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).</p>
 </li>
+<li>
+<p>Post-processing of the rendered HTML (adding section numbers, auto identifiers, resolving cross-references, building the table of contents, etc.) is substantially faster for documents containing multibyte (e.g., CJK) characters. These passes apply regular expressions line by line instead of to the whole document at once, which avoids the quadratic cost of mapping byte offsets to character offsets in long multibyte strings (for a document with ~1600 sections, the post-processing time dropped from ~73s to ~16s).</p>
+</li>
 </ul>
 <h2 id="sec:litedown-0-11" class="unnumbered">litedown 0.11</h2>
 <ul>
