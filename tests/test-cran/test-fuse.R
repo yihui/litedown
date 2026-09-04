@@ -76,3 +76,24 @@ assert('fiss() respects purl = FALSE chunk option', {
   out = fiss(I(src))
   (c('public = 2', '') %==% as.character(out))
 })
+
+# fuse() code chunk / inline output is snapshot-tested in test-fuse.md; the
+# asserts below cover behavior that isn't a simple output comparison (S3
+# classes, and the register/restore lifecycle of a custom engine).
+
+assert('engines() registers a custom engine and restores the old value', {
+  (is.null(engines('foo')))
+  old = engines(foo = function(x, inline = FALSE, ...) 'x')
+  (is.function(engines('foo')))
+  engines(old)  # restore
+  (is.null(engines('foo')))
+})
+
+assert('raw_text() wraps content in a raw block for a given format', {
+  x = one_string(as.character(raw_text('<b>hi</b>', 'html')))
+  (inherits(raw_text('<b>hi</b>', 'html'), 'record_asis'))
+  (grepl('{=html}', x, fixed = TRUE))
+  (grepl('<b>hi</b>', x, fixed = TRUE))
+  # no format leaves the content unfenced
+  (as.character(raw_text('plain')) %==% 'plain')
+})
