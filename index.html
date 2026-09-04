@@ -123,10 +123,10 @@ r-universe:</p>
 <pre><code class="language-r">install.packages('litedown', repos = c('https://yihui.r-universe.dev', 'https://cloud.r-project.org'))
 </code></pre>
 <h3 id="sec:markdown-rendering"><span class="section-number">1.2</span> Markdown rendering</h3>
-<p>The function <code>litedown::mark()</code> is based on the R package
-<a href="https://github.com/r-lib/commonmark"><strong>commonmark</strong></a>, and renders Markdown to
-various output formats supported by <strong>commonmark</strong>, which are primarily HTML and
-LaTeX. MS Office formats are not supported.</p>
+<p>The function <code>litedown::mark()</code> is based on the C library
+<a href="https://github.com/github/cmark-gfm">cmark-gfm</a> (bundled with the package), and
+renders Markdown to various output formats, which are primarily HTML and LaTeX.
+MS Office formats are not supported.</p>
 <h3 id="sec:knitting"><span class="section-number">1.3</span> Knitting</h3>
 <p>R Markdown documents need to be knitted to Markdown before being rendered to a
 target output format. The function <code>litedown::fuse()</code> plays a role similar to
@@ -147,7 +147,7 @@ package sites), and paged HTML documents, etc. See the set \(R\) below:</p>
 <strong>distill</strong> + <strong>htmlwidgets</strong></p>
 </li>
 <li>
-<p>\(D_i\) = (internal dependencies) <strong>commonmark</strong> + <strong>xfun</strong></p>
+<p>\(D_i\) = (internal dependencies) <strong>xfun</strong></p>
 </li>
 <li>
 <p>\(D_e\) = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +

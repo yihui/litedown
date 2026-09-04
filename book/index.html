@@ -431,8 +431,9 @@ learn to customize LaTeX templates. Most other output formats are not supported.
 No Word, RTF, PowerPoint, or EPUB.</p>
 <p>R Markdown is rendered via <code>litedown::fuse()</code>, which is similar to
 <code>rmarkdown::render()</code> and <code>knitr::knit()</code>. Markdown is rendered via
-<code>litedown::mark()</code>, which uses <strong>commonmark</strong> <a href="#ref-R-commonmark" class="citation ref-paren-open ref-paren-close">Ooms 2025</a> instead of Pandoc.</p>
-<p>The <strong>commonmark</strong> package follows the GFM (GitHub Flavored Markdown) spec,
+<code>litedown::mark()</code>, which uses the <a href="https://github.com/github/cmark-gfm">cmark-gfm</a>
+C library (bundled with the package) instead of Pandoc.</p>
+<p>The cmark-gfm library follows the GFM (GitHub Flavored Markdown) spec,
 which can be seen as a subset of Pandoc’s Markdown. Therefore the <strong>litedown</strong>
 package can be viewed as a small subset of the existing R Markdown ecosystem
 (the latter is based on Pandoc). It aims at simplicity, lightweight, and speed,
@@ -458,7 +459,7 @@ package sites, and <strong>pagedown</strong> for paged HTML documents.</p>
 <strong>distill</strong> + <strong>htmlwidgets</strong></p>
 </li>
 <li>
-<p>\(D_i\) = (internal dependencies) <strong>commonmark</strong> + <strong>xfun</strong></p>
+<p>\(D_i\) = (internal dependencies) <strong>xfun</strong></p>
 </li>
 <li>
 <p>\(D_e\) = (external dependencies) Pandoc + Bootstrap + jQuery + GitBook +
@@ -473,7 +474,7 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
   class litedown {
     +HTML/LaTeX
     +min [ * ]
-    R-dep (xfun, commonmark)
+    R-dep (xfun)
     web-dep (lite.js)
   }
   class rmarkdown {
@@ -616,18 +617,19 @@ JavaScript, yet it is quite flexible (<a class="cross-ref-chp" href="#chp:widget
 <h2 id="sec:highlights">Highlights</h2>
 <h3 id="sec:small-footprint">Small footprint</h3>
 <p>Almost everything in <strong>litedown</strong> was written from scratch. The package is very
-lightweight, with only two R package dependencies: <strong>commonmark</strong> and <strong>xfun</strong>
-<a href="#ref-R-xfun" class="citation ref-paren-open ref-paren-close">Xie 2026</a>.</p>
+lightweight, with only one R package dependency: <strong>xfun</strong> <a href="#ref-R-xfun" class="citation ref-paren-open ref-paren-close">Xie 2026</a>. The
+Markdown parser and renderer are provided by the
+<a href="https://github.com/github/cmark-gfm">cmark-gfm</a> C library bundled with the
+package.</p>
 <p>It is a deliberate design choice to keep this package lightweight, to make it
 relatively easy to use and simple to maintain. The functions <code>mark()</code> and
 <code>fuse()</code> can be viewed as significantly trimmed-down versions of Pandoc and
 <strong>knitr</strong>, respectively.</p>
-<p>Just to give you a better idea about the “lightweight” (the numbers below refer
-to <em>uncompressed</em> software and source code as of today):</p>
+<p>Just to give you a better idea about the “lightweight”, as of today:</p>
 <ul>
 <li>
-<p>As the Markdown converter, Pandoc 3.5 is about 180Mb, and <strong>commonmark</strong> is
-about 1Mb on my macOS.</p>
+<p>As the Markdown converter, Pandoc 3.8.3 binary is about 186Mb, and the
+<strong>litedown</strong> binary is under 1Mb on my macOS.</p>
 </li>
 <li>
 <p>Bootstrap’s CSS is about 12,000 lines (plus 1500 lines of JS), and
@@ -644,7 +646,7 @@ about 600 lines (400 lines of JS and 200 lines of CSS).</p>
 <p>Admittedly, pursuing lightweight requires sacrifice in features and quality
 (e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
 the trade-off should be reasonable to those who prefer minimalism. With a 2Mb
-footprint (the total file size of <strong>litedown</strong>, <strong>commonmark</strong>, and <strong>xfun</strong>),
+footprint (the total file size of <strong>litedown</strong> and <strong>xfun</strong>),
 you can:</p>
 <ul>
 <li>
@@ -690,7 +692,7 @@ document, so you can quickly and easily know where the error occurred exactly.
 When previewing <code>.Rmd</code> documents with <code>roam()</code>, you will see line numbers on the
 left side of code blocks. Clicking on these numbers will bring you to the lines
 in the source.</p>
-<p>Due to the fact that the parser is based on <strong>commonmark</strong> (instead of solely on
+<p>Due to the fact that the parser is based on cmark-gfm (instead of solely on
 regular expressions like <strong>knitr</strong>’s parser), it can precisely recognize code
 chunks and inline code, which means code within other verbatim code blocks or
 comments will be untouched. For example:</p>
@@ -3347,7 +3349,7 @@ and more portable.</p>
 <li>
 <p>The document parser of <strong>knitr</strong> is based solely on regular expressions and
 not robust. Code chunks and inline expressions are not aware of their
-contexts. The parser of <strong>litedown</strong> is based on <strong>commonmark</strong>, which is
+contexts. The parser of <strong>litedown</strong> is based on cmark-gfm, which is
 more robust and makes it straightforward to write verbatim code or comment
 out code (<a class="cross-ref-sec" href="#sec:skipped-chunks">2.1.3</a>).</p>
 </li>
@@ -3567,7 +3569,7 @@ you want to create a table from a rectangular object <code>x</code> in R.</p>
 e.g., a colon on the right means the column is right-aligned, and colons on both
 ends means the column is center-aligned.</p>
 <h2 id="sec:markdown-addon"><span class="section-number">3.3</span> Add-on features</h2>
-<p>In addition to the basic features above (supported by <strong>commonmark</strong>), the
+<p>In addition to the basic features above (supported by cmark-gfm), the
 <strong>litedown</strong> package also supports the following features.</p>
 <h3 id="sec:raw-latex-html-blocks"><span class="section-number">3.3.1</span> Raw LaTeX/HTML blocks</h3>
 <p>Raw LaTeX and HTML blocks can be written as fenced code blocks with language
@@ -4351,10 +4353,10 @@ For example:</p>
 will be rendered to <code>\chapter{heading}</code> instead of the default
 <code>\section{heading}</code>.</p>
 <h3 id="sec:other-options"><span class="section-number">4.1.17</span> Other options</h3>
-<p>Options not described above can be found on the help pages of <strong>commonmark</strong>,
-e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argument of
-<code>commonmark::markdown_*()</code> functions, and the <code>table</code> option is for the <code>table</code>
-extension in <strong>commonmark</strong>’s extensions.</p>
+<p>Options not described above are passed to the underlying cmark-gfm renderer,
+e.g., the <code>hardbreaks</code> option is for the <code>hardbreaks</code> argument of the internal
+<code>markdown_*()</code> renderers, and the <code>table</code> option is for the <code>table</code> extension in
+cmark-gfm’s extensions.</p>
 <pre><code class="language-r">litedown::markdown_options()
 #&gt;  [1] &quot;-cleveref&quot;         &quot;-hardbreaks&quot;       &quot;-number_sections&quot; 
 #&gt;  [4] &quot;-offline&quot;          &quot;-smartypants&quot;      &quot;-tagfilter&quot;       
@@ -4364,16 +4366,17 @@ extension in <strong>commonmark</strong>’s extensions.</p>
 #&gt; [16] &quot;+js_math&quot;          &quot;+latex_math&quot;       &quot;+smart&quot;           
 #&gt; [19] &quot;+strikethrough&quot;    &quot;+subscript&quot;        &quot;+superscript&quot;     
 #&gt; [22] &quot;+table&quot;            &quot;+tasklist&quot;        
-# commonmark's arguments
-opts = formals(commonmark::markdown_html)
+# renderer arguments
+opts = formals(litedown:::markdown_html)
 opts = opts[setdiff(names(opts), c('text', 'extensions'))]
 unlist(opts)
 #&gt; hardbreaks      smart  normalize  sourcepos  footnotes 
 #&gt;      FALSE      FALSE      FALSE      FALSE      FALSE 
-# commonmark's extensions
-commonmark::list_extensions()
-#&gt; [1] &quot;table&quot;         &quot;strikethrough&quot; &quot;autolink&quot;      &quot;tagfilter&quot;    
-#&gt; [5] &quot;tasklist&quot;     
+# cmark-gfm's extensions (some were added by litedown)
+litedown:::list_extensions()
+#&gt;  [1] &quot;table&quot;          &quot;strikethrough&quot;  &quot;autolink&quot;       &quot;tagfilter&quot;     
+#&gt;  [5] &quot;tasklist&quot;       &quot;math&quot;           &quot;superscript&quot;    &quot;subscript&quot;     
+#&gt;  [9] &quot;rawblock&quot;       &quot;attributes&quot;     &quot;latexfootnotes&quot;
 </code></pre>
 <h2 id="sec:templates"><span class="section-number">4.2</span> Templates</h2>
 <p>By default, <code>mark()</code> generates a document fragment (i.e., the body) if the input
@@ -6894,7 +6897,7 @@ you can manipulate the DOM arbitrarily with JavaScript. <a href="#fnref-1" class
 </li>
 <li id="fn-2">
 <p>In fact, <code>xml,</code> <code>man</code>, <code>text</code>, and <code>commonmark</code> output formats are
-supported (thanks to the <strong>commonmark</strong> package), but perhaps they are not
+supported (thanks to the cmark-gfm library), but perhaps they are not
 very useful to average users. <a href="#fnref-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="2" aria-label="Back to reference 2">↩</a></p>
 </li>
 <li id="fn-02-fuse-1">
@@ -6973,10 +6976,6 @@ convert Markdown input to CommonMark output, but it is possible anyway. <a href=
 <p id="ref-R-rbibutils">Boshnakov GN, Putman C (2026).
 <em>rbibutils: Read Bibtex Files and Convert Between Bibliography Formats</em>.
 R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://geobosh.github.io/rbibutils/</a>. 
-</p>
-<p id="ref-R-commonmark">Ooms J (2025).
-<em>commonmark: High Performance CommonMark and Github Markdown Rendering in R</em>.
-R package version 2.0.0, <a href="https://docs.ropensci.org/commonmark/">https://docs.ropensci.org/commonmark/</a>. 
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
