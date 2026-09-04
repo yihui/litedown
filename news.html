@@ -43,33 +43,7 @@
 </div>
 <h2 id="sec:litedown-0-12" class="unnumbered">litedown 0.12</h2>
 <ul>
-<li>
-<p>The Markdown library (‘cmark-gfm’, the GitHub fork of the reference CommonMark implementation) is now bundled with <strong>litedown</strong> (as C code under <code>src/</code>) instead of being provided by the <strong>commonmark</strong> package. This allows fixing bugs and adding features at the C level rather than working around them in R. The <strong>commonmark</strong> package is no longer a dependency (#141).</p>
-</li>
-<li>
-<p>LaTeX math (<code>$...$</code>, <code>$$...$$</code>, and <code>\begin{}...\end{}</code> environments) is now recognized by a ‘cmark-gfm’ syntax extension (C code under <code>src/extensions/</code>) instead of the previous token round-trip in R. Math bodies are real nodes in the parse tree, so Markdown special characters inside math (e.g., <code>_</code>, <code>*</code>, <code>[]</code>) are no longer misinterpreted (#33, part of <a href="https://github.com/yihui/litedown/issues/142">#142</a>).</p>
-</li>
-<li>
-<p>Superscript (<code>^x^</code>) and subscript (<code>~x~</code>) are now recognized by a ‘cmark-gfm’ syntax extension (C code under <code>src/extensions/</code>) instead of the previous token round-trip in R, and their content is parsed as inline Markdown so nesting works (e.g., <code>a^b*c*^</code> gives <code>a&lt;sup&gt;b&lt;em&gt;c&lt;/em&gt;&lt;/sup&gt;</code>). Because a single delimiter character can be owned by only one extension, this same extension also provides strikethrough (<code>~~x~~</code>); the <code>superscript</code>, <code>subscript</code>, and <code>strikethrough</code> options can still be toggled independently. Matching now follows the same left/right-flanking rules as <code>*</code>/<code>_</code> emphasis rather than the old restricted character class, which is a small behavior change: a delimiter is recognized only when it “hugs” its content (e.g., <code>a ^x^ b</code> still works, but a <code>^</code> immediately adjacent to punctuation such as in <code>a^*b*^</code> is treated literally). Part of <a href="https://github.com/yihui/litedown/issues/142">#142</a>.</p>
-</li>
-<li>
-<p>Raw content blocks (<code>```{=html}</code>, <code>```{=latex}</code>, and <code>```{=tex}</code>) are now recognized by a ‘cmark-gfm’ syntax extension (C code under <code>src/extensions/</code>) instead of the previous post-processing regex in R. A raw HTML block appears verbatim in HTML output (and is dropped elsewhere), and a raw LaTeX/TeX block appears verbatim in LaTeX output (and is dropped elsewhere); a raw LaTeX/TeX block that is a LaTeX math environment is still rendered as math in HTML output too. Part of <a href="https://github.com/yihui/litedown/issues/142">#142</a>.</p>
-</li>
-<li>
-<p>The internal detection of “prose” lines (lines not inside a code block, used when rewriting fenced Divs and cross-references) is now backed by a single ‘cmark-gfm’ parse in C instead of the regex-based <code>xfun::prose_index()</code>. This is faster and more accurate: indented code blocks and unbalanced/tilde code fences are recognized correctly.</p>
-</li>
-<li>
-<p>Fixed a bug in ‘cmark-gfm’ that inline elements (such as inline code) on indented continuation lines (e.g., wrapped paragraph lines, or lines inside list items or blockquotes) were reported with incorrect source positions (columns). The fix is kept as a patch under <code>src/patches/</code>.</p>
-</li>
-<li>
-<p>A fenced code block immediately following a closing HTML tag (e.g., a <code>```</code> line right after <code>&lt;/p&gt;</code>) is now parsed as a code block instead of being absorbed into the preceding HTML block. Previously this required inserting a blank line between them in R; ‘cmark-gfm’ has been patched (see <code>src/patches/</code>) to end such an HTML block at an opening code fence, which removes the fragile R workaround (#135).</p>
-</li>
-<li>
-<p>Fixed a bug that a multi-backtick inline code expression (e.g., <code>`` `{r} code` ``</code>) on an indented line (such as a continuation line of a list item) left its fences and padding spaces in the output (#139).</p>
-</li>
-<li>
-<p>Post-processing of the rendered HTML (adding section numbers, auto identifiers, resolving cross-references, building the table of contents, etc.) is substantially faster for documents containing multibyte (e.g., CJK) characters. These passes apply regular expressions line by line instead of to the whole document at once, which avoids the quadratic cost of mapping byte offsets to character offsets in long multibyte strings (for a document with ~1600 sections, the post-processing time dropped from ~73s to ~16s).</p>
-</li>
+<li>The Markdown backend has been changed from the <strong>commonmark</strong> package to a copy of ‘cmark-gfm’ bundled with <strong>litedown</strong>, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (#33, <a href="https://github.com/yihui/litedown/issues/135">#135</a>, <a href="https://github.com/yihui/litedown/issues/139">#139</a>). The <strong>commonmark</strong> package is no longer a dependency (#141, <a href="https://github.com/yihui/litedown/issues/142">#142</a>, <a href="https://github.com/yihui/litedown/issues/143">#143</a>). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to “hug” their content (e.g., <code>a^b^</code> works, but <code>a ^ b ^</code> no longer produces a superscript), consistent with how <code>*emphasis*</code> works.</li>
 </ul>
 <h2 id="sec:litedown-0-11" class="unnumbered">litedown 0.11</h2>
 <ul>
