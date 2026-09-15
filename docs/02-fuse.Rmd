@@ -197,6 +197,25 @@ litedown::reactor(echo = FALSE)
 The chunk option `echo` will be restored to `TRUE` after `fuse()` finishes this
 document.
 
+::: callout-caution
+Setting an option *both* globally (via `reactor()`) and locally (in the chunk
+header) *in the same chunk* will not work as you might expect: the global value
+will be lost after this chunk. This is because local chunk options are applied
+on top of global options before a chunk is evaluated, and restored to their
+previous global values after the chunk is done, which will override any global
+value you set inside the chunk. For example, do *not* do this:
+
+```` md
+```{r, setup}
+#| dev = 'jpeg'
+litedown::reactor(dev = 'jpeg')  # will NOT persist to later chunks
+```
+````
+
+If you want to set an option globally, set it only via `reactor()` and do not
+also provide it as a local chunk option.
+:::
+
 ### Skipped code chunks {#sec:skipped-chunks}
 
 Code chunks inside other code blocks are not parsed or evaluated, which provides
@@ -646,6 +665,17 @@ that can be evaluated to a function (e.g., `"grDevices::svg"`).
 
 The default device is `cairo_pdf` for LaTeX output, and `png` for other types of
 output (such as HTML).
+
+::: callout-tip
+If the default device is not available on your system (e.g., R was built without
+Cairo support, so `png()` cannot open a device), you can set an alternative
+device globally in a setup chunk, e.g., `litedown::reactor(dev = ragg::agg_png)`.
+Remember to set `dev` *only* via `reactor()` and not also as a local chunk
+option, or the global value will be lost (see the caution in @sec:reactor). If
+this setup chunk does not itself generate any plots, also set `fig.path = NA`
+(@sec:chunk-options) for it so that `fuse()` will not try to open the
+(unavailable) default device for this chunk.
+:::
 
 The plot file path (specified via the chunk option `fig.path`) will be passed to
 the first argument of the device function. The chunk option `dev.args` can be
