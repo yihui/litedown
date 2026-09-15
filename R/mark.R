@@ -302,10 +302,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       if (!isTRUE(yaml_field(yaml, format, 'keep_tex')))
         on.exit(file.remove(tex), add = TRUE)
       write_utf8(ret, tex)
-      output = tinytex::latexmk(
-        tex, latex_engine %||% 'xelatex',
+      # run latexmk in the output dir so that relative paths in the .tex file
+      # (e.g., plot files under output__files/) can be resolved (#168)
+      pdf = in_dir(out_dir, tinytex::latexmk(
+        basename(tex), latex_engine %||% 'xelatex',
         if (pkg_cite == 'biblatex') 'biber' else 'bibtex'
-      )
+      ))
+      output = if (out_dir == '.') pdf else file.path(out_dir, pdf)
     }
     # for RStudio to capture the output path when previewing the output
     if (is_rmd_preview()) message('\nOutput created: ', output)

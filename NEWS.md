@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.12
 
+- Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
+
 - The chunk option `echo` can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., `echo = -1` hides the first line, and `echo = 2:3` shows only the second and third lines (thanks, @jangorecki, #93).
 
 - The Markdown backend has been changed from the **commonmark** package to a copy of 'cmark-gfm' bundled with **litedown**, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (#33, #135, #139). The **commonmark** package is no longer a dependency (#141, #142, #143). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to "hug" their content (e.g., `a^b^` works, but `a ^ b ^` no longer produces a superscript), consistent with how `*emphasis*` works.
