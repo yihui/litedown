@@ -15,14 +15,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/key-buttons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/callout.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/tabsets.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.5/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.7/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/prism-xcode.min.css">
 </head>
 <body>
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-09-04</h3></div>
+<div class="date"><h3>2026-09-15</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -1224,6 +1224,21 @@ litedown::reactor(echo = FALSE)
 </code></pre>
 <p>The chunk option <code>echo</code> will be restored to <code>TRUE</code> after <code>fuse()</code> finishes this
 document.</p>
+<div class="callout-caution">
+<p>Setting an option <em>both</em> globally (via <code>reactor()</code>) and locally (in the chunk
+header) <em>in the same chunk</em> will not work as you might expect: the global value
+will be lost after this chunk. This is because local chunk options are applied
+on top of global options before a chunk is evaluated, and restored to their
+previous global values after the chunk is done, which will override any global
+value you set inside the chunk. For example, do <em>not</em> do this:</p>
+<pre><code class="language-md">```{r, setup}
+#| dev = 'jpeg'
+litedown::reactor(dev = 'jpeg')  # will NOT persist to later chunks
+```
+</code></pre>
+<p>If you want to set an option globally, set it only via <code>reactor()</code> and do not
+also provide it as a local chunk option.</p>
+</div>
 <h3 id="sec:skipped-chunks"><span class="section-number">2.1.3</span> Skipped code chunks</h3>
 <p>Code chunks inside other code blocks are not parsed or evaluated, which provides
 a way to write verbatim code chunks, e.g.,</p>
@@ -1792,6 +1807,16 @@ function (e.g., <code>svg</code>), a function name as a string (e.g., <code>&quo
 that can be evaluated to a function (e.g., <code>&quot;grDevices::svg&quot;</code>).</p>
 <p>The default device is <code>cairo_pdf</code> for LaTeX output, and <code>png</code> for other types of
 output (such as HTML).</p>
+<div class="callout-tip">
+<p>If the default device is not available on your system (e.g., R was built without
+Cairo support, so <code>png()</code> cannot open a device), you can set an alternative
+device globally in a setup chunk, e.g., <code>litedown::reactor(dev = ragg::agg_png)</code>.
+Remember to set <code>dev</code> <em>only</em> via <code>reactor()</code> and not also as a local chunk
+option, or the global value will be lost (see the caution in <a class="cross-ref-sec" href="#sec:reactor">2.1.2</a>). If
+this setup chunk does not itself generate any plots, also set <code>fig.path = NA</code>
+(<a class="cross-ref-sec" href="#sec:chunk-options">2.2</a>) for it so that <code>fuse()</code> will not try to open the
+(unavailable) default device for this chunk.</p>
+</div>
 <p>The plot file path (specified via the chunk option <code>fig.path</code>) will be passed to
 the first argument of the device function. The chunk option <code>dev.args</code> can be
 used to pass a list of additional arguments to the device, and the default list
@@ -7001,7 +7026,7 @@ R package version 0.11.3, <a href="https://github.com/yihui/litedown">https://gi
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.60.1, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.60.3, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>
@@ -7017,10 +7042,10 @@ R package version 0.60.1, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/tabsets.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.18.5/dist/katex.min.js,npm/katex@0.18.5/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/katex@0.18.7/dist/katex.min.js,npm/katex@0.18.7/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js" defer></script>
 </body>
 </html>
