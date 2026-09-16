@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-09-15</h3></div>
+<div class="date"><h3>2026-09-16</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -1233,7 +1233,7 @@ previous global values after the chunk is done, which will override any global
 value you set inside the chunk. For example, do <em>not</em> do this:</p>
 <pre><code class="language-md">```{r, setup}
 #| dev = 'jpeg'
-litedown::reactor(dev = 'jpeg')  # will NOT persist to later chunks
+litedown::reactor(dev = 'svg')  # will NOT persist to later chunks
 ```
 </code></pre>
 <p>If you want to set an option globally, set it only via <code>reactor()</code> and do not
@@ -1810,11 +1810,9 @@ output (such as HTML).</p>
 <div class="callout-tip">
 <p>If the default device is not available on your system (e.g., R was built without
 Cairo support, so <code>png()</code> cannot open a device), you can set an alternative
-device globally in a setup chunk, e.g., <code>litedown::reactor(dev = ragg::agg_png)</code>.
-Remember to set <code>dev</code> <em>only</em> via <code>reactor()</code> and not also as a local chunk
-option, or the global value will be lost (see the caution in <a class="cross-ref-sec" href="#sec:reactor">2.1.2</a>). If
+device globally in a setup chunk, e.g., <code>litedown::reactor(dev = 'svg')</code>. If
 this setup chunk does not itself generate any plots, also set <code>fig.path = NA</code>
-(<a class="cross-ref-sec" href="#sec:chunk-options">2.2</a>) for it so that <code>fuse()</code> will not try to open the
+(<a class="cross-ref-sec" href="#sec:option-fig">2.2.12</a>) for it, so that <code>fuse()</code> will not try to open the
 (unavailable) default device for this chunk.</p>
 </div>
 <p>The plot file path (specified via the chunk option <code>fig.path</code>) will be passed to
