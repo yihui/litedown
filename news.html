@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.3">
+<meta name="generator" content="litedown 0.11.4">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/css/article.min.css">
@@ -43,6 +43,9 @@
 </div>
 <h2 id="sec:litedown-0-12" class="unnumbered">litedown 0.12</h2>
 <ul>
+<li>
+<p>Fixed a bug that <code>fuse()</code> (and <code>mark()</code>) failed to compile a <code>.tex</code> file to PDF when the output was in a different directory, because <code>latexmk</code> was not run in the output directory and could not find relative paths in the <code>.tex</code> file such as plot files (thanks, <a href="https://github.com/reedacartwright">@reedacartwright</a>, <a href="https://github.com/yihui/litedown/issues/168">#168</a>).</p>
+</li>
 <li>
 <p>The chunk option <code>echo</code> can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., <code>echo = -1</code> hides the first line, and <code>echo = 2:3</code> shows only the second and third lines (thanks, <a href="https://github.com/jangorecki">@jangorecki</a>, <a href="https://github.com/yihui/litedown/issues/93">#93</a>).</p>
 </li>
@@ -363,7 +366,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.3</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.4</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.73/js/appendix.min.js" defer></script>
