@@ -705,9 +705,16 @@ timing_path = function() {
 # when users hit the Knit button
 knit = function(input, ...) fuse(input, envir = parent.frame())
 
+reset_list <- function(x) {
+  lapply(x, function(a) {
+    class(a) <- unique.default(c("litedown_reset", oldClass(x)))
+    a
+  })
+}
+
 fuse_code = function(x, blocks) {
   # merge local chunk options into global options
-  old = reactor(x$options); on.exit(reactor(old), add = TRUE)
+  old = reactor(reset_list(x$options)); on.exit(reactor(old), add = TRUE)
   opts = reactor()
 
   # delayed assignment to evaluate a chunk option only when it is actually used
@@ -755,6 +762,11 @@ fuse_code = function(x, blocks) {
       new_warning(sprintf("The engine '%s' is not supported.", lang))
     )
   }
+
+  # Drop any names from old that have been updated by the chunk.
+  nms <- names(old)
+  keep <- vapply(reactor(nms), inherits, logical(1), what = "litedown_reset")
+  old <- old[nms[keep]]
 
   if (!opts$include) return('')
 
