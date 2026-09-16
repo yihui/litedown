@@ -208,7 +208,7 @@ value you set inside the chunk. For example, do *not* do this:
 ```` md
 ```{r, setup}
 #| dev = 'jpeg'
-litedown::reactor(dev = 'jpeg')  # will NOT persist to later chunks
+litedown::reactor(dev = 'svg')  # will NOT persist to later chunks
 ```
 ````
 
@@ -669,11 +669,9 @@ output (such as HTML).
 ::: callout-tip
 If the default device is not available on your system (e.g., R was built without
 Cairo support, so `png()` cannot open a device), you can set an alternative
-device globally in a setup chunk, e.g., `litedown::reactor(dev = ragg::agg_png)`.
-Remember to set `dev` *only* via `reactor()` and not also as a local chunk
-option, or the global value will be lost (see the caution in @sec:reactor). If
+device globally in a setup chunk, e.g., `litedown::reactor(dev = 'svg')`. If
 this setup chunk does not itself generate any plots, also set `fig.path = NA`
-(@sec:chunk-options) for it so that `fuse()` will not try to open the
+(@sec:option-fig) for it, so that `fuse()` will not try to open the
 (unavailable) default device for this chunk.
 :::
 
