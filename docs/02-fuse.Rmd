@@ -197,24 +197,16 @@ litedown::reactor(echo = FALSE)
 The chunk option `echo` will be restored to `TRUE` after `fuse()` finishes this
 document.
 
-::: callout-caution
-Setting an option *both* globally (via `reactor()`) and locally (in the chunk
-header) *in the same chunk* will not work as you might expect: the global value
-will be lost after this chunk. This is because local chunk options are applied
-on top of global options before a chunk is evaluated, and restored to their
-previous global values after the chunk is done, which will override any global
-value you set inside the chunk. For example, do *not* do this:
+You can set an option both globally (via `reactor()` in the chunk code) and
+locally (in the chunk header) in the same chunk. The global value will persist
+to later chunks, while the local value applies only to the current chunk, e.g.:
 
 ```` md
 ```{r, setup}
-#| dev = 'jpeg'
-litedown::reactor(dev = 'svg')  # will NOT persist to later chunks
+#| dev = 'png'
+litedown::reactor(dev = 'svg')  # 'svg' persists to later chunks
 ```
 ````
-
-If you want to set an option globally, set it only via `reactor()` and do not
-also provide it as a local chunk option.
-:::
 
 ### Skipped code chunks {#sec:skipped-chunks}
 

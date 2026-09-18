@@ -41,6 +41,46 @@ assert('fuse() fig.path option controls plot file location', {
   unlink('foo', recursive = TRUE)
 })
 
+# helper to fuse and return the value of a global option after fuse() finishes;
+# a chunk records the option value into an environment so we can inspect it
+# without relying on fuse()'s own restore of global options on exit
+fuse_opt = function(src, name) {
+  e = new.env()
+  assign('.probe', e, envir = globalenv()); on.exit(rm('.probe', envir = globalenv()))
+  fuse(text = src, output = 'markdown', envir = globalenv())
+  e[[name]]
+}
+
+assert('fuse() keeps a global option set in chunk code even if also set locally (#167)', {
+  # `dev` is set both as a local chunk option and globally via reactor() in the
+  # chunk code; the global value must persist to later chunks
+  src = c(
+    '```{r, setup}', "#| dev = 'png'", "reactor(dev = 'jpeg')", '```', '',
+    '```{r}', ".probe$dev = reactor('dev')", '```'
+  )
+  old = reactor(dev = NULL)
+  ('jpeg' %==% fuse_opt(src, 'dev'))
+  reactor(old)
+
+  # the same, but the option is set by direct assignment on the reactor env
+  src = c(
+    '```{r, setup}', "#| dev = 'png'", "opts = reactor(); opts$dev = 'jpeg'", '```', '',
+    '```{r}', ".probe$dev = reactor('dev')", '```'
+  )
+  old = reactor(dev = NULL)
+  ('jpeg' %==% fuse_opt(src, 'dev'))
+  reactor(old)
+})
+
+assert('fuse() does not leak a local chunk option into later chunks (#167)', {
+  # fig.alt is local to chunk-a only; chunk-b must not inherit it
+  src = c(
+    '```{r, chunk-a}', "#| fig.alt = c('a histogram', 'a sunflower plot')", '1 + 1', '```', '',
+    '```{r, chunk-b}', ".probe$alt = reactor('fig.alt')", '```'
+  )
+  (is.null(fuse_opt(src, 'alt')))
+})
+
 assert('fuse() does not let nested fuse() override outer plot files (#127)', {
   b = tempfile(fileext = '.Rmd')
   a = tempfile(fileext = '.Rmd')

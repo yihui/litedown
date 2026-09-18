@@ -707,7 +707,11 @@ knit = function(input, ...) fuse(input, envir = parent.frame())
 
 fuse_code = function(x, blocks) {
   # merge local chunk options into global options
-  old = reactor(x$options); on.exit(reactor(old), add = TRUE)
+  old = reactor(x$options)
+  # restore the local options on exit, but keep any options that the chunk's
+  # code set globally (`changed`, recorded during evaluation below) (#167)
+  changed = character()
+  on.exit(reactor(old[setdiff(names(old), changed)]), add = TRUE)
   opts = reactor()
 
   # delayed assignment to evaluate a chunk option only when it is actually used
@@ -749,12 +753,19 @@ fuse_code = function(x, blocks) {
   # resolve inline chunk references and do code interpolation
   x$source = fill_source(x$source, opts$fill, blocks)
 
+  # arm tracking of global options set by the chunk's code during evaluation;
+  # save/restore the previous state so nested fuse() calls don't interfere
+  os = .env$opts_set; .env$opts_set = character()
+  on.exit(.env$opts_set <- os, add = TRUE)
   res = if (isFALSE(opts$eval)) list(new_source(x$source)) else {
     if (is.function(eng <- engines(lang))) eng(x) else list(
       new_source(x$source),
       new_warning(sprintf("The engine '%s' is not supported.", lang))
     )
   }
+  # record what the chunk's code changed, then disarm tracking so that options
+  # set by litedown itself below (e.g. engine-returned options) aren't recorded
+  changed = .env$opts_set; .env$opts_set = os
 
   if (!opts$include) return('')
 
@@ -1113,10 +1124,40 @@ new_opts = function() {
       )
     }
     if (any(nms == '')) stop('All arguments must be either named or unnamed.')
+    track_opts(.opts, nms)
     old = opt_get(nms, drop = FALSE)
     for (i in nms) assign(i, v[[i]], envir = .opts)
     invisible(old)
   }
+}
+
+# Record option names (re)set while a chunk's code is being evaluated, so that
+# global options set inside a chunk aren't reverted by the chunk's local options
+# on exit (#167). Only the `reactor` options environment is tracked, and only
+# while tracking is armed by fuse_code() around the chunk code evaluation. Note
+# that litedown's own lazy evaluation of language-valued options uses
+# delayedAssign(), which writes to the environment directly and bypasses these
+# hooks, so it is correctly not recorded here.
+track_opts = function(opts, nms) {
+  # .env may not exist yet while options are initialized at package load time
+  if (!exists('.env', envir = topenv(environment()))) return()
+  if (identical(opts, reactor()) && is.character(.env$opts_set))
+    .env$opts_set = union(.env$opts_set, nms)
+}
+
+# intercept direct assignment to the options environment, e.g. reactor()$dev = x
+#' @export
+`$<-.litedown_env` = function(x, name, value) {
+  track_opts(x, name)
+  assign(name, value, envir = x)
+  x
+}
+
+#' @export
+`[[<-.litedown_env` = function(x, i, value) {
+  track_opts(x, i)
+  assign(i, value, envir = x)
+  x
 }
 
 #' Get and set chunk options
