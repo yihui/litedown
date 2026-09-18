@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 0.12
 
+- A chunk option can now be set both globally (via `reactor()` in a code chunk) and locally (in the chunk header) in the same chunk, and the global value will persist to later chunks (thanks, @reedacartwright, #167).
+
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
 
 - The chunk option `echo` can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., `echo = -1` hides the first line, and `echo = 2:3` shows only the second and third lines (thanks, @jangorecki, #93).
