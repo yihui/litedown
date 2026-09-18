@@ -55,8 +55,8 @@ assert('fuse() keeps a global option set in chunk code even if also set locally 
   # `dev` is set both as a local chunk option and globally via reactor() in the
   # chunk code; the global value must persist to later chunks
   src = c(
-    '```{r, setup}', "#| dev = 'png'", "reactor(dev = 'jpeg')", '```', '',
-    '```{r}', ".probe$dev = reactor('dev')", '```'
+    '```{r, setup}', "#| dev = 'png'", "litedown::reactor(dev = 'jpeg')", '```', '',
+    '```{r}', ".probe$dev = litedown::reactor('dev')", '```'
   )
   old = reactor(dev = NULL)
   ('jpeg' %==% fuse_opt(src, 'dev'))
@@ -64,8 +64,8 @@ assert('fuse() keeps a global option set in chunk code even if also set locally 
 
   # the same, but the option is set by direct assignment on the reactor env
   src = c(
-    '```{r, setup}', "#| dev = 'png'", "opts = reactor(); opts$dev = 'jpeg'", '```', '',
-    '```{r}', ".probe$dev = reactor('dev')", '```'
+    '```{r, setup}', "#| dev = 'png'", "opts = litedown::reactor(); opts$dev = 'jpeg'", '```', '',
+    '```{r}', ".probe$dev = litedown::reactor('dev')", '```'
   )
   old = reactor(dev = NULL)
   ('jpeg' %==% fuse_opt(src, 'dev'))
@@ -76,7 +76,7 @@ assert('fuse() does not leak a local chunk option into later chunks (#167)', {
   # fig.alt is local to chunk-a only; chunk-b must not inherit it
   src = c(
     '```{r, chunk-a}', "#| fig.alt = c('a histogram', 'a sunflower plot')", '1 + 1', '```', '',
-    '```{r, chunk-b}', ".probe$alt = reactor('fig.alt')", '```'
+    '```{r, chunk-b}', ".probe$alt = litedown::reactor('fig.alt')", '```'
   )
   (is.null(fuse_opt(src, 'alt')))
 })
