@@ -1,0 +1,12 @@
+---
+title: Help pages
+---
+
+```{css, echo = FALSE}
+h2 {
+  text-align: center;
+  margin-top: 2em;
+}
+```
+
+`{r} litedown::pkg_manual()`

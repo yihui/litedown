@@ -450,6 +450,106 @@ run_examples = function(html, config, path) {
   })
 }
 
+#' Build a website for an R package
+#'
+#' Generate a website from a template shipped with \pkg{litedown}, which
+#' contains pages for the package description, news, manual, vignettes,
+#' examples, and source code.
+#'
+#' Template files are copied from `system.file('site', package = 'litedown')` to
+#' the `output` directory. Files that already exist under `output` are not
+#' overwritten, i.e., you can customize any page by providing your own version
+#' of it. Pages that do not apply to the package are deleted, e.g., `news.Rmd`
+#' is deleted if the package has neither `NEWS.md` nor `inst/NEWS.Rd`.
+#'
+#' If the package contains a book project (i.e., `docs/_litedown.yml` exists),
+#' the book will be built via [fuse_book()] and placed under the `book/`
+#' subdirectory of the site.
+#'
+#' The package must have been installed, because rendering the site requires the
+#' installed version of it (e.g., [pkg_manual()] reads its Rd database, and
+#' `articles.Rmd` lists its built vignettes). The pages generated from the
+#' package source (e.g., `examples.Rmd` and the book under `book/`) require the
+#' package root directory, which is taken from the `path` attribute of `name`.
+#' @inheritParams pkg_desc
+#' @param output The directory in which the site is built (created if it does not
+#'   exist). It holds both the site source (i.e., the template) and the output
+#'   files.
+#' @param exclude Filenames of template pages to be excluded, e.g., you can use
+#'   `exclude = NULL` to keep all pages.
+#' @return Output file paths (invisibly).
+#' @seealso [fuse_site()], which renders the site after the template has been
+#'   set up.
+#' @export
+#' @examples
+#' \dontrun{
+#' # run this in the root directory of a package
+#' litedown::pkg_site()
+#' }
+pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') {
+  if (!loadable(name)) stop(
+    "The package '", name, "' needs to be installed before its site can be built."
+  )
+  path = normalize_path(attr(name, 'path') %||% system.file(package = name))
+  # tell detect_pkg() where the package is (the site dir may live anywhere)
+  vars = set_envvar(c(R_LITEDOWN_PKG = path))
+  on.exit(set_envvar(vars), add = TRUE)
+  site_skeleton(output, path, exclude)
+  res = in_dir(output, {
+    # the footer is included by _litedown.yml as a .md file
+    if (file_exists('_footer.Rmd')) fuse('_footer.Rmd', '.md')
+    # create a placeholder so that the book is included in the nav menu
+    if (book <- file_exists(cfg <- file.path(path, 'docs/_litedown.yml'))) {
+      dir_create('book'); file.create('book/index.html')
+    }
+    out = fuse_site('.')
+    if (book) {
+      fuse_book(d <- dirname(cfg))
+      copy_dir(d, 'book')
+      unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
+    }
+    dir_create('playground')
+    copy_dir(file.path(path, 'playground'), 'playground')
+    if (dir.exists('examples')) write_utf8(
+      grep('^[^_].+[.](Rmd|R)$', list.files('examples'), value = TRUE),
+      'playground/examples.txt'
+    )
+    out
+  })
+  invisible(res)
+}
+
+# copy the site template to the site dir and delete pages that do not apply
+site_skeleton = function(output, path, exclude = NULL) {
+  dir_create(output)
+  # copy template files, but keep files that already exist in the site dir
+  tpl = pkg_file('site')
+  for (f in list.files(tpl, all.files = TRUE, recursive = TRUE)) {
+    if (file_exists(f2 <- file.path(output, f))) next
+    dir_create(dirname(f2))
+    file.copy(file.path(tpl, f), f2)
+  }
+  in_dir(output, {
+    # examples.Rmd styles the listing with this stylesheet
+    file.copy(pkg_file('resources', 'listing.css'), '.', overwrite = TRUE)
+    if (!dir.exists(file.path(path, 'vignettes'))) unlink('articles.Rmd')
+    if (!any(file_exists(file.path(path, c('NEWS.md', 'inst/NEWS.Rd')))))
+      unlink('news.Rmd')
+    if (dir.exists(d <- file.path(path, 'examples'))) {
+      file.copy(d, '.', recursive = TRUE)
+    } else unlink('examples.Rmd')
+    unlink(exclude, recursive = TRUE)
+  })
+  invisible(output)
+}
+
+# copy the content (instead of the directory itself) of a dir to another dir
+copy_dir = function(from, to) {
+  if (!dir.exists(from)) return()
+  fs = list.files(from, all.files = TRUE, no.. = TRUE, full.names = TRUE)
+  file.copy(fs, to, recursive = TRUE, overwrite = TRUE)
+}
+
 # read package metadata: from the DESCRIPTION file if the package root is found,
 # otherwise from the installed package
 read_desc = function(name = detect_pkg(), fields = NULL) {
@@ -471,6 +571,12 @@ detect_pkg = local({
 })
 
 .detect_pkg = function(error = TRUE) {
+  # the root dir can be specified explicitly via an env var (e.g., by pkg_site())
+  if (!is.na(p <- Sys.getenv('R_LITEDOWN_PKG', NA))) {
+    desc = read_utf8(file.path(p, 'DESCRIPTION'))
+    name = grep_sub('^Package: (.+?)\\s*$', '\\1', desc)[1]
+    return(structure(name, path = p, wd = getwd()))
+  }
   ds = if (xfun::is_R_CMD_check()) {
     # R CMD check's working directory is PKG_NAME.Rcheck by default
     name = grep_sub('[.]Rcheck$', '', basename(getwd()))
