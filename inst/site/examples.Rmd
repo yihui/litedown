@@ -3,7 +3,7 @@ title: Examples
 ---
 
 ```{r, echo = FALSE}
-litedown::vest(css = 'listing.css')
+litedown::vest(css = 'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/listing.css')
 ```
 
 ```{css, echo = FALSE}

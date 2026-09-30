@@ -530,8 +530,6 @@ site_skeleton = function(output, path, exclude = NULL) {
     file.copy(file.path(tpl, f), f2)
   }
   in_dir(output, {
-    # examples.Rmd styles the listing with this stylesheet
-    file.copy(pkg_file('resources', 'listing.css'), '.', overwrite = TRUE)
     if (!dir.exists(file.path(path, 'vignettes'))) unlink('articles.Rmd')
     if (!any(file_exists(file.path(path, c('NEWS.md', 'inst/NEWS.Rd')))))
       unlink('news.Rmd')

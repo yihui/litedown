@@ -119,7 +119,6 @@ if (system.file('site', package = pkg) != '')
     site_skeleton(d, p)
     fs = list.files(d)
     ('index.Rmd' %in% fs)
-    ('listing.css' %in% fs)
     # vignettes/ exists, so articles.Rmd is kept
     ('articles.Rmd' %in% fs)
     # no NEWS.md/inst/NEWS.Rd and no examples/ -> the pages are deleted
