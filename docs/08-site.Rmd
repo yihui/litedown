@@ -256,12 +256,82 @@ litedown::pkg_code()
 
 Alternatively, you can build a package website by calling these functions in
 separate `.Rmd` files, e.g., `pkg_desc()` in `index.Rmd`, `pkg_news()` in
-`news.Rmd`, and so on.
+`news.Rmd`, and so on. You do not have to write these files yourself, since
+**litedown** ships a site template that does it for you (@sec:pkg-site-fun).
 
-### Package sites via GitHub Action
+### Package sites via `pkg_site()` {#sec:pkg-site-fun}
+
+`pkg_site()` builds a website for an R package from a template bundled with
+**litedown**. Run it in the package root directory:
+
+```{r, eval = FALSE}
+litedown::pkg_site()
+```
+
+Like the other `pkg_*()` functions, it detects the package from the `DESCRIPTION`
+file in the current or an upper-level directory, which can also be specified via
+the `name` argument. It copies the template to the `site/` directory (which can
+be changed via the `output` argument), deletes the pages that do not apply to the
+package, and renders the site with `fuse_site()`. The package has to be installed
+first, because rendering the site requires the installed version of it, e.g.,
+`pkg_manual()` reads its help database, and `articles.Rmd` lists its built
+vignettes.
+
+The template lives under `system.file('site', package = 'litedown')` and contains
+the following `.Rmd` files (explained in @tab:pkg-site):
+
+```{r}
+list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
+```
+
+:::: table
+::: caption
+[ ](#@tab:pkg-site) Explanations of site source files.
+:::
+
+| source | description | content |
+|----|----|----|
+| `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
+| `articles` | package vignettes | the `doc/` folder of the installed package |
+| `code` | source code (R, C, C++, etc.) | `pkg_code()` |
+| `examples` | examples | the `examples/` folder in the package root directory |
+| `manual` | help pages | `pkg_manual()` |
+| `news` | news | `pkg_news()` |
+| `_footer` | page footer | package authors |
+::::
+
+Files that already exist in the site directory are never overwritten by the
+template, so you can customize any page by putting your own version of it in the
+site directory and committing it to your repository.
+
+The `exclude` argument allows you to exclude certain pages from the site. By
+default, `code.Rmd` is excluded, and
+
+-   `articles.Rmd` is excluded if the package does not have the `vignettes/`
+    directory;
+
+-   `examples.Rmd` is excluded if the package does not have the `examples/`
+    directory;
+
+-   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
+    the package.
+
+For example, if you do not want to include the news (or the source code,
+either), you can use `exclude = c('code.Rmd', 'news.Rmd')`.
+
+If the package contains a book project (i.e., `docs/_litedown.yml` exists), the
+book will be built with `fuse_book()` and published under the `book/` subpage of
+the site.
+
+If you publish the site to GitHub Pages yourself instead of using the GitHub
+action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
+site directory, because Jekyll ignores files and directories whose names start
+with `_`, such as the `_footer.md` used by the template.
+
+### Package sites via GitHub Action {#sec:pkg-site-gha}
 
 You may use GitHub Actions to automatically build and deploy package websites.
-The key is to call `litedown::fuse_site()`. I have provided [a simple GitHub
+The key is to call `litedown::pkg_site()`. I have provided [a simple GitHub
 action](https://github.com/yihui/actions/blob/main/litedown-site/action.yml) in the
 **actions** repository, and you can add a step `uses: yihui/actions/litedown-site@HEAD`
 to your GitHub workflow to use it.
@@ -301,57 +371,17 @@ cat(sprintf(
 ), sep = '\n\n')
 ```
 
+The options `site-dir` and `exclude` are passed to the `output` and `exclude`
+arguments of `pkg_site()` (@sec:pkg-site-fun), respectively, except that
+`exclude` takes filenames separated by spaces here, e.g., `exclude: 'code.Rmd
+news.Rmd'`. For `pkg-root`, the action changes to this directory (or the
+subdirectory containing `DESCRIPTION`) before calling `pkg_site()`. The `cleanup`
+option allows you to run a command before publishing the site, e.g., you can
+delete the `.Rmd` source and `.yml` config files.
+
 By default, the site is built under the `site/` directory of the package. If you
 change this path, please remember to adjust the `path` option for the
 `actions/upload-pages-artifact` action accordingly.
-
-If the site source directory in your package does not exist or is empty, the
-action will copy [the site
-template](https://github.com/yihui/actions/tree/main/litedown-site) from the **actions** repo,
-which contains the following `.Rmd` files (explained in @tab:pkg-site):
-
-```{r}
-list.files('../../actions/litedown-site/', '[.]Rmd$')
-```
-
-:::: table
-::: caption
-[ ](#@tab:pkg-site) Explanations of site source files.
-:::
-
-| source | description | content |
-|----|----|----|
-| `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | the `doc/` folder of the installed package |
-| `code` | source code (R, C, C++, etc.) | `pkg_code()` |
-| `examples` | examples | the `examples/` folder in the package root directory |
-| `manual` | help pages | `pkg_manual()` |
-| `news` | news | `pkg_news()` |
-| `_footer` | page footer | package authors |
-::::
-
-You can freely customize this template according to your own needs (e.g.,
-modify, add, or delete files), and add the folder to your repository. Then the
-action will use your custom template to build the site.
-
-The `exclude` option allows you to exclude certain pages from the site. By
-default, `code.Rmd` is excluded, and
-
--   `articles.Rmd` is excluded if the package does not have the `vignettes/`
-    directory;
-
--   `examples.Rmd` is excluded if the package does not have the `examples/`
-    directory;
-
--   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
-    the package.
-
-You can exclude any page via the `exclude` option. For example, if don't want to
-include the news, you can specify `exclude: 'code.Rmd news.Rmd'` (if you do not
-want `code.Rmd`, either).
-
-The `cleanup` option allows you to run a command before publishing the site,
-e.g., you can delete the `.Rmd` source and `.yml` config files.
 
 #### Package playground
 
@@ -362,8 +392,8 @@ code or render R Markdown documents without a server or a local R installation
 (yes, it works on your mobile device, too!).
 
 The playground can be customized by adding a `playground/` directory to the
-package root, which the site action copies into `site/playground/`. The
-following files are recognized:
+package root, which `pkg_site()` copies into `site/playground/`. The following
+files are recognized:
 
 -   `_default.Rmd` (or `_default.R`): the content pre-loaded in the editor when
     the playground opens. The `.Rmd` version is tried first; if it does not

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playground</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <h2>Initializing Playground</h2>
+  <p id="loading-msg">Loading webR…</p>
+</div>
+
+<header>
+  <h1>Playground</h1>
+  <button id="run-btn" disabled>&#9654; Run</button>
+  <select id="examples-select"><option value="">Load example…</option></select>
+  <span id="status"></span>
+</header>
+
+<div class="container">
+  <div class="pane" id="editor-pane">
+    <div class="pane-header">Source Editor</div>
+    <div id="editor-wrap"></div>
+  </div>
+  <div class="pane" id="preview-pane">
+    <div class="pane-header">HTML Preview</div>
+    <!-- An iframe is the cleanest way to display litedown's standalone HTML output:
+         its own <head> CSS/JS would conflict with the playground page if injected directly. -->
+    <iframe id="preview-frame"></iframe>
+  </div>
+</div>
+
+<!-- CodeMirror 5 — plain <script> tags from CDN, no ES-module deduplication issues
+     (the problem that plagued CodeMirror 6 when loading its modules from CDN). -->
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/markdown/markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/r/r.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/yaml/yaml.min.js"></script>
+<!-- xml mode is needed by the markdown mode for inline HTML highlighting -->
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/xml/xml.min.js"></script>
+
+<script type="module" src="index.js"></script>
+</body>
+</html>

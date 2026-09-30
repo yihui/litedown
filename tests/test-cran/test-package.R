@@ -105,3 +105,29 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   # the alias TOC links back to those sections
   (any(grepl('href="#sec:man-', m)))
 })
+
+assert('pkg_site() requires the package to be installed', {
+  (has_error(pkg_site('an-uninstalled-package')))
+})
+
+# the site template is under inst/, which may not be installed for tests
+if (system.file('site', package = pkg) != '')
+  assert('site_skeleton() copies the site template and deletes pages that do not apply', {
+    d = tempfile(); p = tempfile()
+    dir_create(file.path(p, 'vignettes'))
+    writeLines('Package: foo', file.path(p, 'DESCRIPTION'))
+    site_skeleton(d, p)
+    fs = list.files(d)
+    ('index.Rmd' %in% fs)
+    # vignettes/ exists, so articles.Rmd is kept
+    ('articles.Rmd' %in% fs)
+    # no NEWS.md/inst/NEWS.Rd and no examples/ -> the pages are deleted
+    (!('news.Rmd' %in% fs))
+    (!('examples.Rmd' %in% fs))
+    # files that already exist in the site dir are not overwritten
+    write_utf8('custom', f <- file.path(d, 'index.Rmd'))
+    site_skeleton(d, p, exclude = 'code.Rmd')
+    (read_utf8(f) %==% 'custom')
+    (!file_exists(file.path(d, 'code.Rmd')))
+    unlink(c(d, p), recursive = TRUE)
+  })
