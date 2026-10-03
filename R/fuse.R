@@ -913,22 +913,27 @@ fill_source = function(x, fill, blocks) {
 
 fill_label = function(x, blocks) {
   r = '`<(.+?)>`'
+  found = FALSE  # whether any `<label>` marker was expanded
   for (i in grep(r, x)) {
     ind = sub('^(\\s*).*', '\\1', x[i])  # possible indent
     x[i] = match_replace(x[i], r, function(z) {
       labs = sub(r, '\\1', z)  # chunk label
       j = labs %in% names(blocks)
-      if (any(j)) z[j] = uapply(blocks[labs[j]], function(b) {
-        s = b$source
-        if ((n <- length(s)) > 0) {
-          paste0(c('', rep(ind, n - 1)), s, collapse = '\n')
-        } else ''
-      })
+      if (any(j)) {
+        found <<- TRUE
+        z[j] = uapply(blocks[labs[j]], function(b) {
+          s = b$source
+          if ((n <- length(s)) > 0) {
+            paste0(c('', rep(ind, n - 1)), s, collapse = '\n')
+          } else ''
+        })
+      }
       z
     })
   }
-  # recursion for possible more `<label>` markers
-  if (is.null(i)) x else fill_label(split_lines(x), blocks)
+  # recurse only if a label expanded (its source may hold more markers); a
+  # `<...>` that matches no chunk label is left as-is and must not recurse
+  if (found) fill_label(split_lines(x), blocks) else x
 }
 
 fill_code = function(x, fill) {

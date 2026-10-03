@@ -21,6 +21,19 @@ assert('code blocks after asis HTML output are rendered correctly (regression)',
   (as.character(gsub('.*<pre><code class="language-r">1:2.*', '', out)) %==% '')
 })
 
+assert('fill_label() leaves an unmatched `<...>` alone (regression)', {
+  # a `<...>` in chunk source that matches no chunk label previously sent
+  # fill_label() into infinite recursion (node stack overflow); it must pass
+  # through verbatim, while a real `<label>` still expands to that chunk source
+  src = paste(c(
+    '```{r lab}', '#| eval: false', 'secret_val', '```', '',
+    '```{js}', 'const a = `<lab>`, b = `<${s}>`;', '```'
+  ), collapse = '\n')
+  out = as.character(fuse(text = src, output = 'markdown'))
+  (any(grepl('secret_val', out)))          # real label expanded
+  (any(grepl('${s}', out, fixed = TRUE)))  # unmatched marker preserved
+})
+
 assert('fuse() fig.path option controls plot file location', {
   src = c(
     '---', 'output:', '  html:', '    options:', '      embed_resources: false',

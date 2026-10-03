@@ -6,6 +6,8 @@
 
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
 
+- Fixed an infinite recursion (node stack overflow) in `fuse()` when a code chunk's source contained a `` `<...>` `` sequence that matched no chunk label (e.g., a JavaScript template literal such as `` `<${x}>` ``). Such a sequence is now left unchanged, while a real `` `<label>` `` include still expands to that chunk's source.
+
 - The chunk option `echo` can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., `echo = -1` hides the first line, and `echo = 2:3` shows only the second and third lines (thanks, @jangorecki, #93).
 
 # CHANGES IN litedown VERSION 0.11
