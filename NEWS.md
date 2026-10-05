@@ -8,6 +8,8 @@
 
 - Fixed an infinite recursion (node stack overflow) in `fuse()` when a code chunk's source contained a `` `<...>` `` sequence that matched no chunk label (e.g., a JavaScript template literal such as `` `<${x}>` ``). Such a sequence is now left unchanged, while a real `` `<label>` `` include still expands to that chunk's source.
 
+- Fixed a bug that backtick text containing a brace object (e.g., a JavaScript object literal with nested braces such as `` `{ cols: { cyl: { type: "select" } } }` ``) was mistakenly treated as an inline code expression. The `` `{lang} source` `` form now requires an engine name immediately after the opening `{`.
+
 - The chunk option `echo` can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., `echo = -1` hides the first line, and `echo = 2:3` shows only the second and third lines (thanks, @jangorecki, #93).
 
 # CHANGES IN litedown VERSION 0.11

@@ -81,8 +81,11 @@ crack = function(input, text = NULL) {
   set_error_handler(input)
 
   d = tok_subset(d, d$type == 'code')
-  # find out inline code `{lang} expr`
-  rx_inline = '^\\s*[{](.+?)[}]\\s+(.+?)\\s*$'
+  # find out inline code `{lang} expr`; the `{...}` part must start with an
+  # engine name right after `{` (no leading space), so that literal backtick
+  # text containing brace objects (e.g., a JS object `{ a: { b } }`) is not
+  # mistaken for inline code
+  rx_inline = '^\\s*[{]([a-zA-Z0-9_]+.*?)[}]\\s+(.+?)\\s*$'
   # look for `r expr` if `{lang}` not found (for compatibility with knitr)
   if (!any(j <- grepl(rx_inline, d$literal)) && getOption('litedown.enable.knitr_inline', FALSE)) {
     rx_inline = '^(r) +(.+?)\\s*$'

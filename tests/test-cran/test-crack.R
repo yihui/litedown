@@ -69,6 +69,16 @@ assert('crack() handles inline code in text blocks', {
   (is.list(res[[1]]$source))
 })
 
+assert('crack() does not treat brace objects in backticks as inline code', {
+  # a `{...}` part is inline code only when it starts with an engine name right
+  # after `{`; literal backtick text holding a brace object (e.g., a JS object
+  # with nested braces) must stay plain text
+  src = c('Use `{ cols: { cyl: { type: "select" } } }` to add a dropdown.')
+  res = crack(text=src)
+  # no inline code extracted: source stays a plain string, not a list
+  (!is.list(res[[1]]$source))
+})
+
 assert('crack() strips fence padding for multi-backtick inline code on indented lines', {
   # `` `` ``-fences pad code with a space on each side; on an indented line,
   # cmark's sourcepos ignores the indentation, so the leftover text used to
