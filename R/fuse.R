@@ -33,13 +33,15 @@ new_env = function(...) new.env(..., parent = emptyenv())
 #' @examples
 #' library(litedown)
 #' # parse R Markdown
-#' res = crack(c('```{r}\n1+1\n```', 'Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!'))
+#' res = crack(c(
+#'   "```{r}\n1+1\n```", "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"
+#' ))
 #' str(res)
 #' # evaluate inline code and combine results with text fragments
 #' txt = lapply(res[[2]]$source, function(x) {
 #'   if (is.character(x)) x else eval(parse(text = x$source))
 #' })
-#' paste(unlist(txt), collapse = '')
+#' paste(unlist(txt), collapse = "")
 crack = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
   rx_engine = '([a-zA-Z0-9_]+)'  # only allow these characters for engine names
@@ -250,7 +252,9 @@ char_pos = function(x, p) {
 #' @examples
 #'
 #' # parse R code
-#' res = sieve(c("#' This is _doc_.", '', '#| eval=TRUE', '# this is code', '1 + 1'))
+#' res = sieve(c(
+#'   "#' This is _doc_.", "", "#| eval=TRUE", "# this is code", "1 + 1"
+#' ))
 #' str(res)
 sieve = function(input, text = NULL) {
   text = read_input(input, text); input = attr(text, 'input')
@@ -366,8 +370,8 @@ convert_knitr = function(input) {
 #'   `NULL`, the whole context (an environment) is returned.
 #' @export
 #' @examples
-#' litedown::get_context('input')
-#' litedown::get_context('format')
+#' litedown::get_context("input")
+#' litedown::get_context("format")
 #' names(litedown::get_context())  # all available items
 get_context = function(item = NULL) if (is.null(item)) .env else .env[[item]]
 
@@ -455,9 +459,9 @@ block_order = function(res, N = length(res)) {
 #' @export
 #' @examples
 #' library(litedown)
-#' doc = c('```{r}', '1 + 1', '```', '', '$\\pi$ = `{r} pi`.')
+#' doc = c("```{r}", "1 + 1", "```", "", "$\\pi$ = `{r} pi`.")
 #' fuse(doc)
-#' fuse(doc, '.tex')
+#' fuse(doc, ".tex")
 #' fiss(doc)
 fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet = FALSE) {
   text = read_input(input, text); input = attr(text, 'input')
@@ -1039,9 +1043,9 @@ interleave = function(res) {
 #'   treated as raw output.
 #' @export
 #' @examples
-#' litedown::raw_text(c('**This**', '_is_', '[Markdown](#).'))
-#' litedown::raw_text('<b>Bold</b>', 'html')
-#' litedown::raw_text('\\textbf{Bold}', 'latex')
+#' litedown::raw_text(c("**This**", "_is_", "[Markdown](#)."))
+#' litedown::raw_text("<b>Bold</b>", "html")
+#' litedown::raw_text("\\textbf{Bold}", "latex")
 raw_text = function(x, format = NULL) {
   if (length(fmt <- sprintf('=%s', format)) == 1) x = fenced_block(x, fmt)
   new_asis(x, TRUE)
@@ -1153,18 +1157,18 @@ new_opts = function() {
 #' @export
 #' @examples
 #' # get options
-#' litedown::reactor('echo')
-#' litedown::reactor(c('echo', 'fig.width'))
+#' litedown::reactor("echo")
+#' litedown::reactor(c("echo", "fig.width"))
 #'
 #' # set options
 #' old = litedown::reactor(echo = FALSE, fig.width = 8)
-#' litedown::reactor(c('echo', 'fig.width'))
+#' litedown::reactor(c("echo", "fig.width"))
 #' litedown::reactor(old)  # restore options
 #'
 #' # use the environment directly
 #' opts = litedown::reactor()
 #' opts$echo
-#' mget(c('echo', 'fig.width'), opts)
+#' mget(c("echo", "fig.width"), opts)
 #' ls(opts)  # built-in options
 reactor = new_opts()
 reactor(

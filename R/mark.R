@@ -48,19 +48,19 @@
 #' @export
 #' @examples
 #'
-#' mark(c('Hello _World_!', '', 'Welcome to **litedown**.'))
+#' mark(c("Hello _World_!", "", "Welcome to **litedown**."))
 #' # if input appears to be a file path but should be treated as text, use I()
-#' mark(I('This is *not* a file.md'))
+#' mark(I("This is *not* a file.md"))
 #' # that's equivalent to
-#' mark(text = 'This is *not* a file.md')
+#' mark(text = "This is *not* a file.md")
 #'
 #' # output to a file
-#' (mark('_Hello_, **World**!', output = tempfile()))
+#' (mark("_Hello_, **World**!", output = tempfile()))
 #'
 #' # convert to other formats
-#' mark('Hello _World_!', '.tex')
-#' mark('Hello _**`World`**_!', 'xml')
-#' mark('Hello _**`World`**_!', 'text')
+#' mark("Hello _World_!", ".tex")
+#' mark("Hello _**`World`**_!", "xml")
+#' mark("Hello _**`World`**_!", "text")
 mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()) {
   text = read_input(input, text); input = attr(text, 'input')
   part = yaml_body(text)

@@ -71,16 +71,19 @@ Programming} (in case \emph{Reactive Programming} is no longer fun or cool).
 \examples{
 library(litedown)
 # parse R Markdown
-res = crack(c("```{r}\n1+1\n```", "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"))
+res = crack(c(
+  "```{r}\n1+1\n```", "Hello, `pi` = `{r} pi` and `e` = `{r} exp(1)`!"
+))
 str(res)
 # evaluate inline code and combine results with text fragments
 txt = lapply(res[[2]]$source, function(x) {
-    if (is.character(x))
-        x else eval(parse(text = x$source))
+  if (is.character(x)) x else eval(parse(text = x$source))
 })
 paste(unlist(txt), collapse = "")
 
 # parse R code
-res = sieve(c("#' This is _doc_.", "", "#| eval=TRUE", "# this is code", "1 + 1"))
+res = sieve(c(
+  "#' This is _doc_.", "", "#| eval=TRUE", "# this is code", "1 + 1"
+))
 str(res)
 }
