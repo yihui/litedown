@@ -43,8 +43,7 @@ installed version of it (e.g., \code{\link[=pkg_manual]{pkg_manual()}} reads its
 package source (e.g., \code{examples.Rmd} and the book under \verb{book/}) require the
 package root directory, which is taken from the \code{path} attribute of \code{name}.
 }
-\examples{
-\dontrun{
+\examples{\dontrun{
 # run this in the root directory of a package
 litedown::pkg_site()
 }

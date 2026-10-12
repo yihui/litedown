@@ -98,8 +98,7 @@ Helper functions to retrieve various types of package information that can be
 put together as the full package documentation like a \pkg{pkgdown} website.
 These functions can be called inside any R Markdown document.
 }
-\examples{
-\dontrun{
+\examples{\dontrun{
 litedown::pkg_desc()
 litedown::pkg_news()
 litedown::pkg_citation()

@@ -34,9 +34,9 @@
 #' @examples
 #' # create a minimal book example in the temp dir
 #' d = tempfile()
-#' litedown:::proj_skeleton(d, 'site')
+#' litedown:::proj_skeleton(d, "site")
 #' fuse_site(d)
-#' if (interactive()) browseURL(file.path(d, 'index.html'))
+#' if (interactive()) browseURL(file.path(d, "index.html"))
 #' # clean up
 #' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
@@ -200,9 +200,9 @@ menu_name = function(x) {
 #' @examples
 #' # create a minimal book example in the temp dir
 #' d = tempfile()
-#' litedown:::proj_skeleton(d, 'book')
+#' litedown:::proj_skeleton(d, "book")
 #' fuse_book(d)
-#' if (interactive()) browseURL(file.path(d, 'index.html'))
+#' if (interactive()) browseURL(file.path(d, "index.html"))
 #' # clean up
 #' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
