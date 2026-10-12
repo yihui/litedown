@@ -25,6 +25,7 @@ Imports:
     utils,
     xfun (>= 0.55)
 Suggests:
+    mirai,
     rbibutils,
     rstudioapi,
     testit,
