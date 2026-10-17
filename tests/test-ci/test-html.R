@@ -63,6 +63,6 @@ assert('a footnote with Chinese content renders', {
   # the footnote block carries generated ids/aria attributes, so match the
   # Chinese-bearing parts rather than the full HTML
   h = md(text = c('正文[^n]', '', '[^n]: 这是一个中文脚注。'))
-  (matches(h, '.*<section class="footnotes".*') %==% '')
-  (matches(h, '.*<li id="fn-n">\n<p>这是一个中文脚注。.*') %==% '')
+  (has_match(h, '<section class="footnotes"'))
+  (has_match(h, '<li id="fn-n">\n<p>这是一个中文脚注。'))
 })
