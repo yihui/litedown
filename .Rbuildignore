@@ -11,3 +11,4 @@ Makefile
 ^site$
 .*\.tar\.gz$
 .*\.Rcheck$
+^\.githooks$

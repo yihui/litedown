@@ -1,18 +1,8 @@
 # Repository Instructions
 
-## Build and Test Instructions
+## Test Instructions
 
 ```bash
-# Roxygenize (update man/ from roxygen comments)
-Rscript -e 'roxygen2::roxygenize(".")'
-
-# Build the package
-R CMD build .
-
-# Install the package
-R CMD INSTALL litedown_*.tar.gz
-
-# Run tests
 Rscript tests/test-all.R
 ```
 
@@ -57,7 +47,7 @@ assert('message', {
 ## PR checklist
 
 1. **Tests**: every code change needs corresponding test assertions.
-2. **Re-roxygenize**: run `roxygen2::roxygenize('.')` after changing roxygen docs.
+2. **Re-roxygenize**: run `roxygen2::roxygenize('.')` and `./.githooks/pre-commit` after changing roxygen docs.
 3. **Update NEWS.md**: first heading is always `# litedown x.y` (dev version).
 4. **Run tests**: `Rscript tests/test-all.R`
 5. **Clean up artifacts**: `rm -rf *.tar.gz *.Rcheck/`
