@@ -43,7 +43,12 @@ the \code{DESCRIPTION} file if it exists in the current working directory or
 upper-level directories).}
 
 \item{type}{The HTML tag for the description: \code{table} (\verb{<table>} with \verb{<tr>}
-and \verb{<td>}) or \code{dl} (definition list \verb{<dl>} with \verb{<dt>} and \verb{<dd>}).}
+and \verb{<td>}) or \code{dl} (definition list \verb{<dl>} with \verb{<dt>} and \verb{<dd>}). The
+\code{dl} type generates a compact description for a sidebar (a fenced Div with
+the classes \code{side} and \code{side-right}): the fields \code{Description} and
+\code{Suggests} are omitted, and the fields \code{URL} and \code{BugReports} are merged
+into a field \code{Links}, in which URLs are shown as short text links (instead
+of long bare URLs that cannot be wrapped in a narrow sidebar).}
 
 \item{path}{For \code{\link[=pkg_news]{pkg_news()}}, path to the \code{NEWS.md} file. If empty, \code{\link[=news]{news()}}
 will be called to retrieve the news entries. For \code{\link[=pkg_code]{pkg_code()}}, path to the

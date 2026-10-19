@@ -8,6 +8,8 @@ litedown::reactor(echo = FALSE)
 # package description
 pkg_name = litedown:::detect_pkg()
 pkg_path = attr(pkg_name, 'path')
+readme = file.path(pkg_path, 'README.md')
+has_readme = file.exists(readme)
 # if man/figures exists and used, copy it to current dir
 fig = file.path(pkg_path, 'man/figures')
 if (!xfun::same_path('.', pkg_path) && dir.exists(fig)) {
@@ -17,12 +19,14 @@ if (!xfun::same_path('.', pkg_path) && dir.exists(fig)) {
 ```
 
 ```{r}
-litedown::pkg_desc(pkg_name)
+# with a README, put a compact description in the sidebar; otherwise show the
+# full description in the main column
+litedown::pkg_desc(pkg_name, if (has_readme) 'dl' else 'table')
 ```
 
 ```{r, results = 'asis'}
 # readme, if exists
-if (file.exists(readme <- file.path(pkg_path, 'README.md'))) {
+if (has_readme) {
   x = xfun::read_utf8(readme)
   i = which(x == '<!-- badges: start -->')
   # remove lines before badges since they usually contain duplicated info (e.g., title)

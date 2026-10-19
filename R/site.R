@@ -61,7 +61,7 @@ fuse_site = function(input = '.') {
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
     css2 = c(site_css, '@site'), js2 = site_js,
-    include_before = nav_menu(info, inputs), include_after = format(Sys.Date(), '&copy; %Y')
+    include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
     list(embed_resources = FALSE, toc = TRUE), opts[['options']]
@@ -125,10 +125,11 @@ filter_outdated = function(x, x2, n) {
 }
 
 # build a nav menu from filenames under root directory
-nav_menu = function(info, inputs) {
+nav_menu = function(info) {
   if (is.na(info$root)) return('[Home](/index.html)')
   root = sub('/+$', '', info$root)  # strip any trailing slash for reliable dirname() comparison
-  b = basename(inputs[dirname(inputs) == root])
+  # list all pages, since `inputs` may be a single file when previewing
+  b = basename(find_input(root, FALSE, info$yaml[['site']][['pattern']]))
   links = sprintf(
     '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))),
     if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')

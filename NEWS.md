@@ -4,6 +4,10 @@
 
 - Added a new function `pkg_site()`, which builds a website for an R package from a template bundled with **litedown** (under `system.file('site', package = 'litedown')`). The template contains pages for the package description, news, manual, vignettes, examples, and source code, and can be customized page by page (a file that already exists in the site directory will not be overwritten by the template). Previously this template only lived in the GitHub Action <https://github.com/yihui/actions/tree/main/litedown-site>, which means a package site could not be built locally, and the template could get out of sync with the installed version of **litedown**.
 
+- `pkg_desc(type = "dl")` now generates a compact description in a sidebar (a fenced Div with the classes `side` and `side-right`): the `Description` and `Suggests` fields are omitted, and `URL` and `BugReports` are merged into a `Links` field with short text links (e.g., `Browse source code` and `Report a bug`) instead of long bare URLs. The site template of `pkg_site()` uses it to put the description in a sidebar on the home page when the package has a `README.md`.
+
+- Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via `roam()`.
+
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
 
 - Fixed an infinite recursion (node stack overflow) in `fuse()` when a code chunk's source contained a `` `<...>` `` sequence that matched no chunk label (e.g., a JavaScript template literal such as `` `<${x}>` ``). Such a sequence is now left unchanged, while a real `` `<label>` `` include still expands to that chunk's source.

@@ -82,6 +82,31 @@ assert('pkg_desc() renders package metadata as an HTML table or definition list'
   (any(grepl('<dt>Version</dt>', dl, fixed = TRUE)))
 })
 
+assert('pkg_desc(type = "dl") generates a compact sidebar', {
+  dl = pkg_desc(pkg, 'dl')
+  (!any(grepl('<dt>Description</dt>', dl, fixed = TRUE)))
+  (!any(grepl('<dt>(URL|BugReports|Suggests)</dt>', dl)))
+  (any(grepl('<dt>Links</dt>', dl, fixed = TRUE)))
+  (any(grepl('>Report a bug</a>', dl, fixed = TRUE)))
+  # wrapped in a sidebar Div
+  (dl[1] %==% '::: {.side .side-right}')
+  (':::' %in% dl)
+})
+
+assert('side_links() labels URLs by host and appends the bug tracker', {
+  (side_links(NA, NA) %==% NULL)
+  x = side_links(
+    'https://github.com/a/b, https://example.org/pkg/', 'https://github.com/a/b/issues'
+  )
+  (side_links('https://dev.azure.com/o/p/_git/r', NA) %==%
+    '[Browse source code](https://dev.azure.com/o/p/_git/r)')
+  (x %==% paste0(
+    '[Browse source code](https://github.com/a/b)\\\n',
+    '[example.org](https://example.org/pkg/)\\\n',
+    '[Report a bug](https://github.com/a/b/issues)'
+  ))
+})
+
 assert('pkg_citation() returns text and BibTeX citations', {
   ci = suppressWarnings(pkg_citation(pkg))
   (length(ci) > 0L)

@@ -85,6 +85,16 @@ assert('fuse_site() renders every input file in a site skeleton to HTML', {
   (length(readLines(file.path(d, 'index.html'))) > 0L)
 })
 
+assert('nav_menu() lists all pages even if only one file is being rendered', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
+  (length(m) %==% 2L)
+  (grepl('Home', m[1], fixed = TRUE))
+  (grepl('/about.html', m[2], fixed = TRUE))
+})
+
 assert('fuse_book() renders a book skeleton into a single HTML file', {
   d = tempfile()
   on.exit(unlink(d, recursive = TRUE), add = TRUE)

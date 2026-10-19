@@ -113,7 +113,12 @@ vig_filter = function(ifile, encoding) {
 #'   the `DESCRIPTION` file if it exists in the current working directory or
 #'   upper-level directories).
 #' @param type The HTML tag for the description: `table` (`<table>` with `<tr>`
-#'   and `<td>`) or `dl` (definition list `<dl>` with `<dt>` and `<dd>`).
+#'   and `<td>`) or `dl` (definition list `<dl>` with `<dt>` and `<dd>`). The
+#'   `dl` type generates a compact description for a sidebar (a fenced Div with
+#'   the classes `side` and `side-right`): the fields `Description` and
+#'   `Suggests` are omitted, and the fields `URL` and `BugReports` are merged
+#'   into a field `Links`, in which URLs are shown as short text links (instead
+#'   of long bare URLs that cannot be wrapped in a narrow sidebar).
 #' @return A character vector (HTML or Markdown) that will be printed as is
 #'   inside a code chunk of an R Markdown document.
 #'
@@ -126,6 +131,7 @@ vig_filter = function(ifile, encoding) {
 #' litedown::pkg_citation()
 #' }
 pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
+  type = match.arg(type)
   fields = c(
     'Title', 'Version', 'Description', 'Depends', 'Imports', 'Suggests',
     'License', 'URL', 'BugReports', 'VignetteBuilder', 'Authors@R', 'Author'
@@ -136,15 +142,21 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
   d[['Author']] = one_string(pkg_authors(d), ', ')
   d[['Authors@R']] = NULL
+  if (type == 'dl') {
+    # reuse the URL slot (to keep the field order) for all links
+    d[['URL']] = side_links(d[['URL']], d[['BugReports']])
+    d[c('Title', 'Description', 'BugReports', 'Suggests')] = NULL
+    names(d)[names(d) == 'URL'] = 'Links'
+  }
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
-    if (i %in% c('Description', 'URL', 'BugReports', 'Author')) {
+    if (i %in% c('Description', 'URL', 'BugReports', 'Links', 'Author')) {
       sans_p(markdown_html(d[[i]], extensions = 'autolink'))
     } else html_escape(d[[i]])
   }
   d = unlist(d)
   res = one_string(switch(
-    type[1],
+    type,
     table = c(
       '<table class="table-full"><tbody>',
       sprintf('<tr>\n<td>%s</td>\n<td>%s</td>\n</tr>', names(d), d),
@@ -152,8 +164,23 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
     ),
     dl = c('<dl class="pkg-desc">', sprintf('<dt>%s</dt>\n<dd>%s</dd>', names(d), d), '</dl>')
   ))
-
+  # put the sidebar in a fenced Div (blank lines separate it from raw HTML)
+  if (type == 'dl') res = c('::: {.side .side-right}', '', res, '', ':::')
   new_asis(c(res, vest(css = '@manual')))
+}
+
+# turn URLs into Markdown links with short labels
+side_links = function(url, bug) {
+  u = if (!is.na(url)) match_full(url, 'https?://[^[:space:],<>()]+')
+  host = sub('^https?://(www[.])?([^/]+).*', '\\2', u)
+  repo = host %in% c(
+    'github.com', 'gitlab.com', 'codeberg.org', 'bitbucket.org', 'dev.azure.com'
+  )
+  x = c(
+    sprintf('[%s](%s)', ifelse(repo, 'Browse source code', host), u),
+    if (!is.na(bug)) sprintf('[Report a bug](%s)', bug)
+  )
+  if (length(x)) one_string(x, '\\\n')
 }
 
 # format authors, adding URL and ORCID links as appropriate

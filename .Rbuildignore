@@ -1,4 +1,5 @@
 .gitignore
+^AGENTS\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 Makefile
@@ -7,8 +8,9 @@ Makefile
 ^docs$
 ^examples$
 ^src/patches$
-^playground$
 ^site$
+^inst/site/_.*\.md$
+^inst/site/doc$
 .*\.tar\.gz$
 .*\.Rcheck$
 ^\.githooks$
