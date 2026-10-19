@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.7">
+<meta name="generator" content="litedown 0.11.8">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/css/article.min.css">
@@ -94,6 +94,7 @@ h2 {
 <a href="#sec:man-pkg_desc"><code>pkg_desc()</code></a>
 <a href="#sec:man-pkg_desc"><code>pkg_news()</code></a>
 <a href="#sec:man-pkg_desc"><code>pkg_code()</code></a>
+<a href="#sec:man-pkg_desc"><code>pkg_examples()</code></a>
 <a href="#sec:man-pkg_desc"><code>pkg_citation()</code></a>
 <a href="#sec:man-pkg_desc"><code>pkg_manual()</code></a>
 <a href="#sec:man-pkg_site"><code>pkg_site()</code></a>
@@ -770,7 +771,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/tmp/RtmpgTttve/file1a126120a883&quot;
+<pre><code>#&gt; [1] &quot;/tmp/Rtmp6yVfzD/file1a2844df2bc2&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -851,6 +852,8 @@ pkg_code(
   link = TRUE
 )
 
+pkg_examples(path = attr(detect_pkg(), "path"), dir = "examples")
+
 pkg_citation(name = detect_pkg())
 
 pkg_manual(
@@ -871,7 +874,12 @@ upper-level directories).</p>
 <tr><td><code>type</code></td>
 <td>
 <p>The HTML tag for the description: <code>table</code> (<code>&lt;table&gt;</code> with <code>&lt;tr&gt;</code>
-and <code>&lt;td&gt;</code>) or <code>dl</code> (definition list <code>&lt;dl&gt;</code> with <code>&lt;dt&gt;</code> and <code>&lt;dd&gt;</code>).</p>
+and <code>&lt;td&gt;</code>) or <code>dl</code> (definition list <code>&lt;dl&gt;</code> with <code>&lt;dt&gt;</code> and <code>&lt;dd&gt;</code>). The
+<code>dl</code> type generates a compact description for a sidebar (a fenced Div with
+the classes <code>side</code> and <code>side-right</code>): the fields <code>Description</code> and
+<code>Suggests</code> are omitted, and the fields <code>URL</code> and <code>BugReports</code> are merged
+into a field <code>Links</code>, in which URLs are shown as short text links (instead
+of long bare URLs that cannot be wrapped in a narrow sidebar).</p>
 </td></tr>
 <tr><td><code>path</code></td>
 <td>
@@ -913,6 +921,10 @@ can also provide a string template containing the placeholder <code>%s</code> (w
 will be filled out with the file paths via <code>sprintf()</code>), e.g.,
 <code>https://github.com/yihui/litedown/blob/main/%s</code>.</p>
 </td></tr>
+<tr><td><code>dir</code></td>
+<td>
+<p>The directory of examples, relative to the package root <code>path</code>.</p>
+</td></tr>
 <tr><td><code>overview</code></td>
 <td>
 <p>Whether to include the package overview page, i.e., the
@@ -934,6 +946,10 @@ inside a code chunk of an R Markdown document.
 </p>
 <p><code>pkg_code()</code> returns the package source code under the <code>R/</code> and
 <code>src/</code> directories.
+</p>
+<p><code>pkg_examples()</code> returns a list of boxes for the example files (e.g.,
+<code>.Rmd</code> files) under the <code>examples/</code> directory of the package, each with a
+link to its output, a link to its source, and a preview of the source.
 </p>
 <p><code>pkg_citation()</code> returns the package citation in both the plain-text
 and BibTeX formats.
@@ -1267,7 +1283,7 @@ litedown::vest(css = &quot;@tabsets&quot;, js = c(&quot;@tabsets&quot;, &quot;@f
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.7</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.8</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/js/appendix.min.js" defer></script>

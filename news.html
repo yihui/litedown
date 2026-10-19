@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.7">
+<meta name="generator" content="litedown 0.11.8">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/css/article.min.css">
@@ -50,6 +50,12 @@
 <p>Added a new function <code>pkg_site()</code>, which builds a website for an R package from a template bundled with <strong>litedown</strong> (under <code>system.file('site', package = 'litedown')</code>). The template contains pages for the package description, news, manual, vignettes, examples, and source code, and can be customized page by page (a file that already exists in the site directory will not be overwritten by the template). Previously this template only lived in the GitHub Action <a href="https://github.com/yihui/actions/tree/main/litedown-site">https://github.com/yihui/actions/tree/main/litedown-site</a>, which means a package site could not be built locally, and the template could get out of sync with the installed version of <strong>litedown</strong>.</p>
 </li>
 <li>
+<p><code>pkg_desc(type = &quot;dl&quot;)</code> now generates a compact description in a sidebar (a fenced Div with the classes <code>side</code> and <code>side-right</code>): the <code>Description</code> and <code>Suggests</code> fields are omitted, and <code>URL</code> and <code>BugReports</code> are merged into a <code>Links</code> field with short text links (e.g., <code>Browse source code</code> and <code>Report a bug</code>) instead of long bare URLs. The site template of <code>pkg_site()</code> uses it to put the description in a sidebar on the home page when the package has a <code>README.md</code>.</p>
+</li>
+<li>
+<p>Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via <code>roam()</code>.</p>
+</li>
+<li>
 <p>Fixed a bug that <code>fuse()</code> (and <code>mark()</code>) failed to compile a <code>.tex</code> file to PDF when the output was in a different directory, because <code>latexmk</code> was not run in the output directory and could not find relative paths in the <code>.tex</code> file such as plot files (thanks, <a href="https://github.com/reedacartwright">@reedacartwright</a>, <a href="https://github.com/yihui/litedown/issues/168">#168</a>).</p>
 </li>
 <li>
@@ -60,6 +66,12 @@
 </li>
 <li>
 <p>The chunk option <code>echo</code> can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., <code>echo = -1</code> hides the first line, and <code>echo = 2:3</code> shows only the second and third lines (thanks, <a href="https://github.com/jangorecki">@jangorecki</a>, <a href="https://github.com/yihui/litedown/issues/93">#93</a>).</p>
+</li>
+<li>
+<p>The navigation menu of a site no longer includes <code>doc/index.html</code> (the vignette index of an R package).</p>
+</li>
+<li>
+<p>Added a new function <code>pkg_examples()</code> to list the examples under the <code>examples/</code> directory of a package, so the <code>examples.Rmd</code> page of the <code>pkg_site()</code> template no longer assumes that the site is built in the package root directory.</p>
 </li>
 </ul>
 <h2 id="sec:litedown-0-11" class="unnumbered">litedown 0.11</h2>
@@ -375,7 +387,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.7</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.8</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.110/js/appendix.min.js" defer></script>
