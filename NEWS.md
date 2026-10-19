@@ -16,6 +16,8 @@
 
 - The chunk option `echo` can now take a numeric vector of line numbers to select which lines of the source code to display, e.g., `echo = -1` hides the first line, and `echo = 2:3` shows only the second and third lines (thanks, @jangorecki, #93).
 
+- The navigation menu of a site no longer includes `doc/index.html` (the vignette index of an R package).
+
 # CHANGES IN litedown VERSION 0.11
 
 - The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).

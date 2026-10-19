@@ -95,6 +95,19 @@ assert('nav_menu() lists all pages even if only one file is being rendered', {
   (grepl('/about.html', m[2], fixed = TRUE))
 })
 
+assert('nav_menu() ignores doc/index.html (vignette index)', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  for (i in c('doc', 'sub')) {
+    dir.create(file.path(d, i))
+    writeLines('x', file.path(d, i, 'index.html'))
+  }
+  m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
+  (any(grepl('(/sub/)', m, fixed = TRUE)))
+  (!any(grepl('/doc/', m, fixed = TRUE)))
+})
+
 assert('fuse_book() renders a book skeleton into a single HTML file', {
   d = tempfile()
   on.exit(unlink(d, recursive = TRUE), add = TRUE)

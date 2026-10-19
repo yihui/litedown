@@ -134,9 +134,11 @@ nav_menu = function(info) {
     '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))),
     if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
   )
-  # add subdirs that already have an index.html (same exclusion as find_input)
+  # add subdirs that already have an index.html (same exclusion as find_input),
+  # except `doc/` whose index.html is the vignette index of an R package
   sub_dirs = list.dirs(root, recursive = FALSE)
   sub_dirs = sub_dirs[file.exists(file.path(sub_dirs, 'index.html'))]
+  sub_dirs = sub_dirs[basename(sub_dirs) != 'doc']
   dnames = basename(sub_dirs)
   c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames))
 }
