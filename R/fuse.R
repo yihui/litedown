@@ -449,6 +449,22 @@ block_order = function(res, N = length(res)) {
 #' @note For `fuse()`, you can generate the intermediate Markdown output via
 #'   `output = '.md'` or `output = 'markdown'` without further calling `mark()`.
 #'
+#'   Chunks tagged with the chunk option `compute` evaluate via the executor
+#'   registered in the global option `compute.executor` (for example
+#'   `mirai::register_render()`), typically in another R process. Use
+#'   `#| compute: gpu` to route to the profile `"gpu"`, or `#| compute: true`
+#'   for the backend's default profile. Routed chunks on the same profile
+#'   share the executing process's global environment. Objects created in one
+#'   routed chunk are visible to later chunks on the same profile.
+#'
+#'   Untagged chunks and inline code always evaluate host-side in
+#'   [fuse_env()], and neither side can see the other's state. Note that
+#'   `cache = TRUE` on a routed chunk writes to `cache.path` on the executing
+#'   process's filesystem. This is correct for local workers, but ineffective
+#'   for remote ones. A tagged chunk raises an error when no executor is
+#'   registered. An invalid `compute` value warns, and the chunk evaluates
+#'   locally as if untagged.
+#'
 #'   If the global option `litedown.tinypng` is set to `TRUE` and the
 #'   \pkg{tinyimg} package is installed, PNG plots generated from code chunks
 #'   will be optimized by [tinyimg::tinypng()] to reduce file size. To optimize
@@ -1183,7 +1199,7 @@ reactor(
   tab.cap = NULL, tab.env = '.table', cap.pos = NULL,
   print = NULL, print.args = NULL, time = FALSE,
   code = NULL, file = NULL, child = NULL, purl = TRUE,
-  wd = NULL,
+  wd = NULL, compute = NULL,
   signif = 3, power = 6, dollar = NA
 )
 
@@ -1218,7 +1234,72 @@ eng_r = function(x, inline = FALSE, ...) {
     hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
     id = opts$label, rw = opts$cache.rw
   )
-  do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
+  profile = compute_profile(opts$compute)
+  if (isFALSE(profile)) {
+    return(do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args)))
+  }
+  # routed chunk: delegate evaluation to the registered executor, which calls
+  # record_remote() in another process and returns its result bundle
+  ex = getOption('compute.executor')
+  if (!is.function(ex)) stop(
+    "the 'compute' chunk option requires a registered executor; set one with ",
+    "options(compute.executor = ...), for example mirai::register_render()"
+  )
+  out = ex(record_remote, list(code = x$source, args = args), profile)
+  record_unpack(out, args$dev.path)
+}
+
+# resolve the chunk option `compute` to a compute profile. FALSE means the
+# chunk is not routed and evaluates in the host session. NULL means the
+# backend's default profile (`compute: true`). Otherwise, the profile name.
+compute_profile = function(opt) {
+  if (is.null(opt) || isFALSE(opt)) return(FALSE)
+  if (isTRUE(opt)) return(NULL)
+  if (is.character(opt) && length(opt) == 1 && nzchar(opt)) return(opt)
+  warning("ignoring invalid 'compute' chunk option; expected TRUE or a profile name")
+  FALSE
+}
+
+# the worker half of a routed chunk: records the chunk in the executing
+# process's global environment, so objects persist across chunks on the same
+# profile. Returns the results along with the plot file contents, so the host
+# can write figures even when the worker has a separate filesystem.
+record_remote = function(code, args) {
+  call = c(list(code = code, envir = globalenv()), args)
+  if (!is.character(args$dev.path)) return(list(res = do.call(xfun::record, call)))
+  dir = tempfile('litedown-fig-'); dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  call$dev.path = file.path(dir, basename(args$dev.path))
+  res = do.call(xfun::record, call)
+  plots = unlist(lapply(res, function(x) if (inherits(x, 'record_plot')) x))
+  list(
+    res = res, files = if (length(plots)) basename(plots),
+    # on a cache hit, the plot files from the original run no longer exist (the
+    # temp dir above was cleaned up). Ship no blobs: the host reuses the
+    # figure files it wrote on the first run
+    blobs = lapply(plots, function(p) if (file.exists(p)) readBin(p, 'raw', file.size(p)))
+  )
+}
+
+# the host half of a routed chunk: writes plot blobs into dirname(dev.path),
+# rewrites record_plot paths to their host-side locations, and returns res
+record_unpack = function(out, dev.path) {
+  res = out$res
+  files = out$files
+  if (!length(files) || !is.character(dev.path)) return(res)
+  dir = dirname(dev.path)
+  for (i in seq_along(files)) {
+    # blobs are absent for plots restored from the worker's cache
+    if (!is.null(blob <- out$blobs[[i]])) {
+      dir.create(dir, showWarnings = FALSE, recursive = TRUE)
+      writeBin(blob, file.path(dir, files[[i]]))
+    }
+  }
+  res[] = lapply(res, function(el) {
+    if (inherits(el, 'record_plot')) el[] = file.path(dir, basename(el))
+    el
+  })
+  res
 }
 
 # the Markdown engine: echo Markdown source verbatim, and also output it as-is
