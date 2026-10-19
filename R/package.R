@@ -306,6 +306,44 @@ pkg_code = function(
   new_asis(unlist(code))
 }
 
+#' @param dir The directory of examples, relative to the package root `path`.
+#' @return `pkg_examples()` returns a list of boxes for the example files (e.g.,
+#'   `.Rmd` files) under the `examples/` directory of the package, each with a
+#'   link to its output, a link to its source, and a preview of the source.
+#' @rdname pkg_desc
+#' @export
+pkg_examples = function(path = attr(detect_pkg(), 'path'), dir = 'examples') {
+  d = file.path(path, dir)
+  if (!isTRUE(dir.exists(d))) {
+    if (missing(path)) message('Please run this function in the package source directory.')
+    return(new_asis(sprintf("The '%s/' directory does not exist.", dir)))
+  }
+  # if the examples have been copied to the working directory (the site dir), link
+  # to the copies; otherwise link to the originals
+  base = if (dir.exists(dir)) dir else relative_path(d)
+  res = lapply(find_input(d), function(f) {
+    b = basename(f); f2 = file.path(base, b)
+    # in roam(), the output is rendered on the fly from the source
+    h = if (is_roaming()) paste0(f2, '?preview=2') else with_ext(f2, 'html')
+    x = read_utf8(f)
+    # get title
+    t = grep_sub('^title: ["\']?(.+?)["\']?\\s*$', '\\1', x)
+    t = if (length(t)) t[1] else sans_ext(b)
+    # get example number
+    i = grep_sub('^([0-9]+).*', '\\1', b)
+    i = if (length(i)) paste0(i, '\\. ') else ''
+    # put example source in a box
+    fenced_div(c(
+      fenced_div(
+        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, f2, h),
+        '.caption .name'
+      ),
+      fenced_block(x, '.md')
+    ), '.box')
+  })
+  new_asis(unlist(res))
+}
+
 # retrieve Github repo link from DESCRIPTION
 github_link = function(path) {
   u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]

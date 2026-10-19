@@ -131,6 +131,20 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   (any(grepl('href="#sec:man-', m)))
 })
 
+assert('pkg_examples() lists examples from the package root, not the working dir', {
+  p = tempfile(); d = file.path(p, 'examples')
+  dir.create(d, recursive = TRUE)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  write_utf8(c('---', 'title: Hello', '---'), file.path(d, '001-hi.Rmd'))
+  x = in_dir(tempdir(), pkg_examples(p))
+  (length(x) > 0L)
+  (any(grepl('001\\. [Hello](', x, fixed = TRUE)))
+  (any(grepl('.box', x, fixed = TRUE)))
+  (any(grepl('001-hi.html)', x, fixed = TRUE)))
+  x = pkg_examples(p, 'nope')
+  (grepl("'nope/'", x, fixed = TRUE))
+})
+
 assert('pkg_site() requires the package to be installed', {
   (has_error(pkg_site('an-uninstalled-package')))
 })

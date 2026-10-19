@@ -4,6 +4,7 @@
 \alias{pkg_desc}
 \alias{pkg_news}
 \alias{pkg_code}
+\alias{pkg_examples}
 \alias{pkg_citation}
 \alias{pkg_manual}
 \title{Print the package description, news, citation, manual pages, and source code}
@@ -26,6 +27,8 @@ pkg_code(
   number_sections = TRUE,
   link = TRUE
 )
+
+pkg_examples(path = attr(detect_pkg(), "path"), dir = "examples")
 
 pkg_citation(name = detect_pkg())
 
@@ -76,6 +79,8 @@ can also provide a string template containing the placeholder \verb{\%s} (which
 will be filled out with the file paths via \code{sprintf()}), e.g.,
 \verb{https://github.com/yihui/litedown/blob/main/\%s}.}
 
+\item{dir}{The directory of examples, relative to the package root \code{path}.}
+
 \item{overview}{Whether to include the package overview page, i.e., the
 \code{{name}-package.Rd} page.}
 
@@ -92,6 +97,10 @@ inside a code chunk of an R Markdown document.
 
 \code{pkg_code()} returns the package source code under the \verb{R/} and
 \verb{src/} directories.
+
+\code{pkg_examples()} returns a list of boxes for the example files (e.g.,
+\code{.Rmd} files) under the \verb{examples/} directory of the package, each with a
+link to its output, a link to its source, and a preview of the source.
 
 \code{pkg_citation()} returns the package citation in both the plain-text
 and BibTeX formats.

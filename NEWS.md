@@ -18,6 +18,8 @@
 
 - The navigation menu of a site no longer includes `doc/index.html` (the vignette index of an R package).
 
+- Added a new function `pkg_examples()` to list the examples under the `examples/` directory of a package, so the `examples.Rmd` page of the `pkg_site()` template no longer assumes that the site is built in the package root directory.
+
 # CHANGES IN litedown VERSION 0.11
 
 - The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).
