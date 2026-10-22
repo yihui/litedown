@@ -324,6 +324,12 @@ feature_form = function(path) {
 
 na_omit = function(x) x[!is.na(x)]
 
+# JS needed by diagram languages
+diagram_js = list(
+  mermaid = '@npm/mermaid/dist/mermaid.min.js',
+  pele = c('@npm/pele/dist/pele.global.js', '@render-pele')
+)
+
 # accumulate variable values
 acc_var = local({
   db = list()

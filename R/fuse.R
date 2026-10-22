@@ -1235,10 +1235,11 @@ eng_md = function(x, inline = FALSE, ...) {
   } else list(new_source(s), new_asis(s))
 }
 
-# the Mermaid engine: put code in ```mermaid and add caption if necessary
-eng_mermaid = function(x, inline = FALSE, ...) {
-  code = fenced_block(src <- x$source, 'mermaid')
+# the Mermaid/Pele engines: put code in ```mermaid (or ```pele) and add caption
+# if necessary
+eng_diagram = function(x, inline = FALSE, ...) {
   opts = reactor()
+  code = fenced_block(src <- x$source, opts$engine)
   code = add_cap(code, opts$fig.cap, opts$label, opts$cap.pos, opts$fig.env)
   if (inline) one_string(c(code, '')) else {
     list(new_source(src), new_asis(code))
@@ -1345,7 +1346,8 @@ eng_exec = function(x, inline = FALSE, ...) {
 #' litedown::engines()  # built-in engines
 engines = new_opts()
 engines(
-  r = eng_r, md = eng_md, mermaid = eng_mermaid, embed = eng_embed,
+  r = eng_r, md = eng_md, mermaid = eng_diagram, pele = eng_diagram,
+  embed = eng_embed,
   css = eng_css, js = eng_js,
   exec = eng_exec, sh = eng_exec, bash = eng_exec, zsh = eng_exec, powershell = eng_exec
 )

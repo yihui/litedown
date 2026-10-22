@@ -165,14 +165,17 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   ret = render(text)
   ret = move_attrs(ret, format)  # apply attributes of the form {attr="value"}
 
-  has_mermaid = FALSE
+  diagrams = character()  # diagram languages used (mermaid/pele)
 
   if (format == 'html') {
-    # support mermaid
-    r_mmd = '<pre><code class="language-mermaid">(.*?)</code></pre>'
-    if (has_mermaid <- length(grep(r_mmd, ret))) {
-      ret = gsub(r_mmd, '<pre class="mermaid">\\1</pre>', ret)
-    }
+    # support mermaid/pele diagrams
+    ret = gsub(
+      '<pre><code class="language-(mermaid|pele)">(.*?)</code></pre>',
+      '<pre class="\\1">\\2</pre>', ret
+    )
+    diagrams = names(diagram_js)[vapply(names(diagram_js), function(i) {
+      any(grepl(sprintf('<pre class="%s">', i), ret, fixed = TRUE))
+    }, NA)]
     # remove empty table header
     ret = gsub('<thead>\n<tr>\n(<th[^>]*></th>\n)+</tr>\n</thead>\n', '', ret)
     # table caption: a paragraph that starts with 'Table: ' or ': ' after </table>
@@ -272,9 +275,13 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
       if (has_math) set_math(js_math, is_katex)
       # add js/css for syntax highlighting
       set_highlight(options, ret)
-      # add js for mermaid
-      if (has_mermaid && length(grep('mermaid', meta[['js']])) == 0)
-        acc_var(js = '@npm/mermaid/dist/mermaid.min.js')
+      # add js for diagrams (the library comes first, which can be skipped if
+      # the user has added it, e.g., with a specific version)
+      for (i in diagrams) {
+        js = diagram_js[[i]]
+        if (any(grepl(sprintf('npm/%s[@/]', i), meta[['js']]))) js = js[-1]
+        acc_var(js = js)
+      }
     }
     ret = build_output(
       format, options, template, meta, test = c(if (length(input)) dirname(input), '.')

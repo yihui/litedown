@@ -184,7 +184,7 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
 -   $J$ = Lightweight [vanilla JS/CSS](https://github.com/yihui/lite.js)
 
-```{mermaid}
+```{pele}
 #| scope-litedown, echo = FALSE,
 #| fig.cap = 'A minimal partial re-implementation of the R Markdown ecosystem as **litedown**, via [Chibaku Tensei](https://naruto.fandom.com/wiki/Chibaku_Tensei) (to [seal the nine tailed beasts](https://youtu.be/IqAD4np1g1s)).'
 classDiagram
@@ -242,7 +242,7 @@ classDiagram
   style litedown fill:lightcyan
 ```
 
-```{mermaid}
+```{pele}
 #| scope-rmarkdown, echo = FALSE,
 #| fig.cap = 'A set of core packages in the R Markdown ecosystem. `R-dep()`
 #|  stands for recursive R package dependencies (with their numbers), `sys-dep`

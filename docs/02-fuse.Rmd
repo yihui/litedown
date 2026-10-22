@@ -480,7 +480,7 @@ character string), which will be used to check if the cache exists. Any change
 in the input of the hash will lead to a change in the hash value, which in turn
 invalidates the old cache and creates new cache.
 
-```{mermaid}
+```{pele}
 #| flow-cache, echo = FALSE,
 #| fig.cap = 'The cache (in)validation process.'
 
@@ -1010,7 +1010,7 @@ example, the labels for the following code chunks will be `chunk-a`, `chunk-2`,
 //| label: chunk-js
 ```
 
-```{mermaid, label = 'project-flowchart'}
+```{pele, label = 'project-flowchart'}
 ```
 ````
 
@@ -1482,7 +1482,7 @@ plot(cars)
 Both `#'` and `#|` comments are optional. If no `#'` or `#|` comments are found
 in the script, the whole script will be treated as a single code chunk.
 
-```{mermaid}
+```{pele}
 #| flow-sieve, echo = FALSE,
 #| fig.cap = 'An illustration of how scripts are rendered.'
 flowchart TD
@@ -1594,13 +1594,17 @@ By default, external scripts are
 to run an external script immediately, you may set the chunk option
 `defer = FALSE`.
 
-### The Mermaid engine
+### The Pele and Mermaid engines {#sec:engine-diagram}
 
-The `mermaid` engine can be used to draw diagrams with
-[mermaid.js](https://mermaid.js.org), e.g.,
+The `pele` and `mermaid` engines can be used to draw diagrams from text written
+in the [Mermaid](https://mermaid.js.org) syntax. The `pele` engine renders them
+with [Pele](https://pele.run), which is much more lightweight than
+[mermaid.js](https://mermaid.js.org) (the `mermaid` engine), supports all
+diagram types in Mermaid 12.1.0, and renders diagrams synchronously with its own
+layout and visual style, e.g.,
 
 ```` md
-```{mermaid, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
+```{pele, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
 flowchart TD
     A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
     A --> C[CWEB]
@@ -1608,8 +1612,13 @@ flowchart TD
 ```
 ````
 
-The JS library mermaid.js has to be loaded for the diagrams to be rendered. By
-default, the latest version of mermaid.js will be added to the `js` variable
+The two engines take the same input, so you can switch between them by changing
+the engine name. The chunk option `fig.cap` adds a caption to the diagram, and
+`echo = FALSE` hides the diagram source. Use the `mermaid` engine if you need
+a Mermaid feature that Pele does not support.
+
+The JS library has to be loaded for the diagrams to be rendered. By default,
+the latest version of Pele (or mermaid.js) will be added to the `js` variable
 (@sec:the-js-variable) in the YAML metadata automatically. If you prefer using a
 specific version, you can add it manually to the YAML metadata, e.g.,
 
@@ -1626,6 +1635,11 @@ output:
 
 ```
 ````
+
+The same applies to Pele, e.g., `js: ["@npm/pele@1.8.0/dist/pele.global.js"]`.
+Colors and fonts of Pele diagrams can be customized via CSS variables such as
+`--pele-bg` and `--pele-font` (see the [Pele
+documentation](https://pele.run/theming)).
 
 ### The embed engine
 

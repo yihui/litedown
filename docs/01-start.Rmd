@@ -15,7 +15,7 @@ For those who are familiar with R Markdown, you can think of the function
 `knitr::purl()`, and `litedown::mark()` as the new Pandoc. @fig:fuse-flow shows
 the conversion process from R Markdown to a target format.
 
-```{mermaid}
+```{pele}
 #| fuse-flow, echo = FALSE,
 #| fig.cap = 'A diagram illustrating how **litedown** converts R Markdown documents to target output formats.'
 
@@ -103,7 +103,7 @@ A computational document contains both text narratives and code for computing.
 @fig:flow-concepts shows the basic components of a document and how they work
 together.
 
-```{mermaid}
+```{pele}
 #| flow-concepts, echo = FALSE,
 #| fig.cap = 'An illustration of the structure of a computational document and how its components are split, computed, and merged.'
 flowchart TD
