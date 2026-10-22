@@ -490,6 +490,9 @@ fuse = function(input, output = NULL, text = NULL, envir = parent.frame(), quiet
   oenv = as.list(.env); on.exit(reset_env(oenv, .env), add = TRUE)
   # use default fig.path/cache.path instead of inheriting (#127)
   nested = isTRUE(.env$in_fuse); .env$in_fuse = TRUE
+  # document-level store: shared with child documents only, so a fuse() call
+  # whose output isn't included in the parent starts afresh
+  .env$doc = .env$child_doc %||% new_env(); .env$child_doc = NULL
   if (nested) reactor(fig.path = NULL, cache.path = NULL)
 
   # set working directory if unset
@@ -728,7 +731,8 @@ fuse_code = function(x, blocks) {
 
   # fuse child documents (empty the `child` option to avoid infinite recursion)
   if (length(opts$child)) return(uapply(reactor(child = NULL)$child, function(.) {
-    child = .env$child; .env$child = TRUE; on.exit(.env$child <- child)
+    child = .env$child; .env$child = TRUE; .env$child_doc = .env$doc
+    on.exit({ .env$child <- child; .env$child_doc <- NULL })
     fuse(., output = 'markdown', envir = fuse_env(), quiet = TRUE)
   }))
 
