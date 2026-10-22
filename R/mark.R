@@ -285,7 +285,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   }
 
   if (format == 'html') {
-    ret = in_dir(out_dir, embed_resources(ret, options))
+    ret = in_dir(out_dir, embed_resources(pdf_embed(ret), options))
     ret = clean_html(ret)
   } else if (format == 'latex') {
     # remove \maketitle if \title is absent

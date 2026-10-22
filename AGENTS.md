@@ -23,6 +23,8 @@ assert('message', {
 })
 ```
 
+- Only parenthesized expressions `(...)` in `assert()` are checked; other
+  statements (setup, `on.exit()`) run as usual, so no `local()` wrapper is needed.
 - Use `has_error()` instead of `tryCatch()` for error testing.
 - Never use `:::` to access internal functions; `testit` exposes them automatically.
 

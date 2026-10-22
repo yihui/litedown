@@ -220,3 +220,25 @@ assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   (!has_katex(c('```{=html}', '<hr>', '```')))
   (!has_katex(c('```{=latex}', '\\textbf{x}', '```')))
 })
+
+assert('mark() uses <embed> instead of <img> for PDF files in HTML output', {
+  (mark2('![](a.pdf)') %==%
+     '<p><embed src="a.pdf" type="application/pdf" aria-label="" /></p>')
+  (mark2('![cap](b.PDF#page=2){.c}') %==%
+     '<p><embed src="b.PDF#page=2" type="application/pdf" aria-label="cap" class="c" /></p>')
+  (mark2('![x](a.pdfx)') %==% '<p><img src="a.pdfx" alt="x" /></p>')
+})
+
+assert('embed_resources() drops ?query/#hash only if the bare path exists', {
+  d = tempfile(); dir.create(d); owd = setwd(d); on.exit(setwd(owd))
+  writeLines('x', 'a.pdf')
+  o = list(embed_resources = 'local', embed_cleanup = FALSE)
+  b64 = function(x) grepl('data:application/pdf;base64,', embed_resources(x, o), fixed = TRUE)
+  (b64('<embed src="a.pdf#page=2" />'))
+  (b64('<embed src="a.pdf?v=1" />'))
+  # raw HTML tag without the self-closing slash
+  (b64('<embed src="a.pdf" type="application/pdf" height="400">'))
+  (grepl('#page=2"', embed_resources('<embed src="a.pdf?v=1#page=2" />', o)))
+  (!grepl('v=1', embed_resources('<embed src="a.pdf?v=1#page=2" />', o), fixed = TRUE))
+  (has_warning(embed_resources('<embed src="b.pdf#page=2" />', o)))
+})
