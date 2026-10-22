@@ -231,7 +231,8 @@ assert('mark() uses <embed> instead of <img> for PDF files in HTML output', {
 
 assert('embed_resources() drops ?query/#hash only if the bare path exists', {
   d = tempfile(); dir.create(d); owd = setwd(d); on.exit(setwd(owd))
-  writeLines('x', 'a.pdf')
+  # a real PDF, since xfun::mime_type() sniffs the content if 'mime' is absent
+  grDevices::pdf('a.pdf'); plot.new(); invisible(dev.off())
   o = list(embed_resources = 'local', embed_cleanup = FALSE)
   b64 = function(x) has_match(embed_resources(x, o), 'data:application/pdf;base64,', fixed = TRUE)
   (b64('<embed src="a.pdf#page=2" />'))
