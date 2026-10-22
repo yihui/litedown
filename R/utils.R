@@ -969,9 +969,9 @@ embed_resources = function(x, options) {
   if (!any(embed, is.character(offline))) return(x)
   clean = options[['embed_cleanup']]
 
-  # find images in <img> and (for slides only) comments
+  # find images in <img>/<embed> and (for slides only) comments
   rs = c(
-    '(<img src=")([^"]+)("[^>]*?/>)',
+    '(<(?:img|embed) src=")([^"]+)("[^>]*?/?>)',
     '(<!--#[^>]*? style="background-image: url\\("?)([^"]+?)("?\\);)'
   )
   for (r in rs) x = match_replace(x, r, function(z) {
@@ -980,7 +980,7 @@ embed_resources = function(x, options) {
     z3 = sub(r, '\\3', z)
     # skip images already base64 encoded
     for (i in grep('^data:.+;base64,.+', z2, invert = TRUE)) {
-      is_svg = grepl('[.]svg$', f <- z2[i]) && grepl('^<img', z1[i])
+      is_svg = grepl('[.]svg([?#].*)?$', f <- z2[i]) && grepl('^<img', z1[i])
       a = if (is_svg) str_trim(gsub('^"|/>$', '', z3[i])) else ''
       f = download_url(f, offline)
       if (is_https(f)) {
@@ -988,8 +988,16 @@ embed_resources = function(x, options) {
           download_cache$get(f, 'text', function(xml) process_svg(xml, a))
         }
       } else if (embed[2]) {
-        if (file_exists(f <- URLdecode(f))) {
-          z2[i] = if (is_svg) process_svg(read_utf8(f), a) else base64_uri(f)
+        f = URLdecode(f)
+        # drop ?query/#hash if only the bare path exists; keep #hash (e.g.,
+        # #page=2 for PDF) on the data URI but not ?query (it'd corrupt base64)
+        hash = ''
+        if (!file_exists(f) && file_exists(f2 <- sub('[?#].*', '', f))) {
+          hash = sub('^[^#]*', '', f)
+          f = f2
+        }
+        if (file_exists(f)) {
+          z2[i] = if (is_svg) process_svg(read_utf8(f), a) else paste0(base64_uri(f), hash)
           if (clean && normalize_path(f) %in% .env$plot_files) file.remove(f)
         } else {
           warning("File '", f, "' not found (hence cannot be embedded).")
@@ -1381,6 +1389,14 @@ download_url = function(url, dir = '.', file = NULL, handler = NULL) {
     })
   }
   URLencode(p)
+}
+
+# use <embed> instead of <img> for PDF files (browsers can't render them in <img>)
+pdf_embed = function(x) {
+  gsub(
+    '<img src="([^"]+?[.](?i:pdf)(?:[?#][^"]*)?)" alt="([^"]*)"',
+    '<embed src="\\1" type="application/pdf" aria-label="\\2"', x, perl = TRUE
+  )
 }
 
 # compact HTML code

@@ -23,6 +23,11 @@ assert('message', {
 })
 ```
 
+- Only parenthesized expressions `(...)` in `assert()` are checked; other
+  statements (setup, `on.exit()`) run as usual, so no `local()` wrapper is needed.
+- To test whether output matches a string or pattern, prefer `has_match(x,
+  pattern)` over `grepl()`: on mismatch it prints `x`, so we can see what went
+  wrong, whereas `grepl()` only gives a vague `TRUE`/`FALSE`.
 - Use `has_error()` instead of `tryCatch()` for error testing.
 - Never use `:::` to access internal functions; `testit` exposes them automatically.
 
