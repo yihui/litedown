@@ -234,12 +234,12 @@ assert('embed_resources() drops ?query/#hash only if the bare path exists', {
   # a real PDF, since xfun::mime_type() sniffs the content if 'mime' is absent
   grDevices::pdf('a.pdf'); plot.new(); invisible(dev.off())
   o = list(embed_resources = 'local', embed_cleanup = FALSE)
-  b64 = function(x) has_match(embed_resources(x, o), 'data:application/pdf;base64,', fixed = TRUE)
+  b64 = function(x) has_match(embed_resources(x, o), 'data:application/pdf;base64,')
   (b64('<embed src="a.pdf#page=2" />'))
   (b64('<embed src="a.pdf?v=1" />'))
   # raw HTML tag without the self-closing slash
   (b64('<embed src="a.pdf" type="application/pdf" height="400">'))
   (has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), '#page=2"'))
-  (!has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), 'v=1', fixed = TRUE))
+  (!has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), 'v=1'))
   (has_warning(embed_resources('<embed src="b.pdf#page=2" />', o)))
 })
