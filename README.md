@@ -20,43 +20,85 @@ coverage](https://codecov.io/gh/yihui/litedown/branch/main/graph/badge.svg)](htt
 
 <!-- badges: end -->
 
-This package provides a trimmed-down and reimagined implementation of [R
-Markdown](https://rmarkdown.rstudio.com). It is much more lightweight, at the
-price of dropping some features. It does not depend on the R package **knitr**
-or the system package Pandoc.
+**litedown** turns Markdown and R Markdown into HTML and LaTeX/PDF, with no
+**knitr** and no Pandoc. It imports only one R package, **xfun**, and
+renders Markdown with a bundled and patched copy of the
+[cmark-gfm](https://github.com/github/cmark-gfm) C library.
 
-Please consider this package experimental for now. The documentation is also
-very incomplete and still under development.
+-   **Computing**: run code chunks and inline code (`` `{r} x` ``) in R, or in
+    other languages via engines such as JavaScript, CSS, Mermaid, and shell
+    commands. Chunk options control code, text output, figures, tables,
+    caching, and even the order of execution.
 
-## Usage
+-   **Markdown**: GFM plus math, footnotes, superscripts/subscripts, raw
+    HTML/LaTeX blocks, element attributes, cross-references, citations, and
+    callouts.
 
-### Installation
+-   **Output**: single HTML documents (with resources embedded if you want),
+    LaTeX and PDF, and lightweight HTML articles, slides, and paged HTML (for
+    print), styled with small vanilla CSS/JS files from
+    [lite.js](https://github.com/yihui/lite.js).
 
-At the moment, you are recommended to install the development version from
-r-universe:
+-   **Projects**: books and websites from a directory of documents with a
+    `_litedown.yml`, including websites for R packages via `pkg_site()`.
+
+-   **Workflow**: `roam()` previews and renders documents in a browser, with
+    live reload, so you do not need a `Knit` button.
+
+## Installation
 
 ``` r
-install.packages('litedown', repos = c('https://yihui.r-universe.dev', 'https://cloud.r-project.org'))
+install.packages('litedown')
 ```
 
-### Markdown rendering
+The development version is available from r-universe:
 
-The function `litedown::mark()` is based on the C library
-[cmark-gfm](https://github.com/github/cmark-gfm) (bundled with the package), and
-renders Markdown to various output formats, which are primarily HTML and LaTeX.
-MS Office formats are not supported.
+``` r
+install.packages('litedown', repos = 'https://yihui.r-universe.dev')
+```
 
-### Knitting
+## A quick look
 
-R Markdown documents need to be knitted to Markdown before being rendered to a
-target output format. The function `litedown::fuse()` plays a role similar to
-`knitr::knit()` and `rmarkdown::render()`. It fuses program code with
-narratives, i.e., it executes code in the source document and interweaves
-results with narratives in the output document.
+Save this as `hello.Rmd`:
 
-### Previewing
+````` markdown
+---
+title: Hello litedown
+output: html
+---
 
-Try `litedown::roam()`.
+```{r}
+x = 2
+```
+
+The area of a circle with radius `{r} x` is `{r} pi * x^2`.
+`````
+
+Then render it:
+
+``` r
+litedown::fuse('hello.Rmd')  # hello.Rmd -> hello.html
+litedown::roam()             # or preview and render in a browser
+```
+
+## Main functions
+
+| Function                                  | What it does                                  |
+|:------------------------------------------|:----------------------------------------------|
+| `fuse()`                                  | executes code in an R Markdown document, then renders it via `mark()` |
+| `mark()`                                  | renders Markdown to HTML, LaTeX, etc.         |
+| `fiss()`                                  | extracts code from a document (like `knitr::purl()`) |
+| `roam()`                                  | previews and renders documents in a browser   |
+| `fuse_book()`, `fuse_site()`, `pkg_site()` | build books, websites, and package sites     |
+
+If you do not compute in your documents, `mark()` alone is enough.
+
+## Learn more
+
+Read the book, [*litedown: R Markdown Reimagined*](https://pkg.yihui.org/litedown/book/),
+which also covers [differences from **knitr**](https://pkg.yihui.org/litedown/book/#sec:comparison-to-knitr).
+Browse [examples](https://pkg.yihui.org/litedown/examples/) of
+chunk options and engines.
 
 ## Scope
 

@@ -110,3 +110,20 @@ assert('raw_text() wraps content in a raw block for a given format', {
   # no format leaves the content unfenced
   (as.character(raw_text('plain')) %==% 'plain')
 })
+
+assert('the pele and mermaid engines output diagram code blocks', {
+  (is.function(engines('pele')))
+  for (e in c('pele', 'mermaid')) {
+    x = fuse(c(sprintf('```{%s, echo = FALSE}', e), 'flowchart LR', '  A --> B', '```'), output = 'markdown')
+    (has_match(x, sprintf('``` ?%s\n', e)))
+    h = mark(x)
+    (has_match(h, sprintf('<pre class="%s">', e)))
+  }
+})
+
+assert('a pinned diagram library is not added twice but its renderer is', {
+  x = '---\ntitle: T\n---\n\n```pele\nflowchart LR\n  A --> B\n```'
+  h = mark(x, meta = list(js = '@npm/pele@1.8.0/dist/pele.global.js'))
+  (has_match(h, 'render-pele'))
+  (length(gregexpr('pele[.]global', h)[[1]]) %==% 1L)
+})

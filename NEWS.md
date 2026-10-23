@@ -6,6 +6,8 @@
 
 - `pkg_desc(type = "dl")` now generates a compact description in a sidebar (a fenced Div with the classes `side` and `side-right`): the `Description` and `Suggests` fields are omitted, and `URL` and `BugReports` are merged into a `Links` field with short text links (e.g., `Browse source code` and `Report a bug`) instead of long bare URLs. The site template of `pkg_site()` uses it to put the description in a sidebar on the home page when the package has a `README.md`.
 
+- Added a new `pele` engine to draw diagrams with [Pele](https://pele.run), a lightweight renderer for the Mermaid syntax. It takes the same input as the `mermaid` engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the **litedown** documentation (<https://pkg.yihui.org/litedown/book/>) now use it.
+
 - Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via `roam()`.
 
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
