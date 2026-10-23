@@ -28,7 +28,7 @@
 #' - `newfile`: Build an input file if it does not have a `.html` output file.
 #'
 #' - `outdated`: Rebuild an input file if the modification time of its `.html`
-#' output file is older than the input.
+#' output file is older than the input or the config file `_litedown.yml`.
 #' @param input The root directory of the site, or a vector of input file paths.
 #' @return Output file paths (invisibly).
 #' @examples
@@ -55,7 +55,9 @@ fuse_site = function(input = '.') {
   cfg = merge_list(list(rebuild = 'outdated'), info$yaml[['site']])
   b = cfg[['rebuild']]
   if (b == 'outdated') b = 0
-  i = if (is.numeric(b)) filter_outdated(inputs, output, b) else {
+  # a config change affects all pages
+  deps = if (!is.na(root)) file.path(root, '_litedown.yml')
+  i = if (is.numeric(b)) filter_outdated(inputs, output, b, deps) else {
     if (b == 'newfile') !file_exists(output) else TRUE
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
@@ -120,8 +122,11 @@ set_site_options = function(opts, input, root, extra = NULL) {
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
 }
 
-filter_outdated = function(x, x2, n) {
-  m1 = file.mtime(x); m2 = file.mtime(x2); is.na(m2) | m1 - m2 > n
+# `deps` are extra files that make all outputs outdated when they are modified
+filter_outdated = function(x, x2, n, deps = NULL) {
+  m1 = file.mtime(x); m2 = file.mtime(x2)
+  if (length(deps)) m1 = pmax(m1, max(file.mtime(deps)), na.rm = TRUE)
+  is.na(m2) | m1 - m2 > n
 }
 
 # build a nav menu from filenames under root directory

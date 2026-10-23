@@ -8,6 +8,8 @@
 
 - Added a new `pele` engine to draw diagrams with [Pele](https://pele.run), a lightweight renderer for the Mermaid syntax. It takes the same input as the `mermaid` engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the **litedown** documentation (<https://pkg.yihui.org/litedown/book/>) now use it.
 
+- `fuse_site()` with `rebuild: "outdated"` (the default) now also rebuilds pages when `_litedown.yml` is newer than their output files, instead of only comparing each page with its own source file.
+
 - Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via `roam()`.
 
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).

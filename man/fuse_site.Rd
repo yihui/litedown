@@ -40,7 +40,7 @@ values are:
 \itemize{
 \item \code{newfile}: Build an input file if it does not have a \code{.html} output file.
 \item \code{outdated}: Rebuild an input file if the modification time of its \code{.html}
-output file is older than the input.
+output file is older than the input or the config file \verb{_litedown.yml}.
 }
 }
 \examples{

@@ -60,6 +60,15 @@ assert('filter_outdated() flags inputs whose output is missing or stale', {
   unlink(c(f1, f2))
 })
 
+assert('filter_outdated() flags all outputs when a dependency is newer', {
+  f1 = tempfile(); f2 = tempfile(); f3 = tempfile()
+  writeLines('a', f1); Sys.sleep(.05); writeLines('b', f2); Sys.sleep(.05)
+  writeLines('c', f3)
+  (isFALSE(filter_outdated(f1, f2, 0)))
+  (isTRUE(filter_outdated(f1, f2, 0, f3)))
+  unlink(c(f1, f2, f3))
+})
+
 assert('yml_config() reads and normalizes _litedown.yml', {
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
