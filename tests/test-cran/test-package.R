@@ -122,6 +122,23 @@ if (has_news) assert('pkg_news() returns news entries with lowered heading level
   (any(grepl('^## ', n)))
 })
 
+assert('pkg_news() links issues and users right after a parenthesis', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE))
+  writeLines(
+    'BugReports: https://github.com/a/b/issues', file.path(d, 'DESCRIPTION')
+  )
+  writeLines(
+    c('# CHANGES IN x VERSION 1.0', '', '- Fix (#1, #2) by (@u).'),
+    file.path(d, 'NEWS.md')
+  )
+  n = unclass(pkg_news('x', file.path(d, 'NEWS.md')))[3]
+  (n %==% paste0(
+    '- Fix ([#1](https://github.com/a/b/issues/1), ',
+    '[#2](https://github.com/a/b/issues/2)) by ([@u](https://github.com/u)).'
+  ))
+})
+
 if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TOC', {
   m = pkg_manual(pkg, toc = TRUE, number_sections = FALSE, examples = FALSE)
   (length(m) > 0L)

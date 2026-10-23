@@ -22,6 +22,8 @@
 
 - Added a new function `pkg_examples()` to list the examples under the `examples/` directory of a package, so the `examples.Rmd` page of the `pkg_site()` template no longer assumes that the site is built in the package root directory.
 
+- `pkg_news()` now links issue numbers (and `@username`s) that immediately follow an opening parenthesis, e.g., `#1` in `(#1, #2)`.
+
 - HTML output now uses `<embed>` instead of `<img>` for PDF files included via `![](foo.pdf)`, and the PDF is base64 encoded when resources are embedded (a `?query` or `#hash` in the path is ignored when locating the file, and the `#hash`, e.g., `#page=2`, is kept).
 
 # CHANGES IN litedown VERSION 0.11

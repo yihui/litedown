@@ -245,12 +245,13 @@ pkg_news = function(
     res = gsub('^## CHANGES IN ([^ ]+) VERSION( .+)', '## \\1\\2', res)
     # link Github @username and #issue
     if (length(u <- github_link(dirname(path)))) {
-      r1 = '([[:alnum:]-]+)'; r2 = '([0-9]+)'
-      res = gsub(paste0(' @', r1), ' [@\\1](https://github.com/\\1)', res)
-      res = gsub(paste0(' #', r2), sprintf(' [#\\1](%sissues/\\1)', u), res)
+      # the link may follow a space or an opening parenthesis
+      r0 = '(^|[ (])'; r1 = '([[:alnum:]-]+)'; r2 = '([0-9]+)'
+      res = gsub(paste0(r0, '@', r1), '\\1[@\\2](https://github.com/\\2)', res)
+      res = gsub(paste0(r0, '#', r2), sprintf('\\1[#\\2](%sissues/\\2)', u), res)
       res = gsub(
-        sprintf(' %s/%s#%s', r1, r1, r2),
-        ' [\\1/\\2#\\3](https://github.com/\\1/\\2/issues/\\3)', res
+        sprintf('%s%s/%s#%s', r0, r1, r1, r2),
+        '\\1[\\2/\\3#\\4](https://github.com/\\2/\\3/issues/\\4)', res
       )
     }
   }
