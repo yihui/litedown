@@ -377,12 +377,35 @@ tweak_citation = function(x) {
 #' @param examples A list of arguments to be passed to [xfun::record()] to run
 #'   examples each help page, e.g., `list(dev = 'svg', dev.args = list(height =
 #'   6))`. If not a list (e.g., `FALSE`), examples will not be run.
+#' @param groups A list of groups, each of which is a list with the fields
+#'   `title`, `desc` (optional), and `contents`, where `contents` is a character
+#'   vector of names to be matched (`*` and `?` are wildcards): topic names or
+#'   Rd filenames for `pkg_manual()`, and vignette filenames or titles for
+#'   `pkg_articles()`. Items that do not belong to any group are put in a group
+#'   named `Other`. By default, groups are read from the subfield `manual` or
+#'   `articles` of the field `site` in `_litedown.yml` in the current
+#'   directory, e.g.,
+#'
+#' ```yaml
+#' site:
+#'   manual:
+#'     Sites:
+#'       desc: Build package sites.
+#'       contents: [pkg_site, "roam*"]
+#'     Others: [mark, fuse]
+#' ```
+#'
+#'   That is, the keys are group titles, and each value is either the
+#'   `contents` or a map with `desc` and `contents`.
+#'
+#'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
+#'   `pkg_articles()` lists all vignettes in a single list.
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
-  examples = list()
+  examples = list(), groups = site_groups('manual')
 ) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
@@ -402,6 +425,16 @@ pkg_manual = function(
   }, logical(1))]
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
+  if (length(groups)) {
+    keys = .mapply(c, sans_ext(entries), al[entries])
+    groups = lapply(group_items(keys, groups), function(g) {
+      g$i = entries[g$i]  # use filenames instead of indices
+      g
+    })
+    # list pages by group, with the overview page (if any) first
+    db = db[c(intersect(intro, names(db)), unlist(lapply(groups, `[[`, 'i')))]
+    al = al[names(db)]
+  }
 
   cl = header_class(toc, number_sections, FALSE)
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
@@ -437,20 +470,33 @@ pkg_manual = function(
 
   # extract all aliases and put them in the beginning (like a TOC)
   env = asNamespace(name)
-  toc = unlist(.mapply(function(topics, target) {
-    fn = uapply(topics, function(x) {
+  toc = lapply(al, function(topics) {
+    uapply(topics, function(x) {
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
-    sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
-  }, al, sans_ext(names(al))))
-
-  g = toupper(substr(unlist(al), 1, 1))
-  g[!g %in% LETTERS] = 'misc'
-  g = factor(g, intersect(c(LETTERS, 'misc'), g))
-  toc = split(toc, g)  # group by first character
-  toc = unlist(mapply(function(x, g) {
-    c('<p>', sprintf('<b>-- <kbd>%s</kbd> --</b>', g), x, '</p>')
-  }, toc, names(toc)))
+  })
+  toc_links = function(toc) {
+    unlist(.mapply(function(fn, target) {
+      sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
+    }, toc, sans_ext(names(toc))))
+  }
+  toc = if (length(groups)) {
+    ov = intersect(intro, names(db))
+    unlist(use.names = FALSE, lapply(c(
+      if (length(ov)) list(list(title = 'Overview', i = ov)), groups
+    ), function(g) toc_block(toc_links(toc[g$i]), g$title, g$desc)))
+  } else {
+    # group by first character of aliases
+    g = toupper(substr(unlist(al), 1, 1))
+    g[!g %in% LETTERS] = 'misc'
+    g = factor(g, intersect(c(LETTERS, 'misc'), g))
+    l = split(toc_links(toc), g)
+    unlist(lapply(names(l), function(i) {
+      toc_block(c(sprintf('<b>-- <kbd>%s</kbd> --</b>', i), l[[i]]))
+    }), use.names = FALSE)
+  }
+  # put the index in a callout (blank lines make it a fenced Div, not HTML)
+  toc = c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::', '')
 
   r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
@@ -468,7 +514,81 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<img src="../help/figures/', '<img src="man/figures/', res, fixed = TRUE)
-  new_asis(c(toc, res, vest(css = '@manual')))
+  # the callout assets are not in the default site assets
+  new_asis(c(toc, res, vest('callout', css = '@manual')))
+}
+
+#' @return `pkg_articles()` returns a list of links to the built vignettes of
+#'   the package (and their source files) in Markdown. It also copies the
+#'   `doc` directory of the installed package to the current directory.
+#' @rdname pkg_desc
+#' @export
+pkg_articles = function(name = detect_pkg(), groups = site_groups('articles')) {
+  res = tools::getVignetteInfo(name)
+  if (!nrow(res)) return('This package has no vignettes.')
+  file.copy(system.file('doc', package = name), './', recursive = TRUE)
+  vigs = res[, 'PDF']
+  # redirect doc/index.html to articles.html
+  if (!'index.html' %in% vigs) writeLines(
+    "<script>location.href = location.href.replace(/\\/[^\\/]*$/, '') + '/../articles.html';</script>",
+    'doc/index.html'
+  )
+  # clean up .R files
+  file.remove(file.path('doc', setdiff(res[, 'R'], '')))
+  src = res[, 'File']
+  # TODO: show excerpts of vignettes if possible
+  items = sprintf('- [%s](doc/%s) (source: [%s](doc/%s))\n', res[, 'Title'], vigs, src, src)
+  if (!length(groups)) return(new_asis(items))
+  keys = .mapply(c, sans_ext(src), src, res[, 'Title'])
+  new_asis(unlist(lapply(group_items(keys, groups), function(g) {
+    c(paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''), items[g$i])
+  })))
+}
+
+# a block of links in the TOC, optionally with a heading and a description
+toc_block = function(x, title = NULL, desc = NULL) {
+  c(if (length(title)) sprintf('<h3 class="unnumbered unlisted">%s</h3>', title),
+    if (length(desc)) sprintf('<p>%s</p>', desc), '<p>', x, '</p>')
+}
+
+# groups from the field `site: {key}` in _litedown.yml in the current directory.
+# The config is a map from group titles to either `contents` or a map with
+# `desc` and `contents` (xfun::taml_file() can't parse lists of maps).
+site_groups = function(key) {
+  g = yml_config('.')[['site']][[key]]
+  if (!length(g)) return()
+  .mapply(function(title, x) {
+    if (!is.list(x)) x = list(contents = x)
+    c(list(title = title), x)
+  }, names(g), g)
+}
+
+# split items into groups by matching the character vectors `keys` (one per
+# item) against `contents` of each group; the first matching group wins, and
+# unmatched items go to the last group `Other`. Contents that match no item
+# (e.g., stale names) are an error. Returns a list of groups, each
+# with `title`, `desc`, and the indices `i` of items (empty groups dropped).
+group_items = function(keys, groups) {
+  id = rep(NA_integer_, length(keys)); bad = NULL
+  for (j in seq_along(groups)) {
+    hit = lapply(as.character(unlist(groups[[j]]$contents)), function(p) {
+      h = vapply(keys, function(k) any(grepl(utils::glob2rx(p), k)), NA)
+      if (!any(h)) bad <<- c(bad, sprintf('"%s" (group "%s")', p, groups[[j]]$title))
+      h
+    })
+    id[is.na(id) & Reduce(`|`, hit, FALSE)] = j
+  }
+  if (length(bad)) stop(
+    'No match for the following items in the groups: ', paste(bad, collapse = ', '),
+    call. = FALSE
+  )
+  groups = c(groups, list(list(title = 'Other')))
+  id[is.na(id)] = length(groups)
+  res = lapply(seq_along(groups), function(j) {
+    g = groups[[j]]
+    list(title = g$title, desc = g$desc, i = which(id == j))
+  })
+  res[lengths(lapply(res, `[[`, 'i')) > 0]
 }
 
 run_examples = function(html, config, path) {

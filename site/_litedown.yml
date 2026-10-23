@@ -1,5 +1,15 @@
 site:
   standalone: ["026-snap-clean*"]
+  manual:
+    Render documents:
+      desc: Convert Markdown and R Markdown to output formats.
+      contents: [mark, fuse, html_format, markdown_options, vest]
+    Code chunks and engines:
+      desc: Parse and run code chunks, and customize the runtime.
+      contents: [crack, engines, reactor, fuse_env, fuse_exit, get_context, timing_data, raw_text]
+    Websites and books:
+      desc: Build multi-page output and package sites.
+      contents: [fuse_site, fuse_book, roam, pkg_site, pkg_desc]
 
 output:
   html:

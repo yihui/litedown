@@ -7,6 +7,7 @@
 \alias{pkg_examples}
 \alias{pkg_citation}
 \alias{pkg_manual}
+\alias{pkg_articles}
 \title{Print the package description, news, citation, manual pages, and source code}
 \usage{
 pkg_desc(name = detect_pkg(), type = c("table", "dl"))
@@ -37,8 +38,11 @@ pkg_manual(
   toc = TRUE,
   number_sections = TRUE,
   overview = TRUE,
-  examples = list()
+  examples = list(),
+  groups = site_groups("manual")
 )
+
+pkg_articles(name = detect_pkg(), groups = site_groups("articles"))
 }
 \arguments{
 \item{name}{The package name (by default, it is automatically detected from
@@ -86,6 +90,29 @@ will be filled out with the file paths via \code{sprintf()}), e.g.,
 
 \item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
 examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
+
+\item{groups}{A list of groups, each of which is a list with the fields
+\code{title}, \code{desc} (optional), and \code{contents}, where \code{contents} is a character
+vector of names to be matched (\code{*} and \verb{?} are wildcards): topic names or
+Rd filenames for \code{pkg_manual()}, and vignette filenames or titles for
+\code{pkg_articles()}. Items that do not belong to any group are put in a group
+named \code{Other}. By default, groups are read from the subfield \code{manual} or
+\code{articles} of the field \code{site} in \verb{_litedown.yml} in the current
+directory, e.g.,
+
+\if{html}{\out{<div class="sourceCode yaml">}}\preformatted{site:
+  manual:
+    Sites:
+      desc: Build package sites.
+      contents: [pkg_site, "roam*"]
+    Others: [mark, fuse]
+}\if{html}{\out{</div>}}
+
+That is, the keys are group titles, and each value is either the
+\code{contents} or a map with \code{desc} and \code{contents}.
+
+If no groups are provided, \code{pkg_manual()} lists topics alphabetically, and
+\code{pkg_articles()} lists all vignettes in a single list.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
@@ -106,6 +133,10 @@ link to its output, a link to its source, and a preview of the source.
 and BibTeX formats.
 
 \code{pkg_manual()} returns all manual pages of the package in HTML.
+
+\code{pkg_articles()} returns a list of links to the built vignettes of
+the package (and their source files) in Markdown. It also copies the
+\code{doc} directory of the installed package to the current directory.
 }
 \description{
 Helper functions to retrieve various types of package information that can be
