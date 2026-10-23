@@ -145,7 +145,18 @@ nav_menu = function(info) {
   sub_dirs = sub_dirs[file.exists(file.path(sub_dirs, 'index.html'))]
   sub_dirs = sub_dirs[basename(sub_dirs) != 'doc']
   dnames = basename(sub_dirs)
-  c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames))
+  c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames), nav_github(root))
+}
+
+# a GitHub icon pushed to the right end of the menu (see site.css), if the
+# package that the site `root` belongs to has a GitHub repo
+nav_github = function(root = '.') {
+  if (is.null(pkg <- in_dir(root, detect_pkg(error = FALSE)))) return()
+  if (!length(repo <- github_link(attr(pkg, 'path')))) return()
+  sprintf(paste0(
+    '[![GitHub](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/',
+    'mark-github-24.svg){.no-invert}](%s){.right}'
+  ), repo)
 }
 
 menu_name = function(x) {

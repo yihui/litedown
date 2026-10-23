@@ -12,6 +12,10 @@
 
 - `fuse_site()` with `rebuild: "outdated"` (the default) now also rebuilds pages when `_litedown.yml` is newer than their output files, instead of only comparing each page with its own source file.
 
+- On the home page of `pkg_site()`, the `Links` in the sidebar no longer include the URL of the package site itself (i.e., `https://USER.github.io/PKG/`, or the field `url` under `site` in `_litedown.yml`), and badges in `README.md` (between `<!-- badges: start -->` and `<!-- badges: end -->`) are placed in the right sidebar.
+
+- The navigation menu of a package site gets a GitHub icon on the right if the `BugReports` field points to a GitHub repo.
+
 - Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via `roam()`.
 
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).

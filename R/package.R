@@ -144,7 +144,7 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   d[['Authors@R']] = NULL
   if (type == 'dl') {
     # reuse the URL slot (to keep the field order) for all links
-    d[['URL']] = side_links(d[['URL']], d[['BugReports']])
+    d[['URL']] = side_links(d[['URL']], d[['BugReports']], name)
     d[c('Title', 'Description', 'BugReports', 'Suggests')] = NULL
     names(d)[names(d) == 'URL'] = 'Links'
   }
@@ -169,9 +169,21 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   new_asis(c(res, vest(css = '@manual')))
 }
 
+# is a URL the site of the package itself (the site config `url`, or the
+# conventional https://USER.github.io/PKG/)? Such links are pointless on the site.
+is_own_site = function(u, pkg) {
+  norm = function(x) tolower(sub('/+$', '', x))
+  own = norm(yml_config('.')[['site']][['url']])
+  r = if (length(pkg)) grepl(
+    sprintf('^https?://[^/]+[.]github[.]io/%s$', tolower(pkg)), norm(u)
+  ) else FALSE
+  norm(u) %in% own | r
+}
+
 # turn URLs into Markdown links with short labels
-side_links = function(url, bug) {
+side_links = function(url, bug, pkg = NULL) {
   u = if (!is.na(url)) match_full(url, 'https?://[^[:space:],<>()]+')
+  u = u[!is_own_site(u, pkg)]
   host = sub('^https?://(www[.])?([^/]+).*', '\\2', u)
   repo = host %in% c(
     'github.com', 'gitlab.com', 'codeberg.org', 'bitbucket.org', 'dev.azure.com'
@@ -687,11 +699,14 @@ pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') 
   vars = set_envvar(c(R_LITEDOWN_PKG = path))
   on.exit(set_envvar(vars), add = TRUE)
   site_skeleton(output, path, exclude)
+  docs_out = same_path(file.path(path, 'docs'), output)
   res = in_dir(output, {
     # the footer is included by _litedown.yml as a .md file
     if (file_exists('_footer.Rmd')) fuse('_footer.Rmd', '.md')
     # create a placeholder so that the book is included in the nav menu
-    if (book <- file_exists(cfg <- file.path(path, 'docs/_litedown.yml'))) {
+    # (unless docs/ is where the site is built)
+    cfg = file.path(path, 'docs/_litedown.yml')
+    if (book <- !docs_out && file_exists(cfg)) {
       dir_create('book'); file.create('book/index.html')
     }
     out = fuse_site('.')

@@ -180,7 +180,7 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
   (has_match(m, '<h3 class="unnumbered unlisted">Other</h3>'))
   (!any(grepl('<kbd>', m)))
   (has_match(m, '<p>My desc</p>'))
-  (has_match(m, '::: {.callout-tip data-legend="Index"}', fixed = TRUE))
+  (has_match(m, '::: {.callout-tip data-legend="Index"}', fixed = TRUE, perl = FALSE))
   (has_match(m, 'callout[.](min[.])?css'))
   # the help pages must still follow the index
   (any(grepl('<h2 id="sec:man-', m)))
@@ -215,6 +215,20 @@ assert('site_groups() reads groups from the site field of _litedown.yml', {
   (g[[2]] %==% list(title = 'B', desc = 'dd', contents = 'z'))
   (is.null(in_dir(d, site_groups('articles'))))
   (is.null(in_dir(tempdir(), site_groups('manual'))))
+})
+
+assert('side_links() drops the URL of the package site', {
+  u = 'https://a.github.io/pkg/, https://github.com/a/pkg'
+  x = side_links(u, 'https://github.com/a/pkg/issues', 'pkg')
+  (!grepl('github.io', x))
+  (grepl('Browse source code', x))
+  # the site URL can be set in _litedown.yml
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('site:', '  url: https://pkg.example.org/'), file.path(d, '_litedown.yml'))
+  x = in_dir(d, side_links('https://pkg.example.org, https://github.com/a/pkg', NA, 'pkg'))
+  (!grepl('example.org', x))
+  (grepl('Browse source code', x))
 })
 
 assert('pkg_examples() lists examples from the package root, not the working dir', {
