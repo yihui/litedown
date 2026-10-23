@@ -1,4 +1,4 @@
-name: Build and deploy package site
+name: Package site
 
 on:
   push:

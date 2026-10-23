@@ -10,12 +10,12 @@
 
 <!-- badges: start -->
 
-[![Build site](https://github.com/yihui/litedown/actions/workflows/litedown.yml/badge.svg)](https://github.com/yihui/litedown/actions/workflows/litedown.yml)
-[![R-CMD-check](https://github.com/yihui/litedown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yihui/litedown/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 release](https://www.r-pkg.org/badges/version/litedown)](https://cran.r-project.org/package=litedown)
 [![litedown on
 r-universe](https://yihui.r-universe.dev/badges/litedown)](https://yihui.r-universe.dev/litedown)
+[![R-CMD-check](https://github.com/yihui/litedown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yihui/litedown/actions/workflows/R-CMD-check.yaml)
+[![Build site](https://github.com/yihui/litedown/actions/workflows/litedown.yml/badge.svg)](https://github.com/yihui/litedown/actions/workflows/litedown.yml)
 [![Codecov test
 coverage](https://codecov.io/gh/yihui/litedown/branch/main/graph/badge.svg)](https://app.codecov.io/gh/yihui/litedown?branch=main)
 
