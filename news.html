@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.11">
+<meta name="generator" content="litedown 0.11.12">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.116/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.116/css/article.min.css">
@@ -44,7 +44,7 @@
 <h2 id="sec:litedown-0-12" class="unnumbered">litedown 0.12</h2>
 <ul>
 <li>
-<p>The Markdown backend has been changed from the <strong>commonmark</strong> package to a copy of ‘cmark-gfm’ bundled with <strong>litedown</strong>, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (#33, <a href="https://github.com/yihui/litedown/issues/135">#135</a>, <a href="https://github.com/yihui/litedown/issues/139">#139</a>). The <strong>commonmark</strong> package is no longer a dependency (#141, <a href="https://github.com/yihui/litedown/issues/142">#142</a>, <a href="https://github.com/yihui/litedown/issues/143">#143</a>). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to “hug” their content (e.g., <code>a^b^</code> works, but <code>a ^ b ^</code> no longer produces a superscript), consistent with how <code>*emphasis*</code> works.</p>
+<p>The Markdown backend has been changed from the <strong>commonmark</strong> package to a copy of ‘cmark-gfm’ bundled with <strong>litedown</strong>, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (<a href="https://github.com/yihui/litedown/issues/33">#33</a>, <a href="https://github.com/yihui/litedown/issues/135">#135</a>, <a href="https://github.com/yihui/litedown/issues/139">#139</a>). The <strong>commonmark</strong> package is no longer a dependency (<a href="https://github.com/yihui/litedown/issues/141">#141</a>, <a href="https://github.com/yihui/litedown/issues/142">#142</a>, <a href="https://github.com/yihui/litedown/issues/143">#143</a>). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to “hug” their content (e.g., <code>a^b^</code> works, but <code>a ^ b ^</code> no longer produces a superscript), consistent with how <code>*emphasis*</code> works.</p>
 </li>
 <li>
 <p>Added a new function <code>pkg_site()</code>, which builds a website for an R package from a template bundled with <strong>litedown</strong> (under <code>system.file('site', package = 'litedown')</code>). The template contains pages for the package description, news, manual, vignettes, examples, and source code, and can be customized page by page (a file that already exists in the site directory will not be overwritten by the template). Previously this template only lived in the GitHub Action <a href="https://github.com/yihui/actions/tree/main/litedown-site">https://github.com/yihui/actions/tree/main/litedown-site</a>, which means a package site could not be built locally, and the template could get out of sync with the installed version of <strong>litedown</strong>.</p>
@@ -54,6 +54,9 @@
 </li>
 <li>
 <p>Added a new <code>pele</code> engine to draw diagrams with <a href="https://pele.run">Pele</a>, a lightweight renderer for the Mermaid syntax. It takes the same input as the <code>mermaid</code> engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the <strong>litedown</strong> documentation (<a href="https://pkg.yihui.org/litedown/book/">https://pkg.yihui.org/litedown/book/</a>) now use it.</p>
+</li>
+<li>
+<p><code>fuse_site()</code> with <code>rebuild: &quot;outdated&quot;</code> (the default) now also rebuilds pages when <code>_litedown.yml</code> is newer than their output files, instead of only comparing each page with its own source file.</p>
 </li>
 <li>
 <p>Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via <code>roam()</code>.</p>
@@ -75,6 +78,9 @@
 </li>
 <li>
 <p>Added a new function <code>pkg_examples()</code> to list the examples under the <code>examples/</code> directory of a package, so the <code>examples.Rmd</code> page of the <code>pkg_site()</code> template no longer assumes that the site is built in the package root directory.</p>
+</li>
+<li>
+<p><code>pkg_news()</code> now links issue numbers (and <code>@username</code>s) that immediately follow an opening parenthesis, e.g., <code>#1</code> in <code>([#1](https://github.com/yihui/litedown/issues/1), [#2](https://github.com/yihui/litedown/issues/2))</code>.</p>
 </li>
 <li>
 <p>HTML output now uses <code>&lt;embed&gt;</code> instead of <code>&lt;img&gt;</code> for PDF files included via <code>![](foo.pdf)</code>, and the PDF is base64 encoded when resources are embedded (a <code>?query</code> or <code>#hash</code> in the path is ignored when locating the file, and the <code>#hash</code>, e.g., <code>#page=2</code>, is kept).</p>
@@ -335,7 +341,7 @@ graph TD;
 <p>Added the JS asset <a href="https://github.com/yihui/lite.js/blob/main/js/mathjax-config.js"><code>@mathjax-config</code></a> to enable equation numbering by default when the JS math library is set to MathJax (thanks, <a href="https://github.com/hturner">@hturner</a>, <a href="https://github.com/yihui/litedown/issues/32">#32</a>).</p>
 </li>
 <li>
-<p>Set <code>options(bitmapType = 'cairo')</code> in <code>fuse()</code> if <code>capabilities('cairo')</code> is TRUE, which will generate smaller bitmap plot files (e.g., <code>.png</code>) than using <code>quartz</code> or <code>Xlib</code>, and is also a safer option for <code>fuse()</code> to be executed in parallel (rstudio/rmarkdown#2561).</p>
+<p>Set <code>options(bitmapType = 'cairo')</code> in <code>fuse()</code> if <code>capabilities('cairo')</code> is TRUE, which will generate smaller bitmap plot files (e.g., <code>.png</code>) than using <code>quartz</code> or <code>Xlib</code>, and is also a safer option for <code>fuse()</code> to be executed in parallel (<a href="https://github.com/rstudio/rmarkdown/issues/2561">rstudio/rmarkdown#2561</a>).</p>
 </li>
 <li>
 <p>Added a new vignette engine <code>litedown::book</code> to make it possible to build multiple vignettes into a book. To use this engine, declare <code>\VignetteEngine{litedown::book}</code> only in the book index file (e.g., <code>index.Rmd</code>) but not in other book chapter files.</p>
@@ -393,7 +399,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.11</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.12</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.116/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.116/js/appendix.min.js" defer></script>
