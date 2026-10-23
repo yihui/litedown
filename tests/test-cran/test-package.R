@@ -165,6 +165,10 @@ assert('group_items() assigns items to groups with wildcards and an Other group'
   (g[[1]]$i %==% 1L)
   (g[[2]]$i %==% c(2L, 3L))  # matches B via the second key
   (g[[3]]$i %==% 4L)
+  # skipped items are included only when matched by a group
+  g = group_items(keys, groups, skip = c(FALSE, FALSE, TRUE, TRUE))
+  (g[[2]]$i %==% c(2L, 3L))
+  (length(g) %==% 2L)  # item 4 is skipped, so no Other group
 })
 
 if (has_rd) assert('pkg_manual() groups help pages when groups are given', {

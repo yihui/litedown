@@ -382,7 +382,9 @@ tweak_citation = function(x) {
 #'   vector of names to be matched (`*` and `?` are wildcards): topic names or
 #'   Rd filenames for `pkg_manual()`, and vignette filenames or titles for
 #'   `pkg_articles()`. Items that do not belong to any group are put in a group
-#'   named `Other`. By default, groups are read from the subfield `manual` or
+#'   named `Other`, except help pages with the keyword `internal`, which are
+#'   listed only if a group names them (e.g., re-exported functions). A name
+#'   that matches nothing is an error. By default, groups are read from the subfield `manual` or
 #'   `articles` of the field `site` in `_litedown.yml` in the current
 #'   directory, e.g.,
 #'
@@ -419,15 +421,18 @@ pkg_manual = function(
   db = tools::Rd_db(name)  # all Rd pages
   intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
   entries = setdiff(names(db), intro)
-  entries = entries[!vapply(entries, function(i) {
+  internal = vapply(entries, function(i) {
     kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
     'internal' %in% kwd
-  }, logical(1))]
+  }, logical(1))
+  # internal pages are only kept if a group names them explicitly (like
+  # pkgdown, e.g., for re-exported functions)
+  if (!length(groups)) entries = entries[!internal]
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
   if (length(groups)) {
     keys = .mapply(c, sans_ext(entries), al[entries])
-    groups = lapply(group_items(keys, groups), function(g) {
+    groups = lapply(group_items(keys, groups, internal), function(g) {
       g$i = entries[g$i]  # use filenames instead of indices
       g
     })
@@ -568,7 +573,8 @@ site_groups = function(key) {
 # unmatched items go to the last group `Other`. Contents that match no item
 # (e.g., stale names) are an error. Returns a list of groups, each
 # with `title`, `desc`, and the indices `i` of items (empty groups dropped).
-group_items = function(keys, groups) {
+# Items flagged in `skip` are only included if a group matches them.
+group_items = function(keys, groups, skip = FALSE) {
   id = rep(NA_integer_, length(keys)); bad = NULL
   for (j in seq_along(groups)) {
     hit = lapply(as.character(unlist(groups[[j]]$contents)), function(p) {
@@ -583,7 +589,7 @@ group_items = function(keys, groups) {
     call. = FALSE
   )
   groups = c(groups, list(list(title = 'Other')))
-  id[is.na(id)] = length(groups)
+  id[is.na(id) & !skip] = length(groups)
   res = lapply(seq_along(groups), function(j) {
     g = groups[[j]]
     list(title = g$title, desc = g$desc, i = which(id == j))

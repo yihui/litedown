@@ -8,7 +8,7 @@
 
 - Added a new `pele` engine to draw diagrams with [Pele](https://pele.run), a lightweight renderer for the Mermaid syntax. It takes the same input as the `mermaid` engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the **litedown** documentation (<https://pkg.yihui.org/litedown/book/>) now use it.
 
-- Added a function `pkg_articles()` to list package vignettes (it was previously inlined in the `articles.Rmd` template of `pkg_site()`). Both `pkg_articles()` and `pkg_manual()` gain an argument `groups` to group vignettes or help pages, which defaults to the subfield `articles` or `manual` of `site` in `_litedown.yml` (similar to `_pkgdown.yml`), e.g., `site: {manual: {Sites: [pkg_site, "roam*"]}}` (group titles are the keys). Items not in any group are listed under `Other`. Without groups, the default listing is unchanged.
+- Added a function `pkg_articles()` to list package vignettes (it was previously inlined in the `articles.Rmd` template of `pkg_site()`). Both `pkg_articles()` and `pkg_manual()` gain an argument `groups` to group vignettes or help pages, which defaults to the subfield `articles` or `manual` of `site` in `_litedown.yml` (similar to `_pkgdown.yml`), e.g., `site: {manual: {Sites: [pkg_site, "roam*"]}}` (group titles are the keys). Items not in any group are listed under `Other`, and a name that matches nothing is an error. Help pages with the keyword `internal` (e.g., re-exports) are listed only if a group names them. Without groups, the default listing is unchanged.
 
 - `fuse_site()` with `rebuild: "outdated"` (the default) now also rebuilds pages when `_litedown.yml` is newer than their output files, instead of only comparing each page with its own source file.
 
