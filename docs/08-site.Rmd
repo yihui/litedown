@@ -391,8 +391,8 @@ interactive R playground powered by [webR](https://r-wasm.org). It installs
 code or render R Markdown documents without a server or a local R installation
 (yes, it works on your mobile device, too!).
 
-The playground can be customized by adding a `playground/` directory to the
-package root, which `pkg_site()` copies into `site/playground/`. The following
+The playground can be customized by adding files to the `playground/`
+directory under the site directory (e.g., `site/playground/`). The following
 files are recognized:
 
 -   `_default.Rmd` (or `_default.R`): the content pre-loaded in the editor when
