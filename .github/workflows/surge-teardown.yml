@@ -1,0 +1,39 @@
+# Remove a PR's surge.sh preview. Runs on `delete` (branch deleted) as the
+# primary path, since deleting the branch at merge time cancels `closed` runs;
+# `closed` covers PRs whose branch is kept. Teardown is idempotent.
+name: Remove surge preview
+
+on:
+  pull_request:
+    types: [closed]
+  delete:
+
+permissions:
+  contents: read
+  pull-requests: read # look up the PR for a deleted branch
+
+jobs:
+  teardown:
+    # Ignore tag deletions; only branches map to a preview.
+    if: github.event_name == 'pull_request' || github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    env:
+      SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Resolve PR number
+        id: pr
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            num="${{ github.event.pull_request.number }}"
+          else
+            num=$(gh pr list --repo "${{ github.repository }}" --state all \
+              --head "${{ github.event.ref }}" --json number --jq '.[0].number // empty')
+          fi
+          echo "num=$num" >> "$GITHUB_OUTPUT"
+
+      - name: Teardown preview
+        if: env.SURGE_TOKEN != '' && steps.pr.outputs.num != ''
+        run: |
+          npm install -g surge
+          surge teardown "litedown-pr-${{ steps.pr.outputs.num }}.surge.sh" || true

@@ -1,0 +1,72 @@
+name: Package site
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write # comment the preview URL
+
+# One run per ref; a new push supersedes the previous one.
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+  # PR previews are served at litedown-pr-<N>.surge.sh
+  PREVIEW_DOMAIN: litedown-pr-${{ github.event.pull_request.number }}.surge.sh
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Fork PRs cannot read the secret or write to the repo; skip them.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@HEAD
+      - uses: r-lib/actions/setup-r@HEAD
+        with:
+          use-public-rspm: true
+      - uses: yihui/actions/setup-r-dependencies@HEAD
+        with:
+          extra-packages: litedown xfun .
+          r-universe: yihui
+      - uses: yihui/actions/litedown-site@HEAD
+        with:
+          site-dir: 'site'
+      - name: Deploy PR preview to surge
+        if: github.event_name == 'pull_request' && env.SURGE_TOKEN != ''
+        run: |
+          npm install -g surge
+          surge ./site "$PREVIEW_DOMAIN"
+      - name: Comment preview URL
+        if: github.event_name == 'pull_request' && env.SURGE_TOKEN != ''
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: surge-preview
+          message: |
+            Site preview: https://${{ env.PREVIEW_DOMAIN }}
+
+            Updates on every push; removed when this PR closes.
+      - name: Deploy to gh-pages
+        if: github.event_name == 'push'
+        run: |
+          tmp=$(mktemp -d)
+          cp -r site/. "$tmp"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch origin gh-pages; then
+            git switch gh-pages
+          else
+            git switch --orphan gh-pages
+            git rm -rf . 2>/dev/null || true
+          fi
+          find . -maxdepth 1 ! -name .git ! -name . -exec rm -rf {} +
+          cp -r "$tmp"/. .
+          git add -A
+          git diff --cached --quiet || (git commit -m "deploy site" && git push origin gh-pages)
