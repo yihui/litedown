@@ -16,6 +16,8 @@
 
 - The navigation menu of a package site gets a GitHub icon on the right if the `BugReports` field points to a GitHub repo.
 
+- The local cache of the latest version of the jsDelivr assets is now invalidated when **litedown** is upgraded, and actually expires after a week (the age was previously compared in the wrong time units).
+
 - Fixed a bug that the navigation menu of a website only contained the page being previewed (instead of all pages) when previewing a single file via `roam()`.
 
 - Fixed a bug that `fuse()` (and `mark()`) failed to compile a `.tex` file to PDF when the output was in a different directory, because `latexmk` was not run in the output directory and could not find relative paths in the `.tex` file such as plot files (thanks, @reedacartwright, #168).
