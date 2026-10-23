@@ -1,15 +1,16 @@
 :root { --slide-width: 100%; }
 html { scroll-snap-type: y mandatory; }
 th, td { padding: .2em .5em; }
-.slide { padding: 0 1em; background-color: #fff; }
-.slide, :is(.frontmatter, .middle) .main {
-  display: flex;
-  flex-direction: column;
-}
 .slide {
+  padding: 0 1em;
+  background-color: #fff;
   & > .main { flex-grow: 1; }
   & > .header { margin-bottom: 1em; }
   h2, h3 { margin-top: unset; }
+}
+.slide, :is(.frontmatter, .middle) .main {
+  display: flex;
+  flex-direction: column;
 }
 body {
   max-width: fit-content;
