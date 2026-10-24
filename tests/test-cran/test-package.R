@@ -146,6 +146,126 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   (any(grepl('id="sec:man-', m)))
   # the alias TOC links back to those sections
   (any(grepl('href="#sec:man-', m)))
+  # the default index is also in a callout
+  (any(grepl('{.callout-tip data-legend="Index"}', m, fixed = TRUE)))
+})
+
+assert('group_items() assigns items to groups with wildcards and an Other group', {
+  keys = list(c('a_x', 'a'), c('q', 'b'), 'b_z', 'misc')
+  groups = list(
+    list(title = 'A', desc = 'd', contents = 'a_*'),
+    list(title = 'Z', contents = 'nothing'),
+    list(title = 'B', contents = c('b_z', 'b'))
+  )
+  # contents that match no item are an error
+  (has_error(group_items(keys, groups), 'nothing'))
+  groups[[2]] = NULL
+  g = group_items(keys, groups)
+  (sapply(g, `[[`, 'title') %==% c('A', 'B', 'Other'))
+  (g[[1]]$i %==% 1L)
+  (g[[2]]$i %==% c(2L, 3L))  # matches B via the second key
+  (g[[3]]$i %==% 4L)
+  # skipped items are included only when matched by a group
+  g = group_items(keys, groups, skip = c(FALSE, FALSE, TRUE, TRUE))
+  (g[[2]]$i %==% c(2L, 3L))
+  (length(g) %==% 2L)  # item 4 is skipped, so no Other group
+})
+
+if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
+  m = pkg_manual(
+    pkg, examples = FALSE,
+    groups = list(list(title = 'First', desc = 'My desc', contents = 'pkg_*'))
+  )
+  (has_match(m, '<h3 class="unnumbered unlisted">First</h3>'))
+  (has_match(m, '<h3 class="unnumbered unlisted">Other</h3>'))
+  (!any(grepl('<kbd>', m)))
+  (has_match(m, '<p>My desc</p>'))
+  (has_match(m, '::: {.callout-tip data-legend="Index"}', fixed = TRUE, perl = FALSE))
+  (has_match(m, 'callout[.](min[.])?css'))
+  # the help pages must still follow the index
+  (any(grepl('<h2 id="sec:man-', m)))
+})
+
+vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
+if (!is.null(vp) && nrow(tools::getVignetteInfo(vp)))
+  assert('pkg_articles() lists vignettes, optionally in groups', {
+    d = tempfile(); dir.create(d)
+    on.exit(unlink(d, recursive = TRUE), add = TRUE)
+    x = in_dir(d, pkg_articles(vp))
+    (any(grepl('^- \\[', x)))
+    x = in_dir(d, pkg_articles(vp, groups = list(list(title = 'G', desc = 'dd', contents = '*'))))
+    (x[1] %==% '## G\n')
+    (x[2] %==% 'dd')
+    (!any(grepl('## Other', x)))
+  })
+
+assert('pkg_articles() reports packages without vignettes', {
+  (pkg_articles('base') %==% 'This package has no vignettes.')
+})
+
+assert('site_groups() reads groups from the site field of _litedown.yml', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c(
+    'site:', '  manual:', '    A: [x, "y*"]', '    B:', '      desc: dd',
+    '      contents: [z]'
+  ), file.path(d, '_litedown.yml'))
+  g = in_dir(d, site_groups('manual'))
+  (g[[1]] %==% list(title = 'A', contents = c('x', 'y*')))
+  (g[[2]] %==% list(title = 'B', desc = 'dd', contents = 'z'))
+  (is.null(in_dir(d, site_groups('articles'))))
+  (is.null(in_dir(tempdir(), site_groups('manual'))))
+})
+
+assert('side_links() drops the URL of the package site', {
+  u = 'https://a.github.io/pkg/, https://github.com/a/pkg'
+  x = side_links(u, 'https://github.com/a/pkg/issues', 'pkg')
+  (!grepl('github.io', x))
+  (grepl('Browse source code', x))
+  # the site URL can be set in _litedown.yml
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('site:', '  url: https://pkg.example.org/'), file.path(d, '_litedown.yml'))
+  x = in_dir(d, side_links('https://pkg.example.org, https://github.com/a/pkg', NA, 'pkg'))
+  (!grepl('example.org', x))
+  (grepl('Browse source code', x))
+})
+
+assert('site_cleanup() removes the template sources but not assets or your files', {
+  d = tempfile(); p = tempfile()
+  dir_create(file.path(p, 'vignettes'))
+  writeLines('Package: foo', file.path(p, 'DESCRIPTION'))
+  on.exit(unlink(c(d, p), recursive = TRUE), add = TRUE)
+  dir_create(d)
+  write_utf8('custom', file.path(d, 'index.Rmd'))
+  copied = site_skeleton(d, p)
+  (!('index.Rmd' %in% copied))  # it was not copied from the template
+  (all(c('manual.Rmd', '_litedown.yml', 'playground/index.html') %in% copied))
+  site_cleanup(d, copied)
+  fs = list.files(d, recursive = TRUE)
+  (!any(c('manual.Rmd', '_litedown.yml', '_footer.Rmd') %in% fs))
+  ('index.Rmd' %in% fs)  # your own file stays
+  ('playground/index.html' %in% fs)  # assets stay
+})
+
+assert('site_exclude() reads the pages to exclude from _litedown.yml', {
+  d = tempfile(); p = tempfile()
+  dir_create(file.path(p, 'vignettes'))
+  writeLines('Package: foo', file.path(p, 'DESCRIPTION'))
+  on.exit(unlink(c(d, p), recursive = TRUE), add = TRUE)
+  dir_create(d)
+  (site_exclude(d) %==% 'code.Rmd')  # default
+  cfg = file.path(d, '_litedown.yml')
+  writeLines(c('site:', '  exclude: [code.Rmd, index.Rmd]'), cfg)
+  (site_exclude(d) %==% c('code.Rmd', 'index.Rmd'))
+  site_skeleton(d, p)
+  (!any(c('code.Rmd', 'index.Rmd') %in% list.files(d)))
+  (file_exists(file.path(d, 'manual.Rmd')))
+  # NA means to exclude nothing
+  writeLines(c('site:', '  exclude: NA'), cfg)
+  (length(site_exclude(d)) %==% 0L)
+  site_skeleton(d, p)
+  (file_exists(file.path(d, 'code.Rmd')))
 })
 
 assert('pkg_examples() lists examples from the package root, not the working dir', {
@@ -182,7 +302,7 @@ if (system.file('site', package = pkg) != '')
     (!('examples.Rmd' %in% fs))
     # files that already exist in the site dir are not overwritten
     write_utf8('custom', f <- file.path(d, 'index.Rmd'))
-    site_skeleton(d, p, exclude = 'code.Rmd')
+    site_skeleton(d, p)
     (read_utf8(f) %==% 'custom')
     (!file_exists(file.path(d, 'code.Rmd')))
     unlink(c(d, p), recursive = TRUE)

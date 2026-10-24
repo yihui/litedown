@@ -1116,6 +1116,13 @@ jsdelivr = function(file, dir = 'npm/@xiee/utils/') {
   ifelse(is_https(file), file, sprintf('https://cdn.jsdelivr.net/%s%s', dir, file))
 }
 
+# read the cache of jsdelivr versions, which is discarded if it was saved by a
+# different version of litedown (unless `any = TRUE`, e.g., as a fallback)
+read_jsd_cache = function(file, any = FALSE) {
+  info = if (file.exists(file)) readRDS(file)
+  if (any || identical(info$litedown, packageVersion('litedown'))) info
+}
+
 # get the latest version of jsdelivr assets
 jsd_version = local({
   vers = list()  # cache versions in current session
@@ -1129,6 +1136,7 @@ jsd_version = local({
   # update cache to a specific version
   u_cache = function(info, pkg, version, file) {
     if (!grepl('^@', version)) version = paste0('@', version)
+    info$litedown = packageVersion('litedown')
     info[[pkg]] = list(version = version, time = Sys.time())
     saveRDS(info, file)
     version
@@ -1136,12 +1144,13 @@ jsd_version = local({
   # cache expires after one week by default
   v_cache = function(pkg, force, delta = getOption('litedown.jsdelivr.cache', 604800)) {
     if (!isTRUE(force) && file.exists(f <- p_cache())) {
-      info = readRDS(f)
+      info = read_jsd_cache(f, is.infinite(delta))
       if (is.character(force)) {
         u_cache(info, pkg, force, f)
       } else {
         info = info[[pkg]]
-        if (!is.null(t <- info$time) && Sys.time() - t <= delta) info$version
+        age = as.numeric(Sys.time() - info$time, units = 'secs')
+        if (length(age) && age <= delta) info$version
       }
     }
   }
@@ -1154,8 +1163,7 @@ jsd_version = local({
     v = grep_sub('.*"version":\\s*"([0-9.]+)".*', '@\\1', x)
     if (length(v)) {
       if (dir_create(dirname(f <- p_cache()))) {
-        info = if (file.exists(f)) readRDS(f) else list()
-        u_cache(info, pkg, v[1], f)
+        u_cache(read_jsd_cache(f), pkg, v[1], f)
       }
       v[1]
     }

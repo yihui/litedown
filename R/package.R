@@ -144,7 +144,7 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   d[['Authors@R']] = NULL
   if (type == 'dl') {
     # reuse the URL slot (to keep the field order) for all links
-    d[['URL']] = side_links(d[['URL']], d[['BugReports']])
+    d[['URL']] = side_links(d[['URL']], d[['BugReports']], name)
     d[c('Title', 'Description', 'BugReports', 'Suggests')] = NULL
     names(d)[names(d) == 'URL'] = 'Links'
   }
@@ -169,9 +169,21 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   new_asis(c(res, vest(css = '@manual')))
 }
 
+# is a URL the site of the package itself (the site config `url`, or the
+# conventional https://USER.github.io/PKG/)? Such links are pointless on the site.
+is_own_site = function(u, pkg) {
+  norm = function(x) tolower(sub('/+$', '', x))
+  own = norm(yml_config('.')[['site']][['url']])
+  r = if (length(pkg)) grepl(
+    sprintf('^https?://[^/]+[.]github[.]io/%s$', tolower(pkg)), norm(u)
+  ) else FALSE
+  norm(u) %in% own | r
+}
+
 # turn URLs into Markdown links with short labels
-side_links = function(url, bug) {
+side_links = function(url, bug, pkg = NULL) {
   u = if (!is.na(url)) match_full(url, 'https?://[^[:space:],<>()]+')
+  u = u[!is_own_site(u, pkg)]
   host = sub('^https?://(www[.])?([^/]+).*', '\\2', u)
   repo = host %in% c(
     'github.com', 'gitlab.com', 'codeberg.org', 'bitbucket.org', 'dev.azure.com'
@@ -377,12 +389,37 @@ tweak_citation = function(x) {
 #' @param examples A list of arguments to be passed to [xfun::record()] to run
 #'   examples each help page, e.g., `list(dev = 'svg', dev.args = list(height =
 #'   6))`. If not a list (e.g., `FALSE`), examples will not be run.
+#' @param groups A list of groups, each of which is a list with the fields
+#'   `title`, `desc` (optional), and `contents`, where `contents` is a character
+#'   vector of names to be matched (`*` and `?` are wildcards): topic names or
+#'   Rd filenames for `pkg_manual()`, and vignette filenames or titles for
+#'   `pkg_articles()`. Items that do not belong to any group are put in a group
+#'   named `Other`, except help pages with the keyword `internal`, which are
+#'   listed only if a group names them (e.g., re-exported functions). A name
+#'   that matches nothing is an error. By default, groups are read from the
+#'   subfield `manual` or `articles` of the field `site` in `_litedown.yml` in
+#'   the current directory, e.g.,
+#'
+#' ```yaml
+#' site:
+#'   manual:
+#'     Sites:
+#'       desc: Build package sites
+#'       contents: [pkg_site, "roam*"]
+#'     Others: [mark, fuse]
+#' ```
+#'
+#'   That is, the keys are group titles, and each value is either the
+#'   `contents` or a map with `desc` and `contents`.
+#'
+#'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
+#'   `pkg_articles()` lists all vignettes in a single list.
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
-  examples = list()
+  examples = list(), groups = site_groups('manual')
 ) {
   links = tools::findHTMLlinks('')
   # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
@@ -396,12 +433,25 @@ pkg_manual = function(
   db = tools::Rd_db(name)  # all Rd pages
   intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
   entries = setdiff(names(db), intro)
-  entries = entries[!vapply(entries, function(i) {
+  internal = vapply(entries, function(i) {
     kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
     'internal' %in% kwd
-  }, logical(1))]
+  }, logical(1))
+  # internal pages are only kept if a group names them explicitly (like
+  # pkgdown, e.g., for re-exported functions)
+  if (!length(groups)) entries = entries[!internal]
   db = db[c(if (overview && intro %in% names(db)) intro, entries)]
   al = lapply(db, Rd_aliases)
+  if (length(groups)) {
+    keys = .mapply(c, sans_ext(entries), al[entries])
+    groups = lapply(group_items(keys, groups, internal), function(g) {
+      g$i = entries[g$i]  # use filenames instead of indices
+      g
+    })
+    # list pages by group, with the overview page (if any) first
+    db = db[c(intersect(intro, names(db)), unlist(lapply(groups, `[[`, 'i')))]
+    al = al[names(db)]
+  }
 
   cl = header_class(toc, number_sections, FALSE)
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
@@ -437,20 +487,33 @@ pkg_manual = function(
 
   # extract all aliases and put them in the beginning (like a TOC)
   env = asNamespace(name)
-  toc = unlist(.mapply(function(topics, target) {
-    fn = uapply(topics, function(x) {
+  toc = lapply(al, function(topics) {
+    uapply(topics, function(x) {
       if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
     })
-    sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
-  }, al, sans_ext(names(al))))
-
-  g = toupper(substr(unlist(al), 1, 1))
-  g[!g %in% LETTERS] = 'misc'
-  g = factor(g, intersect(c(LETTERS, 'misc'), g))
-  toc = split(toc, g)  # group by first character
-  toc = unlist(mapply(function(x, g) {
-    c('<p>', sprintf('<b>-- <kbd>%s</kbd> --</b>', g), x, '</p>')
-  }, toc, names(toc)))
+  })
+  toc_links = function(toc) {
+    unlist(.mapply(function(fn, target) {
+      sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
+    }, toc, sans_ext(names(toc))))
+  }
+  toc = if (length(groups)) {
+    ov = intersect(intro, names(db))
+    unlist(use.names = FALSE, lapply(c(
+      if (length(ov)) list(list(title = 'Overview', i = ov)), groups
+    ), function(g) toc_block(toc_links(toc[g$i]), g$title, g$desc)))
+  } else {
+    # group by first character of aliases
+    g = toupper(substr(unlist(al), 1, 1))
+    g[!g %in% LETTERS] = 'misc'
+    g = factor(g, intersect(c(LETTERS, 'misc'), g))
+    l = split(toc_links(toc), g)
+    unlist(lapply(names(l), function(i) {
+      toc_block(c(sprintf('<b>-- <kbd>%s</kbd> --</b>', i), l[[i]]))
+    }), use.names = FALSE)
+  }
+  # put the index in a callout (blank lines make it a fenced Div, not HTML)
+  toc = c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::', '')
 
   r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
@@ -468,7 +531,82 @@ pkg_manual = function(
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
   res = gsub('<img src="../help/figures/', '<img src="man/figures/', res, fixed = TRUE)
-  new_asis(c(toc, res, vest(css = '@manual')))
+  # the callout assets are not in the default site assets
+  new_asis(c(toc, res, vest('callout', css = '@manual')))
+}
+
+#' @return `pkg_articles()` returns a list of links to the built vignettes of
+#'   the package (and their source files) in Markdown. It also copies the
+#'   `doc` directory of the installed package to the current directory.
+#' @rdname pkg_desc
+#' @export
+pkg_articles = function(name = detect_pkg(), groups = site_groups('articles')) {
+  res = tools::getVignetteInfo(name)
+  if (!nrow(res)) return('This package has no vignettes.')
+  file.copy(system.file('doc', package = name), './', recursive = TRUE)
+  vigs = res[, 'PDF']
+  # redirect doc/index.html to articles.html
+  if (!'index.html' %in% vigs) writeLines(
+    "<script>location.href = location.href.replace(/\\/[^\\/]*$/, '') + '/../articles.html';</script>",
+    'doc/index.html'
+  )
+  # clean up .R files
+  file.remove(file.path('doc', setdiff(res[, 'R'], '')))
+  src = res[, 'File']
+  # TODO: show excerpts of vignettes if possible
+  items = sprintf('- [%s](doc/%s) (source: [%s](doc/%s))\n', res[, 'Title'], vigs, src, src)
+  if (!length(groups)) return(new_asis(items))
+  keys = .mapply(c, sans_ext(src), src, res[, 'Title'])
+  new_asis(unlist(lapply(group_items(keys, groups), function(g) {
+    c(paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''), items[g$i])
+  })))
+}
+
+# a block of links in the TOC, optionally with a heading and a description
+toc_block = function(x, title = NULL, desc = NULL) {
+  c(if (length(title)) sprintf('<h3 class="unnumbered unlisted">%s</h3>', title),
+    if (length(desc)) sprintf('<p>%s</p>', desc), '<p>', x, '</p>')
+}
+
+# groups from the field `site: {key}` in _litedown.yml in the current directory.
+# The config is a map from group titles to either `contents` or a map with
+# `desc` and `contents` (xfun::taml_file() can't parse lists of maps).
+site_groups = function(key) {
+  g = yml_config('.')[['site']][[key]]
+  if (!length(g)) return()
+  .mapply(function(title, x) {
+    if (!is.list(x)) x = list(contents = x)
+    c(list(title = title), x)
+  }, names(g), g)
+}
+
+# split items into groups by matching the character vectors `keys` (one per
+# item) against `contents` of each group; the first matching group wins, and
+# unmatched items go to the last group `Other`. Contents that match no item
+# (e.g., stale names) are an error. Returns a list of groups, each
+# with `title`, `desc`, and the indices `i` of items (empty groups dropped).
+# Items flagged in `skip` are only included if a group matches them.
+group_items = function(keys, groups, skip = FALSE) {
+  id = rep(NA_integer_, length(keys)); bad = NULL
+  for (j in seq_along(groups)) {
+    hit = lapply(as.character(unlist(groups[[j]]$contents)), function(p) {
+      h = vapply(keys, function(k) any(grepl(utils::glob2rx(p), k)), NA)
+      if (!any(h)) bad <<- c(bad, sprintf('"%s" (group "%s")', p, groups[[j]]$title))
+      h
+    })
+    id[is.na(id) & Reduce(`|`, hit, FALSE)] = j
+  }
+  if (length(bad)) stop(
+    'No match for the following items in the groups: ', paste(bad, collapse = ', '),
+    call. = FALSE
+  )
+  groups = c(groups, list(list(title = 'Other')))
+  id[is.na(id) & !skip] = length(groups)
+  res = lapply(seq_along(groups), function(j) {
+    g = groups[[j]]
+    list(title = g$title, desc = g$desc, i = which(id == j))
+  })
+  res[lengths(lapply(res, `[[`, 'i')) > 0]
 }
 
 run_examples = function(html, config, path) {
@@ -528,6 +666,15 @@ run_examples = function(html, config, path) {
 #' of it. Pages that do not apply to the package are deleted, e.g., `news.Rmd`
 #' is deleted if the package has neither `NEWS.md` nor `inst/NEWS.Rd`.
 #'
+#' The source files copied from the template (e.g., `index.Rmd` and
+#' `_litedown.yml`) are removed after the site is built, so only your own files
+#' and the output remain in `output`.
+#'
+#' Template pages that you do not want can be listed in the field `exclude`
+#' under `site` in `_litedown.yml` under `output`, e.g.,
+#' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
+#' `code.Rmd` is excluded, and `exclude: NA` means to exclude nothing.
+#'
 #' If the package contains a book project (i.e., `docs/_litedown.yml` exists),
 #' the book will be built via [fuse_book()] and placed under the `book/`
 #' subdirectory of the site.
@@ -541,8 +688,6 @@ run_examples = function(html, config, path) {
 #' @param output The directory in which the site is built (created if it does not
 #'   exist). It holds both the site source (i.e., the template) and the output
 #'   files.
-#' @param exclude Filenames of template pages to be excluded, e.g., you can use
-#'   `exclude = NULL` to keep all pages.
 #' @return Output file paths (invisibly).
 #' @seealso [fuse_site()], which renders the site after the template has been
 #'   set up.
@@ -552,7 +697,7 @@ run_examples = function(html, config, path) {
 #' # run this in the root directory of a package
 #' litedown::pkg_site()
 #' }
-pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') {
+pkg_site = function(name = detect_pkg(), output = 'site') {
   if (!loadable(name)) stop(
     "The package '", name, "' needs to be installed before its site can be built."
   )
@@ -560,12 +705,16 @@ pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') 
   # tell detect_pkg() where the package is (the site dir may live anywhere)
   vars = set_envvar(c(R_LITEDOWN_PKG = path))
   on.exit(set_envvar(vars), add = TRUE)
-  site_skeleton(output, path, exclude)
+  copied = site_skeleton(output, path)
+  on.exit(site_cleanup(output, copied), add = TRUE)
+  docs_out = same_path(file.path(path, 'docs'), output)
   res = in_dir(output, {
     # the footer is included by _litedown.yml as a .md file
     if (file_exists('_footer.Rmd')) fuse('_footer.Rmd', '.md')
     # create a placeholder so that the book is included in the nav menu
-    if (book <- file_exists(cfg <- file.path(path, 'docs/_litedown.yml'))) {
+    # (unless docs/ is where the site is built)
+    cfg = file.path(path, 'docs/_litedown.yml')
+    if (book <- !docs_out && file_exists(cfg)) {
       dir_create('book'); file.create('book/index.html')
     }
     out = fuse_site('.')
@@ -585,15 +734,26 @@ pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') 
   invisible(res)
 }
 
-# copy the site template to the site dir and delete pages that do not apply
-site_skeleton = function(output, path, exclude = NULL) {
+# pages of the template that should not be copied: `site: exclude` in the
+# _litedown.yml under `dir` ('code.Rmd' by default, and NA means none)
+site_exclude = function(dir) {
+  x = yml_config(dir)[['site']][['exclude']] %||% 'code.Rmd'
+  x[!is.na(x)]
+}
+
+# copy the site template to the site dir and delete pages that do not apply;
+# returns the template files that were copied
+site_skeleton = function(output, path) {
   dir_create(output)
+  exclude = site_exclude(output)
   # copy template files, but keep files that already exist in the site dir
   tpl = pkg_file('site')
+  copied = NULL
   for (f in list.files(tpl, all.files = TRUE, recursive = TRUE)) {
+    if (any(f == exclude | startsWith(f, paste0(exclude, '/')))) next
     if (file_exists(f2 <- file.path(output, f))) next
     dir_create(dirname(f2))
-    file.copy(file.path(tpl, f), f2)
+    if (file.copy(file.path(tpl, f), f2)) copied = c(copied, f)
   }
   in_dir(output, {
     if (!dir.exists(file.path(path, 'vignettes'))) unlink('articles.Rmd')
@@ -602,9 +762,16 @@ site_skeleton = function(output, path, exclude = NULL) {
     if (dir.exists(d <- file.path(path, 'examples'))) {
       file.copy(d, '.', recursive = TRUE)
     } else unlink('examples.Rmd')
-    unlink(exclude, recursive = TRUE)
   })
-  invisible(output)
+  invisible(copied)
+}
+
+# remove the source files (.Rmd, .yml, and _* in the top directory) that were
+# copied from the template, since they are not part of the site; the files in
+# subdirectories (e.g., the playground) are assets of the site
+site_cleanup = function(dir, files) {
+  files = files[!grepl('/', files) & grepl('^_|[.](Rmd|yml)$', files)]
+  unlink(file.path(dir, files))
 }
 
 # copy the content (instead of the directory itself) of a dir to another dir

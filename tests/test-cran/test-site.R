@@ -128,3 +128,16 @@ assert('fuse_book() renders a book skeleton into a single HTML file', {
   # chapters are wrapped in .chapter divs
   (any(grepl('class="chapter', h, fixed = TRUE)))
 })
+
+assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
+  p = tempfile(); dir.create(p)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  desc = file.path(p, 'DESCRIPTION')
+  writeLines(c('Package: foo', 'BugReports: https://github.com/a/foo/issues'), desc)
+  x = nav_github(p)
+  (has_match(x, '](https://github.com/a/foo/)', fixed = TRUE, perl = FALSE))
+  (has_match(x, 'mark-github-24.svg){.no-invert}', fixed = TRUE, perl = FALSE))
+  (has_match(x, '{.right}', fixed = TRUE, perl = FALSE))
+  writeLines(c('Package: foo'), desc)
+  (is.null(nav_github(p)))
+})

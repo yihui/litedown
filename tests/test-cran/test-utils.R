@@ -218,3 +218,17 @@ assert('number_sections() prefixes hierarchical numbers to HTML headings', {
   # input with no headings is returned unchanged
   (number_sections('<p>no heading</p>') %==% '<p>no heading</p>')
 })
+
+assert('read_jsd_cache() discards the cache saved by a different litedown version', {
+  f = tempfile()
+  on.exit(unlink(f), add = TRUE)
+  (is.null(read_jsd_cache(f)))  # no cache file
+  info = list(litedown = packageVersion('litedown'), pkg = list(version = '@1'))
+  saveRDS(info, f)
+  (read_jsd_cache(f) %==% info)
+  info$litedown = package_version('0.0.1')
+  saveRDS(info, f)
+  (is.null(read_jsd_cache(f)))
+  # a stale cache is still acceptable as a fallback
+  (read_jsd_cache(f, any = TRUE) %==% info)
+})

@@ -215,8 +215,8 @@ or a website.
 A series of helper functions have been provided in **litedown** to get various
 information about the package, such as the package description (`pkg_desc()`),
 news (`pkg_news()`), citation (`pkg_citation()`), source code (`pkg_code()`),
-and all manual pages (`pkg_manual()`). You can call these functions in code
-chunks to print out the desired information.
+vignettes (`pkg_articles()`), and all manual pages (`pkg_manual()`). You can
+call these functions in code chunks to print out the desired information.
 
 For example, you may call them in the appendix (@sec:appendices) of a book:
 
@@ -292,7 +292,7 @@ list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
 | source | description | content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | the `doc/` folder of the installed package |
+| `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
@@ -302,10 +302,13 @@ list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
 
 Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the
-site directory and committing it to your repository.
+site directory and committing it to your repository. The source files copied from
+the template (e.g., `manual.Rmd` and `_litedown.yml`) are removed after the site
+is built, so the site directory only keeps your own files and the output.
 
-The `exclude` argument allows you to exclude certain pages from the site. By
-default, `code.Rmd` is excluded, and
+You can exclude certain template pages from the site via the field `exclude`
+under `site` in `_litedown.yml` in the site directory (the pages will not be
+copied). By default, `code.Rmd` is excluded, and
 
 -   `articles.Rmd` is excluded if the package does not have the `vignettes/`
     directory;
@@ -317,73 +320,63 @@ default, `code.Rmd` is excluded, and
     the package.
 
 For example, if you do not want to include the news (or the source code,
-either), you can use `exclude = c('code.Rmd', 'news.Rmd')`.
+either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
+`exclude: NA`.
 
 If the package contains a book project (i.e., `docs/_litedown.yml` exists), the
 book will be built with `fuse_book()` and published under the `book/` subpage of
-the site.
+the site (unless `docs/` is also where the site is built, i.e., `output =
+'docs'`).
+
+On the home page, badges in `README.md` (between the comments `<!-- badges:
+start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
+`Links` field there omits the URL of the package site itself
+(`https://USER.github.io/PKG/` is detected automatically, or you can set it via
+`url` under `site` in `_litedown.yml`). If the `BugReports` field of
+`DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
+icon on the right.
 
 If you publish the site to GitHub Pages yourself instead of using the GitHub
 action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
 site directory, because Jekyll ignores files and directories whose names start
 with `_`, such as the `_footer.md` used by the template.
 
-### Package sites via GitHub Action {#sec:pkg-site-gha}
+#### Grouping manual pages and articles {#sec:pkg-site-groups}
 
-You may use GitHub Actions to automatically build and deploy package websites.
-The key is to call `litedown::pkg_site()`. I have provided [a simple GitHub
-action](https://github.com/yihui/actions/blob/main/litedown-site/action.yml) in the
-**actions** repository, and you can add a step `uses: yihui/actions/litedown-site@HEAD`
-to your GitHub workflow to use it.
+By default, `pkg_manual()` lists all topics alphabetically, and `pkg_articles()`
+lists all vignettes in a single list. To organize them into groups (like the
+`reference` and `articles` fields of `_pkgdown.yml`), add the fields `manual`
+and `articles` under `site` in `_litedown.yml` in the site directory. The keys
+are group titles, and each value is either a vector of names or a map with a
+description `desc` and the names `contents`:
 
-::: callout-note
-Remember to enable the deployment of GitHub Pages via GitHub Actions in your
-repository settings (`Settings` → `Pages` → `Build and deployment` → `Source` →
-`GitHub Actions`).
-:::
-
-Below is [the full
-workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/litedown.yml)
-for building and publishing **litedown**'s site to GitHub Pages:
-
-```{embed, attr.output = '.yaml data-file="litedown.yml" data-source="1"'}
-"../.github/workflows/litedown.yml"
+``` yaml
+site:
+  manual:
+    Render documents:
+      desc: Convert Markdown and R Markdown to output formats
+      contents: [mark, fuse, "html_*"]
+    Others: [crack, engines]
+  articles:
+    Guides: ["*intro*"]
 ```
 
-You can copy it to the `.github/workflows/` directory of the R package's Git
-repository and commit/push it via Git. Within a few minutes, the package site
-should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
-username, and `pkg` is the repository name, e.g.,
-<https://yihui.github.io/litedown/>.
+Names in `contents` are matched against the topics and Rd filenames of help
+pages (for `manual`), or the filenames (without extensions) and titles of
+vignettes (for `articles`). The wildcards `*` and `?` are supported. The first
+group that matches an item wins, and the items that do not belong to any group
+are put in a group named `Other`. The page then shows the groups in the order
+that you specify. For the manual, the groups are also listed in an index at the
+top of the page.
 
-The action `yihui/actions/litedown-site` supports a few options that you can configure
-under the `with` field. In the above example workflow, we used the option
-`site-dir`. Below are the options currently supported:
+If a name matches nothing (e.g., a function that has been renamed), an error is
+signaled, so that stale configurations do not go unnoticed. Help pages with the
+keyword `internal` (e.g., the page of re-exported functions) are hidden by
+default, and listed only if a group names them. You can also pass the groups to
+the `groups` argument of `pkg_manual()` and `pkg_articles()` as a list of lists
+with the fields `title`, `desc`, and `contents`.
 
-```{r, echo = FALSE, results = 'asis'}
-if (!dir.exists('../../actions'))
-  system('git clone --depth 1 https://github.com/yihui/actions.git ../../actions')
-inputs = xfun::yaml_load(readLines('../../actions/litedown-site/action.yml'), use_yaml = FALSE)$inputs
-cat(sprintf(
-  '- `%s`: %s (default: `%s`).', names(inputs),
-  unlist(lapply(inputs, `[[`, 'description')),
-  unlist(lapply(inputs, `[[`, 'default'))
-), sep = '\n\n')
-```
-
-The options `site-dir` and `exclude` are passed to the `output` and `exclude`
-arguments of `pkg_site()` (@sec:pkg-site-fun), respectively, except that
-`exclude` takes filenames separated by spaces here, e.g., `exclude: 'code.Rmd
-news.Rmd'`. For `pkg-root`, the action changes to this directory (or the
-subdirectory containing `DESCRIPTION`) before calling `pkg_site()`. The `cleanup`
-option allows you to run a command before publishing the site, e.g., you can
-delete the `.Rmd` source and `.yml` config files.
-
-By default, the site is built under the `site/` directory of the package. If you
-change this path, please remember to adjust the `path` option for the
-`actions/upload-pages-artifact` action accordingly.
-
-#### Package playground
+### Package playground
 
 The site template also includes a `playground/` subpage, which provides an
 interactive R playground powered by [webR](https://r-wasm.org). It installs
@@ -410,3 +403,56 @@ files are recognized:
 If the package has an `examples/` directory, the `.Rmd`/`.R` files under it will
 show up in the "Load example..." dropdown of the playground. Selecting an
 example loads its source into the editor.
+
+### Package sites via GitHub Action {#sec:pkg-site-gha}
+
+You may use GitHub Actions to automatically build and deploy package websites.
+The key is to call `litedown::pkg_site()`. I have provided [a simple GitHub
+action](https://github.com/yihui/actions/blob/main/litedown-site/action.yml) in the
+**actions** repository, and you can add a step `uses: yihui/actions/litedown-site@HEAD`
+to your GitHub workflow to use it.
+
+::: callout-note
+Remember to enable the deployment of GitHub Pages via GitHub Actions in your
+repository settings (`Settings` → `Pages` → `Build and deployment` → `Source` →
+`GitHub Actions`).
+:::
+
+Below is [the full
+workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/litedown-site.yml)
+for building and publishing **litedown**'s site to GitHub Pages:
+
+```{embed, attr.output = '.yaml data-file="litedown-site.yml" data-source="1"'}
+"../.github/workflows/litedown-site.yml"
+```
+
+You can copy it to the `.github/workflows/` directory of the R package's Git
+repository and commit/push it via Git. Within a few minutes, the package site
+should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
+username, and `pkg` is the repository name, e.g.,
+<https://yihui.github.io/litedown/>.
+
+The action `yihui/actions/litedown-site` supports a few options that you can configure
+under the `with` field. In the above example workflow, we used the option
+`site-dir`. Below are the options currently supported:
+
+```{r, echo = FALSE, results = 'asis'}
+if (!dir.exists('../../actions'))
+  system('git clone --depth 1 https://github.com/yihui/actions.git ../../actions')
+inputs = xfun::yaml_load(readLines('../../actions/litedown-site/action.yml'), use_yaml = FALSE)$inputs
+cat(sprintf(
+  '- `%s`: %s (default: `%s`).', names(inputs),
+  unlist(lapply(inputs, `[[`, 'description')),
+  unlist(lapply(inputs, `[[`, 'default'))
+), sep = '\n\n')
+```
+
+The option `site-dir` is passed to the `output` argument of `pkg_site()`
+(@sec:pkg-site-fun). For `pkg-root`, the action changes to this directory (or the
+subdirectory containing `DESCRIPTION`) before calling `pkg_site()`. The `cleanup`
+option allows you to run a command before publishing the site, e.g., you can
+delete the `.Rmd` source and `.yml` config files.
+
+By default, the site is built under the `site/` directory of the package. If you
+change this path, please remember to adjust the `path` option for the
+`actions/upload-pages-artifact` action accordingly.

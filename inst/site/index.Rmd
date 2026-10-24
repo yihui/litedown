@@ -29,8 +29,15 @@ litedown::pkg_desc(pkg_name, if (has_readme) 'dl' else 'table')
 if (has_readme) {
   x = xfun::read_utf8(readme)
   i = which(x == '<!-- badges: start -->')
-  # remove lines before badges since they usually contain duplicated info (e.g., title)
-  if (length(i)) x = x[-seq_len(i[1] - 1)]
+  if (length(i)) {
+    j = which(x == '<!-- badges: end -->')
+    # put badges in the right sidebar
+    if (length(j <- j[j > i[1]])) x = append(append(
+      x, c('', ':::', ''), j[1]
+    ), c('::: {.side .side-right}', ''), i[1] - 1)
+    # remove lines before badges since they usually contain duplicated info (e.g., title)
+    x = x[seq_along(x) >= i[1]]
+  }
   i = which(tolower(x) == paste('#', tolower(pkg_name)))
   # remove the title line if it still exists
   if (length(i)) x = x[-i[1]]
