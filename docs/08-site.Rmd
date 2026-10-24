@@ -334,6 +334,11 @@ start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
 `DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
 icon on the right.
 
+If you publish the site to GitHub Pages yourself instead of using the GitHub
+action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
+site directory, because Jekyll ignores files and directories whose names start
+with `_`, such as the `_footer.md` used by the template.
+
 #### Grouping manual pages and articles {#sec:pkg-site-groups}
 
 By default, `pkg_manual()` lists all topics alphabetically, and `pkg_articles()`
@@ -369,10 +374,33 @@ default, and listed only if a group names them. You can also pass the groups to
 the `groups` argument of `pkg_manual()` and `pkg_articles()` as a list of lists
 with the fields `title`, `desc`, and `contents`.
 
-If you publish the site to GitHub Pages yourself instead of using the GitHub
-action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
-site directory, because Jekyll ignores files and directories whose names start
-with `_`, such as the `_footer.md` used by the template.
+### Package playground
+
+The site template also includes a `playground/` subpage, which provides an
+interactive R playground powered by [webR](https://r-wasm.org). It installs
+**litedown** and its dependencies in the browser and lets users write and run R
+code or render R Markdown documents without a server or a local R installation
+(yes, it works on your mobile device, too!).
+
+The playground can be customized by adding files to the `playground/`
+directory under the site directory (e.g., `site/playground/`). The following
+files are recognized:
+
+-   `_default.Rmd` (or `_default.R`): the content pre-loaded in the editor when
+    the playground opens. The `.Rmd` version is tried first; if it does not
+    exist, the `.R` version is tried.
+
+-   `setup.R`: an R script executed once in the webR session after packages are
+    installed. It is a good place to install/load the package under
+    documentation[^08-site-2] and define any helpers that users might need.
+
+[^08-site-2]: To install the development version of a package,
+    [r-universe.dev](https://docs.r-universe.dev/install/binaries.html) can be
+    helpful.
+
+If the package has an `examples/` directory, the `.Rmd`/`.R` files under it will
+show up in the "Load example..." dropdown of the playground. Selecting an
+example loads its source into the editor.
 
 ### Package sites via GitHub Action {#sec:pkg-site-gha}
 
@@ -426,31 +454,3 @@ delete the `.Rmd` source and `.yml` config files.
 By default, the site is built under the `site/` directory of the package. If you
 change this path, please remember to adjust the `path` option for the
 `actions/upload-pages-artifact` action accordingly.
-
-#### Package playground
-
-The site template also includes a `playground/` subpage, which provides an
-interactive R playground powered by [webR](https://r-wasm.org). It installs
-**litedown** and its dependencies in the browser and lets users write and run R
-code or render R Markdown documents without a server or a local R installation
-(yes, it works on your mobile device, too!).
-
-The playground can be customized by adding files to the `playground/`
-directory under the site directory (e.g., `site/playground/`). The following
-files are recognized:
-
--   `_default.Rmd` (or `_default.R`): the content pre-loaded in the editor when
-    the playground opens. The `.Rmd` version is tried first; if it does not
-    exist, the `.R` version is tried.
-
--   `setup.R`: an R script executed once in the webR session after packages are
-    installed. It is a good place to install/load the package under
-    documentation[^08-site-2] and define any helpers that users might need.
-
-[^08-site-2]: To install the development version of a package,
-    [r-universe.dev](https://docs.r-universe.dev/install/binaries.html) can be
-    helpful.
-
-If the package has an `examples/` directory, the `.Rmd`/`.R` files under it will
-show up in the "Load example..." dropdown of the playground. Selecting an
-example loads its source into the editor.
