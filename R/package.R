@@ -675,7 +675,7 @@ run_examples = function(html, config, path) {
 #' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
 #' `code.Rmd` is excluded, and `exclude: NA` means to exclude nothing.
 #'
-#' If the package contains a book project (i.e., `docs/_litedown.yml` exists),
+#' If the package contains a book project (i.e., `book/_litedown.yml` exists),
 #' the book will be built via [fuse_book()] and placed under the `book/`
 #' subdirectory of the site.
 #'
@@ -707,14 +707,12 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   on.exit(set_envvar(vars), add = TRUE)
   copied = site_skeleton(output, path)
   on.exit(site_cleanup(output, copied), add = TRUE)
-  docs_out = same_path(file.path(path, 'docs'), output)
   res = in_dir(output, {
     # the footer is included by _litedown.yml as a .md file
     if (file_exists('_footer.Rmd')) fuse('_footer.Rmd', '.md')
     # create a placeholder so that the book is included in the nav menu
-    # (unless docs/ is where the site is built)
-    cfg = file.path(path, 'docs/_litedown.yml')
-    if (book <- !docs_out && file_exists(cfg)) {
+    cfg = file.path(path, 'book/_litedown.yml')
+    if (book <- file_exists(cfg)) {
       dir_create('book'); file.create('book/index.html')
     }
     out = fuse_site('.')

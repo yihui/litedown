@@ -323,10 +323,9 @@ For example, if you do not want to include the news (or the source code,
 either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
 `exclude: NA`.
 
-If the package contains a book project (i.e., `docs/_litedown.yml` exists), the
+If the package contains a book project (i.e., `book/_litedown.yml` exists), the
 book will be built with `fuse_book()` and published under the `book/` subpage of
-the site (unless `docs/` is also where the site is built, i.e., `output =
-'docs'`).
+the site.
 
 On the home page, badges in `README.md` (between the comments `<!-- badges:
 start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
