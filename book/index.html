@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.12">
+<meta name="generator" content="litedown 0.11.13">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.117/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.117/css/article.min.css">
@@ -22,7 +22,7 @@
 <div class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-10-23</h3></div>
+<div class="date"><h3>2026-10-24</h3></div>
 </div>
 <div class="">
 <div id="TOC">
@@ -316,12 +316,13 @@
 <li><a href="#sec:pkg-site"><span class="section-number">8.4</span> R package documentation</a>
 <ul>
 <li><a href="#sec:the-pkg-helper-functions"><span class="section-number">8.4.1</span> The <code>pkg_*()</code> helper functions</a></li>
-<li><a href="#sec:pkg-site-fun"><span class="section-number">8.4.2</span> Package sites via <code>pkg_site()</code></a></li>
-<li><a href="#sec:pkg-site-gha"><span class="section-number">8.4.3</span> Package sites via GitHub Action</a>
+<li><a href="#sec:pkg-site-fun"><span class="section-number">8.4.2</span> Package sites via <code>pkg_site()</code></a>
 <ul>
-<li><a href="#sec:package-playground"><span class="section-number">8.4.3.1</span> Package playground</a></li>
+<li><a href="#sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages and articles</a></li>
 </ul>
 </li>
+<li><a href="#sec:package-playground"><span class="section-number">8.4.3</span> Package playground</a></li>
+<li><a href="#sec:pkg-site-gha"><span class="section-number">8.4.4</span> Package sites via GitHub Action</a></li>
 </ul>
 </li>
 </ul>
@@ -6545,8 +6546,8 @@ or a website.</p>
 <p>A series of helper functions have been provided in <strong>litedown</strong> to get various
 information about the package, such as the package description (<code>pkg_desc()</code>),
 news (<code>pkg_news()</code>), citation (<code>pkg_citation()</code>), source code (<code>pkg_code()</code>),
-and all manual pages (<code>pkg_manual()</code>). You can call these functions in code
-chunks to print out the desired information.</p>
+vignettes (<code>pkg_articles()</code>), and all manual pages (<code>pkg_manual()</code>). You can
+call these functions in code chunks to print out the desired information.</p>
 <p>For example, you may call them in the appendix (<a class="cross-ref-sec" href="#sec:appendices">3.3.6</a>) of a book:</p>
 <pre><code class="language-md"># Appendix {.appendix}
 
@@ -6625,7 +6626,7 @@ the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" hre
 <tr>
 <td><code>articles</code></td>
 <td>package vignettes</td>
-<td>the <code>doc/</code> folder of the installed package</td>
+<td><code>pkg_articles()</code> (the <code>doc/</code> folder of the installed package)</td>
 </tr>
 <tr>
 <td><code>code</code></td>
@@ -6657,9 +6658,12 @@ the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" hre
 </div>
 <p>Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the
-site directory and committing it to your repository.</p>
-<p>The <code>exclude</code> argument allows you to exclude certain pages from the site. By
-default, <code>code.Rmd</code> is excluded, and</p>
+site directory and committing it to your repository. The source files copied from
+the template (e.g., <code>manual.Rmd</code> and <code>_litedown.yml</code>) are removed after the site
+is built, so the site directory only keeps your own files and the output.</p>
+<p>You can exclude certain template pages from the site via the field <code>exclude</code>
+under <code>site</code> in <code>_litedown.yml</code> in the site directory (the pages will not be
+copied). By default, <code>code.Rmd</code> is excluded, and</p>
 <ul>
 <li>
 <p><code>articles.Rmd</code> is excluded if the package does not have the <code>vignettes/</code>
@@ -6675,15 +6679,75 @@ the package.</p>
 </li>
 </ul>
 <p>For example, if you do not want to include the news (or the source code,
-either), you can use <code>exclude = c('code.Rmd', 'news.Rmd')</code>.</p>
+either), you can use <code>exclude: [code.Rmd, news.Rmd]</code>. To exclude nothing, use
+<code>exclude: NA</code>.</p>
 <p>If the package contains a book project (i.e., <code>docs/_litedown.yml</code> exists), the
 book will be built with <code>fuse_book()</code> and published under the <code>book/</code> subpage of
-the site.</p>
+the site (unless <code>docs/</code> is also where the site is built, i.e., <code>output = 'docs'</code>).</p>
+<p>On the home page, badges in <code>README.md</code> (between the comments <code>&lt;!-- badges: start --&gt;</code> and <code>&lt;!-- badges: end --&gt;</code>) are put in the right sidebar, and the
+<code>Links</code> field there omits the URL of the package site itself
+(<code>https://USER.github.io/PKG/</code> is detected automatically, or you can set it via
+<code>url</code> under <code>site</code> in <code>_litedown.yml</code>). If the <code>BugReports</code> field of
+<code>DESCRIPTION</code> points to a GitHub repository, the navigation menu gets a GitHub
+icon on the right.</p>
 <p>If you publish the site to GitHub Pages yourself instead of using the GitHub
-action (<a class="cross-ref-sec" href="#sec:pkg-site-gha">8.4.3</a>), remember to create an empty <code>.nojekyll</code> file in the
+action (<a class="cross-ref-sec" href="#sec:pkg-site-gha">8.4.4</a>), remember to create an empty <code>.nojekyll</code> file in the
 site directory, because Jekyll ignores files and directories whose names start
 with <code>_</code>, such as the <code>_footer.md</code> used by the template.</p>
-<h3 id="sec:pkg-site-gha"><span class="section-number">8.4.3</span> Package sites via GitHub Action</h3>
+<h4 id="sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages and articles</h4>
+<p>By default, <code>pkg_manual()</code> lists all topics alphabetically, and <code>pkg_articles()</code>
+lists all vignettes in a single list. To organize them into groups (like the
+<code>reference</code> and <code>articles</code> fields of <code>_pkgdown.yml</code>), add the fields <code>manual</code>
+and <code>articles</code> under <code>site</code> in <code>_litedown.yml</code> in the site directory. The keys
+are group titles, and each value is either a vector of names or a map with a
+description <code>desc</code> and the names <code>contents</code>:</p>
+<pre><code class="language-yaml">site:
+  manual:
+    Render documents:
+      desc: Convert Markdown and R Markdown to output formats
+      contents: [mark, fuse, &quot;html_*&quot;]
+    Others: [crack, engines]
+  articles:
+    Guides: [&quot;*intro*&quot;]
+</code></pre>
+<p>Names in <code>contents</code> are matched against the topics and Rd filenames of help
+pages (for <code>manual</code>), or the filenames (without extensions) and titles of
+vignettes (for <code>articles</code>). The wildcards <code>*</code> and <code>?</code> are supported. The first
+group that matches an item wins, and the items that do not belong to any group
+are put in a group named <code>Other</code>. The page then shows the groups in the order
+that you specify. For the manual, the groups are also listed in an index at the
+top of the page.</p>
+<p>If a name matches nothing (e.g., a function that has been renamed), an error is
+signaled, so that stale configurations do not go unnoticed. Help pages with the
+keyword <code>internal</code> (e.g., the page of re-exported functions) are hidden by
+default, and listed only if a group names them. You can also pass the groups to
+the <code>groups</code> argument of <code>pkg_manual()</code> and <code>pkg_articles()</code> as a list of lists
+with the fields <code>title</code>, <code>desc</code>, and <code>contents</code>.</p>
+<h3 id="sec:package-playground"><span class="section-number">8.4.3</span> Package playground</h3>
+<p>The site template also includes a <code>playground/</code> subpage, which provides an
+interactive R playground powered by <a href="https://r-wasm.org">webR</a>. It installs
+<strong>litedown</strong> and its dependencies in the browser and lets users write and run R
+code or render R Markdown documents without a server or a local R installation
+(yes, it works on your mobile device, too!).</p>
+<p>The playground can be customized by adding files to the <code>playground/</code>
+directory under the site directory (e.g., <code>site/playground/</code>). The following
+files are recognized:</p>
+<ul>
+<li>
+<p><code>_default.Rmd</code> (or <code>_default.R</code>): the content pre-loaded in the editor when
+the playground opens. The <code>.Rmd</code> version is tried first; if it does not
+exist, the <code>.R</code> version is tried.</p>
+</li>
+<li>
+<p><code>setup.R</code>: an R script executed once in the webR session after packages are
+installed. It is a good place to install/load the package under
+documentation<sup class="footnote-ref"><a href="#fn-08-site-2" id="fnref-08-site-2" data-footnote-ref>13</a></sup> and define any helpers that users might need.</p>
+</li>
+</ul>
+<p>If the package has an <code>examples/</code> directory, the <code>.Rmd</code>/<code>.R</code> files under it will
+show up in the “Load example…” dropdown of the playground. Selecting an
+example loads its source into the editor.</p>
+<h3 id="sec:pkg-site-gha"><span class="section-number">8.4.4</span> Package sites via GitHub Action</h3>
 <p>You may use GitHub Actions to automatically build and deploy package websites.
 The key is to call <code>litedown::pkg_site()</code>. I have provided <a href="https://github.com/yihui/actions/blob/main/litedown-site/action.yml">a simple GitHub
 action</a> in the
@@ -6694,10 +6758,10 @@ to your GitHub workflow to use it.</p>
 repository settings (<code>Settings</code> → <code>Pages</code> → <code>Build and deployment</code> → <code>Source</code> →
 <code>GitHub Actions</code>).</p>
 </div>
-<p>Below is <a href="https://github.com/yihui/litedown/blob/main/.github/workflows/litedown.yml">the full
+<p>Below is <a href="https://github.com/yihui/litedown/blob/main/.github/workflows/litedown-site.yml">the full
 workflow</a>
 for building and publishing <strong>litedown</strong>’s site to GitHub Pages:</p>
-<pre><code class="language-yaml" data-file="litedown.yml" data-source="1">name: Package site
+<pre><code class="language-yaml" data-file="litedown-site.yml" data-source="1">name: Package site
 
 on:
   push:
@@ -6727,15 +6791,15 @@ jobs:
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@HEAD
-      - uses: r-lib/actions/setup-r@HEAD
+      - uses: actions/checkout@v7
+      - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-      - uses: yihui/actions/setup-r-dependencies@HEAD
+      - uses: yihui/actions/setup-r-dependencies@v1.3.3
         with:
           extra-packages: litedown xfun .
           r-universe: yihui
-      - uses: yihui/actions/litedown-site@HEAD
+      - uses: yihui/actions/litedown-site@v1.3.3
         with:
           site-dir: 'site'
       - name: Deploy PR preview to surge
@@ -6798,39 +6862,14 @@ under the <code>with</code> field. In the above example workflow, we used the op
 <p><code>repo-fields</code>: Additional DESCRIPTION fields to include in the <code>PACKAGES</code> index when <code>repo: true</code> (space- or comma-separated), passed to the <code>fields</code> argument of <code>tools::write_PACKAGES()</code>. For example, use <code>Revision</code> to surface a recorded git commit (default: ``).</p>
 </li>
 </ul>
-<p>The options <code>site-dir</code> and <code>exclude</code> are passed to the <code>output</code> and <code>exclude</code>
-arguments of <code>pkg_site()</code> (<a class="cross-ref-sec" href="#sec:pkg-site-fun">8.4.2</a>), respectively, except that
-<code>exclude</code> takes filenames separated by spaces here, e.g., <code>exclude: 'code.Rmd news.Rmd'</code>. For <code>pkg-root</code>, the action changes to this directory (or the
+<p>The option <code>site-dir</code> is passed to the <code>output</code> argument of <code>pkg_site()</code>
+(<a class="cross-ref-sec" href="#sec:pkg-site-fun">8.4.2</a>). For <code>pkg-root</code>, the action changes to this directory (or the
 subdirectory containing <code>DESCRIPTION</code>) before calling <code>pkg_site()</code>. The <code>cleanup</code>
 option allows you to run a command before publishing the site, e.g., you can
 delete the <code>.Rmd</code> source and <code>.yml</code> config files.</p>
 <p>By default, the site is built under the <code>site/</code> directory of the package. If you
 change this path, please remember to adjust the <code>path</code> option for the
 <code>actions/upload-pages-artifact</code> action accordingly.</p>
-<h4 id="sec:package-playground"><span class="section-number">8.4.3.1</span> Package playground</h4>
-<p>The site template also includes a <code>playground/</code> subpage, which provides an
-interactive R playground powered by <a href="https://r-wasm.org">webR</a>. It installs
-<strong>litedown</strong> and its dependencies in the browser and lets users write and run R
-code or render R Markdown documents without a server or a local R installation
-(yes, it works on your mobile device, too!).</p>
-<p>The playground can be customized by adding files to the <code>playground/</code>
-directory under the site directory (e.g., <code>site/playground/</code>). The following
-files are recognized:</p>
-<ul>
-<li>
-<p><code>_default.Rmd</code> (or <code>_default.R</code>): the content pre-loaded in the editor when
-the playground opens. The <code>.Rmd</code> version is tried first; if it does not
-exist, the <code>.R</code> version is tried.</p>
-</li>
-<li>
-<p><code>setup.R</code>: an R script executed once in the webR session after packages are
-installed. It is a good place to install/load the package under
-documentation<sup class="footnote-ref"><a href="#fn-08-site-2" id="fnref-08-site-2" data-footnote-ref>13</a></sup> and define any helpers that users might need.</p>
-</li>
-</ul>
-<p>If the package has an <code>examples/</code> directory, the <code>.Rmd</code>/<code>.R</code> files under it will
-show up in the “Load example…” dropdown of the playground. Selecting an
-example loads its source into the editor.</p>
 <div class="chapter-after side side-right">
 </div>
 </div>
@@ -7091,7 +7130,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.11.12, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.11.13, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
