@@ -5,7 +5,7 @@
 Makefile
 ^\.github$
 ^LICENSE\.md$
-^docs$
+^book$
 ^examples$
 ^src/patches$
 ^site$

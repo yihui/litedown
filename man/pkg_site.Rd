@@ -39,7 +39,7 @@ under \code{site} in \verb{_litedown.yml} under \code{output}, e.g.,
 \verb{exclude: [code.Rmd, news.Rmd]}. They will not be copied. By default, only
 \code{code.Rmd} is excluded, and \code{exclude: NA} means to exclude nothing.
 
-If the package contains a book project (i.e., \verb{docs/_litedown.yml} exists),
+If the package contains a book project (i.e., \verb{book/_litedown.yml} exists),
 the book will be built via \code{\link[=fuse_book]{fuse_book()}} and placed under the \verb{book/}
 subdirectory of the site.
 

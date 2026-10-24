@@ -6,7 +6,7 @@
 /examples/figures/
 /inst/site/doc/
 /inst/site/_footer.md
-/docs/packages.bib
+/book/packages.bib
 *.Rcheck/
 *.tar.gz
 src/*.o
