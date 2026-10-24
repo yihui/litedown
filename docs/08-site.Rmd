@@ -304,8 +304,9 @@ Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the
 site directory and committing it to your repository.
 
-The `exclude` argument allows you to exclude certain pages from the site. By
-default, `code.Rmd` is excluded, and
+You can exclude certain template pages from the site via the field `exclude`
+under `site` in `_litedown.yml` in the site directory (the pages will not be
+copied). By default, `code.Rmd` is excluded, and
 
 -   `articles.Rmd` is excluded if the package does not have the `vignettes/`
     directory;
@@ -317,7 +318,8 @@ default, `code.Rmd` is excluded, and
     the package.
 
 For example, if you do not want to include the news (or the source code,
-either), you can use `exclude = c('code.Rmd', 'news.Rmd')`.
+either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
+`exclude: NA`.
 
 If the package contains a book project (i.e., `docs/_litedown.yml` exists), the
 book will be built with `fuse_book()` and published under the `book/` subpage of
@@ -415,10 +417,8 @@ cat(sprintf(
 ), sep = '\n\n')
 ```
 
-The options `site-dir` and `exclude` are passed to the `output` and `exclude`
-arguments of `pkg_site()` (@sec:pkg-site-fun), respectively, except that
-`exclude` takes filenames separated by spaces here, e.g., `exclude: 'code.Rmd
-news.Rmd'`. For `pkg-root`, the action changes to this directory (or the
+The option `site-dir` is passed to the `output` argument of `pkg_site()`
+(@sec:pkg-site-fun). For `pkg-root`, the action changes to this directory (or the
 subdirectory containing `DESCRIPTION`) before calling `pkg_site()`. The `cleanup`
 option allows you to run a command before publishing the site, e.g., you can
 delete the `.Rmd` source and `.yml` config files.

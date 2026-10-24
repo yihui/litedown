@@ -231,6 +231,26 @@ assert('side_links() drops the URL of the package site', {
   (grepl('Browse source code', x))
 })
 
+assert('site_exclude() reads the pages to exclude from _litedown.yml', {
+  d = tempfile(); p = tempfile()
+  dir_create(file.path(p, 'vignettes'))
+  writeLines('Package: foo', file.path(p, 'DESCRIPTION'))
+  on.exit(unlink(c(d, p), recursive = TRUE), add = TRUE)
+  dir_create(d)
+  (site_exclude(d) %==% 'code.Rmd')  # default
+  cfg = file.path(d, '_litedown.yml')
+  writeLines(c('site:', '  exclude: [code.Rmd, index.Rmd]'), cfg)
+  (site_exclude(d) %==% c('code.Rmd', 'index.Rmd'))
+  site_skeleton(d, p)
+  (!any(c('code.Rmd', 'index.Rmd') %in% list.files(d)))
+  (file_exists(file.path(d, 'manual.Rmd')))
+  # NA means to exclude nothing
+  writeLines(c('site:', '  exclude: NA'), cfg)
+  (length(site_exclude(d)) %==% 0L)
+  site_skeleton(d, p)
+  (file_exists(file.path(d, 'code.Rmd')))
+})
+
 assert('pkg_examples() lists examples from the package root, not the working dir', {
   p = tempfile(); d = file.path(p, 'examples')
   dir.create(d, recursive = TRUE)
@@ -265,7 +285,7 @@ if (system.file('site', package = pkg) != '')
     (!('examples.Rmd' %in% fs))
     # files that already exist in the site dir are not overwritten
     write_utf8('custom', f <- file.path(d, 'index.Rmd'))
-    site_skeleton(d, p, exclude = 'code.Rmd')
+    site_skeleton(d, p)
     (read_utf8(f) %==% 'custom')
     (!file_exists(file.path(d, 'code.Rmd')))
     unlink(c(d, p), recursive = TRUE)

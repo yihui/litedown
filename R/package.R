@@ -666,6 +666,11 @@ run_examples = function(html, config, path) {
 #' of it. Pages that do not apply to the package are deleted, e.g., `news.Rmd`
 #' is deleted if the package has neither `NEWS.md` nor `inst/NEWS.Rd`.
 #'
+#' Template pages that you do not want can be listed in the field `exclude`
+#' under `site` in `_litedown.yml` under `output`, e.g.,
+#' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
+#' `code.Rmd` is excluded, and `exclude: NA` means to exclude nothing.
+#'
 #' If the package contains a book project (i.e., `docs/_litedown.yml` exists),
 #' the book will be built via [fuse_book()] and placed under the `book/`
 #' subdirectory of the site.
@@ -679,8 +684,6 @@ run_examples = function(html, config, path) {
 #' @param output The directory in which the site is built (created if it does not
 #'   exist). It holds both the site source (i.e., the template) and the output
 #'   files.
-#' @param exclude Filenames of template pages to be excluded, e.g., you can use
-#'   `exclude = NULL` to keep all pages.
 #' @return Output file paths (invisibly).
 #' @seealso [fuse_site()], which renders the site after the template has been
 #'   set up.
@@ -690,7 +693,7 @@ run_examples = function(html, config, path) {
 #' # run this in the root directory of a package
 #' litedown::pkg_site()
 #' }
-pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') {
+pkg_site = function(name = detect_pkg(), output = 'site') {
   if (!loadable(name)) stop(
     "The package '", name, "' needs to be installed before its site can be built."
   )
@@ -698,7 +701,7 @@ pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') 
   # tell detect_pkg() where the package is (the site dir may live anywhere)
   vars = set_envvar(c(R_LITEDOWN_PKG = path))
   on.exit(set_envvar(vars), add = TRUE)
-  site_skeleton(output, path, exclude)
+  site_skeleton(output, path)
   docs_out = same_path(file.path(path, 'docs'), output)
   res = in_dir(output, {
     # the footer is included by _litedown.yml as a .md file
@@ -726,12 +729,21 @@ pkg_site = function(name = detect_pkg(), output = 'site', exclude = 'code.Rmd') 
   invisible(res)
 }
 
+# pages of the template that should not be copied: `site: exclude` in the
+# _litedown.yml under `dir` ('code.Rmd' by default, and NA means none)
+site_exclude = function(dir) {
+  x = yml_config(dir)[['site']][['exclude']] %||% 'code.Rmd'
+  x[!is.na(x)]
+}
+
 # copy the site template to the site dir and delete pages that do not apply
-site_skeleton = function(output, path, exclude = NULL) {
+site_skeleton = function(output, path) {
   dir_create(output)
+  exclude = site_exclude(output)
   # copy template files, but keep files that already exist in the site dir
   tpl = pkg_file('site')
   for (f in list.files(tpl, all.files = TRUE, recursive = TRUE)) {
+    if (any(f == exclude | startsWith(f, paste0(exclude, '/')))) next
     if (file_exists(f2 <- file.path(output, f))) next
     dir_create(dirname(f2))
     file.copy(file.path(tpl, f), f2)
@@ -743,7 +755,6 @@ site_skeleton = function(output, path, exclude = NULL) {
     if (dir.exists(d <- file.path(path, 'examples'))) {
       file.copy(d, '.', recursive = TRUE)
     } else unlink('examples.Rmd')
-    unlink(exclude, recursive = TRUE)
   })
   invisible(output)
 }
