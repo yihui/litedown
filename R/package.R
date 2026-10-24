@@ -396,15 +396,15 @@ tweak_citation = function(x) {
 #'   `pkg_articles()`. Items that do not belong to any group are put in a group
 #'   named `Other`, except help pages with the keyword `internal`, which are
 #'   listed only if a group names them (e.g., re-exported functions). A name
-#'   that matches nothing is an error. By default, groups are read from the subfield `manual` or
-#'   `articles` of the field `site` in `_litedown.yml` in the current
-#'   directory, e.g.,
+#'   that matches nothing is an error. By default, groups are read from the
+#'   subfield `manual` or `articles` of the field `site` in `_litedown.yml` in
+#'   the current directory, e.g.,
 #'
 #' ```yaml
 #' site:
 #'   manual:
 #'     Sites:
-#'       desc: Build package sites.
+#'       desc: Build package sites
 #'       contents: [pkg_site, "roam*"]
 #'     Others: [mark, fuse]
 #' ```

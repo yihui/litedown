@@ -215,8 +215,8 @@ or a website.
 A series of helper functions have been provided in **litedown** to get various
 information about the package, such as the package description (`pkg_desc()`),
 news (`pkg_news()`), citation (`pkg_citation()`), source code (`pkg_code()`),
-and all manual pages (`pkg_manual()`). You can call these functions in code
-chunks to print out the desired information.
+vignettes (`pkg_articles()`), and all manual pages (`pkg_manual()`). You can
+call these functions in code chunks to print out the desired information.
 
 For example, you may call them in the appendix (@sec:appendices) of a book:
 
@@ -292,7 +292,7 @@ list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
 | source | description | content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | the `doc/` folder of the installed package |
+| `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
@@ -321,7 +321,51 @@ either), you can use `exclude = c('code.Rmd', 'news.Rmd')`.
 
 If the package contains a book project (i.e., `docs/_litedown.yml` exists), the
 book will be built with `fuse_book()` and published under the `book/` subpage of
-the site.
+the site (unless `docs/` is also where the site is built, i.e., `output =
+'docs'`).
+
+On the home page, badges in `README.md` (between the comments `<!-- badges:
+start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
+`Links` field there omits the URL of the package site itself
+(`https://USER.github.io/PKG/` is detected automatically, or you can set it via
+`url` under `site` in `_litedown.yml`). If the `BugReports` field of
+`DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
+icon on the right.
+
+#### Grouping manual pages and articles {#sec:pkg-site-groups}
+
+By default, `pkg_manual()` lists all topics alphabetically, and `pkg_articles()`
+lists all vignettes in a single list. To organize them into groups (like the
+`reference` and `articles` fields of `_pkgdown.yml`), add the fields `manual`
+and `articles` under `site` in `_litedown.yml` in the site directory. The keys
+are group titles, and each value is either a vector of names or a map with a
+description `desc` and the names `contents`:
+
+``` yaml
+site:
+  manual:
+    Render documents:
+      desc: Convert Markdown and R Markdown to output formats
+      contents: [mark, fuse, "html_*"]
+    Others: [crack, engines]
+  articles:
+    Guides: ["*intro*"]
+```
+
+Names in `contents` are matched against the topics and Rd filenames of help
+pages (for `manual`), or the filenames (without extensions) and titles of
+vignettes (for `articles`). The wildcards `*` and `?` are supported. The first
+group that matches an item wins, and the items that do not belong to any group
+are put in a group named `Other`. The page then shows the groups in the order
+that you specify. For the manual, the groups are also listed in an index at the
+top of the page.
+
+If a name matches nothing (e.g., a function that has been renamed), an error is
+signaled, so that stale configurations do not go unnoticed. Help pages with the
+keyword `internal` (e.g., the page of re-exported functions) are hidden by
+default, and listed only if a group names them. You can also pass the groups to
+the `groups` argument of `pkg_manual()` and `pkg_articles()` as a list of lists
+with the fields `title`, `desc`, and `contents`.
 
 If you publish the site to GitHub Pages yourself instead of using the GitHub
 action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the

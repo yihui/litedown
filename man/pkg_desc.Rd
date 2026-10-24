@@ -98,14 +98,14 @@ Rd filenames for \code{pkg_manual()}, and vignette filenames or titles for
 \code{pkg_articles()}. Items that do not belong to any group are put in a group
 named \code{Other}, except help pages with the keyword \code{internal}, which are
 listed only if a group names them (e.g., re-exported functions). A name
-that matches nothing is an error. By default, groups are read from the subfield \code{manual} or
-\code{articles} of the field \code{site} in \verb{_litedown.yml} in the current
-directory, e.g.,
+that matches nothing is an error. By default, groups are read from the
+subfield \code{manual} or \code{articles} of the field \code{site} in \verb{_litedown.yml} in
+the current directory, e.g.,
 
 \if{html}{\out{<div class="sourceCode yaml">}}\preformatted{site:
   manual:
     Sites:
-      desc: Build package sites.
+      desc: Build package sites
       contents: [pkg_site, "roam*"]
     Others: [mark, fuse]
 }\if{html}{\out{</div>}}
