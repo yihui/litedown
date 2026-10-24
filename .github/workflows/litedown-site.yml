@@ -32,11 +32,11 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-      - uses: yihui/actions/setup-r-dependencies@v1.3.3
+      - uses: yihui/actions/setup-r-dependencies@v1.4.0
         with:
-          extra-packages: litedown xfun .
+          extra-packages: litedown .
           r-universe: yihui
-      - uses: yihui/actions/litedown-site@v1.3.3
+      - uses: yihui/actions/litedown-site@HEAD
         with:
           site-dir: 'site'
       - name: Deploy PR preview to surge
