@@ -717,8 +717,9 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     }
     out = fuse_site('.')
     if (book) {
-      fuse_book(d <- dirname(cfg))
-      copy_dir(d, 'book')
+      # run from the package root so that `$input$` is relative to it
+      in_dir(path, fuse_book('book'))
+      copy_dir(dirname(cfg), 'book')
       unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
     }
     dir_create('playground')
