@@ -28,15 +28,15 @@ jobs:
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@HEAD
-      - uses: r-lib/actions/setup-r@HEAD
+      - uses: actions/checkout@v7
+      - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-      - uses: yihui/actions/setup-r-dependencies@HEAD
+      - uses: yihui/actions/setup-r-dependencies@v1.3.3
         with:
           extra-packages: litedown xfun .
           r-universe: yihui
-      - uses: yihui/actions/litedown-site@HEAD
+      - uses: yihui/actions/litedown-site@v1.3.3
         with:
           site-dir: 'site'
       - name: Deploy PR preview to surge

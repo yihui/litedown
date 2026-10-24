@@ -387,11 +387,11 @@ repository settings (`Settings` → `Pages` → `Build and deployment` → `Sour
 :::
 
 Below is [the full
-workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/litedown.yml)
+workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/litedown-site.yml)
 for building and publishing **litedown**'s site to GitHub Pages:
 
-```{embed, attr.output = '.yaml data-file="litedown.yml" data-source="1"'}
-"../.github/workflows/litedown.yml"
+```{embed, attr.output = '.yaml data-file="litedown-site.yml" data-source="1"'}
+"../.github/workflows/litedown-site.yml"
 ```
 
 You can copy it to the `.github/workflows/` directory of the R package's Git
