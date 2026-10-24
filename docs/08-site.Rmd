@@ -432,6 +432,18 @@ should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
 username, and `pkg` is the repository name, e.g.,
 <https://yihui.github.io/litedown/>.
 
+The workflow also deploys a preview of the site for each pull request to
+[surge.sh](https://surge.sh) at `https://USER-REPO-pr-N.surge.sh` (`N` is the
+pull request number, and the domain is lowercased with special characters
+replaced by `-`), and posts the URL as a comment on the pull request. The
+preview is updated on every push, so you can check how your changes look before
+merging. To enable it, create a free surge.sh account, run `surge token` to get a
+token, and save it as the repository secret `SURGE_TOKEN` (under `Settings` →
+`Secrets and variables` → `Actions`). The preview steps are skipped when the
+secret is absent, as well as for pull requests from forks, which cannot access
+secrets. The preview is removed by the `teardown` job of the same workflow when
+the pull request is closed (or its branch is deleted).
+
 The action `yihui/actions/litedown-site` supports a few options that you can configure
 under the `with` field. In the above example workflow, we used the option
 `site-dir`. Below are the options currently supported:
