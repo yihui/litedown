@@ -231,6 +231,23 @@ assert('side_links() drops the URL of the package site', {
   (grepl('Browse source code', x))
 })
 
+assert('site_cleanup() removes the template sources but not assets or your files', {
+  d = tempfile(); p = tempfile()
+  dir_create(file.path(p, 'vignettes'))
+  writeLines('Package: foo', file.path(p, 'DESCRIPTION'))
+  on.exit(unlink(c(d, p), recursive = TRUE), add = TRUE)
+  dir_create(d)
+  write_utf8('custom', file.path(d, 'index.Rmd'))
+  copied = site_skeleton(d, p)
+  (!('index.Rmd' %in% copied))  # it was not copied from the template
+  (all(c('manual.Rmd', '_litedown.yml', 'playground/index.html') %in% copied))
+  site_cleanup(d, copied)
+  fs = list.files(d, recursive = TRUE)
+  (!any(c('manual.Rmd', '_litedown.yml', '_footer.Rmd') %in% fs))
+  ('index.Rmd' %in% fs)  # your own file stays
+  ('playground/index.html' %in% fs)  # assets stay
+})
+
 assert('site_exclude() reads the pages to exclude from _litedown.yml', {
   d = tempfile(); p = tempfile()
   dir_create(file.path(p, 'vignettes'))

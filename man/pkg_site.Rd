@@ -30,6 +30,10 @@ overwritten, i.e., you can customize any page by providing your own version
 of it. Pages that do not apply to the package are deleted, e.g., \code{news.Rmd}
 is deleted if the package has neither \code{NEWS.md} nor \code{inst/NEWS.Rd}.
 
+The source files copied from the template (e.g., \code{index.Rmd} and
+\verb{_litedown.yml}) are removed after the site is built, so only your own files
+and the output remain in \code{output}.
+
 Template pages that you do not want can be listed in the field \code{exclude}
 under \code{site} in \verb{_litedown.yml} under \code{output}, e.g.,
 \verb{exclude: [code.Rmd, news.Rmd]}. They will not be copied. By default, only

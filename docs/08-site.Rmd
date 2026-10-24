@@ -302,7 +302,9 @@ list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
 
 Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the
-site directory and committing it to your repository.
+site directory and committing it to your repository. The source files copied from
+the template (e.g., `manual.Rmd` and `_litedown.yml`) are removed after the site
+is built, so the site directory only keeps your own files and the output.
 
 You can exclude certain template pages from the site via the field `exclude`
 under `site` in `_litedown.yml` in the site directory (the pages will not be

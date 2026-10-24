@@ -666,6 +666,10 @@ run_examples = function(html, config, path) {
 #' of it. Pages that do not apply to the package are deleted, e.g., `news.Rmd`
 #' is deleted if the package has neither `NEWS.md` nor `inst/NEWS.Rd`.
 #'
+#' The source files copied from the template (e.g., `index.Rmd` and
+#' `_litedown.yml`) are removed after the site is built, so only your own files
+#' and the output remain in `output`.
+#'
 #' Template pages that you do not want can be listed in the field `exclude`
 #' under `site` in `_litedown.yml` under `output`, e.g.,
 #' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
@@ -701,7 +705,8 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   # tell detect_pkg() where the package is (the site dir may live anywhere)
   vars = set_envvar(c(R_LITEDOWN_PKG = path))
   on.exit(set_envvar(vars), add = TRUE)
-  site_skeleton(output, path)
+  copied = site_skeleton(output, path)
+  on.exit(site_cleanup(output, copied), add = TRUE)
   docs_out = same_path(file.path(path, 'docs'), output)
   res = in_dir(output, {
     # the footer is included by _litedown.yml as a .md file
@@ -736,17 +741,19 @@ site_exclude = function(dir) {
   x[!is.na(x)]
 }
 
-# copy the site template to the site dir and delete pages that do not apply
+# copy the site template to the site dir and delete pages that do not apply;
+# returns the template files that were copied
 site_skeleton = function(output, path) {
   dir_create(output)
   exclude = site_exclude(output)
   # copy template files, but keep files that already exist in the site dir
   tpl = pkg_file('site')
+  copied = NULL
   for (f in list.files(tpl, all.files = TRUE, recursive = TRUE)) {
     if (any(f == exclude | startsWith(f, paste0(exclude, '/')))) next
     if (file_exists(f2 <- file.path(output, f))) next
     dir_create(dirname(f2))
-    file.copy(file.path(tpl, f), f2)
+    if (file.copy(file.path(tpl, f), f2)) copied = c(copied, f)
   }
   in_dir(output, {
     if (!dir.exists(file.path(path, 'vignettes'))) unlink('articles.Rmd')
@@ -756,7 +763,15 @@ site_skeleton = function(output, path) {
       file.copy(d, '.', recursive = TRUE)
     } else unlink('examples.Rmd')
   })
-  invisible(output)
+  invisible(copied)
+}
+
+# remove the source files (.Rmd, .yml, and _* in the top directory) that were
+# copied from the template, since they are not part of the site; the files in
+# subdirectories (e.g., the playground) are assets of the site
+site_cleanup = function(dir, files) {
+  files = files[!grepl('/', files) & grepl('^_|[.](Rmd|yml)$', files)]
+  unlink(file.path(dir, files))
 }
 
 # copy the content (instead of the directory itself) of a dir to another dir
