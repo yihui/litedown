@@ -6765,41 +6765,69 @@ for building and publishing <strong>litedown</strong>’s site to GitHub Pages:<
 
 on:
   push:
-    branches: [&quot;main&quot;]
+    branches: [&quot;main&quot;, &quot;master&quot;]
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, synchronize, closed]
+  delete:
 
 permissions:
   contents: write
   pull-requests: write # comment the preview URL
 
-# One run per ref; a new push supersedes the previous one.
-concurrency:
-  group: site-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
-  # PR previews are served at litedown-pr-&lt;N&gt;.surge.sh
-  PREVIEW_DOMAIN: litedown-pr-${{ github.event.pull_request.number }}.surge.sh
 
 jobs:
-  deploy:
+  # The domain of the PR preview (&lt;owner&gt;-&lt;repo&gt;-pr-&lt;N&gt;.surge.sh), derived once
+  # and shared by the jobs below.
+  preview:
     runs-on: ubuntu-latest
-    # Fork PRs cannot read the secret or write to the repo; skip them.
+    outputs:
+      domain: ${{ steps.domain.outputs.domain }}
+    steps:
+      - id: domain
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ github.event.ref }}
+        run: |
+          if [ &quot;${{ github.event_name }}&quot; = &quot;pull_request&quot; ]; then
+            num=&quot;${{ github.event.pull_request.number }}&quot;
+          elif [ &quot;${{ github.event_name }}&quot; = &quot;delete&quot; ]; then
+            num=$(gh pr list --repo &quot;${{ github.repository }}&quot; --state all \
+              --head &quot;$REF&quot; --json number --jq '.[0].number // empty')
+          fi
+          if [ -n &quot;$num&quot; ]; then
+            name=$(echo &quot;${{ github.repository }}-pr-$num&quot; |
+              tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-')
+            echo &quot;domain=$name.surge.sh&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;
+          fi
+
+  deploy:
+    needs: preview
+    # Skip closed PRs (see teardown) and fork PRs, which cannot read the secret
+    # or write to the repo.
     if: &gt;-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event_name == 'push' || (
+      github.event_name == 'pull_request' &amp;&amp;
+      github.event.action != 'closed' &amp;&amp;
+      github.event.pull_request.head.repo.full_name == github.repository)
+    # One run per ref; a new push supersedes the previous one.
+    concurrency:
+      group: site-${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_DOMAIN: ${{ needs.preview.outputs.domain }}
     steps:
       - uses: actions/checkout@v7
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-      - uses: yihui/actions/setup-r-dependencies@v1.3.3
+      - uses: yihui/actions/setup-r-dependencies@v1.4.0
         with:
-          extra-packages: litedown xfun .
+          extra-packages: litedown .
           r-universe: yihui
-      - uses: yihui/actions/litedown-site@v1.3.3
+      - uses: yihui/actions/litedown-site@HEAD
         with:
           site-dir: 'site'
       - name: Deploy PR preview to surge
@@ -6833,12 +6861,42 @@ jobs:
           cp -r &quot;$tmp&quot;/. .
           git add -A
           git diff --cached --quiet || (git commit -m &quot;deploy site&quot; &amp;&amp; git push origin gh-pages)
+
+  # Remove the preview of a PR. A deleted branch is the primary trigger, since
+  # deleting the branch at merge time cancels `closed` runs; `closed` covers PRs
+  # whose branch is kept. Teardown is idempotent.
+  teardown:
+    needs: preview
+    # Ignore tag deletions; only branches map to a preview.
+    if: &gt;-
+      github.event.action == 'closed' ||
+      (github.event_name == 'delete' &amp;&amp; github.event.ref_type == 'branch')
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_DOMAIN: ${{ needs.preview.outputs.domain }}
+    steps:
+      - name: Teardown preview
+        if: env.SURGE_TOKEN != '' &amp;&amp; env.PREVIEW_DOMAIN != ''
+        run: |
+          npm install -g surge
+          surge teardown &quot;$PREVIEW_DOMAIN&quot; || true
 </code></pre>
 <p>You can copy it to the <code>.github/workflows/</code> directory of the R package’s Git
 repository and commit/push it via Git. Within a few minutes, the package site
 should be ready at <code>https://user.github.io/pkg/</code>, where <code>user</code> is your GitHub
 username, and <code>pkg</code> is the repository name, e.g.,
 <a href="https://yihui.github.io/litedown/">https://yihui.github.io/litedown/</a>.</p>
+<p>The workflow also deploys a preview of the site for each pull request to
+<a href="https://surge.sh">surge.sh</a> at <code>https://USER-REPO-pr-N.surge.sh</code> (<code>N</code> is the
+pull request number, and the domain is lowercased with special characters
+replaced by <code>-</code>), and posts the URL as a comment on the pull request. The
+preview is updated on every push, so you can check how your changes look before
+merging. To enable it, create a free surge.sh account, run <code>surge token</code> to get a
+token, and save it as the repository secret <code>SURGE_TOKEN</code> (under <code>Settings</code> →
+<code>Secrets and variables</code> → <code>Actions</code>). The preview steps are skipped when the
+secret is absent, as well as for pull requests from forks, which cannot access
+secrets. The preview is removed by the <code>teardown</code> job of the same workflow when
+the pull request is closed (or its branch is deleted).</p>
 <p>The action <code>yihui/actions/litedown-site</code> supports a few options that you can configure
 under the <code>with</code> field. In the above example workflow, we used the option
 <code>site-dir</code>. Below are the options currently supported:</p>
@@ -6848,9 +6906,6 @@ under the <code>with</code> field. In the above example workflow, we used the op
 </li>
 <li>
 <p><code>pkg-root</code>: Root directory of the R package in the repository (default: <code>.</code>).</p>
-</li>
-<li>
-<p><code>exclude</code>: Pages to be excluded (filenames separated by spaces) (default: <code>code.Rmd</code>).</p>
 </li>
 <li>
 <p><code>cleanup</code>: Command to clean up the site directory before publishing, e.g., you can delete the <code>.Rmd</code> source files (default: <code>rm -f *.Rmd *.yml _*</code>).</p>
