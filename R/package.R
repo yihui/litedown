@@ -717,8 +717,9 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     }
     out = fuse_site('.')
     if (book) {
-      # run from the package root so that `$input$` is relative to it
-      in_dir(path, fuse_book('book'))
+      # run from the package root so that `$input$` is relative to it; use a
+      # fresh env so book code (e.g., `cfg`) cannot clobber our variables
+      in_dir(path, fuse_book('book', envir = new.env(parent = globalenv())))
       copy_dir(dirname(cfg), 'book')
       unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
     }
