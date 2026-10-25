@@ -34,6 +34,8 @@
 
 - `pkg_news()` now links issue numbers (and `@username`s) that immediately follow an opening parenthesis, e.g., `#1` in `(#1, #2)`.
 
+- The default stylesheet no longer sets `font-size: .9em` on `body`, so body text is slightly larger (about 11%); the relative sizes of elements such as `code`, footnotes, and captions are unchanged.
+
 - HTML output now uses `<embed>` instead of `<img>` for PDF files included via `![](foo.pdf)`, and the PDF is base64 encoded when resources are embedded (a `?query` or `#hash` in the path is ignored when locating the file, and the `#hash`, e.g., `#page=2`, is kept).
 
 # CHANGES IN litedown VERSION 0.11

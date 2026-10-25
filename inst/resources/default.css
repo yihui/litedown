@@ -7,7 +7,7 @@ body {
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
-body, .abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
+.abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }
