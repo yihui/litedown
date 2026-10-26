@@ -10,45 +10,9 @@ output:
       toc: true
 ---
 
-This page is styled by [Water.css](https://watercss.kognise.dev), which is loaded from a CDN via the `css` field
-above. Nothing else is applied to the page: litedown's default stylesheet is not
-used.
+This page is styled by [Water.css](https://watercss.kognise.dev), which is
+loaded from a CDN via the `css` field above. Nothing else is applied to the
+page: litedown's default stylesheet is not used.
 
-## Text
-
-Plain text can be *emphasized*, **strong**, ~~deleted~~, or `inline code`, and
-it can contain [links](https://yihui.org/litedown/) and footnotes.[^1]
-
-> A block quote is a good place to quote someone.
-
-1.  A numbered item.
-2.  Another item.
-
--   A bullet item.
--   Another item.
-
-[^1]: A footnote.
-
-## Code and output
-
-```{r}
-summary(cars)
-```
-
-## Diagram
-
-```{pele, echo = FALSE}
-#| fig.cap = 'How an R Markdown document becomes a styled HTML page.'
-flowchart LR
-  A@{ shape: doc, label: "*.Rmd" }-. <code>fuse()</code> .-> B@{ shape: doc, label: "*.md" }
-  B-- <code>mark()</code> -->C@{ shape: doc, label: "*.html" }
-  D@{ shape: cyl, label: "CSS (CDN)" }-. <code>css</code> .->C
-  C==>E@{ shape: stadium, label: "Styled page" }
-```
-
-## Table
-
-```{r}
-#| tab.cap = 'First 4 rows of the `mtcars` data.'
-head(mtcars, 4)
+```{r, child = '_css-demo.Rmd'}
 ```

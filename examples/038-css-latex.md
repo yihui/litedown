@@ -10,9 +10,9 @@ output:
       toc: true
 ---
 
-This page is styled by [LaTeX.css](https://latex.vercel.app), which is loaded from a CDN via the `css` field
-above. Nothing else is applied to the page: litedown's default stylesheet is not
-used.
+This page is styled by [LaTeX.css](https://latex.vercel.app), which is loaded
+from a CDN via the `css` field above. Nothing else is applied to the page:
+litedown's default stylesheet is not used.
 
 ## Text
 
@@ -47,7 +47,7 @@ summary(cars)
 
 ## Diagram
 
-:::: {.figure #fig:chunk-2}
+:::: {.figure #fig:chunk-1-2}
 
 ``` pele
 flowchart LR
@@ -59,7 +59,7 @@ flowchart LR
 
 
 ::: {.caption}
-[](#@fig:chunk-2)
+[](#@fig:chunk-1-2)
 How an R Markdown document becomes a styled HTML page.
 :::
 ::::
@@ -70,10 +70,10 @@ How an R Markdown document becomes a styled HTML page.
 head(mtcars, 4)
 ```
 
-:::: {.table #tab:chunk-3}
+:::: {.table #tab:chunk-1-3}
 
 ::: {.caption}
-[](#@tab:chunk-3)
+[](#@tab:chunk-1-3)
 First 4 rows of the `mtcars` data.
 :::
 

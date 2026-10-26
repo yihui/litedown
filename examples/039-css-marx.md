@@ -10,9 +10,9 @@ output:
       toc: true
 ---
 
-This page is styled by [Marx](https://mblode.github.io/marx/), which is loaded from a CDN via the `css` field
-above. Nothing else is applied to the page: litedown's default stylesheet is not
-used.
+This page is styled by [Marx](https://mblode.github.io/marx/), which is loaded
+from a CDN via the `css` field above. Nothing else is applied to the page:
+litedown's default stylesheet is not used.
 
 Marx limits the width of `<main>` but not of `<header>`, so we give the title
 block the same width with a little CSS:
@@ -59,7 +59,7 @@ summary(cars)
 
 ## Diagram
 
-:::: {.figure #fig:chunk-3}
+:::: {.figure #fig:chunk-2-2}
 
 ``` pele
 flowchart LR
@@ -71,7 +71,7 @@ flowchart LR
 
 
 ::: {.caption}
-[](#@fig:chunk-3)
+[](#@fig:chunk-2-2)
 How an R Markdown document becomes a styled HTML page.
 :::
 ::::
@@ -82,10 +82,10 @@ How an R Markdown document becomes a styled HTML page.
 head(mtcars, 4)
 ```
 
-:::: {.table #tab:chunk-4}
+:::: {.table #tab:chunk-2-3}
 
 ::: {.caption}
-[](#@tab:chunk-4)
+[](#@tab:chunk-2-3)
 First 4 rows of the `mtcars` data.
 :::
 
