@@ -5,13 +5,14 @@ date: 2026-10-26
 output:
   html:
     meta:
-      css: ["https://cdn.jsdelivr.net/gh/oxalorg/sakura/css/sakura.css"]
+      css: ["@gh/oxalorg/sakura/css/sakura.css"]
     options:
       toc: true
 ---
 
-This page is styled by [Sakura](https://oxal.org/projects/sakura/), loaded from a CDN with the `css` field
-above. litedown's default stylesheet is not used.
+This page is styled by [Sakura](https://oxal.org/projects/sakura/), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used.
 
 ## Text
 
@@ -32,11 +33,19 @@ it can contain [links](https://yihui.org/litedown/) and footnotes.[^1]
 
 ```{r}
 summary(cars)
-plot(cars)
+```
+
+## Diagram
+
+```{pele, echo = FALSE}
+#| fig.cap = 'From an R Markdown document to HTML.'
+flowchart LR
+  A["*.Rmd"] --> B["*.md"] --> C["*.html"]
 ```
 
 ## Table
 
 ```{r}
+#| tab.cap = 'First 4 rows of the `mtcars` data.'
 head(mtcars, 4)
 ```

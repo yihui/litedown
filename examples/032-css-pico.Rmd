@@ -5,24 +5,14 @@ date: 2026-10-26
 output:
   html:
     meta:
-      css: ["https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"]
+      css: ["@npm/@picocss/pico/css/pico.classless.min.css"]
     options:
       toc: true
 ---
 
-This page is styled by [Pico CSS](https://picocss.com), loaded from a CDN with the `css` field
-above. litedown's default stylesheet is not used.
-
-Pico expects the page to be wrapped in `<main>`, but litedown uses `<div>`s, so
-we center the content ourselves:
-
-```{css, echo = FALSE}
-.frontmatter, .body {
-  max-width: 800px;
-  margin: auto;
-  padding: 0 1rem;
-}
-```
+This page is styled by [Pico CSS](https://picocss.com), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used.
 
 ## Text
 
@@ -43,11 +33,19 @@ it can contain [links](https://yihui.org/litedown/) and footnotes.[^1]
 
 ```{r}
 summary(cars)
-plot(cars)
+```
+
+## Diagram
+
+```{pele, echo = FALSE}
+#| fig.cap = 'From an R Markdown document to HTML.'
+flowchart LR
+  A["*.Rmd"] --> B["*.md"] --> C["*.html"]
 ```
 
 ## Table
 
 ```{r}
+#| tab.cap = 'First 4 rows of the `mtcars` data.'
 head(mtcars, 4)
 ```

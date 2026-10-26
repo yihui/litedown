@@ -5,26 +5,14 @@ date: 2026-10-26
 output:
   html:
     meta:
-      css: ["https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"]
+      css: ["@npm/@picocss/pico/css/pico.classless.min.css"]
     options:
       toc: true
 ---
 
-This page is styled by [Pico CSS](https://picocss.com), loaded from a CDN with the `css` field
-above. litedown's default stylesheet is not used.
-
-Pico expects the page to be wrapped in `<main>`, but litedown uses `<div>`s, so
-we center the content ourselves:
-
-``` {=html}
-<style type="text/css">
-.frontmatter, .body {
-  max-width: 800px;
-  margin: auto;
-  padding: 0 1rem;
-}
-</style>
-```
+This page is styled by [Pico CSS](https://picocss.com), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used.
 
 ## Text
 
@@ -57,20 +45,40 @@ summary(cars)
 #>  Max.   :25.0   Max.   :120.00  
 ```
 
-``` {.r}
-plot(cars)
+## Diagram
+
+:::: {.figure #fig:chunk-2}
+
+``` pele
+flowchart LR
+  A["*.Rmd"] --> B["*.md"] --> C["*.html"]
 ```
-![](<031-css-pico__files/chunk-2-1.png>)
+
+
+::: {.caption}
+[](#@fig:chunk-2)
+From an R Markdown document to HTML.
+:::
+::::
 
 ## Table
 
 ``` {.r}
 head(mtcars, 4)
 ```
+
+:::: {.table #tab:chunk-3}
+
+::: {.caption}
+[](#@tab:chunk-3)
+First 4 rows of the `mtcars` data.
+:::
+
 | |mpg|cyl|disp|hp|drat|wt|qsec|vs|am|gear|carb|
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
 |Mazda RX4|21.0|6|160|110|3.90|2.620|16.46|0|1|4|4|
 |Mazda RX4 Wag|21.0|6|160|110|3.90|2.875|17.02|0|1|4|4|
 |Datsun 710|22.8|4|108| 93|3.85|2.320|18.61|1|1|4|1|
 |Hornet 4 Drive|21.4|6|258|110|3.08|3.215|19.44|1|0|3|1|
+::::
 

@@ -1,5 +1,5 @@
 site:
-  standalone: ["026-snap-clean*"]
+  standalone: ["026-snap-clean*", "*-css-*"]
   manual:
     Render documents:
       desc: Convert Markdown and R Markdown to output formats.
@@ -36,8 +36,8 @@ site:
       desc: Different styles/themes of slides.
       contents: ["026-*"]
     Custom styles:
-      desc: Change the look of a page with a stylesheet from the web, such as Water.css, new.css, Simple.css, Pico, Sakura, or Buttondown.
-      contents: ["028-*", "029-*", "030-*", "031-*", "032-*", "033-*"]
+      desc: Change the look of a page interactively, or with a stylesheet from the web, such as Water.css, new.css, Simple.css, Pico, Sakura, or Buttondown.
+      contents: ["028-*", "029-*", "030-*", "031-*", "032-*", "033-*", "034-*"]
     Tests:
       desc: Miscellaneous tests.
       contents: ["test-*"]

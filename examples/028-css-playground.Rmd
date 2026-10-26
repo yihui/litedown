@@ -1,0 +1,116 @@
+---
+title: Customize the look of a page
+subtitle: Tweak the major CSS settings and copy the CSS code
+output:
+  html:
+    meta:
+      css: ["@default"]
+    options:
+      toc: true
+---
+
+Change the settings below, and the page will update right away. Only the
+settings you have changed appear in the CSS code, which you can copy into a CSS
+chunk in your document, or into a `.css` file listed in the `css` field of the
+YAML metadata.
+
+```{css, echo = FALSE}
+#ui {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13em, 1fr));
+  gap: .5em 1em;
+  border: 1px solid #ddd;
+  padding: 1em;
+  label { display: flex; flex-direction: column; font-size: .9em; }
+  input, select { width: 100%; }
+}
+```
+
+## Settings
+
+<form id="ui">
+<label>Font family
+<select data-sel="body" data-prop="font-family">
+<option value="">Default</option>
+<option value="Georgia, serif">Serif</option>
+<option value="system-ui, sans-serif">System UI</option>
+<option value="ui-monospace, monospace">Monospace</option>
+</select></label>
+<label>Font size (px)
+<input type="range" min="12" max="24" data-sel="body" data-prop="font-size" data-unit="px"></label>
+<label>Line height
+<input type="range" min="1" max="2.2" step=".1" data-sel="body" data-prop="line-height"></label>
+<label>Page width (px)
+<input type="range" min="500" max="1200" step="20" data-sel="body" data-prop="max-width" data-unit="px"></label>
+<label>Text color
+<input type="color" data-sel="body" data-prop="color"></label>
+<label>Background color
+<input type="color" data-sel="body" data-prop="background"></label>
+<label>Link color
+<input type="color" data-sel="a" data-prop="color"></label>
+<label>Heading color
+<input type="color" data-sel="h1, h2, h3" data-prop="color" data-read="h2"></label>
+<p><button type="reset">Reset</button> <button type="button" id="copy">Copy CSS</button></p>
+</form>
+
+## CSS code
+
+<pre><code id="out" class="language-css"></code></pre>
+
+## Preview
+
+This section shows how some common elements look. Here is a
+[link](https://yihui.org/litedown/), some `inline code`, and a quote:
+
+> A block quote is a good place to quote someone.
+
+```{r}
+summary(cars$speed)
+```
+
+```{r}
+#| tab.cap = 'First 3 rows of the `cars` data.'
+head(cars, 3)
+```
+
+```{js, echo = FALSE}
+const d = document, ui = d.getElementById('ui'), out = d.getElementById('out');
+const inputs = [...ui.querySelectorAll('[data-prop]')];
+const style = d.head.appendChild(d.createElement('style'));
+const hex = c => '#' + c.match(/\d+/g).slice(0, 3)
+  .map(i => (+i).toString(16).padStart(2, '0')).join('');
+
+// initialize inputs with the current computed style
+inputs.forEach(el => {
+  const t = d.querySelector(el.dataset.read || el.dataset.sel);
+  const cs = getComputedStyle(t), p = el.dataset.prop;
+  if (el.type === 'color') {
+    el.value = hex(cs[p === 'background' ? 'backgroundColor' : p]);
+    // a transparent background means white
+    if (p === 'background' && cs.backgroundColor.endsWith('0)')) el.value = '#ffffff';
+  } else if (el.type === 'range') {
+    el.value = p === 'line-height' ?
+      Math.round(parseFloat(cs.lineHeight) / parseFloat(cs.fontSize) * 10) / 10 :
+      parseFloat(cs[p === 'max-width' ? 'maxWidth' : 'fontSize']);
+  }
+  el.dataset.init = el.value;
+});
+
+function update() {
+  const rules = {};
+  inputs.forEach(el => {
+    if (el.value === el.dataset.init) return;
+    (rules[el.dataset.sel] ??= []).push(
+      `  ${el.dataset.prop}: ${el.value}${el.dataset.unit || ''};`
+    );
+  });
+  const css = Object.entries(rules)
+    .map(([s, v]) => `${s} {\n${v.join('\n')}\n}`).join('\n');
+  style.textContent = css;
+  out.textContent = css || '/* Change a setting above to generate CSS. */';
+}
+ui.addEventListener('input', update);
+ui.addEventListener('reset', () => setTimeout(update));
+d.getElementById('copy').onclick = () => navigator.clipboard.writeText(style.textContent);
+update();
+```
