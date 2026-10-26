@@ -243,3 +243,10 @@ assert('embed_resources() drops ?query/#hash only if the bare path exists', {
   (!has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), 'v=1'))
   (has_warning(embed_resources('<embed src="b.pdf#page=2" />', o)))
 })
+
+assert('the HTML template uses semantic elements for frontmatter, body, and TOC', {
+  x = mark(I(c('---', 'title: T', '---', '', '## A', '', '## B')), '.html', options = 'toc')
+  (has_match(x, '<header class="frontmatter">'))
+  (has_match(x, '<main class="body">'))
+  (has_match(x, '<nav id="TOC">'))
+})

@@ -664,7 +664,7 @@ build_toc = function(html, n = 3) {
   # add class 'numbered' to the first <ul> if any heading is numbered
   if (length(grep('<span class="section-number[^"]*">', x)))
     x = sub('<ul>', '<ul class="numbered">', x)
-  paste0('<div id="TOC">\n', x, '</div>')
+  paste0('<nav id="TOC">\n', x, '</nav>')
 }
 
 # add TOC to the html body

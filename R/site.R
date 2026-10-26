@@ -113,9 +113,11 @@ set_site_options = function(opts, input, root, extra = NULL) {
   m = opts[['meta']]
   for (i in c('include_before', 'include_after')) {
     if (!is.character(m[[i]])) next
-    tag = if (i == 'include_before') 'nav' else 'footer'
+    nav = i == 'include_before'
+    tag = if (nav) 'nav' else 'footer'
     x = mark(I(one_string(m[[i]], test = c(dirname(input), root))))
-    x = sprintf('<%s>%s</%s>', tag, x, tag)
+    # the class lets CSS tell the site menu from other <nav>s such as the TOC
+    x = sprintf('<%s%s>%s</%s>', tag, if (nav) ' class="site-nav"' else '', x, tag)
     m[[i]] = sub_vars(x, list(input = I(input)))
   }
   opts[['meta']] = m

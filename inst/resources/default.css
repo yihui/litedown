@@ -1,13 +1,13 @@
 body {
   font-family: sans-serif;
-  max-width: 800px;
+  max-width: 50em;
   margin: auto;
   padding: 1em;
   line-height: 1.5;
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
-.abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
+.abstract, .footnotes, footer, #refs, div:has(> .caption) { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }
@@ -17,7 +17,6 @@ pre {
   white-space: pre-wrap; word-break: break-word;
   code { display: block; padding: 1em; overflow-x: auto; }
 }
-code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
 :not(pre, th) > code, code[class], div > .caption { background: #f8f8f8; }
 pre > code:is(:not([class]), .language-plain, .language-none, .plain), .box, .figure, .table { background: inherit; border: 1px solid #eee; }
 pre > code {
@@ -102,6 +101,6 @@ section.footnotes {
   body { max-width: 100%; }
   tr, img { break-inside: avoid; }
 }
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 62em) {
   body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
 }

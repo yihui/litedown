@@ -1,0 +1,18 @@
+---
+title: "litedown with Simple.css"
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: ["@npm/simpledotcss/simple.min.css"]
+    options:
+      toc: true
+---
+
+This page is styled by [Simple.css](https://simplecss.org), which is loaded
+from a CDN via the `css` field above. Nothing else is applied to the page:
+litedown's default stylesheet is not used.
+
+```{r, child = '_css-demo.Rmd'}
+```

@@ -12,10 +12,13 @@
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you are free to add more features by yourself. In this chapter,
 we introduce some CSS/JS assets from the GitHub repository
-<https://github.com/yihui/lite.js>. You can load arbitrary external JS and CSS
-files via the `js` and `css` meta variables. There are numerous JS libraries and
-CSS frameworks on the web, and you do not have to use the ones mentioned in this
-chapter. You can also write CSS/JS by yourself to enrich your HTML applications.
+<https://github.com/yihui/lite.js>: first the default CSS (@sec:default-css),
+which you can customize with your own CSS or a stylesheet from the web
+(@sec:custom-assets), and then optional features that you can turn on with
+extra assets. You can load arbitrary external JS and CSS files via the `js` and
+`css` meta variables. There are numerous JS libraries and CSS frameworks on the
+web, and you do not have to use the ones mentioned in this chapter. You can
+also write CSS/JS by yourself to enrich your HTML applications.
 
 Remember that the CSS and JS are introduced under the output format `html` in
 YAML metadata, e.g.,
@@ -82,12 +85,13 @@ litedown::vest(css = c('@callout', '@book'), js = '@callout')
 
 You can call `vest()` multiple times in a document to keep adding assets.
 
-## The default CSS {#sec:default}
+## The default CSS {#sec:default-css}
 
 The default stylesheet defines the basic styles of the document body, lists,
 code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
-example, the maximum width for the body is set to 800px. If you want to override
-it, you can provide your own stylesheet, e.g.,
+example, the maximum width for the body is set to 50em (800px at the default
+font size). If you want to override it, you can provide your own stylesheet (see
+@sec:custom-assets for more), e.g.,
 
 ``` css
 body {
@@ -107,6 +111,137 @@ css: ["default"]
 The former uses the jsdelivr resource and will not be embedded in HTML by
 default. The latter points to the `default.css` shipped with the **litedown**
 package, and will always be embedded.
+
+## Custom CSS/JS {#sec:custom-assets}
+
+The default CSS (@sec:default-css) gives your pages a simple look, and you may
+want to change it. The look of a web page (colors, fonts, spacing, etc.) is
+controlled by CSS, which is a list of rules like "make all links red". You do
+not have to know CSS to change how your **litedown** pages look. There are two
+easy ways: add a few rules to tweak what you do not like, or use a ready-made
+stylesheet from the web. The same ideas apply to JavaScript, which controls how
+a page behaves.
+
+To get a feel for it, visit the
+[examples](https://pkg.yihui.org/litedown/examples.html#sec:custom-styles). The
+first one is a
+[playground](https://pkg.yihui.org/litedown/examples/028-css-playground.html),
+where you can pick a font, colors, and so on with sliders and color pickers, and
+**litedown** shows the CSS code for your choices so you can copy it. The others
+show the same page with different stylesheets from the web.
+
+### Add a few rules to a document
+
+If your document is an R Markdown file, you can write the rules in a `css` code
+chunk anywhere in the document. For example, this makes links and headings red,
+and increases the text size:
+
+```` md
+```{css, echo = FALSE}
+body { font-size: 18px; }
+a, h1, h2, h3 { color: crimson; }
+```
+````
+
+Alternatively, save the rules in a file (say, `my.css`) and list it in the YAML
+metadata. Keep `@default` in front of it so that **litedown**'s default look
+stays, and your rules (which come later) override it:
+
+``` yaml
+output:
+  html:
+    meta:
+      css: ["@default", "my.css"]
+```
+
+How do you know what to write? Right-click the thing you want to change on the
+page and choose "Inspect": your web browser will show its tag name and class,
+which is what you put before the braces `{}` (the "selector"). Below are some
+common ones:
+
+| To change            | Selector                                          |
+|----------------------|---------------------------------------------------|
+| the whole page       | `body` (font, background, and width)              |
+| title, author, date  | `.frontmatter`                                    |
+| table of contents    | `#TOC`, and its links `#TOC a`                    |
+| section headings     | `h1`, `h2`, `h3`, etc.                            |
+| code                 | `pre` (blocks) and `code` (inline)                |
+| block quotes         | `blockquote`                                      |
+| tables               | `table`                                           |
+| footnotes            | `.footnotes`                                      |
+
+### Use CSS/JS from the web
+
+Many people have published small stylesheets that make plain HTML pages look
+nice, such as [Water.css](https://watercss.kognise.dev),
+[new.css](https://newcss.net), [Simple.css](https://simplecss.org), and
+[Pico](https://picocss.com). You can use one by adding its address to the `css`
+field. These stylesheets are complete by themselves, so leave out `@default`:
+
+``` yaml
+output:
+  html:
+    meta:
+      css: ["https://newcss.net/new.min.css"]
+```
+
+If a stylesheet is on [jsDelivr](https://www.jsdelivr.com), you can use the
+shorthand `@npm/` (or `@gh/` for GitHub) followed by the package and file name,
+e.g., `css: ["@npm/water.css/out/water.css"]` (see @tab:at-syntax for the
+syntax).
+
+All of these work with **litedown** because it produces ordinary HTML. A few
+stylesheets look slightly off (e.g., a title that is not centered), and you can
+fix that with a few rules as shown above. The examples page above
+has many of them, including such small fixes.
+
+You are not limited to the CSS/JS assets introduced in this chapter: you can
+include any CSS framework or JS library in the same way, via the `css` and `js`
+fields. For example, here is how to use the
+[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library
+to create interactive tables:
+
+```` md
+---
+title: Display Tables with the JS Library DataTables
+output:
+  html:
+    meta:
+      css: ["@default", "@npm/simple-datatables/dist/style"]
+      js: ["@npm/simple-datatables"]
+---
+
+::: {#mtcars-table}
+```{r}
+I(mtcars)
+```
+:::
+
+```{js, type = "module"}
+new simpleDatatables.DataTable('#mtcars-table > table');
+```
+````
+
+
+See @sec:simple-dt for more ways to create this type of table.
+
+### Apply the styles to all pages {#sec:global-css}
+
+For a website or a book (@chp:sites), you do not need to repeat the setting in
+every page. Put it in the `output` field of `_litedown.yml` instead, and it will
+apply to all pages. For example, if you have saved your rules in `custom.css` in
+the project folder, this adds them to the default look of the site:
+
+``` yaml
+output:
+  html:
+    meta:
+      css2: ["custom.css"]
+```
+
+The field `css2` means "add to the defaults", whereas `css` means "replace the
+defaults". So if you want to use a stylesheet from the web for all pages, use
+`css` as above. See @sec:site-defaults for more details.
 
 ## Copy buttons {#sec:copy-button}
 
@@ -490,10 +625,10 @@ what an article format looks like when you read the HTML version of the book.
 
 ### The overall style
 
-The maximum width of the article body is 800px. For larger screens, this means
-there will be extra space in the left/right margin, where we can place auxiliary
-information, such as the TOC and footnotes. On smaller screens, the side content
-will be collapsed into the body.
+The maximum width of the article body is also 50em (@sec:default-css). For
+larger screens, this means there will be extra space in the left/right margin,
+where we can place auxiliary information, such as the TOC and footnotes. On
+smaller screens, the side content will be collapsed into the body.
 
 The article frontmatter, body, and optionally the appendix are placed in
 separate boxes.
@@ -974,34 +1109,3 @@ For example, `` `Ctrl + Alt + Delete` `` becomes `Ctrl + Alt + Delete`.
 
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
-
-## Include arbitrary CSS/JS {#sec:arbitrary-assets}
-
-You can include arbitrary CSS frameworks and JS libraries in your documents, not
-limited to aforementioned ones in the GitHub repository `yihui/lite.js`. Below
-is a quick example of using the
-[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library
-to create interactive tables:
-
-```` md
----
-title: Display Tables with the JS Library DataTables
-output:
-  html:
-    meta:
-      css: ["@default", "@npm/simple-datatables/dist/style"]
-      js: ["@npm/simple-datatables"]
----
-
-::: {#mtcars-table}
-```{r}
-I(mtcars)
-```
-:::
-
-```{js, type = "module"}
-new simpleDatatables.DataTable('#mtcars-table > table');
-```
-````
-
-See @sec:simple-dt for more ways to create this type of table.

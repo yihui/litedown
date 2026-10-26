@@ -141,3 +141,13 @@ assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
   writeLines(c('Package: foo'), desc)
   (is.null(nav_github(p)))
 })
+
+assert('set_site_options() marks the site menu with class site-nav', {
+  o = options(); on.exit(options(o))
+  d = tempfile(); dir.create(d); f = file.path(d, 'a.md'); writeLines('hi', f)
+  set_site_options(
+    list(meta = list(include_before = 'x', include_after = 'y')), f, d
+  )
+  (has_match(getOption('litedown.html.meta')$include_before, '^<nav class="site-nav">'))
+  (has_match(getOption('litedown.html.meta')$include_after, '^<footer>'))
+})

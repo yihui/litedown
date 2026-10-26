@@ -201,7 +201,7 @@ assert('auto_identifier() adds ids to headings and keeps existing ones', {
 
 assert('build_toc() builds a nested TOC from HTML headings', {
   toc = build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'))
-  (grepl('id="TOC"', toc, fixed = TRUE))
+  (grepl('<nav id="TOC">', toc, fixed = TRUE))
   (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
   (grepl('<a href="#b">B</a>', toc, fixed = TRUE))
   # headings marked class="unlisted" are excluded, dropping the TOC below 2 items

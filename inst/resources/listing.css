@@ -8,6 +8,8 @@ body {
 ul {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
+  padding-left: .5em;
 }
 h1 {
   text-align: left;
@@ -22,6 +24,12 @@ h1 {
       margin: .5em 0;
     }
   }
+  em, pre code {
+    font-size: .9em;
+  }
+  em:not(:hover), pre code:not(:hover) {
+    opacity: .7;
+  }
   .run {
     float: right;
   }
@@ -35,17 +43,7 @@ pre > code:not([class]) {
 pre, pre:hover {
   white-space: pre;
 }
-ul {
-  width: 100%;
-  padding-left: .5em;
-}
 li {
   display: inline-block;
   margin-right: 2em;
-}
-em, pre code {
-  font-size: .8em;
-}
-em:not(:hover), pre code:not(:hover) {
-  opacity: .7;
 }
