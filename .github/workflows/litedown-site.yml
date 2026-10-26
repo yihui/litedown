@@ -64,6 +64,7 @@ jobs:
         with:
           extra-packages: litedown .
           r-universe: yihui
+          brew-packages: xquartz
       - uses: yihui/actions/litedown-site@HEAD
         with:
           site-dir: 'site'
