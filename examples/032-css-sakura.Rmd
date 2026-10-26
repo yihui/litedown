@@ -1,0 +1,42 @@
+---
+title: "litedown with Sakura"
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: ["https://cdn.jsdelivr.net/gh/oxalorg/sakura/css/sakura.css"]
+    options:
+      toc: true
+---
+
+This page is styled by [Sakura](https://oxal.org/projects/sakura/), loaded from a CDN with the `css` field
+above. litedown's default stylesheet is not used.
+
+## Text
+
+Plain text can be *emphasized*, **strong**, ~~deleted~~, or `inline code`, and
+it can contain [links](https://yihui.org/litedown/) and footnotes.[^1]
+
+> A block quote is a good place to quote someone.
+
+1.  A numbered item.
+2.  Another item.
+
+-   A bullet item.
+-   Another item.
+
+[^1]: A footnote.
+
+## Code and output
+
+```{r}
+summary(cars)
+plot(cars)
+```
+
+## Table
+
+```{r}
+head(mtcars, 4)
+```
