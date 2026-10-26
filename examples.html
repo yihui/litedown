@@ -1100,7 +1100,7 @@ Render with `litedown::fuse()`.
 </div>
 </div>
 <h2 id="sec:custom-styles"><span class="section-number main-number">9</span> Custom styles</h2>
-<p>Change the look of a page interactively, or with a stylesheet from the web, such as Water.css, new.css, Simple.css, Pico, Sakura, or Buttondown.</p>
+<p>Change the look of a page interactively, or with a stylesheet from the web, such as Water.css, new.css, Simple.css, Pico, Sakura, Buttondown, or 98.css.</p>
 <div class="boxes">
 <div class="box">
 <div class="caption name">
@@ -1544,6 +1544,180 @@ litedown's default stylesheet is not used.
 
 ```{r, child = '_css-demo.Rmd'}
 ```
+</code></pre>
+</div>
+<div class="box">
+<div class="caption name">
+<p>042. <a href="examples/042-windows-98.html">litedown with 98.css</a> <em>(source: <a href="examples/042-windows-98.md">042-windows-98.md</a>)</em> <a href="examples/042-windows-98.html" class="run">⏵</a></p>
+</div>
+<pre><code class="language-md">---
+title: &quot;litedown with 98.css&quot;
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: [&quot;@npm/98.css/dist/98.css&quot;]
+---
+
+This page is styled by [98.css](https://github.com/jdan/98.css), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used. The page is plain Markdown: the window below is a
+[fenced div](https://pkg.yihui.org/litedown/book/#sec:fenced-divs) (`:::`) whose classes
+are the ones documented by 98.css.
+
+::::: {.window  style=&quot;margin: 2em auto; max-width: 40em;&quot;}
+::: title-bar
+&lt;div class=&quot;title-bar-text&quot;&gt;litedown.md&lt;/div&gt;
+&lt;div class=&quot;title-bar-controls&quot;&gt;
+&lt;button aria-label=&quot;Minimize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Maximize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Close&quot;&gt;&lt;/button&gt;
+&lt;/div&gt;
+:::
+
+::: window-body
+Plain text can be *emphasized*, **strong**, ~~deleted~~, or `inline code`, and
+it can contain [links](https://yihui.org/litedown/).
+
+&gt; A block quote is a good place to quote someone.
+
+1.  A numbered item.
+2.  Another item.
+
+-   A bullet item.
+-   Another item.
+
+| Package | Style      |
+|:--------|:-----------|
+| 98.css  | Windows 98 |
+| XP.css  | Windows XP |
+| 7.css   | Windows 7  |
+
+&lt;button class=&quot;default&quot;&gt;OK&lt;/button&gt; &lt;button&gt;Cancel&lt;/button&gt;
+:::
+
+::: status-bar
+&lt;p class=&quot;status-bar-field&quot;&gt;Rendered by litedown&lt;/p&gt;
+&lt;p class=&quot;status-bar-field&quot;&gt;98.css&lt;/p&gt;
+:::
+:::::
+</code></pre>
+</div>
+<div class="box">
+<div class="caption name">
+<p>043. <a href="examples/043-windows-xp.html">litedown with XP.css</a> <em>(source: <a href="examples/043-windows-xp.md">043-windows-xp.md</a>)</em> <a href="examples/043-windows-xp.html" class="run">⏵</a></p>
+</div>
+<pre><code class="language-md">---
+title: &quot;litedown with XP.css&quot;
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: [&quot;@npm/xp.css/dist/XP.css&quot;]
+---
+
+This page is styled by [XP.css](https://github.com/botoxparty/XP.css), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used. The page is plain Markdown: the window below is a
+[fenced div](https://pkg.yihui.org/litedown/book/#sec:fenced-divs) (`:::`) whose classes
+are the ones documented by XP.css.
+
+::::: {.window  style=&quot;margin: 2em auto; max-width: 40em;&quot;}
+::: title-bar
+&lt;div class=&quot;title-bar-text&quot;&gt;litedown.md&lt;/div&gt;
+&lt;div class=&quot;title-bar-controls&quot;&gt;
+&lt;button aria-label=&quot;Minimize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Maximize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Close&quot;&gt;&lt;/button&gt;
+&lt;/div&gt;
+:::
+
+::: window-body
+Plain text can be *emphasized*, **strong**, ~~deleted~~, or `inline code`, and
+it can contain [links](https://yihui.org/litedown/).
+
+&gt; A block quote is a good place to quote someone.
+
+1.  A numbered item.
+2.  Another item.
+
+-   A bullet item.
+-   Another item.
+
+| Package | Style      |
+|:--------|:-----------|
+| 98.css  | Windows 98 |
+| XP.css  | Windows XP |
+| 7.css   | Windows 7  |
+
+&lt;button class=&quot;default&quot;&gt;OK&lt;/button&gt; &lt;button&gt;Cancel&lt;/button&gt;
+:::
+
+::: status-bar
+&lt;p class=&quot;status-bar-field&quot;&gt;Rendered by litedown&lt;/p&gt;
+&lt;p class=&quot;status-bar-field&quot;&gt;XP.css&lt;/p&gt;
+:::
+:::::
+</code></pre>
+</div>
+<div class="box">
+<div class="caption name">
+<p>044. <a href="examples/044-windows-7.html">litedown with 7.css</a> <em>(source: <a href="examples/044-windows-7.md">044-windows-7.md</a>)</em> <a href="examples/044-windows-7.html" class="run">⏵</a></p>
+</div>
+<pre><code class="language-md">---
+title: &quot;litedown with 7.css&quot;
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: [&quot;@npm/7.css/dist/7.css&quot;]
+---
+
+This page is styled by [7.css](https://github.com/khang-nd/7.css), which is loaded from a CDN via the `css` field
+above. Nothing else is applied to the page: litedown's default stylesheet is not
+used. The page is plain Markdown: the window below is a
+[fenced div](https://pkg.yihui.org/litedown/book/#sec:fenced-divs) (`:::`) whose classes
+are the ones documented by 7.css.
+
+::::: {.window .glass .active style=&quot;margin: 2em auto; max-width: 40em;&quot;}
+::: title-bar
+&lt;div class=&quot;title-bar-text&quot;&gt;litedown.md&lt;/div&gt;
+&lt;div class=&quot;title-bar-controls&quot;&gt;
+&lt;button aria-label=&quot;Minimize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Maximize&quot;&gt;&lt;/button&gt;
+&lt;button aria-label=&quot;Close&quot;&gt;&lt;/button&gt;
+&lt;/div&gt;
+:::
+
+::: window-body
+Plain text can be *emphasized*, **strong**, ~~deleted~~, or `inline code`, and
+it can contain [links](https://yihui.org/litedown/).
+
+&gt; A block quote is a good place to quote someone.
+
+1.  A numbered item.
+2.  Another item.
+
+-   A bullet item.
+-   Another item.
+
+| Package | Style      |
+|:--------|:-----------|
+| 98.css  | Windows 98 |
+| XP.css  | Windows XP |
+| 7.css   | Windows 7  |
+
+&lt;button class=&quot;default&quot;&gt;OK&lt;/button&gt; &lt;button&gt;Cancel&lt;/button&gt;
+:::
+
+::: status-bar
+&lt;p class=&quot;status-bar-field&quot;&gt;Rendered by litedown&lt;/p&gt;
+&lt;p class=&quot;status-bar-field&quot;&gt;7.css&lt;/p&gt;
+:::
+:::::
 </code></pre>
 </div>
 </div>
