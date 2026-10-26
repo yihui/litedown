@@ -356,10 +356,10 @@ pkg_examples = function(
       fenced_block(x, '.md')
     ), '.box'), keys = c(sans_ext(b), b, t))
   })
-  # boxes are laid out in flex containers (see listing.css)
+  # the boxes are laid out in a grid (see listing.css)
   new_asis(if (length(groups)) {
-    group_blocks(res, lapply(res, attr, 'keys'), groups, '.flex-wrap')
-  } else fenced_div(unlist(res), '.flex-wrap'))
+    group_blocks(res, lapply(res, attr, 'keys'), groups, '.boxes')
+  } else fenced_div(unlist(res), '.boxes'))
 }
 
 # retrieve Github repo link from DESCRIPTION
