@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.11.16">
+<title>litedown with Holiday.css</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.11.6/dist/holiday.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/css/prism-xcode.min.css">
+</head>
+<body>
+<header class="frontmatter">
+<div class="title"><h1>litedown with Holiday.css</h1></div>
+<div class="author"><h2>Yihui Xie</h2></div>
+<div class="date"><h3>2026-10-26</h3></div>
+</header>
+<main class="body">
+<nav id="TOC">
+<ul>
+<li><a href="#sec:text">Text</a></li>
+<li><a href="#sec:code-and-output">Code and output</a></li>
+<li><a href="#sec:diagram">Diagram</a></li>
+<li><a href="#sec:table">Table</a></li>
+</ul>
+</nav>
+<p>This page is styled by <a href="https://holidaycss.js.org">Holiday.css</a>, which is
+loaded from a CDN via the <code>css</code> field above. Nothing else is applied to the
+page: litedown’s default stylesheet is not used.</p>
+<h2 id="sec:text">Text</h2>
+<p>Plain text can be <em>emphasized</em>, <strong>strong</strong>, <del>deleted</del>, or <code>inline code</code>, and
+it can contain <a href="https://yihui.org/litedown/">links</a> and footnotes.<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" data-footnote-ref>1</a></sup></p>
+<blockquote>
+<p>A block quote is a good place to quote someone.</p>
+</blockquote>
+<ol>
+<li>A numbered item.</li>
+<li>Another item.</li>
+</ol>
+<ul>
+<li>A bullet item.</li>
+<li>Another item.</li>
+</ul>
+<h2 id="sec:code-and-output">Code and output</h2>
+<pre><code class="language-r">summary(cars)
+</code></pre>
+<pre><code>#&gt;      speed           dist       
+#&gt;  Min.   : 4.0   Min.   :  2.00  
+#&gt;  1st Qu.:12.0   1st Qu.: 26.00  
+#&gt;  Median :15.0   Median : 36.00  
+#&gt;  Mean   :15.4   Mean   : 42.98  
+#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  
+#&gt;  Max.   :25.0   Max.   :120.00  
+</code></pre>
+<h2 id="sec:diagram">Diagram</h2>
+<div class="figure" id="fig:chunk-1-2">
+<pre class="pele">flowchart LR
+  A@{ shape: doc, label: &quot;*.Rmd&quot; }-. &lt;code&gt;fuse()&lt;/code&gt; .-&gt; B@{ shape: doc, label: &quot;*.md&quot; }
+  B-- &lt;code&gt;mark()&lt;/code&gt; --&gt;C@{ shape: doc, label: &quot;*.html&quot; }
+  D@{ shape: cyl, label: &quot;CSS (CDN)&quot; }-. &lt;code&gt;css&lt;/code&gt; .-&gt;C
+  C==&gt;E@{ shape: stadium, label: &quot;Styled page&quot; }
+</pre>
+<div class="caption">
+<p><span class="ref-number-fig">1</span>
+How an R Markdown document becomes a styled HTML page.</p>
+</div>
+</div>
+<h2 id="sec:table">Table</h2>
+<pre><code class="language-r">head(mtcars, 4)
+</code></pre>
+<div class="table" id="tab:chunk-1-3">
+<div class="caption">
+<p><span class="ref-number-tab">1</span>
+First 4 rows of the <code>mtcars</code> data.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+<th align="right">am</th>
+<th align="right">gear</th>
+<th align="right">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td>Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td>Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-1">
+<p>A footnote. <a href="#fnref-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
+</li>
+</ol>
+</section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pele@1.11.0/dist/pele.global.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/js/render-pele.min.js" defer></script>
+</body>
+</html>

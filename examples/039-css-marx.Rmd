@@ -1,0 +1,28 @@
+---
+title: "litedown with Marx"
+author: Yihui Xie
+date: 2026-10-26
+output:
+  html:
+    meta:
+      css: ["@npm/marx-css/css/marx.min.css"]
+    options:
+      toc: true
+---
+
+This page is styled by [Marx](https://mblode.github.io/marx/), which is loaded
+from a CDN via the `css` field above. Nothing else is applied to the page:
+litedown's default stylesheet is not used.
+
+Marx limits the width of `<main>` but not of `<header>`, so we give the title
+block the same width with a little CSS:
+
+```{css, echo = FALSE}
+header {
+  max-width: 40rem;
+  margin: auto;
+}
+```
+
+```{r, child = '_css-demo.Rmd'}
+```
