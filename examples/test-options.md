@@ -23,7 +23,7 @@ mark(mkd, options = '+number_sections+toc')
 `````
 
 ````` {.html .plain}
-<nav id="TOC">
+<div id="TOC">
 <ul class="numbered">
 <li><a href="#chp:header-1"><span class="section-number main-number">1</span> Header 1</a>
 <ul>
@@ -31,7 +31,7 @@ mark(mkd, options = '+number_sections+toc')
 </ul>
 </li>
 </ul>
-</nav>
+</div>
 <h1 id="chp:header-1"><span class="section-number main-number">1</span> Header 1</h1>
 <p>p1</p>
 <h2 id="sec:header-2"><span class="section-number">1.1</span> Header 2</h2>
@@ -450,7 +450,7 @@ mark(mkd, options = '+number_sections')
 ````` {.r}
 mark(mkd, options = '+number_sections+toc')
 `````
-<nav id="TOC">
+<div id="TOC">
 <ul class="numbered">
 <li><a href="#chp:header-1"><span class="section-number main-number">1</span> Header 1</a>
 <ul>
@@ -458,7 +458,7 @@ mark(mkd, options = '+number_sections+toc')
 </ul>
 </li>
 </ul>
-</nav>
+</div>
 <h1 id="chp:header-1"><span class="section-number main-number">1</span> Header 1</h1>
 <p>p1</p>
 <h2 id="sec:header-2"><span class="section-number">1.1</span> Header 2</h2>

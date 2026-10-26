@@ -13,7 +13,7 @@ Change the settings below, and the page will update right away. Only the
 settings you have changed appear in the CSS code, which you can copy into a CSS
 chunk in your document, or into a `.css` file listed in the `css` field of the
 YAML metadata. See
-[Custom styles](https://pkg.yihui.org/litedown/book/#sec:custom-styles) in the
+[Custom CSS/JS](https://pkg.yihui.org/litedown/book/#sec:custom-assets) in the
 book for details.
 
 ```{css, echo = FALSE}

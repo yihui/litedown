@@ -14,7 +14,7 @@ at its core, but you are free to add more features by yourself. In this chapter,
 we introduce some CSS/JS assets from the GitHub repository
 <https://github.com/yihui/lite.js>: first the default CSS (@sec:default), which
 you can customize with your own CSS or a stylesheet from the web
-(@sec:custom-styles), and then optional features that you can turn on with extra
+(@sec:custom-assets), and then optional features that you can turn on with extra
 assets. You can load arbitrary external JS and CSS files via the `js` and `css`
 meta variables. There are numerous JS libraries and CSS frameworks on the web,
 and you do not have to use the ones mentioned in this chapter. You can also
@@ -90,7 +90,7 @@ You can call `vest()` multiple times in a document to keep adding assets.
 The default stylesheet defines the basic styles of the document body, lists,
 code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
 example, the maximum width for the body is set to 800px. If you want to override
-it, you can provide your own stylesheet (see @sec:custom-styles for more), e.g.,
+it, you can provide your own stylesheet (see @sec:custom-assets for more), e.g.,
 
 ``` css
 body {
@@ -111,14 +111,15 @@ The former uses the jsdelivr resource and will not be embedded in HTML by
 default. The latter points to the `default.css` shipped with the **litedown**
 package, and will always be embedded.
 
-## Custom styles {#sec:custom-styles}
+## Custom CSS/JS {#sec:custom-assets}
 
 The default CSS (@sec:default) gives your pages a simple look, and you may want
 to change it. The look of a web page (colors, fonts, spacing, etc.) is
 controlled by CSS, which is a list of rules like "make all links red". You do
 not have to know CSS to change how your **litedown** pages look. There are two
 easy ways: add a few rules to tweak what you do not like, or use a ready-made
-stylesheet from the web.
+stylesheet from the web. The same ideas apply to JavaScript, which controls how
+a page behaves.
 
 To get a feel for it, visit the
 [examples](https://pkg.yihui.org/litedown/examples.html#sec:custom-styles). The
@@ -168,7 +169,7 @@ common ones:
 | tables               | `table`                                           |
 | footnotes            | `.footnotes`                                      |
 
-### Use a stylesheet from the web
+### Use CSS/JS from the web
 
 Many people have published small stylesheets that make plain HTML pages look
 nice, such as [Water.css](https://watercss.kognise.dev),
@@ -186,12 +187,42 @@ output:
 If a stylesheet is on [jsDelivr](https://www.jsdelivr.com), you can use the
 shorthand `@npm/` (or `@gh/` for GitHub) followed by the package and file name,
 e.g., `css: ["@npm/water.css/out/water.css"]` (see @tab:at-syntax for the
-syntax). The same works for JS libraries (@sec:arbitrary-assets).
+syntax).
 
 All of these work with **litedown** because it produces ordinary HTML. A few
 stylesheets look slightly off (e.g., a title that is not centered), and you can
 fix that with a few rules as shown above. The examples page above
 has many of them, including such small fixes.
+
+You are not limited to the CSS/JS assets introduced in this chapter: you can
+include any CSS framework or JS library in the same way, via the `css` and `js`
+fields. For example, here is how to use the
+[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library
+to create interactive tables:
+
+```` md
+---
+title: Display Tables with the JS Library DataTables
+output:
+  html:
+    meta:
+      css: ["@default", "@npm/simple-datatables/dist/style"]
+      js: ["@npm/simple-datatables"]
+---
+
+::: {#mtcars-table}
+```{r}
+I(mtcars)
+```
+:::
+
+```{js, type = "module"}
+new simpleDatatables.DataTable('#mtcars-table > table');
+```
+````
+
+
+See @sec:simple-dt for more ways to create this type of table.
 
 ### Apply the styles to all pages {#sec:global-css}
 
@@ -1077,34 +1108,3 @@ For example, `` `Ctrl + Alt + Delete` `` becomes `Ctrl + Alt + Delete`.
 
 Of course, you can combine any number of JS scripts and CSS files if you want
 multiple features.
-
-## Include arbitrary CSS/JS {#sec:arbitrary-assets}
-
-You can include arbitrary CSS frameworks and JS libraries in your documents, not
-limited to aforementioned ones in the GitHub repository `yihui/lite.js`. Below
-is a quick example of using the
-[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library
-to create interactive tables:
-
-```` md
----
-title: Display Tables with the JS Library DataTables
-output:
-  html:
-    meta:
-      css: ["@default", "@npm/simple-datatables/dist/style"]
-      js: ["@npm/simple-datatables"]
----
-
-::: {#mtcars-table}
-```{r}
-I(mtcars)
-```
-:::
-
-```{js, type = "module"}
-new simpleDatatables.DataTable('#mtcars-table > table');
-```
-````
-
-See @sec:simple-dt for more ways to create this type of table.
