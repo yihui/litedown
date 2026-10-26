@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.15">
+<meta name="generator" content="litedown 0.11.16">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/article.min.css">
@@ -506,7 +506,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/tmp/RtmpfmnOuJ/file1bf72b23f03f&quot;
+<pre><code>#&gt; [1] &quot;/var/folders/n6/hn37q6pj7sj_9dmqqc2113800000gn/T//RtmpDrtLUg/file120161a75b1c&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -1213,7 +1213,11 @@ pkg_code(
   link = TRUE
 )
 
-pkg_examples(path = attr(detect_pkg(), "path"), dir = "examples")
+pkg_examples(
+  path = attr(detect_pkg(), "path"),
+  dir = "examples",
+  groups = site_groups("examples")
+)
 
 pkg_citation(name = detect_pkg())
 
@@ -1289,28 +1293,19 @@ will be filled out with the file paths via <code>sprintf()</code>), e.g.,
 <td>
 <p>The directory of examples, relative to the package root <code>path</code>.</p>
 </td></tr>
-<tr><td><code>overview</code></td>
-<td>
-<p>Whether to include the package overview page, i.e., the
-<code>{name}-package.Rd</code> page.</p>
-</td></tr>
-<tr><td><code>examples</code></td>
-<td>
-<p>A list of arguments to be passed to <code><a href="https://rdrr.io/cran/xfun/man/record.html">xfun::record()</a></code> to run
-examples each help page, e.g., <code>list(dev = 'svg', dev.args = list(height = 6))</code>. If not a list (e.g., <code>FALSE</code>), examples will not be run.</p>
-</td></tr>
 <tr><td><code>groups</code></td>
 <td>
 <p>A list of groups, each of which is a list with the fields
 <code>title</code>, <code>desc</code> (optional), and <code>contents</code>, where <code>contents</code> is a character
 vector of names to be matched (<code>*</code> and <code>?</code> are wildcards): topic names or
-Rd filenames for <code>pkg_manual()</code>, and vignette filenames or titles for
-<code>pkg_articles()</code>. Items that do not belong to any group are put in a group
+Rd filenames for <code>pkg_manual()</code>, vignette filenames or titles for
+<code>pkg_articles()</code>, and filenames or titles of the example files for
+<code>pkg_examples()</code>. Items that do not belong to any group are put in a group
 named <code>Other</code>, except help pages with the keyword <code>internal</code>, which are
 listed only if a group names them (e.g., re-exported functions). A name
 that matches nothing is an error. By default, groups are read from the
-subfield <code>manual</code> or <code>articles</code> of the field <code>site</code> in <code>_litedown.yml</code> in
-the current directory, e.g.,
+subfield <code>manual</code>, <code>articles</code>, or <code>examples</code> of the field <code>site</code> in
+<code>_litedown.yml</code> in the current directory, e.g.,
 </p>
 <pre><code class="language-yaml">site:
   manual:
@@ -1323,7 +1318,17 @@ the current directory, e.g.,
 <code>contents</code> or a map with <code>desc</code> and <code>contents</code>.
 </p>
 <p>If no groups are provided, <code>pkg_manual()</code> lists topics alphabetically, and
-<code>pkg_articles()</code> lists all vignettes in a single list.</p>
+<code>pkg_articles()</code> and <code>pkg_examples()</code> list all items in a single list.</p>
+</td></tr>
+<tr><td><code>overview</code></td>
+<td>
+<p>Whether to include the package overview page, i.e., the
+<code>{name}-package.Rd</code> page.</p>
+</td></tr>
+<tr><td><code>examples</code></td>
+<td>
+<p>A list of arguments to be passed to <code><a href="https://rdrr.io/cran/xfun/man/record.html">xfun::record()</a></code> to run
+examples each help page, e.g., <code>list(dev = 'svg', dev.args = list(height = 6))</code>. If not a list (e.g., <code>FALSE</code>), examples will not be run.</p>
 </td></tr>
 </table>
 <h3 id="sec:value_14" class="unnumbered">Value</h3>
@@ -1454,7 +1459,7 @@ raw content, click on the link on its file size instead.
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.15</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.16</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/appendix.min.js" defer></script>

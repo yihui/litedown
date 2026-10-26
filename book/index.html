@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.15">
+<meta name="generator" content="litedown 0.11.16">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/article.min.css">
@@ -318,7 +318,7 @@
 <li><a href="#sec:the-pkg-helper-functions"><span class="section-number">8.4.1</span> The <code>pkg_*()</code> helper functions</a></li>
 <li><a href="#sec:pkg-site-fun"><span class="section-number">8.4.2</span> Package sites via <code>pkg_site()</code></a>
 <ul>
-<li><a href="#sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages and articles</a></li>
+<li><a href="#sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages, articles, and examples</a></li>
 </ul>
 </li>
 <li><a href="#sec:package-playground"><span class="section-number">8.4.3</span> Package playground</a></li>
@@ -6694,12 +6694,12 @@ icon on the right.</p>
 action (<a class="cross-ref-sec" href="#sec:pkg-site-gha">8.4.4</a>), remember to create an empty <code>.nojekyll</code> file in the
 site directory, because Jekyll ignores files and directories whose names start
 with <code>_</code>, such as the <code>_footer.md</code> used by the template.</p>
-<h4 id="sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages and articles</h4>
+<h4 id="sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages, articles, and examples</h4>
 <p>By default, <code>pkg_manual()</code> lists all topics alphabetically, and <code>pkg_articles()</code>
-lists all vignettes in a single list. To organize them into groups (like the
-<code>reference</code> and <code>articles</code> fields of <code>_pkgdown.yml</code>), add the fields <code>manual</code>
-and <code>articles</code> under <code>site</code> in <code>_litedown.yml</code> in the site directory. The keys
-are group titles, and each value is either a vector of names or a map with a
+and <code>pkg_examples()</code> list all vignettes and examples in a single list. To
+organize them into groups (like the <code>reference</code> and <code>articles</code> fields of
+<code>_pkgdown.yml</code>), add the fields <code>manual</code>, <code>articles</code>, and <code>examples</code> under
+<code>site</code> in <code>_litedown.yml</code> in the site directory. The keys are group titles, and each value is either a vector of names or a map with a
 description <code>desc</code> and the names <code>contents</code>:</p>
 <pre><code class="language-yaml">site:
   manual:
@@ -6709,10 +6709,13 @@ description <code>desc</code> and the names <code>contents</code>:</p>
     Others: [crack, engines]
   articles:
     Guides: [&quot;*intro*&quot;]
+  examples:
+    Basics: [&quot;00*&quot;]
 </code></pre>
 <p>Names in <code>contents</code> are matched against the topics and Rd filenames of help
 pages (for <code>manual</code>), or the filenames (without extensions) and titles of
-vignettes (for <code>articles</code>). The wildcards <code>*</code> and <code>?</code> are supported. The first
+vignettes (for <code>articles</code>), or the filenames and titles of the example files
+(for <code>examples</code>). The wildcards <code>*</code> and <code>?</code> are supported. The first
 group that matches an item wins, and the items that do not belong to any group
 are put in a group named <code>Other</code>. The page then shows the groups in the order
 that you specify. For the manual, the groups are also listed in an index at the
@@ -6721,8 +6724,8 @@ top of the page.</p>
 signaled, so that stale configurations do not go unnoticed. Help pages with the
 keyword <code>internal</code> (e.g., the page of re-exported functions) are hidden by
 default, and listed only if a group names them. You can also pass the groups to
-the <code>groups</code> argument of <code>pkg_manual()</code> and <code>pkg_articles()</code> as a list of lists
-with the fields <code>title</code>, <code>desc</code>, and <code>contents</code>.</p>
+the <code>groups</code> argument of <code>pkg_manual()</code>, <code>pkg_articles()</code>, and <code>pkg_examples()</code>
+as a list of lists with the fields <code>title</code>, <code>desc</code>, and <code>contents</code>.</p>
 <h3 id="sec:package-playground"><span class="section-number">8.4.3</span> Package playground</h3>
 <p>The site template also includes a <code>playground/</code> subpage, which provides an
 interactive R playground powered by <a href="https://r-wasm.org">webR</a>. It installs
@@ -6815,7 +6818,7 @@ jobs:
     concurrency:
       group: site-${{ github.ref }}
       cancel-in-progress: true
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       PREVIEW_DOMAIN: ${{ needs.preview.outputs.domain }}
     steps:
@@ -6823,7 +6826,7 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-      - uses: yihui/actions/setup-r-dependencies@v1.4.0
+      - uses: yihui/actions/setup-r-dependencies@v1.4.1
         with:
           extra-packages: litedown .
           r-universe: yihui
@@ -7185,7 +7188,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.11.15, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.11.16, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -7209,7 +7212,7 @@ R package version 0.62.3, <a href="https://github.com/yihui/xfun">https://github
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/pele@1.10.0/dist/pele.global.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pele@1.10.1/dist/pele.global.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/render-pele.min.js" defer></script>
 </body>
 </html>

@@ -26,8 +26,8 @@
 025-option-filter.Rmd
 026-snap-clean.Rmd
 027-raw-text.Rmd
-028-multibyte.Rmd
 test-collapse.Rmd
 test-inline.Rmd
+test-multibyte.Rmd
 test-options.Rmd
 test-results-hide.Rmd

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.15">
+<meta name="generator" content="litedown 0.11.16">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/css/article.min.css">
@@ -57,7 +57,7 @@
 <p>Added a new <code>pele</code> engine to draw diagrams with <a href="https://pele.run">Pele</a>, a lightweight renderer for the Mermaid syntax. It takes the same input as the <code>mermaid</code> engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the <strong>litedown</strong> documentation (<a href="https://pkg.yihui.org/litedown/book/">https://pkg.yihui.org/litedown/book/</a>) now use it.</p>
 </li>
 <li>
-<p>Added a function <code>pkg_articles()</code> to list package vignettes (it was previously inlined in the <code>articles.Rmd</code> template of <code>pkg_site()</code>). Both <code>pkg_articles()</code> and <code>pkg_manual()</code> gain an argument <code>groups</code> to group vignettes or help pages, which defaults to the subfield <code>articles</code> or <code>manual</code> of <code>site</code> in <code>_litedown.yml</code> (similar to <code>_pkgdown.yml</code>), e.g., <code>site: {manual: {Sites: [pkg_site, &quot;roam*&quot;]}}</code> (group titles are the keys). Items not in any group are listed under <code>Other</code>, and a name that matches nothing is an error. Help pages with the keyword <code>internal</code> (e.g., re-exports) are listed only if a group names them. Without groups, the default listing is unchanged.</p>
+<p>Added a function <code>pkg_articles()</code> to list package vignettes (it was previously inlined in the <code>articles.Rmd</code> template of <code>pkg_site()</code>). <code>pkg_manual()</code>, <code>pkg_articles()</code>, and <code>pkg_examples()</code> gain an argument <code>groups</code> to group help pages, vignettes, or examples, which defaults to the subfield <code>manual</code>, <code>articles</code>, or <code>examples</code> of <code>site</code> in <code>_litedown.yml</code> (similar to <code>_pkgdown.yml</code>), e.g., <code>site: {manual: {Sites: [pkg_site, &quot;roam*&quot;]}}</code> (group titles are the keys). Items not in any group are listed under <code>Other</code>, and a name that matches nothing is an error. Help pages with the keyword <code>internal</code> (e.g., re-exports) are listed only if a group names them. Without groups, the default listing is unchanged.</p>
 </li>
 <li>
 <p><code>fuse_site()</code> with <code>rebuild: &quot;outdated&quot;</code> (the default) now also rebuilds pages when <code>_litedown.yml</code> is newer than their output files, instead of only comparing each page with its own source file.</p>
@@ -415,7 +415,7 @@ graph TD;
 </div>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.15</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.16</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.121/js/appendix.min.js" defer></script>
