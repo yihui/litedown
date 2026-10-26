@@ -12,23 +12,32 @@ site:
       contents: [fuse_site, fuse_book, roam, pkg_site, pkg_desc]
   examples:
     Get started:
-      desc: A minimal document, and inline R code.
-      contents: ["001-*", "020-*"]
+      desc: A minimal document.
+      contents: ["001-*"]
+    Inline code:
+      desc: Inline R code and numeric output.
+      contents: ["020-*"]
     Code chunks:
-      desc: Provide, label, order, fill out, extract, and print the code of chunks.
-      contents: ["005-*", "011-*", "012-*", "013-*", "014-*", "015-*", "019-*"]
-    Output:
-      desc: Control the output of chunks, such as attributes, collapsing, comments, text results, whitespace, filtering, and raw output.
-      contents: ["002-*", "003-*", "006-*", "007-*", "016-*", "017-*", "025-*", "027-*"]
+      desc: Provide, label, order, fill out, and extract the code of chunks.
+      contents: ["005-*", "011-*", "012-*", "014-*", "015-*"]
+    Text output:
+      desc: Collapse, comment, print, filter, and otherwise control the text output of chunks.
+      contents: ["006-*", "007-*", "013-*", "016-*", "017-*", "019-*", "025-*", "027-*"]
+    Attributes:
+      desc: Add attributes to output elements, and create callouts.
+      contents: ["002-*", "003-*"]
     Figures and tables:
       desc: Captions, graphics devices, figure decoration, plot files, and tables.
       contents: ["004-*", "008-*", "009-*", "010-*", "018-*"]
-    Widgets and slides:
-      desc: JavaScript widgets, and slides with the clean theme.
-      contents: ["021-*", "022-*", "023-*", "024-*", "026-*"]
+    Widgets:
+      desc: JavaScript widgets for tables, charts, and maps.
+      contents: ["021-*", "022-*", "023-*", "024-*"]
+    Slides:
+      desc: Slides with the clean theme.
+      contents: ["026-*"]
     Tests:
       desc: Tests of Markdown, inline code, chunk options, and multibyte characters.
-      contents: ["028-*", "test-*"]
+      contents: ["test-*"]
 
 output:
   html:
