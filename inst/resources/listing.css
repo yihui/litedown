@@ -1,7 +1,7 @@
 body {
   max-width: none;
 }
-.body, ul {
+.flex-wrap, ul {
   display: flex;
   flex-wrap: wrap;
 }

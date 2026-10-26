@@ -356,9 +356,10 @@ pkg_examples = function(
       fenced_block(x, '.md')
     ), '.box'), keys = c(sans_ext(b), b, t))
   })
+  # boxes are laid out in flex containers (see listing.css)
   new_asis(if (length(groups)) {
-    group_blocks(res, lapply(res, attr, 'keys'), groups)
-  } else unlist(res))
+    group_blocks(res, lapply(res, attr, 'keys'), groups, '.flex-wrap')
+  } else fenced_div(unlist(res), '.flex-wrap'))
 }
 
 # retrieve Github repo link from DESCRIPTION
@@ -583,13 +584,13 @@ site_groups = function(key) {
   }, names(g), g)
 }
 
-# put items in groups, each with a heading, an optional description, and the items
-group_blocks = function(items, keys, groups) {
+# put items in groups, each with a heading, an optional description, and the
+# items (wrapped in a fenced Div with the attributes `wrap` if provided)
+group_blocks = function(items, keys, groups, wrap = NULL) {
   unlist(lapply(group_items(keys, groups), function(g) {
-    c(
-      paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''),
-      unlist(items[g$i]), ''
-    )
+    x = unlist(items[g$i])
+    if (length(wrap)) x = fenced_div(x, wrap)
+    c(paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''), x, '')
   }))
 }
 

@@ -278,6 +278,8 @@ assert('pkg_examples() lists examples from the package root, not the working dir
   (any(grepl('001\\. [Hello](', x, fixed = TRUE)))
   (any(grepl('.box', x, fixed = TRUE)))
   (any(grepl('001-hi.html)', x, fixed = TRUE)))
+  # the boxes are in a flex container
+  (any(grepl('{.flex-wrap}', x, fixed = TRUE)))
   x = pkg_examples(p, 'nope')
   (grepl("'nope/'", x, fixed = TRUE))
 })
@@ -297,6 +299,8 @@ assert('pkg_examples() puts examples in groups', {
   i = grep('^## ', x)
   (x[i] %==% c('## First\n', '## Graphics\n', '## Other\n'))
   (any(x == 'My desc'))
+  # each group has its own flex container
+  (sum(grepl('{.flex-wrap}', x, fixed = TRUE)) %==% 3L)
   # each example is in its group, in the order of the groups
   (grep('001-hi.html)', x, fixed = TRUE) < i[2])
   (all(grep('002-plot.html)', x, fixed = TRUE) %in% (i[2]:(i[3] - 1))))
