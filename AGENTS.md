@@ -59,9 +59,8 @@ assert('message', {
 6. **Site groups**: the manual and examples pages of the site are grouped in
    `site/_litedown.yml` (fields `manual` and `examples` under `site`). When you
    add a new exported function (help page), add its topic to a group under
-   `manual`; when you add a new file under `examples/`, make sure its name
-   matches a group under `examples` (the groups use number prefixes with
-   wildcards, e.g., `"02*"`; add a new group for a new range, e.g., `"03*"`).
-   Items that do not belong to any group are put in an `Other` group, and a
-   name in the config that matches nothing is an error, so also update the
-   config when you rename or delete a function or an example.
+   `manual`; when you add a new file under `examples/`, add it to a topic group
+   under `examples` by its number prefix (e.g., `"029-*"`), or create a new
+   group if no group fits. Items that do not belong to any group are put in an
+   `Other` group, and a name in the config that matches nothing is an error, so
+   also update the config when you rename or delete a function or an example.
