@@ -1,5 +1,5 @@
 site:
-  standalone: ["026-snap-clean*", "*-css-*"]
+  standalone: ["026-snap-clean*", "0??-css-*"]
   manual:
     Render documents:
       desc: Convert Markdown and R Markdown to output formats.
