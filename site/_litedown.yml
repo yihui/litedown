@@ -37,7 +37,7 @@ site:
       contents: ["026-*"]
     Custom styles:
       desc: Change the look of a page interactively, or with a stylesheet from the web, such as Water.css, new.css, Simple.css, Pico, Sakura, or Buttondown.
-      contents: ["028-*", "029-*", "030-*", "031-*", "032-*", "033-*", "034-*"]
+      contents: ["028-*", "029-*", "030-*", "031-*", "032-*", "033-*", "034-*", "035-*", "036-*", "037-*", "038-*", "039-*", "040-*", "041-*"]
     Tests:
       desc: Miscellaneous tests.
       contents: ["test-*"]
