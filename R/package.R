@@ -325,7 +325,9 @@ pkg_code = function(
 #'   link to its output, a link to its source, and a preview of the source.
 #' @rdname pkg_desc
 #' @export
-pkg_examples = function(path = attr(detect_pkg(), 'path'), dir = 'examples') {
+pkg_examples = function(
+  path = attr(detect_pkg(), 'path'), dir = 'examples', groups = site_groups('examples')
+) {
   d = file.path(path, dir)
   if (!isTRUE(dir.exists(d))) {
     if (missing(path)) message('Please run this function in the package source directory.')
@@ -345,16 +347,18 @@ pkg_examples = function(path = attr(detect_pkg(), 'path'), dir = 'examples') {
     # get example number
     i = grep_sub('^([0-9]+).*', '\\1', b)
     i = if (length(i)) paste0(i, '\\. ') else ''
-    # put example source in a box
-    fenced_div(c(
+    # put example source in a box (and keep the names to match groups)
+    structure(fenced_div(c(
       fenced_div(
         sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, f2, h),
         '.caption .name'
       ),
       fenced_block(x, '.md')
-    ), '.box')
+    ), '.box'), keys = c(sans_ext(b), b, t))
   })
-  new_asis(unlist(res))
+  new_asis(if (length(groups)) {
+    group_blocks(res, lapply(res, attr, 'keys'), groups)
+  } else unlist(res))
 }
 
 # retrieve Github repo link from DESCRIPTION
@@ -392,13 +396,14 @@ tweak_citation = function(x) {
 #' @param groups A list of groups, each of which is a list with the fields
 #'   `title`, `desc` (optional), and `contents`, where `contents` is a character
 #'   vector of names to be matched (`*` and `?` are wildcards): topic names or
-#'   Rd filenames for `pkg_manual()`, and vignette filenames or titles for
-#'   `pkg_articles()`. Items that do not belong to any group are put in a group
+#'   Rd filenames for `pkg_manual()`, vignette filenames or titles for
+#'   `pkg_articles()`, and filenames or titles of the example files for
+#'   `pkg_examples()`. Items that do not belong to any group are put in a group
 #'   named `Other`, except help pages with the keyword `internal`, which are
 #'   listed only if a group names them (e.g., re-exported functions). A name
 #'   that matches nothing is an error. By default, groups are read from the
-#'   subfield `manual` or `articles` of the field `site` in `_litedown.yml` in
-#'   the current directory, e.g.,
+#'   subfield `manual`, `articles`, or `examples` of the field `site` in
+#'   `_litedown.yml` in the current directory, e.g.,
 #'
 #' ```yaml
 #' site:
@@ -413,7 +418,7 @@ tweak_citation = function(x) {
 #'   `contents` or a map with `desc` and `contents`.
 #'
 #'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
-#'   `pkg_articles()` lists all vignettes in a single list.
+#'   `pkg_articles()` and `pkg_examples()` list all items in a single list.
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
@@ -557,9 +562,7 @@ pkg_articles = function(name = detect_pkg(), groups = site_groups('articles')) {
   items = sprintf('- [%s](doc/%s) (source: [%s](doc/%s))\n', res[, 'Title'], vigs, src, src)
   if (!length(groups)) return(new_asis(items))
   keys = .mapply(c, sans_ext(src), src, res[, 'Title'])
-  new_asis(unlist(lapply(group_items(keys, groups), function(g) {
-    c(paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''), items[g$i])
-  })))
+  new_asis(group_blocks(items, keys, groups))
 }
 
 # a block of links in the TOC, optionally with a heading and a description
@@ -578,6 +581,16 @@ site_groups = function(key) {
     if (!is.list(x)) x = list(contents = x)
     c(list(title = title), x)
   }, names(g), g)
+}
+
+# put items in groups, each with a heading, an optional description, and the items
+group_blocks = function(items, keys, groups) {
+  unlist(lapply(group_items(keys, groups), function(g) {
+    c(
+      paste0('## ', g$title, '\n'), if (length(g$desc)) c(g$desc, ''),
+      unlist(items[g$i]), ''
+    )
+  }))
 }
 
 # split items into groups by matching the character vectors `keys` (one per
