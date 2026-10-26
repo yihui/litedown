@@ -1,7 +1,11 @@
 body {
   max-width: none;
 }
-.body, ul {
+.boxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(30em, 100%), 1fr));
+}
+ul {
   display: flex;
   flex-wrap: wrap;
 }
@@ -10,8 +14,6 @@ h1 {
   font-size: 1em;
 }
 .box {
-  width: 30em;
-  flex-grow: 1;
   margin: .5em;
   & > .name {
     font-size: 1em;

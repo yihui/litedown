@@ -340,13 +340,13 @@ action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
 site directory, because Jekyll ignores files and directories whose names start
 with `_`, such as the `_footer.md` used by the template.
 
-#### Grouping manual pages and articles {#sec:pkg-site-groups}
+#### Grouping manual pages, articles, and examples {#sec:pkg-site-groups}
 
 By default, `pkg_manual()` lists all topics alphabetically, and `pkg_articles()`
-lists all vignettes in a single list. To organize them into groups (like the
-`reference` and `articles` fields of `_pkgdown.yml`), add the fields `manual`
-and `articles` under `site` in `_litedown.yml` in the site directory. The keys
-are group titles, and each value is either a vector of names or a map with a
+and `pkg_examples()` list all vignettes and examples in a single list. To
+organize them into groups (like the `reference` and `articles` fields of
+`_pkgdown.yml`), add the fields `manual`, `articles`, and `examples` under
+`site` in `_litedown.yml` in the site directory. The keys are group titles, and each value is either a vector of names or a map with a
 description `desc` and the names `contents`:
 
 ``` yaml
@@ -358,11 +358,14 @@ site:
     Others: [crack, engines]
   articles:
     Guides: ["*intro*"]
+  examples:
+    Basics: ["00*"]
 ```
 
 Names in `contents` are matched against the topics and Rd filenames of help
 pages (for `manual`), or the filenames (without extensions) and titles of
-vignettes (for `articles`). The wildcards `*` and `?` are supported. The first
+vignettes (for `articles`), or the filenames and titles of the example files
+(for `examples`). The wildcards `*` and `?` are supported. The first
 group that matches an item wins, and the items that do not belong to any group
 are put in a group named `Other`. The page then shows the groups in the order
 that you specify. For the manual, the groups are also listed in an index at the
@@ -372,8 +375,8 @@ If a name matches nothing (e.g., a function that has been renamed), an error is
 signaled, so that stale configurations do not go unnoticed. Help pages with the
 keyword `internal` (e.g., the page of re-exported functions) are hidden by
 default, and listed only if a group names them. You can also pass the groups to
-the `groups` argument of `pkg_manual()` and `pkg_articles()` as a list of lists
-with the fields `title`, `desc`, and `contents`.
+the `groups` argument of `pkg_manual()`, `pkg_articles()`, and `pkg_examples()`
+as a list of lists with the fields `title`, `desc`, and `contents`.
 
 ### Package playground
 

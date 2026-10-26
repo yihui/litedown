@@ -29,7 +29,11 @@ pkg_code(
   link = TRUE
 )
 
-pkg_examples(path = attr(detect_pkg(), "path"), dir = "examples")
+pkg_examples(
+  path = attr(detect_pkg(), "path"),
+  dir = "examples",
+  groups = site_groups("examples")
+)
 
 pkg_citation(name = detect_pkg())
 
@@ -85,22 +89,17 @@ will be filled out with the file paths via \code{sprintf()}), e.g.,
 
 \item{dir}{The directory of examples, relative to the package root \code{path}.}
 
-\item{overview}{Whether to include the package overview page, i.e., the
-\code{{name}-package.Rd} page.}
-
-\item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
-examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
-
 \item{groups}{A list of groups, each of which is a list with the fields
 \code{title}, \code{desc} (optional), and \code{contents}, where \code{contents} is a character
 vector of names to be matched (\code{*} and \verb{?} are wildcards): topic names or
-Rd filenames for \code{pkg_manual()}, and vignette filenames or titles for
-\code{pkg_articles()}. Items that do not belong to any group are put in a group
+Rd filenames for \code{pkg_manual()}, vignette filenames or titles for
+\code{pkg_articles()}, and filenames or titles of the example files for
+\code{pkg_examples()}. Items that do not belong to any group are put in a group
 named \code{Other}, except help pages with the keyword \code{internal}, which are
 listed only if a group names them (e.g., re-exported functions). A name
 that matches nothing is an error. By default, groups are read from the
-subfield \code{manual} or \code{articles} of the field \code{site} in \verb{_litedown.yml} in
-the current directory, e.g.,
+subfield \code{manual}, \code{articles}, or \code{examples} of the field \code{site} in
+\verb{_litedown.yml} in the current directory, e.g.,
 
 \if{html}{\out{<div class="sourceCode yaml">}}\preformatted{site:
   manual:
@@ -114,7 +113,13 @@ That is, the keys are group titles, and each value is either the
 \code{contents} or a map with \code{desc} and \code{contents}.
 
 If no groups are provided, \code{pkg_manual()} lists topics alphabetically, and
-\code{pkg_articles()} lists all vignettes in a single list.}
+\code{pkg_articles()} and \code{pkg_examples()} list all items in a single list.}
+
+\item{overview}{Whether to include the package overview page, i.e., the
+\code{{name}-package.Rd} page.}
+
+\item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
+examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is

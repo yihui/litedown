@@ -278,8 +278,34 @@ assert('pkg_examples() lists examples from the package root, not the working dir
   (any(grepl('001\\. [Hello](', x, fixed = TRUE)))
   (any(grepl('.box', x, fixed = TRUE)))
   (any(grepl('001-hi.html)', x, fixed = TRUE)))
+  # the boxes are in a container
+  (any(grepl('{.boxes}', x, fixed = TRUE)))
   x = pkg_examples(p, 'nope')
   (grepl("'nope/'", x, fixed = TRUE))
+})
+
+assert('pkg_examples() puts examples in groups', {
+  p = tempfile(); d = file.path(p, 'examples')
+  dir.create(d, recursive = TRUE)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  write_utf8(c('---', 'title: Hello', '---'), file.path(d, '001-hi.Rmd'))
+  write_utf8(c('---', 'title: Plots', '---'), file.path(d, '002-plot.Rmd'))
+  write_utf8(c('---', 'title: Misc', '---'), file.path(d, '003-misc.Rmd'))
+  groups = list(
+    list(title = 'First', desc = 'My desc', contents = '001*'),
+    list(title = 'Graphics', contents = 'Plots')  # matches the title
+  )
+  x = in_dir(tempdir(), pkg_examples(p, groups = groups))
+  i = grep('^## ', x)
+  (x[i] %==% c('## First\n', '## Graphics\n', '## Other\n'))
+  (any(x == 'My desc'))
+  # each group has its own container
+  (sum(grepl('{.boxes}', x, fixed = TRUE)) %==% 3L)
+  # each example is in its group, in the order of the groups
+  (grep('001-hi.html)', x, fixed = TRUE) < i[2])
+  (all(grep('002-plot.html)', x, fixed = TRUE) %in% (i[2]:(i[3] - 1))))
+  (all(grep('003-misc.html)', x, fixed = TRUE) > i[3]))
+  (has_error(pkg_examples(p, groups = list(list(title = 'X', contents = 'nope*')))))
 })
 
 assert('pkg_site() requires the package to be installed', {

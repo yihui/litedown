@@ -10,6 +10,34 @@ site:
     Websites and books:
       desc: Build multi-page output and package sites.
       contents: [fuse_site, fuse_book, roam, pkg_site, pkg_desc]
+  examples:
+    Get started:
+      desc: A minimal document.
+      contents: ["001-*"]
+    Text output:
+      desc: Collapse, comment, print, filter, and otherwise control the text output of chunks.
+      contents: ["006-*", "007-*", "013-*", "016-*", "017-*", "019-*", "025-*", "027-*"]
+    Figures and tables:
+      desc: Captions, graphics devices, figure decoration, plot files, and tables.
+      contents: ["004-*", "008-*", "009-*", "010-*", "018-*"]
+    Attributes:
+      desc: Add attributes to output elements.
+      contents: ["002-*", "003-*"]
+    Inline code:
+      desc: Inline R code and numeric output.
+      contents: ["020-*"]
+    Code chunks:
+      desc: Provide, label, order, fill out, and extract the code of chunks.
+      contents: ["005-*", "011-*", "012-*", "014-*", "015-*"]
+    Widgets:
+      desc: JavaScript widgets for tables, charts, and maps.
+      contents: ["021-*", "022-*", "023-*", "024-*"]
+    Slides:
+      desc: Different styles/themes of slides.
+      contents: ["026-*"]
+    Tests:
+      desc: Miscellaneous tests.
+      contents: ["test-*"]
 
 output:
   html:
