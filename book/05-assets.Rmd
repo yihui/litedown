@@ -12,13 +12,13 @@
 The **litedown** package aims at lightweight with a minimal number of features
 at its core, but you are free to add more features by yourself. In this chapter,
 we introduce some CSS/JS assets from the GitHub repository
-<https://github.com/yihui/lite.js>: first the default CSS (@sec:default), which
-you can customize with your own CSS or a stylesheet from the web
-(@sec:custom-assets), and then optional features that you can turn on with extra
-assets. You can load arbitrary external JS and CSS files via the `js` and `css`
-meta variables. There are numerous JS libraries and CSS frameworks on the web,
-and you do not have to use the ones mentioned in this chapter. You can also
-write CSS/JS by yourself to enrich your HTML applications.
+<https://github.com/yihui/lite.js>: first the default CSS (@sec:default-css),
+which you can customize with your own CSS or a stylesheet from the web
+(@sec:custom-assets), and then optional features that you can turn on with
+extra assets. You can load arbitrary external JS and CSS files via the `js` and
+`css` meta variables. There are numerous JS libraries and CSS frameworks on the
+web, and you do not have to use the ones mentioned in this chapter. You can
+also write CSS/JS by yourself to enrich your HTML applications.
 
 Remember that the CSS and JS are introduced under the output format `html` in
 YAML metadata, e.g.,
@@ -85,7 +85,7 @@ litedown::vest(css = c('@callout', '@book'), js = '@callout')
 
 You can call `vest()` multiple times in a document to keep adding assets.
 
-## The default CSS {#sec:default}
+## The default CSS {#sec:default-css}
 
 The default stylesheet defines the basic styles of the document body, lists,
 code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
@@ -114,8 +114,8 @@ package, and will always be embedded.
 
 ## Custom CSS/JS {#sec:custom-assets}
 
-The default CSS (@sec:default) gives your pages a simple look, and you may want
-to change it. The look of a web page (colors, fonts, spacing, etc.) is
+The default CSS (@sec:default-css) gives your pages a simple look, and you may
+want to change it. The look of a web page (colors, fonts, spacing, etc.) is
 controlled by CSS, which is a list of rules like "make all links red". You do
 not have to know CSS to change how your **litedown** pages look. There are two
 easy ways: add a few rules to tweak what you do not like, or use a ready-made
@@ -625,11 +625,10 @@ what an article format looks like when you read the HTML version of the book.
 
 ### The overall style
 
-The maximum width of the article body is 50em (800px at the default font size).
-For larger screens, this means
-there will be extra space in the left/right margin, where we can place auxiliary
-information, such as the TOC and footnotes. On smaller screens, the side content
-will be collapsed into the body.
+The maximum width of the article body is also 50em (@sec:default-css). For
+larger screens, this means there will be extra space in the left/right margin,
+where we can place auxiliary information, such as the TOC and footnotes. On
+smaller screens, the side content will be collapsed into the body.
 
 The article frontmatter, body, and optionally the appendix are placed in
 separate boxes.
