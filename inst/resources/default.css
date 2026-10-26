@@ -1,6 +1,6 @@
 body {
   font-family: sans-serif;
-  max-width: 800px;
+  max-width: 50em;
   margin: auto;
   padding: 1em;
   line-height: 1.5;
@@ -101,6 +101,6 @@ section.footnotes {
   body { max-width: 100%; }
   tr, img { break-inside: avoid; }
 }
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 62em) {
   body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
 }

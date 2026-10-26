@@ -89,8 +89,9 @@ You can call `vest()` multiple times in a document to keep adding assets.
 
 The default stylesheet defines the basic styles of the document body, lists,
 code, figures, tables, block quotes, TOC, links, and cross-references, etc. For
-example, the maximum width for the body is set to 800px. If you want to override
-it, you can provide your own stylesheet (see @sec:custom-assets for more), e.g.,
+example, the maximum width for the body is set to 50em (800px at the default
+font size). If you want to override it, you can provide your own stylesheet (see
+@sec:custom-assets for more), e.g.,
 
 ``` css
 body {
@@ -624,7 +625,8 @@ what an article format looks like when you read the HTML version of the book.
 
 ### The overall style
 
-The maximum width of the article body is 800px. For larger screens, this means
+The maximum width of the article body is 50em (800px at the default font size).
+For larger screens, this means
 there will be extra space in the left/right margin, where we can place auxiliary
 information, such as the TOC and footnotes. On smaller screens, the side content
 will be collapsed into the body.
