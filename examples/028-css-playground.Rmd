@@ -73,44 +73,38 @@ summary(cars$speed)
 head(cars, 3)
 ```
 
-```{js, echo = FALSE}
-const d = document, ui = d.getElementById('ui'), out = d.getElementById('out');
-const inputs = [...ui.querySelectorAll('[data-prop]')];
-const style = d.head.appendChild(d.createElement('style'));
-const hex = c => '#' + c.match(/\d+/g).slice(0, 3)
-  .map(i => (+i).toString(16).padStart(2, '0')).join('');
+```{js, echo = FALSE, type = "module"}
+const d = document, ui = d.getElementById("ui"), out = d.getElementById("out"),
+  inputs = [...ui.querySelectorAll("[data-prop]")],
+  style = d.head.appendChild(d.createElement("style")),
+  hex = c => c === "rgba(0, 0, 0, 0)" ? "#ffffff" :
+    "#" + c.match(/\d+/g).slice(0, 3).map(i => (+i).toString(16).padStart(2, "0")).join(""),
+  // read the initial value of a setting from the computed style
+  init = {
+    "font-size": cs => parseFloat(cs.fontSize),
+    "line-height": cs => +(parseFloat(cs.lineHeight) / parseFloat(cs.fontSize)).toFixed(1),
+    "max-width": cs => parseFloat(cs.maxWidth),
+    color: cs => hex(cs.color),
+    background: cs => hex(cs.backgroundColor)
+  };
 
-// initialize inputs with the current computed style
 inputs.forEach(el => {
-  const t = d.querySelector(el.dataset.read || el.dataset.sel);
-  const cs = getComputedStyle(t), p = el.dataset.prop;
-  if (el.type === 'color') {
-    el.value = hex(cs[p === 'background' ? 'backgroundColor' : p]);
-    // a transparent background means white
-    if (p === 'background' && cs.backgroundColor.endsWith('0)')) el.value = '#ffffff';
-  } else if (el.type === 'range') {
-    el.value = p === 'line-height' ?
-      Math.round(parseFloat(cs.lineHeight) / parseFloat(cs.fontSize) * 10) / 10 :
-      parseFloat(cs[p === 'max-width' ? 'maxWidth' : 'fontSize']);
-  }
+  const v = init[el.dataset.prop]?.(getComputedStyle(d.querySelector(el.dataset.read ?? el.dataset.sel)));
+  if (v !== undefined) el.value = v;
   el.dataset.init = el.value;
 });
 
-function update() {
+// show only the settings that have been changed
+const update = () => {
   const rules = {};
-  inputs.forEach(el => {
-    if (el.value === el.dataset.init) return;
-    (rules[el.dataset.sel] ??= []).push(
-      `  ${el.dataset.prop}: ${el.value}${el.dataset.unit || ''};`
-    );
-  });
-  const css = Object.entries(rules)
-    .map(([s, v]) => `${s} {\n${v.join('\n')}\n}`).join('\n');
-  style.textContent = css;
-  out.textContent = css || '/* Change a setting above to generate CSS. */';
-}
-ui.addEventListener('input', update);
-ui.addEventListener('reset', () => setTimeout(update));
-d.getElementById('copy').onclick = () => navigator.clipboard.writeText(style.textContent);
+  inputs.forEach(el => el.value !== el.dataset.init &&
+    (rules[el.dataset.sel] ??= []).push(`  ${el.dataset.prop}: ${el.value}${el.dataset.unit ?? ""};`));
+  style.textContent = Object.entries(rules).map(([s, v]) => `${s} {\n${v.join("\n")}\n}`).join("\n");
+  out.textContent = style.textContent || "/* Change a setting above to generate CSS. */";
+};
+// `change` fires when a slider is released, so the page doesn't shift while dragging
+ui.onchange = update;
+ui.onreset = () => setTimeout(update);
+d.getElementById("copy").onclick = () => navigator.clipboard.writeText(style.textContent);
 update();
 ```

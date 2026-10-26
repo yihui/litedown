@@ -51,13 +51,16 @@ summary(cars)
 
 ``` pele
 flowchart LR
-  A["*.Rmd"] --> B["*.md"] --> C["*.html"]
+  A@{ shape: doc, label: "*.Rmd" }-. <code>fuse()</code> .-> B@{ shape: doc, label: "*.md" }
+  B-- <code>mark()</code> -->C@{ shape: doc, label: "*.html" }
+  D@{ shape: cyl, label: "CSS (CDN)" }-. <code>css</code> .->C
+  C==>E@{ shape: stadium, label: "Styled page" }
 ```
 
 
 ::: {.caption}
 [](#@fig:chunk-2)
-From an R Markdown document to HTML.
+How an R Markdown document becomes a styled HTML page.
 :::
 ::::
 
