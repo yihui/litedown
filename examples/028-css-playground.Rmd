@@ -102,9 +102,13 @@ const update = () => {
   style.textContent = Object.entries(rules).map(([s, v]) => `${s} {\n${v.join("\n")}\n}`).join("\n");
   out.textContent = style.textContent || "/* Change a setting above to generate CSS. */";
 };
-// `change` fires when a slider is released, so the page doesn't shift while dragging
-ui.onchange = update;
-ui.onreset = () => setTimeout(update);
+// sliders update on release (`change`) so the page doesn't shift while dragging
+ui.oninput = e => e.target.type !== "range" && update();
+ui.onchange = e => e.target.type === "range" && update();
+ui.onreset = () => setTimeout(() => {
+  inputs.forEach(el => el.value = el.dataset.init);  // not the HTML defaults
+  update();
+});
 d.getElementById("copy").onclick = () => navigator.clipboard.writeText(style.textContent);
 update();
 ```
