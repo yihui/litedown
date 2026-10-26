@@ -10,6 +10,16 @@ site:
     Websites and books:
       desc: Build multi-page output and package sites.
       contents: [fuse_site, fuse_book, roam, pkg_site, pkg_desc]
+  examples:
+    Examples 001-009:
+      desc: A minimal example, and chunk options for attributes, captions, collapsing, comments, and graphics.
+      contents: ["00*"]
+    Examples 010-019:
+      desc: Chunk options for plot files, labels, execution order, printing, tangling, results, whitespace, and tables.
+      contents: ["01*"]
+    Examples 020-029:
+      desc: Inline output, JavaScript widgets, slides, raw output, and multibyte characters.
+      contents: ["02*"]
 
 output:
   html:

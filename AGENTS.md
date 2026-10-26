@@ -56,3 +56,12 @@ assert('message', {
 3. **Update NEWS.md**: first heading is always `# litedown x.y` (dev version).
 4. **Run tests**: `Rscript tests/test-all.R`
 5. **Clean up artifacts**: `rm -rf *.tar.gz *.Rcheck/`
+6. **Site groups**: the manual and examples pages of the site are grouped in
+   `site/_litedown.yml` (fields `manual` and `examples` under `site`). When you
+   add a new exported function (help page), add its topic to a group under
+   `manual`; when you add a new file under `examples/`, make sure its name
+   matches a group under `examples` (the groups use number prefixes with
+   wildcards, e.g., `"02*"`; add a new group for a new range, e.g., `"03*"`).
+   Items that do not belong to any group are put in an `Other` group, and a
+   name in the config that matches nothing is an error, so also update the
+   config when you rename or delete a function or an example.
