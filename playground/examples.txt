@@ -40,6 +40,7 @@
 039-css-marx.Rmd
 040-css-holiday.Rmd
 041-css-concrete.Rmd
+045-snap-slides.Rmd
 test-collapse.Rmd
 test-inline.Rmd
 test-multibyte.Rmd

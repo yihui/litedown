@@ -1,7 +1,6 @@
 ---
 title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
-date: "`{r} Sys.Date()`"
 output:
   html:
     meta:
@@ -10,9 +9,6 @@ output:
     options:
       toc: true
       number_sections: true
-vignette: >
-  %\VignetteEngine{litedown::vignette}
-  %\VignetteIndexEntry{Making HTML Slides with the litedown Package}
 ---
 
 ## Get started
@@ -617,5 +613,5 @@ when uncompressed) and have no dependencies. They were written from scratch.
 -   Learn more about the Markdown syntax at <https://pkg.yihui.org/litedown/book/>.
 
 -   Github repo: <https://github.com/yihui/litedown> (you can find the [Rmd
-    source](https://github.com/yihui/litedown/blob/main/vignettes/slides.Rmd) of
+    source](https://github.com/yihui/litedown/blob/main/examples/045-snap-slides.Rmd) of
     this presentation in the repo)

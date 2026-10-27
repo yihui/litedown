@@ -16,7 +16,6 @@
 </head>
 <body>
 <nav class="site-nav"><p><a href="index.html">Home</a>
-<a href="articles.html">Articles</a>
 <a href="examples.html">Examples</a>
 <a href="manual.html">Manual</a>
 <a href="news.html">News</a>
@@ -35,7 +34,8 @@
 <li><a href="#sec:main-functions"><span class="section-number main-number">3</span> Main functions</a></li>
 <li><a href="#sec:learn-more"><span class="section-number main-number">4</span> Learn more</a></li>
 <li><a href="#sec:scope"><span class="section-number main-number">5</span> Scope</a></li>
-<li><a href="#sec:license"><span class="section-number main-number">6</span> License</a></li>
+<li><a href="#sec:acknowledgments"><span class="section-number main-number">6</span> Acknowledgments</a></li>
+<li><a href="#sec:license"><span class="section-number main-number">7</span> License</a></li>
 <li><a href="#sec:appendix">Appendix</a></li>
 </ul>
 </nav>
@@ -53,8 +53,6 @@ xfun (&gt;= 0.55)</dd>
 <dt>Links</dt>
 <dd><a href="https://github.com/yihui/litedown">Browse source code</a><br />
 <a href="https://github.com/yihui/litedown/issues">Report a bug</a></dd>
-<dt>VignetteBuilder</dt>
-<dd>litedown</dd>
 <dt>Author</dt>
 <dd><a href="https://yihui.org">Yihui Xie</a> <a href="https://orcid.org/0000-0003-0645-5666"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [aut, cre], Tim Taylor <a href="https://orcid.org/0000-0002-8587-7113"><img src="https://cloud.r-project.org/web/orcid.svg" alt="ORCID iD" class="orcid" /></a> [ctb], John MacFarlane [cph], Jeroen Ooms [ctb, cph], GitHub, Inc.  [cph]</dd>
 </dl>
@@ -161,7 +159,7 @@ which also covers <a href="https://pkg.yihui.org/litedown/book/#sec:comparison-t
 Browse <a href="https://pkg.yihui.org/litedown/examples/">examples</a> of
 chunk options and engines.</p>
 <h2 id="sec:scope"><span class="section-number main-number">5</span> Scope</h2>
-<p>We want to limit the scope of this package. Most planned features have been
+<p>I try to keep the R package small, and most planned features have been
 (re-)implemented so far, such as reports, slides, books, websites (including
 package sites), and paged HTML documents, etc. See the set \(R\) below:</p>
 <p>$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$</p>
@@ -182,10 +180,31 @@ Hugo + paged.js + remark.js + tufte.css + distill.js/.css + …</p>
 <p>\(J\) = Lightweight <a href="https://github.com/yihui/lite.js">vanilla JavaScript/CSS</a></p>
 </li>
 </ul>
-<p>Please feel free to file feature requests anyway, but we may be a little
-conservative when considering them (we will take votes into consideration, so
-please upvote features you like).</p>
-<h2 id="sec:license"><span class="section-number main-number">6</span> License</h2>
+<p>Much of the functionality lives in CSS/JS, which makes <strong>litedown</strong> highly
+extensible and customizable: see <a href="https://pkg.yihui.org/litedown/book/#chp:assets">Chapter 5 of the
+book</a> for how to use the
+default assets and write your own. You are welcome to write your own CSS/JS, or
+contribute yours to <a href="https://github.com/yihui/lite.js"><strong>lite.js</strong></a> so that
+everyone can use it.</p>
+<p>Feature requests are welcome, too. I will take votes into consideration, so
+please upvote the features you like.</p>
+<h2 id="sec:acknowledgments"><span class="section-number main-number">6</span> Acknowledgments</h2>
+<p><strong>litedown</strong> would not exist without the packages in the set \(R\) above:
+<a href="https://github.com/yihui/knitr"><strong>knitr</strong></a>,
+<a href="https://github.com/r-lib/evaluate"><strong>evaluate</strong></a>,
+<a href="https://github.com/rstudio/rmarkdown"><strong>rmarkdown</strong></a>,
+<a href="https://github.com/rstudio/bookdown"><strong>bookdown</strong></a>,
+<a href="https://github.com/rstudio/blogdown"><strong>blogdown</strong></a>,
+<a href="https://github.com/rstudio/pagedown"><strong>pagedown</strong></a>,
+<a href="https://github.com/r-lib/pkgdown"><strong>pkgdown</strong></a>,
+<a href="https://github.com/yihui/xaringan"><strong>xaringan</strong></a>,
+<a href="https://github.com/rstudio/tufte"><strong>tufte</strong></a>,
+<a href="https://github.com/rstudio/distill"><strong>distill</strong></a>, and
+<a href="https://github.com/ramnathv/htmlwidgets"><strong>htmlwidgets</strong></a>. Their ideas,
+designs, and years of hard work by their authors and contributors shaped nearly
+every feature here. I am deeply grateful to them, and proud to build on their
+work.</p>
+<h2 id="sec:license"><span class="section-number main-number">7</span> License</h2>
 <p>The <strong>litedown</strong> package is licensed under MIT.</p>
 <h2 id="sec:appendix" class="appendix">Appendix</h2>
 <p>To cite the package <strong>litedown</strong> in publications, please use:</p>
