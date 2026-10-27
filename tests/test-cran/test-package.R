@@ -142,6 +142,20 @@ assert('pkg_desc() renders package metadata as an HTML table or definition list'
   (any(grepl('<dt>Version</dt>', dl, fixed = TRUE)))
 })
 
+assert('pkg_desc(type = "dl") hides non-author contributors in <details>', {
+  d = tempfile(); dir_create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  ctb = sprintf('person("C%d", "X", role = "ctb")', 1:6)
+  writeLines(c('Package: foo', 'Version: 1.0', 'Title: T', 'Description: D.',
+    sprintf('Authors@R: c(person("A", "B", role = "aut"), %s)', paste(ctb, collapse = ', '))
+  ), file.path(d, 'DESCRIPTION'))
+  res = pkg_desc(structure('foo', path = d), 'dl')
+  (has_match(res, '<details><summary>Other contributors</summary>C1 X'))
+  (has_match(res, 'C6 X'))
+  # authors are not repeated in the details
+  (length(gregexpr('A B', paste(res, collapse = ''))[[1]]) %==% 1L)
+})
+
 assert('pkg_desc(type = "dl") generates a compact sidebar', {
   dl = pkg_desc(pkg, 'dl')
   (!any(grepl('<dt>Description</dt>', dl, fixed = TRUE)))
@@ -303,7 +317,7 @@ assert('site_cleanup() removes the template sources but not assets or your files
   (all(c('manual.Rmd', '_litedown.yml', 'playground/index.html') %in% copied))
   site_cleanup(d, copied)
   fs = list.files(d, recursive = TRUE)
-  (!any(c('manual.Rmd', '_litedown.yml', '_footer.Rmd') %in% fs))
+  (!any(c('manual.Rmd', '_litedown.yml', '_footer.md') %in% fs))
   ('index.Rmd' %in% fs)  # your own file stays
   ('playground/index.html' %in% fs)  # assets stay
 })
@@ -393,3 +407,21 @@ if (system.file('site', package = pkg) != '')
     (!file_exists(file.path(d, 'code.Rmd')))
     unlink(c(d, p), recursive = TRUE)
   })
+
+assert('site_footer() substitutes authors and version', {
+  d = tempfile(); dir_create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('Package: foo', 'Authors@R: person("A", "B", role = "aut")'), file.path(d, 'DESCRIPTION'))
+  write_utf8('$authors$ v$version$ $edit$', file.path(d, '_footer.md'))
+  f = file.path(d, '_footer.md')
+  site_footer(f, d)
+  (has_match(read_utf8(f), '^A B v[0-9.]+ [$]edit[$]$'))
+})
+
+assert('github_link() uses the env var set by pkg_site() for the site package', {
+  d = tempfile(); dir_create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  vars = xfun::set_envvar(c(R_LITEDOWN_PKG = d, R_LITEDOWN_GITHUB = 'https://github.com/a/b/'))
+  on.exit(xfun::set_envvar(vars), add = TRUE)
+  (github_link(d) %==% 'https://github.com/a/b/')  # no DESCRIPTION needed
+})

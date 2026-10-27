@@ -9,8 +9,6 @@ Makefile
 ^examples$
 ^src/patches$
 ^site$
-^inst/site/_.*\.md$
-^inst/site/doc$
 .*\.tar\.gz$
 .*\.Rcheck$
 ^\.githooks$

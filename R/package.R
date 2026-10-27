@@ -140,7 +140,12 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   names(d) = fields
   # remove single quotes on words (which are unnecessary IMO)
   for (i in c('Title', 'Description')) d[[i]] = sans_sq(d[[i]])
-  d[['Author']] = one_string(pkg_authors(d), ', ')
+  a_all = pkg_authors(d)
+  # in the sidebar, show only authors by default when the list is long, and
+  # fold the others
+  a_aut = if (type == 'dl' && length(a_all) > 5) pkg_authors(d, 'aut')
+  a_rest = if (length(a_aut)) pkg_authors(d, 'aut', negate = TRUE)
+  d[['Author']] = one_string(a_all, ', ')
   d[['Authors@R']] = NULL
   if (type == 'dl') {
     # reuse the URL slot (to keep the field order) for all links
@@ -151,9 +156,13 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   # convert URLs to <a>, and escape HTML in other fields
   for (i in names(d)) d[[i]] = if (!is.na(d[[i]])) {
     if (i %in% c('Description', 'URL', 'BugReports', 'Links', 'Author')) {
-      sans_p(markdown_html(d[[i]], extensions = 'autolink'))
+      md_inline(d[[i]])
     } else html_escape(d[[i]])
   }
+  if (length(a_aut) && length(a_rest)) d[['Author']] = sprintf(
+    '%s\n<details><summary>Other contributors</summary>%s</details>',
+    md_inline(one_string(a_aut, ', ')), md_inline(one_string(a_rest, ', '))
+  )
   d = unlist(d)
   res = one_string(switch(
     type,
@@ -168,6 +177,9 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   if (type == 'dl') res = c('::: {.side .side-right}', '', res, '', ':::')
   new_asis(c(res, vest(css = '@manual')))
 }
+
+# Markdown to inline HTML, with URLs converted to links
+md_inline = function(x) sans_p(markdown_html(x, extensions = 'autolink'))
 
 # is a URL the site of the package itself (the site config `url`, or the
 # conventional https://USER.github.io/PKG/)? Such links are pointless on the site.
@@ -196,11 +208,12 @@ side_links = function(url, bug, pkg = NULL) {
 }
 
 # format authors, adding URL and ORCID links as appropriate
-pkg_authors = function(desc, role = NULL, extra = TRUE) {
+# (`role`: keep only people with any of the roles, or the others if `negate`)
+pkg_authors = function(desc, role = NULL, extra = TRUE, negate = FALSE) {
   if (is.null(a <- desc[['Authors@R']])) return(desc[['Author']])
   a = eval(parse_only(a))
   a = uapply(a, function(x) {
-    if (length(role) && !any(role %in% x$role)) return()
+    if (length(role) && any(role %in% x$role) == negate) return()
     role = if (extra && length(x$role)) paste0('[', one_string(x$role, ', '), ']')
     name = paste(x$given, x$family)
     comment = as.list(x$comment)
@@ -364,23 +377,15 @@ pkg_examples = function(
   } else fenced_div(unlist(res), '.boxes'))
 }
 
-# retrieve Github repo link from DESCRIPTION; cache it until DESCRIPTION is
-# modified (mtime can be too coarse to notice quick edits, so also compare the
-# file size), since this may be called many times (e.g., once per page of a site)
-github_link = local({
-  cache = list()
-  function(path) {
-    f = file.path(path, 'DESCRIPTION'); m = list(file.mtime(f), file.size(f))
-    k = normalize_path(f)
-    if (is.null(x <- cache[[k]]) || !identical(x$stamp, m)) {
-      u = read.dcf(f, 'BugReports')[1, 1]
-      cache[[k]] <<- x <- list(
-        stamp = m, url = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
-      )
-    }
-    x$url
-  }
-})
+# retrieve Github repo link from DESCRIPTION; pkg_site() stores it in an env var
+# for the package it builds, because each page of the site may be rendered in a
+# new R session, where an in-memory cache would be lost
+github_link = function(path) {
+  if (nzchar(p <- Sys.getenv('R_LITEDOWN_PKG')) && same_path(path, p) &&
+    !is.na(u <- Sys.getenv('R_LITEDOWN_GITHUB', NA))) return(u[nzchar(u)])
+  u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
+  grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
+}
 
 # the branch of the GitHub Actions run (the source branch for a pull request),
 # falling back to main
@@ -758,13 +763,21 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   )
   path = normalize_path(attr(name, 'path') %||% system.file(package = name))
   # tell detect_pkg() where the package is (the site dir may live anywhere)
-  vars = set_envvar(c(R_LITEDOWN_PKG = path))
+  vars = set_envvar(c(
+    R_LITEDOWN_PKG = path, R_LITEDOWN_GITHUB = github_link(path) %||% ''
+  ))
   on.exit(set_envvar(vars), add = TRUE)
+  # the footer is filled in below; restore it if it is the user's own (a copy
+  # from the template is removed by site_cleanup())
+  footer = file.path(output, '_footer.md')
+  if (file_exists(footer)) {
+    old = read_utf8(footer)
+    on.exit(write_utf8(old, footer), add = TRUE)
+  }
   copied = site_skeleton(output, path)
   on.exit(site_cleanup(output, copied), add = TRUE)
+  site_footer(footer, path)
   res = in_dir(output, {
-    # the footer is included by _litedown.yml as a .md file
-    if (file_exists('_footer.Rmd')) fuse('_footer.Rmd', '.md')
     # create a placeholder so that the book is included in the nav menu
     cfg = file.path(path, 'book/_litedown.yml')
     if (book <- file_exists(cfg)) {
@@ -787,6 +800,22 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     out
   })
   invisible(res)
+}
+
+# fill in the pre-computed variables in the footer file (included by
+# _litedown.yml); $edit$ is left for set_site_options() since it differs from
+# page to page.
+site_footer = function(f, path) {
+  if (!file_exists(f)) return()
+  d = read_desc(structure('', path = path), c('Authors@R', 'Author'))
+  names(d) = c('Authors@R', 'Author')
+  vars = list(
+    authors = xfun::join_words(pkg_authors(d, 'aut', FALSE)),
+    version = as.character(packageVersion('litedown'))
+  )
+  x = read_utf8(f)
+  for (i in names(vars)) x = gsub(sprintf('$%s$', i), vars[[i]], x, fixed = TRUE)
+  write_utf8(x, f)
 }
 
 # pages of the template that should not be copied: `site: exclude` in the

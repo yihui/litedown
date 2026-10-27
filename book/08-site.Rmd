@@ -278,10 +278,10 @@ first, because rendering the site requires the installed version of it, e.g.,
 vignettes.
 
 The template lives under `system.file('site', package = 'litedown')` and contains
-the following `.Rmd` files (explained in @tab:pkg-site):
+the following files (explained in @tab:pkg-site):
 
 ```{r}
-list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
+list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 ```
 
 :::: table
@@ -297,8 +297,12 @@ list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
 | `news` | news | `pkg_news()` |
-| `_footer` | page footer | package authors |
+| `_footer` | page footer | the package authors, a link to edit the page on GitHub, and the **litedown** version |
 ::::
+
+In `_footer.md`, `$authors$` (authors with the role `aut`), `$version$` (the
+**litedown** version), and `$edit$` (the GitHub URL for editing the current
+page) are replaced by their values when the site is built.
 
 Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the

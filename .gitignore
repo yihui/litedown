@@ -4,8 +4,8 @@
 .Ruserdata
 /examples/*__files/
 /examples/figures/
+/examples/*.html
 /inst/site/doc/
-/inst/site/_footer.md
 /book/packages.bib
 *.Rcheck/
 *.tar.gz
