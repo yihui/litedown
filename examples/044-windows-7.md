@@ -9,8 +9,7 @@ output:
 ---
 
 This page is styled by [7.css](https://github.com/khang-nd/7.css), which is loaded from a CDN via the `css` field
-above. Nothing else is applied to the page: litedown's default stylesheet is not
-used. The page is plain Markdown: the window below is a
+above. The page is plain Markdown: the window below is a
 [fenced div](https://pkg.yihui.org/litedown/book/#sec:fenced-divs) (`:::`) whose classes
 are the ones documented by 7.css.
 
