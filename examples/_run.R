@@ -9,8 +9,6 @@ for (f in litedown:::find_input('.')) {
   }
   # example 005 uses |>, which is available only in R >= 4.1.0
   if (grepl('^005-', f) && getRversion() < '4.1.0') next
-  # example 045 shows the current date, so its output changes every day
-  if (ci && grepl('^045-', f)) next
   xfun::Rscript_call(function(.) {
     options(width = 80, litedown.jsd_resolve = FALSE)
     if (xfun::file_ext(.) == 'md') litedown::mark(.) else litedown::fuse(., '.md')
