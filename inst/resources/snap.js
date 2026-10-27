@@ -73,7 +73,7 @@
     setTimeout(() => el?.scrollIntoView(), 100);
   }
   const dE = d.documentElement, dC = d.body.classList;
-  const slides = d.querySelectorAll('div.slide'), N = slides.length,
+  const slides = d.querySelectorAll('.slide'), N = slides.length,
         tm = d.querySelector('span.timer'), fn = d.querySelector('.footnotes');
   slides.forEach((s, i) => {
     // slide header, main body, and footer
