@@ -238,10 +238,9 @@ sub_var = function(x, name, value, ...) {
 
 # unescape HTML code
 restore_html = function(x) {
-  x = gsub('&quot;', '"', x, fixed = TRUE)
-  x = gsub('&amp;', '&', x, fixed = TRUE)
-  x = gsub('&lt;', '<', x, fixed = TRUE)
-  x = gsub('&gt;', '>', x, fixed = TRUE)
+  # the order matters (&amp; is unescaped before &lt; and &gt;)
+  e = c(quot = '"', amp = '&', lt = '<', gt = '>')
+  for (i in names(e)) x = gsub(sprintf('&%s;', i), e[[i]], x, fixed = TRUE)
   x
 }
 

@@ -721,9 +721,9 @@ fuse_code = function(x, blocks) {
   opts = reactor()
 
   # delayed assignment to evaluate a chunk option only when it is actually used
+  # skip the `order` option since it needs to be eval()ed in block_order()
   lapply(setdiff(names(opts), 'order'), function(i) {
-    # skip the `order` option since it needs to be eval()ed in block_order()
-    if (i != 'order' && is_lang(o <- opts[[i]]))
+    if (is_lang(o <- opts[[i]]))
       delayedAssign(i, eval(o, fuse_env()), environment(), opts)
   })
   # set the working directory before evaluating anything else
