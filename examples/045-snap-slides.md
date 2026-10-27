@@ -651,9 +651,8 @@ version](https://github.com/yihui/lite.js/tags) (e.g., `1.11.0`). You can omit
 `@VERSION` to use the latest version but it is not recommended because future
 updates might break your old slides.
 
-Both the JS and CSS are quite lightweight (total size is
-12.9 Kb
-when uncompressed) and have no dependencies. They were written from scratch.
+Both the JS and CSS are quite lightweight (total size is about 14 Kb when
+uncompressed) and have no dependencies. They were written from scratch.
 
 --------------------------------------------------------------------------------
 
@@ -666,8 +665,7 @@ when uncompressed) and have no dependencies. They were written from scratch.
     more lightweight frameworks.
 
 -   Most of presentation features that I need are included in
-    397 lines of JS/CSS code (`default.css`
-    / `snap.js` / `snap.css`).
+    about 400 lines of JS/CSS code (`default.css` / `snap.js` / `snap.css`).
 
 -   This simple presentation framework is highly customizable. Customizing
     slides can be addictive if you know HTML/CSS/JS.
