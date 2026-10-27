@@ -134,7 +134,9 @@ set_site_options = function(opts, input, root, extra = NULL) {
 edit_page_url = function(input, root) {
   if (is.na(root) || is.null(pkg <- in_dir(root, detect_pkg(error = FALSE))))
     return()
-  github_file_url(attr(pkg, 'path'), relative_path(input, root), TRUE)
+  # normalize both paths so that symlinked/short temp dirs compare equal
+  f = relative_path(normalize_path(input), normalize_path(root))
+  github_file_url(attr(pkg, 'path'), f, TRUE)
 }
 
 # `deps` are extra files that make all outputs outdated when they are modified

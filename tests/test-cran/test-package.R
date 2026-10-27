@@ -38,7 +38,7 @@ assert('github_file_url() links existing files to GitHub', {
   (is.null(github_file_url(p, 'a.Rmd')))  # no DESCRIPTION
   writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
     file.path(p, 'DESCRIPTION'))
-  (github_file_url(p, 'a.Rmd', TRUE) %==% 'https://github.com/u/foo/edit/HEAD/a.Rmd')
+  (github_file_url(p, 'a.Rmd', TRUE) %==% 'https://github.com/u/foo/edit/main/a.Rmd')
   (github_file_url(p, 'a.Rmd') %==% 'https://github.com/u/foo/blob/HEAD/a.Rmd')
   (github_file_url(p, 'a.md') %==% 'https://github.com/u/foo/blob/HEAD/a.md?plain=1')
   # the cache is invalidated when DESCRIPTION is modified
@@ -69,7 +69,7 @@ assert('edit_page_url() finds the source of a site page in the package', {
   write_utf8('x', file.path(p, 'examples', 'a.Rmd'))
   vars = set_envvar(c(R_LITEDOWN_PKG = p)); on.exit(set_envvar(vars), add = TRUE)
   (edit_page_url(file.path(d, 'examples/a.Rmd'), d) %==%
-    'https://github.com/u/foo/edit/HEAD/examples/a.Rmd')
+    'https://github.com/u/foo/edit/main/examples/a.Rmd')
   (is.null(edit_page_url(file.path(d, 'index.Rmd'), d)))
 })
 

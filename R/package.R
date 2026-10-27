@@ -383,11 +383,12 @@ github_link = local({
 
 # the GitHub URL of `file` (relative to the package root `path`), if the package
 # has a GitHub repo and the file exists in the package: the edit page if `edit =
-# TRUE`, otherwise the file view (.md files need ?plain=1 to show the source)
+# TRUE, which needs a real branch name since HEAD doesn't work there),
+# otherwise the file view (.md files need ?plain=1 to show the source)
 github_file_url = function(path, file, edit = FALSE) {
   if (all(file_exists(file.path(path, c(file, 'DESCRIPTION')))) &&
     length(u <- github_link(path))) paste0(
-    u, if (edit) 'edit' else 'blob', '/HEAD/', file,
+    u, if (edit) 'edit/main' else 'blob/HEAD', '/', file,
     if (!edit && grepl('[.]md$', file)) '?plain=1'
   )
 }
