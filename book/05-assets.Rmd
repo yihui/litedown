@@ -63,6 +63,7 @@ a = litedown:::assets
 for (i in c('css', 'js')) a[, i] = ifelse(is.na(a[, i]), NA, paste0('`', a[, i], '`'))
 sec = rownames(a)
 sec[sec == 'snap-clean'] = 'snap'  # snap-clean is documented in the slides section
+sec[sec == 'default'] = 'default-css'
 a = cbind(feature = rownames(a), a, section = paste0(' @sec:', sec))
 rownames(a) = NULL
 a

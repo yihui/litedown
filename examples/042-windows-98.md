@@ -13,7 +13,7 @@ above. The page is plain Markdown: the window below is a
 [fenced div](https://pkg.yihui.org/litedown/book/#sec:fenced-divs) (`:::`) whose classes
 are the ones documented by 98.css.
 
-::::: {.window  style="margin: 2em auto; max-width: 40em;"}
+::::: {.window .no-invert  style="margin: 2em auto; max-width: 40em;"}
 ::: title-bar
 <div class="title-bar-text">litedown.md</div>
 <div class="title-bar-controls">

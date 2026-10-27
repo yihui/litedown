@@ -93,8 +93,9 @@ section.footnotes {
   opacity: 0.6;
 }
 @media (prefers-color-scheme: dark) {
-  html, img, video, iframe { filter: invert(1); }
-  .no-invert { filter: none; }
+  :is(html, img, video, iframe) {
+    &:not(.no-invert, .no-invert *), .no-invert:not(&) { filter: invert(1); }
+  }
   body { background: #ededed; }
 }
 @media print {
