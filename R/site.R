@@ -111,6 +111,7 @@ site_js = c('@sidenotes', '@appendix', '@toc-highlight', '@copy-button', '@headi
 # set global options litedown.html.[meta|options] read from _litedown.yml
 set_site_options = function(opts, input, root, extra = NULL) {
   m = opts[['meta']]
+  edit = edit_page_url(input, root) %||% ''
   for (i in c('include_before', 'include_after')) {
     if (!is.character(m[[i]])) next
     nav = i == 'include_before'
@@ -118,10 +119,22 @@ set_site_options = function(opts, input, root, extra = NULL) {
     x = mark(I(one_string(m[[i]], test = c(dirname(input), root))))
     # the class lets CSS tell the site menu from other <nav>s such as the TOC
     x = sprintf('<%s%s>%s</%s>', tag, if (nav) ' class="site-nav"' else '', x, tag)
-    m[[i]] = sub_vars(x, list(input = I(input)))
+    m[[i]] = sub_vars(x, list(input = I(input), edit = I(edit)))
+    # drop the link if the page has no source file on GitHub
+    if (!nav && edit == '') m[[i]] = gsub(
+      '<p><a [^>]*class="edit-page"[^>]*>.*?</a></p>\n?', '', m[[i]]
+    )
   }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
+}
+
+# GitHub URL for editing a page, if the page source also exists (at the same
+# relative path) in the package of the site, e.g., an example under `examples/`
+edit_page_url = function(input, root) {
+  if (is.na(root) || is.null(pkg <- in_dir(root, detect_pkg(error = FALSE))))
+    return()
+  github_file_url(attr(pkg, 'path'), relative_path(input, root), TRUE)
 }
 
 # `deps` are extra files that make all outputs outdated when they are modified
