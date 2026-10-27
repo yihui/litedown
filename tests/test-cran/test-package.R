@@ -51,13 +51,13 @@ assert('github_file_url() links existing files to GitHub', {
 })
 
 assert('gha_branch() reads the branch from GitHub Actions variables', {
-  v = c('GITHUB_BASE_REF', 'GITHUB_REF_TYPE', 'GITHUB_REF_NAME')
+  v = c('GITHUB_HEAD_REF', 'GITHUB_REF_TYPE', 'GITHUB_REF_NAME')
   old = set_envvar(set_names(rep('', 3), v)); on.exit(set_envvar(old), add = TRUE)
   (gha_branch() %==% 'main')
   set_envvar(c(GITHUB_REF_TYPE = 'branch', GITHUB_REF_NAME = 'dev'))
   (gha_branch() %==% 'dev')
-  set_envvar(c(GITHUB_BASE_REF = 'release'))
-  (gha_branch() %==% 'release')
+  set_envvar(c(GITHUB_HEAD_REF = 'feature'))
+  (gha_branch() %==% 'feature')
 })
 
 assert('pkg_examples() links sources to GitHub when possible', {
