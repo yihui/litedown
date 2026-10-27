@@ -26,7 +26,7 @@ coverage](https://codecov.io/gh/yihui/litedown/branch/main/graph/badge.svg)](htt
 renders Markdown with a bundled and patched copy of the
 [cmark-gfm](https://github.com/github/cmark-gfm) C library.
 
--   **Computing**: run code chunks and inline code (`` `{r} x` ``) in R, or in
+-   **Computing**: run code chunks and inline code in R, or in
     other languages via engines such as JavaScript, CSS, Mermaid, and shell
     commands. Chunk options control code, text output, figures, tables,
     caching, and even the order of execution.
@@ -86,8 +86,8 @@ litedown::roam()             # or preview and render in a browser
 
 | Function                                  | What it does                                  |
 |:------------------------------------------|:----------------------------------------------|
-| `fuse()`                                  | executes code in an R Markdown document, then renders it via `mark()` |
-| `mark()`                                  | renders Markdown to HTML, LaTeX, etc.         |
+| `fuse()`                                  | executes code in an R Markdown document, then renders it via `mark()` (like `rmarkdown::render()`) |
+| `mark()`                                  | renders Markdown to HTML, LaTeX, etc. (like Pandoc) |
 | `fiss()`                                  | extracts code from a document (like `knitr::purl()`) |
 | `roam()`                                  | previews and renders documents in a browser   |
 | `fuse_book()`, `fuse_site()`, `pkg_site()` | build books, websites, and package sites     |
@@ -96,10 +96,8 @@ If you do not compute in your documents, `mark()` alone is enough.
 
 ## Learn more
 
-Read the book, [*litedown: R Markdown Reimagined*](https://pkg.yihui.org/litedown/book/),
-which also covers [differences from **knitr**](https://pkg.yihui.org/litedown/book/#sec:comparison-to-knitr).
-Browse [examples](https://pkg.yihui.org/litedown/examples/) of
-chunk options and engines.
+Visit the package site, <https://pkg.yihui.org/litedown/>, which has the
+manual, the book *litedown: R Markdown Reimagined*, and examples.
 
 ## Scope
 
@@ -109,9 +107,17 @@ package sites), and paged HTML documents, etc. See the set $R$ below:
 
 $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
--   $R$ = **knitr** + **evaluate** + **rmarkdown** + **bookdown** +
-    **blogdown** + **pagedown** + **pkgdown** + **xaringan** + **tufte** +
-    **distill** + **htmlwidgets**
+-   $R$ = [**knitr**](https://github.com/yihui/knitr) +
+    [**evaluate**](https://github.com/r-lib/evaluate) +
+    [**rmarkdown**](https://github.com/rstudio/rmarkdown) +
+    [**bookdown**](https://github.com/rstudio/bookdown) +
+    [**blogdown**](https://github.com/rstudio/blogdown) +
+    [**pagedown**](https://github.com/rstudio/pagedown) +
+    [**pkgdown**](https://github.com/r-lib/pkgdown) +
+    [**xaringan**](https://github.com/yihui/xaringan) +
+    [**tufte**](https://github.com/rstudio/tufte) +
+    [**distill**](https://github.com/rstudio/distill) +
+    [**htmlwidgets**](https://github.com/ramnathv/htmlwidgets)
 
 -   $D_i$ = (internal dependencies) **xfun**
 
@@ -132,21 +138,10 @@ please upvote the features you like.
 
 ## Acknowledgments
 
-**litedown** would not exist without the packages in the set $R$ above:
-[**knitr**](https://github.com/yihui/knitr),
-[**evaluate**](https://github.com/r-lib/evaluate),
-[**rmarkdown**](https://github.com/rstudio/rmarkdown),
-[**bookdown**](https://github.com/rstudio/bookdown),
-[**blogdown**](https://github.com/rstudio/blogdown),
-[**pagedown**](https://github.com/rstudio/pagedown),
-[**pkgdown**](https://github.com/r-lib/pkgdown),
-[**xaringan**](https://github.com/yihui/xaringan),
-[**tufte**](https://github.com/rstudio/tufte),
-[**distill**](https://github.com/rstudio/distill), and
-[**htmlwidgets**](https://github.com/ramnathv/htmlwidgets). Their ideas,
-designs, and years of hard work by their authors and contributors shaped nearly
-every feature here. I am deeply grateful to them, and proud to build on their
-work.
+**litedown** was directly inspired by the packages in the set $R$ above. I wrote
+or co-wrote most of them, and learned a lot from the rest. Thanks to all their
+authors and contributors, and to the users whose questions, bug reports, and
+feedback over the years shaped the design of this package.
 
 ## License
 
