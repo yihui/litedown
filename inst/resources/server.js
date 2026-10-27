@@ -79,24 +79,21 @@
   const nav = d.querySelector('.nav-path, .title h1');
   const btn = nav.querySelector('.buttons') || d.createElement('span');
   btn.className = 'buttons';
-  ['back', 'forward', 'new', 'refresh', 'print'].forEach((action, i) => {
+  [
+    ['back', '←', 'Alt + LeftArrow'], ['forward', '→', 'Alt + RightArrow'],
+    ['new', '+'], ['refresh', '⟳', 'Ctrl + R / Command + R'], ['print', '⎙']
+  ].forEach(([action, icon, key]) => {
     if (btn.querySelector(`.${action}`)) return;
     const a = d.createElement('a');
     a.href = '#'; a.title = action[0].toUpperCase() + action.slice(1);
-    const k = ({
-      back: 'Alt + LeftArrow', forward: 'Alt + RightArrow',
-      refresh: 'Ctrl + R / Command + R'
-    })[action];
-    if (k) a.title += ` (${k})`;
+    if (key) a.title += ` (${key})`;
     a.className = action + ' btn-lite';
-    a.innerText = ['←', '→', '+', '⟳', '⎙'][i];
+    a.innerText = icon;
     a.onclick = e => btnAction(e, action);
     btn.append(a);
   });
-  if (nav) {
-    nav.querySelectorAll('a.btn-lite').forEach(a => btn.append(a));
-    nav.append(btn);
-  }
+  nav.querySelectorAll('a.btn-lite').forEach(a => btn.append(a));
+  nav.append(btn);
   function btnAction(e, action) {
     if (!action) return;
     e.preventDefault();

@@ -130,7 +130,7 @@
     if (!dC.contains('slide-mode')) return;  // set timer only in slide mode
     let t = (new Date() - t0);
     if (t1) t = t1 - t;
-    const t2 = new Date(Math.abs(t)).toISOString().substr(11, 8).replace(/^00:/, '');
+    const t2 = new Date(Math.abs(t)).toISOString().slice(11, 19).replace(/^00:/, '');
     tms.forEach(el => {
       el.innerText = t2;
       if (t < 0) el.style.opacity = Math.ceil(t/1000) % 2;
