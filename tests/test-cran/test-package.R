@@ -78,6 +78,10 @@ assert('edit_page_url() finds the source of a site page in the package', {
   writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
     file.path(p, 'DESCRIPTION'))
   write_utf8('x', file.path(p, 'examples', 'a.Rmd'))
+  # the page copied to the site dir must exist, or normalize_path() can't
+  # resolve its symlinks/short names the same way as for the root
+  dir.create(file.path(d, 'examples'))
+  write_utf8('x', file.path(d, 'examples', 'a.Rmd'))
   vars = set_envvar(c(R_LITEDOWN_PKG = p)); on.exit(set_envvar(vars), add = TRUE)
   (edit_page_url(file.path(d, 'examples/a.Rmd'), d) %==%
     paste0('https://github.com/u/foo/edit/', gha_branch(), '/examples/a.Rmd'))
