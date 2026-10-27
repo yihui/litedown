@@ -1,7 +1,7 @@
 ---
 title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
-date: "`{r} Sys.Date()`"
+date: "2026-10-26"
 output:
   html:
     meta:
@@ -590,9 +590,8 @@ version](https://github.com/yihui/lite.js/tags) (e.g., `1.11.0`). You can omit
 `@VERSION` to use the latest version but it is not recommended because future
 updates might break your old slides.
 
-Both the JS and CSS are quite lightweight (total size is
-`{r} xfun::format_bytes(sum(file.size(pres_files <- litedown:::pkg_file('resources', c('default.css', 'snap.css', 'snap.js')))))`
-when uncompressed) and have no dependencies. They were written from scratch.
+Both the JS and CSS are quite lightweight (total size is about 14 Kb when
+uncompressed) and have no dependencies. They were written from scratch.
 
 --------------------------------------------------------------------------------
 
@@ -605,8 +604,7 @@ when uncompressed) and have no dependencies. They were written from scratch.
     more lightweight frameworks.
 
 -   Most of presentation features that I need are included in
-    `{r} length(xfun::read_all(pres_files))` lines of JS/CSS code (`default.css`
-    / `snap.js` / `snap.css`).
+    about 400 lines of JS/CSS code (`default.css` / `snap.js` / `snap.css`).
 
 -   This simple presentation framework is highly customizable. Customizing
     slides can be addictive if you know HTML/CSS/JS.
