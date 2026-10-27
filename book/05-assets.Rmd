@@ -1037,7 +1037,7 @@ style; load it after `snap.css`, e.g., `css: ["@default", "@snap",
 "@snap-clean"]`.
 
 There are more features and caveats than can be covered here. For the full
-guide, see `vignette('slides', package = 'litedown')`.
+guide, see <https://pkg.yihui.org/litedown/examples/045-snap-slides.html>.
 
 ## Right-align a quote footer {#sec:right-quote}
 

@@ -10,6 +10,8 @@
 
 - Added a function `pkg_articles()` to list package vignettes (it was previously inlined in the `articles.Rmd` template of `pkg_site()`). `pkg_manual()`, `pkg_articles()`, and `pkg_examples()` gain an argument `groups` to group help pages, vignettes, or examples, which defaults to the subfield `manual`, `articles`, or `examples` of `site` in `_litedown.yml` (similar to `_pkgdown.yml`), e.g., `site: {manual: {Sites: [pkg_site, "roam*"]}}` (group titles are the keys). Items not in any group are listed under `Other`, and a name that matches nothing is an error. Help pages with the keyword `internal` (e.g., re-exports) are listed only if a group names them. Without groups, the default listing is unchanged.
 
+- Moved the vignette `slides` to the example `examples/045-snap-slides.Rmd`, which is rendered on the package site: https://pkg.yihui.org/litedown/examples/045-snap-slides.html
+
 - `fuse_site()` with `rebuild: "outdated"` (the default) now also rebuilds pages when `_litedown.yml` is newer than their output files, instead of only comparing each page with its own source file.
 
 - On the home page of `pkg_site()`, the `Links` in the sidebar no longer include the URL of the package site itself (i.e., `https://USER.github.io/PKG/`, or the field `url` under `site` in `_litedown.yml`), and badges in `README.md` (between `<!-- badges: start -->` and `<!-- badges: end -->`) are placed in the right sidebar.
