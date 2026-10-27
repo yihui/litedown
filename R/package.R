@@ -384,7 +384,7 @@ github_link = local({
 # the branch of the GitHub Actions run (the source branch for a pull request),
 # falling back to main
 gha_branch = function() {
-  b = Sys.getenv('GITHUB_HEAD_REF')  # the PR's own branch (only set for pull requests)
+  b = Sys.getenv('GITHUB_HEAD_REF')  # only set for pull requests
   if (b == '' && Sys.getenv('GITHUB_REF_TYPE') == 'branch')
     b = Sys.getenv('GITHUB_REF_NAME')
   if (b == '') 'main' else b
