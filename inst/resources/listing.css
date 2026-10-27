@@ -18,13 +18,12 @@ h1 {
 .box {
   margin: .5em;
   & > .name {
-    font-size: 1em;
     padding: 1px .5em;
     p {
       margin: .5em 0;
     }
   }
-  em, pre code {
+  em {
     font-size: .9em;
   }
   em:not(:hover), pre code:not(:hover) {
