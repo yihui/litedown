@@ -338,6 +338,8 @@ pkg_examples = function(
   base = if (dir.exists(dir)) dir else relative_path(d)
   res = lapply(find_input(d), function(f) {
     b = basename(f); f2 = file.path(base, b)
+    # in roam(), keep the local link so that the file can be opened in an editor
+    src = (if (!is_roaming()) github_file_url(path, file.path(dir, b))) %||% f2
     # in roam(), the output is rendered on the fly from the source
     h = if (is_roaming()) paste0(f2, '?preview=2') else with_ext(f2, 'html')
     x = read_utf8(f)
@@ -350,7 +352,7 @@ pkg_examples = function(
     # put example source in a box (and keep the names to match groups)
     structure(fenced_div(c(
       fenced_div(
-        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, f2, h),
+        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, src, h),
         '.caption .name'
       ),
       fenced_block(x, '.md')
@@ -362,10 +364,42 @@ pkg_examples = function(
   } else fenced_div(unlist(res), '.boxes'))
 }
 
-# retrieve Github repo link from DESCRIPTION
-github_link = function(path) {
-  u = read.dcf(file.path(path, 'DESCRIPTION'), 'BugReports')[1, 1]
-  grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
+# retrieve Github repo link from DESCRIPTION; cache it until DESCRIPTION is
+# modified, since this may be called many times (e.g., once per page of a site)
+github_link = local({
+  cache = list()
+  function(path) {
+    f = file.path(path, 'DESCRIPTION'); m = file.mtime(f)
+    k = normalize_path(f)
+    if (is.null(x <- cache[[k]]) || !identical(x$mtime, m)) {
+      u = read.dcf(f, 'BugReports')[1, 1]
+      cache[[k]] <<- x <- list(
+        mtime = m, url = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
+      )
+    }
+    x$url
+  }
+})
+
+# the branch of the GitHub Actions run (the source branch for a pull request),
+# falling back to main
+gha_branch = function() {
+  b = Sys.getenv('GITHUB_HEAD_REF')  # only set for pull requests
+  if (b == '' && Sys.getenv('GITHUB_REF_TYPE') == 'branch')
+    b = Sys.getenv('GITHUB_REF_NAME')
+  if (b == '') 'main' else b
+}
+
+# the GitHub URL of `file` (relative to the package root `path`), if the package
+# has a GitHub repo and the file exists in the package: the edit page if `edit =
+# TRUE, which needs a branch name since HEAD doesn't work there),
+# otherwise the file view (.md files need ?plain=1 to show the source)
+github_file_url = function(path, file, edit = FALSE) {
+  if (all(file_exists(file.path(path, c(file, 'DESCRIPTION')))) &&
+    length(u <- github_link(path))) paste0(
+    u, if (edit) paste0('edit/', gha_branch()) else 'blob/HEAD', '/', file,
+    if (!edit && grepl('[.]md$', file)) '?plain=1'
+  )
 }
 
 #' @return `pkg_citation()` returns the package citation in both the plain-text
@@ -559,8 +593,14 @@ pkg_articles = function(name = detect_pkg(), groups = site_groups('articles')) {
   # clean up .R files
   file.remove(file.path('doc', setdiff(res[, 'R'], '')))
   src = res[, 'File']
+  # link the sources to GitHub if they are found in the package source directory
+  path = attr(name, 'path') %||% system.file(package = name)
+  links = vapply(src, function(f) {
+    (if (!is_roaming()) github_file_url(path, file.path('vignettes', f))) %||%
+      file.path('doc', f)
+  }, '')
   # TODO: show excerpts of vignettes if possible
-  items = sprintf('- [%s](doc/%s) (source: [%s](doc/%s))\n', res[, 'Title'], vigs, src, src)
+  items = sprintf('- [%s](doc/%s) (source: [%s](%s))\n', res[, 'Title'], vigs, src, links)
   if (!length(groups)) return(new_asis(items))
   keys = .mapply(c, sans_ext(src), src, res[, 'Title'])
   new_asis(group_blocks(items, keys, groups))

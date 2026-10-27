@@ -38,7 +38,7 @@
 
 - HTML output now uses `<embed>` instead of `<img>` for PDF files included via `![](foo.pdf)`, and the PDF is base64 encoded when resources are embedded (a `?query` or `#hash` in the path is ignored when locating the file, and the `#hash`, e.g., `#page=2`, is kept).
 
-- The default HTML template now uses semantic elements: the frontmatter is wrapped in `<header class="frontmatter">`, the body in `<main class="body">` (the classes are unchanged), and the TOC is a `<nav id="TOC">` instead of a `<div>`. This makes the HTML structure semantically correct. The site menu now has the class `site-nav`. Also see the new [examples of custom styles](https://pkg.yihui.org/litedown/examples.html#sec:custom-styles), including an interactive page for tweaking the major CSS settings and pages that use stylesheets from the web, and the new book section [Custom CSS/JS](https://pkg.yihui.org/litedown/book/#sec:custom-assets) (#76).
+- The default HTML template now uses semantic elements: the frontmatter is wrapped in `<header class="frontmatter">`, the body in `<main class="body">` (the classes are unchanged), and the TOC is a `<nav id="TOC">` instead of a `<div>`. This makes the HTML structure semantically correct. The site menu now has the class `site-nav`. Also see the new [examples of custom styles](https://pkg.yihui.org/litedown/examples.html#sec:custom-styles), including an interactive page for tweaking the major CSS settings and pages that use stylesheets from the web, and the new book section [Custom CSS/JS](https://pkg.yihui.org/litedown/book/#sec:custom-assets) (thanks, @eijoac @eddelbuettel, #76).
 
 # CHANGES IN litedown VERSION 0.11
 

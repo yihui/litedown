@@ -9,5 +9,7 @@ get_authors = function() {
 ::: flex-col
 Developed by `{r} get_authors()`
 
+[Edit this page]($edit$){.edit-page}
+
 Site built with [litedown](https://github.com/yihui/litedown) v`{r} packageVersion('litedown')`
 :::

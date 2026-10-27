@@ -30,6 +30,66 @@ assert('github_link() extracts the repo URL from DESCRIPTION BugReports', {
   (has_error(suppressWarnings(github_link(tempdir()))))
 })
 
+assert('github_file_url() links existing files to GitHub', {
+  p = tempfile(); dir.create(p)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  write_utf8('a', file.path(p, 'a.Rmd'))
+  write_utf8('a', file.path(p, 'a.md'))
+  (is.null(github_file_url(p, 'a.Rmd')))  # no DESCRIPTION
+  writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
+    file.path(p, 'DESCRIPTION'))
+  (github_file_url(p, 'a.Rmd', TRUE) %==%
+    paste0('https://github.com/u/foo/edit/', gha_branch(), '/a.Rmd'))
+  (github_file_url(p, 'a.Rmd') %==% 'https://github.com/u/foo/blob/HEAD/a.Rmd')
+  (github_file_url(p, 'a.md') %==% 'https://github.com/u/foo/blob/HEAD/a.md?plain=1')
+  # the cache is invalidated when DESCRIPTION is modified
+  Sys.sleep(1.1)
+  writeLines(c('Package: foo', 'BugReports: https://github.com/v/foo/issues'),
+    file.path(p, 'DESCRIPTION'))
+  (github_file_url(p, 'a.Rmd') %==% 'https://github.com/v/foo/blob/HEAD/a.Rmd')
+  (is.null(github_file_url(p, 'b.Rmd')))  # file does not exist
+})
+
+assert('gha_branch() reads the branch from GitHub Actions variables', {
+  v = c('GITHUB_HEAD_REF', 'GITHUB_REF_TYPE', 'GITHUB_REF_NAME')
+  old = set_envvar(set_names(rep('', 3), v)); on.exit(set_envvar(old), add = TRUE)
+  (gha_branch() %==% 'main')
+  set_envvar(c(GITHUB_REF_TYPE = 'branch', GITHUB_REF_NAME = 'dev'))
+  (gha_branch() %==% 'dev')
+  set_envvar(c(GITHUB_HEAD_REF = 'feature'))
+  (gha_branch() %==% 'feature')
+})
+
+assert('pkg_examples() links sources to GitHub when possible', {
+  p = tempfile(); d = file.path(p, 'examples')
+  dir.create(d, recursive = TRUE)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  write_utf8('x', file.path(d, '001-hi.Rmd'))
+  writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
+    file.path(p, 'DESCRIPTION'))
+  x = in_dir(tempdir(), pkg_examples(p))
+  (has_match(x, '(https://github.com/u/foo/blob/HEAD/examples/001-hi.Rmd)'))
+})
+
+assert('edit_page_url() finds the source of a site page in the package', {
+  p = tempfile(); d = file.path(p, 'site')
+  dir.create(file.path(p, 'examples'), recursive = TRUE); dir.create(d)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
+    file.path(p, 'DESCRIPTION'))
+  write_utf8('x', file.path(p, 'examples', 'a.Rmd'))
+  # off Linux, the page in the site dir must exist, or normalize_path() can't
+  # resolve symlinks/short names the same way as for the root
+  if (!xfun::is_linux()) {
+    dir.create(file.path(d, 'examples'))
+    write_utf8('x', file.path(d, 'examples', 'a.Rmd'))
+  }
+  vars = set_envvar(c(R_LITEDOWN_PKG = p)); on.exit(set_envvar(vars), add = TRUE)
+  (edit_page_url(file.path(d, 'examples/a.Rmd'), d) %==%
+    paste0('https://github.com/u/foo/edit/', gha_branch(), '/examples/a.Rmd'))
+  (is.null(edit_page_url(file.path(d, 'index.Rmd'), d)))
+})
+
 assert('pkg_authors() falls back to the Author field with no Authors@R', {
   (pkg_authors(list(Author = 'Jane Doe')) %==% 'Jane Doe')
 })
