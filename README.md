@@ -103,7 +103,7 @@ chunk options and engines.
 
 ## Scope
 
-We want to limit the scope of this package. Most planned features have been
+I try to keep the R package small, and most planned features have been
 (re-)implemented so far, such as reports, slides, books, websites (including
 package sites), and paged HTML documents, etc. See the set $R$ below:
 
@@ -120,9 +120,33 @@ $$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$
 
 -   $J$ = Lightweight [vanilla JavaScript/CSS](https://github.com/yihui/lite.js)
 
-Please feel free to file feature requests anyway, but we may be a little
-conservative when considering them (we will take votes into consideration, so
-please upvote features you like).
+Much of the functionality lives in CSS/JS, which makes **litedown** highly
+extensible and customizable: see [Chapter 5 of the
+book](https://pkg.yihui.org/litedown/book/#chp:assets) for how to use the
+default assets and write your own. You are welcome to write your own CSS/JS, or
+contribute yours to [**lite.js**](https://github.com/yihui/lite.js) so that
+everyone can use it.
+
+Feature requests are welcome, too. I will take votes into consideration, so
+please upvote the features you like.
+
+## Acknowledgments
+
+**litedown** would not exist without the packages in the set $R$ above:
+[**knitr**](https://github.com/yihui/knitr),
+[**evaluate**](https://github.com/r-lib/evaluate),
+[**rmarkdown**](https://github.com/rstudio/rmarkdown),
+[**bookdown**](https://github.com/rstudio/bookdown),
+[**blogdown**](https://github.com/rstudio/blogdown),
+[**pagedown**](https://github.com/rstudio/pagedown),
+[**pkgdown**](https://github.com/r-lib/pkgdown),
+[**xaringan**](https://github.com/yihui/xaringan),
+[**tufte**](https://github.com/rstudio/tufte),
+[**distill**](https://github.com/rstudio/distill), and
+[**htmlwidgets**](https://github.com/ramnathv/htmlwidgets). Their ideas,
+designs, and years of hard work by their authors and contributors shaped nearly
+every feature here. I am deeply grateful to them, and proud to build on their
+work.
 
 ## License
 
