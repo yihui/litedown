@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.19">
+<meta name="generator" content="litedown 0.11.20">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/css/article.min.css">
@@ -6718,10 +6718,10 @@ first, because rendering the site requires the installed version of it, e.g.,
 <code>pkg_manual()</code> reads its help database, and <code>articles.Rmd</code> lists its built
 vignettes.</p>
 <p>The template lives under <code>system.file('site', package = 'litedown')</code> and contains
-the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">5</a>):</p>
-<pre><code class="language-r">list.files(system.file('site', package = 'litedown'), '[.]Rmd$')
+the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">5</a>):</p>
+<pre><code class="language-r">list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 </code></pre>
-<pre><code>#&gt; [1] &quot;_footer.Rmd&quot;  &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;examples.Rmd&quot; &quot;index.Rmd&quot;   
+<pre><code>#&gt; [1] &quot;_footer.md&quot;   &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;examples.Rmd&quot; &quot;index.Rmd&quot;   
 #&gt; [6] &quot;manual.Rmd&quot;   &quot;news.Rmd&quot;    
 </code></pre>
 <div class="table">
@@ -6770,11 +6770,14 @@ the following <code>.Rmd</code> files (explained in <a class="cross-ref-tab" hre
 <tr>
 <td><code>_footer</code></td>
 <td>page footer</td>
-<td>package authors</td>
+<td>the package authors, a link to edit the page on GitHub, and the <strong>litedown</strong> version</td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>In <code>_footer.md</code>, <code>$authors$</code> (authors with the role <code>aut</code>), <code>$version$</code> (the
+<strong>litedown</strong> version), and <code>$edit$</code> (the GitHub URL for editing the current
+page) are replaced by their values when the site is built.</p>
 <p>Files that already exist in the site directory are never overwritten by the
 template, so you can customize any page by putting your own version of it in the
 site directory and committing it to your repository. The source files copied from
@@ -7307,11 +7310,11 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.11.19, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.11.20, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.62.3, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.62.4, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </main>

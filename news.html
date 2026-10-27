@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.19">
+<meta name="generator" content="litedown 0.11.20">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/css/article.min.css">
@@ -54,6 +54,9 @@
 </li>
 <li>
 <p><code>pkg_desc(type = &quot;dl&quot;)</code> now generates a compact description in a sidebar (a fenced Div with the classes <code>side</code> and <code>side-right</code>): the <code>Description</code> and <code>Suggests</code> fields are omitted, and <code>URL</code> and <code>BugReports</code> are merged into a <code>Links</code> field with short text links (e.g., <code>Browse source code</code> and <code>Report a bug</code>) instead of long bare URLs. The site template of <code>pkg_site()</code> uses it to put the description in a sidebar on the home page when the package has a <code>README.md</code>.</p>
+</li>
+<li>
+<p><code>pkg_desc(type = &quot;dl&quot;)</code> shows only the authors (role <code>aut</code>) by default when the author list is long, and the full list is hidden behind <code>&lt;details&gt;</code>. The site template’s footer is now a plain <code>_footer.md</code> (instead of <code>_footer.Rmd</code>), in which <code>$authors$</code> and <code>$version$</code> are substituted by <code>pkg_site()</code>.</p>
 </li>
 <li>
 <p>Added a new <code>pele</code> engine to draw diagrams with <a href="https://pele.run">Pele</a>, a lightweight renderer for the Mermaid syntax. It takes the same input as the <code>mermaid</code> engine (and shares its implementation), and the required JS is added to the HTML output automatically. The diagrams in the <strong>litedown</strong> documentation (<a href="https://pkg.yihui.org/litedown/book/">https://pkg.yihui.org/litedown/book/</a>) now use it.</p>
@@ -424,7 +427,7 @@ graph TD;
 </main>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.19</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.20</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.126/js/appendix.min.js" defer></script>
