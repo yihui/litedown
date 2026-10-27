@@ -381,14 +381,23 @@ github_link = local({
   }
 })
 
+# the branch of the GitHub Actions run (the target branch for a pull request),
+# falling back to main
+gha_branch = function() {
+  b = Sys.getenv('GITHUB_BASE_REF')  # only set for pull requests
+  if (b == '' && Sys.getenv('GITHUB_REF_TYPE') == 'branch')
+    b = Sys.getenv('GITHUB_REF_NAME')
+  if (b == '') 'main' else b
+}
+
 # the GitHub URL of `file` (relative to the package root `path`), if the package
 # has a GitHub repo and the file exists in the package: the edit page if `edit =
-# TRUE, which needs a real branch name since HEAD doesn't work there),
+# TRUE, which needs a branch name since HEAD doesn't work there),
 # otherwise the file view (.md files need ?plain=1 to show the source)
 github_file_url = function(path, file, edit = FALSE) {
   if (all(file_exists(file.path(path, c(file, 'DESCRIPTION')))) &&
     length(u <- github_link(path))) paste0(
-    u, if (edit) 'edit/main' else 'blob/HEAD', '/', file,
+    u, if (edit) paste0('edit/', gha_branch()) else 'blob/HEAD', '/', file,
     if (!edit && grepl('[.]md$', file)) '?plain=1'
   )
 }

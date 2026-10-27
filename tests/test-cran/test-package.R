@@ -38,7 +38,8 @@ assert('github_file_url() links existing files to GitHub', {
   (is.null(github_file_url(p, 'a.Rmd')))  # no DESCRIPTION
   writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
     file.path(p, 'DESCRIPTION'))
-  (github_file_url(p, 'a.Rmd', TRUE) %==% 'https://github.com/u/foo/edit/main/a.Rmd')
+  (github_file_url(p, 'a.Rmd', TRUE) %==%
+    paste0('https://github.com/u/foo/edit/', gha_branch(), '/a.Rmd'))
   (github_file_url(p, 'a.Rmd') %==% 'https://github.com/u/foo/blob/HEAD/a.Rmd')
   (github_file_url(p, 'a.md') %==% 'https://github.com/u/foo/blob/HEAD/a.md?plain=1')
   # the cache is invalidated when DESCRIPTION is modified
@@ -47,6 +48,16 @@ assert('github_file_url() links existing files to GitHub', {
     file.path(p, 'DESCRIPTION'))
   (github_file_url(p, 'a.Rmd') %==% 'https://github.com/v/foo/blob/HEAD/a.Rmd')
   (is.null(github_file_url(p, 'b.Rmd')))  # file does not exist
+})
+
+assert('gha_branch() reads the branch from GitHub Actions variables', {
+  v = c('GITHUB_BASE_REF', 'GITHUB_REF_TYPE', 'GITHUB_REF_NAME')
+  old = set_envvar(set_names(rep('', 3), v)); on.exit(set_envvar(old), add = TRUE)
+  (gha_branch() %==% 'main')
+  set_envvar(c(GITHUB_REF_TYPE = 'branch', GITHUB_REF_NAME = 'dev'))
+  (gha_branch() %==% 'dev')
+  set_envvar(c(GITHUB_BASE_REF = 'release'))
+  (gha_branch() %==% 'release')
 })
 
 assert('pkg_examples() links sources to GitHub when possible', {
@@ -69,7 +80,7 @@ assert('edit_page_url() finds the source of a site page in the package', {
   write_utf8('x', file.path(p, 'examples', 'a.Rmd'))
   vars = set_envvar(c(R_LITEDOWN_PKG = p)); on.exit(set_envvar(vars), add = TRUE)
   (edit_page_url(file.path(d, 'examples/a.Rmd'), d) %==%
-    'https://github.com/u/foo/edit/main/examples/a.Rmd')
+    paste0('https://github.com/u/foo/edit/', gha_branch(), '/examples/a.Rmd'))
   (is.null(edit_page_url(file.path(d, 'index.Rmd'), d)))
 })
 
