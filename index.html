@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.18">
+<meta name="generator" content="litedown 0.11.19">
 <title>litedown: A Lightweight Version of R Markdown</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/css/article.min.css">
@@ -42,7 +42,7 @@
 <div class="side side-right">
 <dl class="pkg-desc">
 <dt>Version</dt>
-<dd>0.11.18</dd>
+<dd>0.11.19</dd>
 <dt>Depends</dt>
 <dd>R (&gt;= 3.2.0)</dd>
 <dt>Imports</dt>
@@ -73,7 +73,7 @@ renders Markdown with a bundled and patched copy of the
 <a href="https://github.com/github/cmark-gfm">cmark-gfm</a> C library.</p>
 <ul>
 <li>
-<p><strong>Computing</strong>: run code chunks and inline code (<code>`{r} x`</code>) in R, or in
+<p><strong>Computing</strong>: run code chunks and inline code in R, or in
 other languages via engines such as JavaScript, CSS, Mermaid, and shell
 commands. Chunk options control code, text output, figures, tables,
 caching, and even the order of execution.</p>
@@ -132,11 +132,11 @@ litedown::roam()             # or preview and render in a browser
 <tbody>
 <tr>
 <td align="left"><code>fuse()</code></td>
-<td align="left">executes code in an R Markdown document, then renders it via <code>mark()</code></td>
+<td align="left">executes code in an R Markdown document, then renders it via <code>mark()</code> (like <code>rmarkdown::render()</code>)</td>
 </tr>
 <tr>
 <td align="left"><code>mark()</code></td>
-<td align="left">renders Markdown to HTML, LaTeX, etc.</td>
+<td align="left">renders Markdown to HTML, LaTeX, etc. (like Pandoc)</td>
 </tr>
 <tr>
 <td align="left"><code>fiss()</code></td>
@@ -154,10 +154,8 @@ litedown::roam()             # or preview and render in a browser
 </table>
 <p>If you do not compute in your documents, <code>mark()</code> alone is enough.</p>
 <h2 id="sec:learn-more"><span class="section-number main-number">4</span> Learn more</h2>
-<p>Read the book, <a href="https://pkg.yihui.org/litedown/book/"><em>litedown: R Markdown Reimagined</em></a>,
-which also covers <a href="https://pkg.yihui.org/litedown/book/#sec:comparison-to-knitr">differences from <strong>knitr</strong></a>.
-Browse <a href="https://pkg.yihui.org/litedown/examples/">examples</a> of
-chunk options and engines.</p>
+<p>Visit the package site, <a href="https://pkg.yihui.org/litedown/">https://pkg.yihui.org/litedown/</a>, which has the
+manual, the book <em>litedown: R Markdown Reimagined</em>, and examples.</p>
 <h2 id="sec:scope"><span class="section-number main-number">5</span> Scope</h2>
 <p>I try to keep the R package small, and most planned features have been
 (re-)implemented so far, such as reports, slides, books, websites (including
@@ -165,9 +163,17 @@ package sites), and paged HTML documents, etc. See the set \(R\) below:</p>
 <p>$$\mathrm{litedown} = \min{\{R\}} + \{D_i\} - \{D_e\} + \{J\}$$</p>
 <ul>
 <li>
-<p>\(R\) = <strong>knitr</strong> + <strong>evaluate</strong> + <strong>rmarkdown</strong> + <strong>bookdown</strong> +
-<strong>blogdown</strong> + <strong>pagedown</strong> + <strong>pkgdown</strong> + <strong>xaringan</strong> + <strong>tufte</strong> +
-<strong>distill</strong> + <strong>htmlwidgets</strong></p>
+<p>\(R\) = <a href="https://github.com/yihui/knitr"><strong>knitr</strong></a> +
+<a href="https://github.com/r-lib/evaluate"><strong>evaluate</strong></a> +
+<a href="https://github.com/rstudio/rmarkdown"><strong>rmarkdown</strong></a> +
+<a href="https://github.com/rstudio/bookdown"><strong>bookdown</strong></a> +
+<a href="https://github.com/rstudio/blogdown"><strong>blogdown</strong></a> +
+<a href="https://github.com/rstudio/pagedown"><strong>pagedown</strong></a> +
+<a href="https://github.com/r-lib/pkgdown"><strong>pkgdown</strong></a> +
+<a href="https://github.com/yihui/xaringan"><strong>xaringan</strong></a> +
+<a href="https://github.com/rstudio/tufte"><strong>tufte</strong></a> +
+<a href="https://github.com/rstudio/distill"><strong>distill</strong></a> +
+<a href="https://github.com/ramnathv/htmlwidgets"><strong>htmlwidgets</strong></a></p>
 </li>
 <li>
 <p>\(D_i\) = (internal dependencies) <strong>xfun</strong></p>
@@ -189,32 +195,21 @@ everyone can use it.</p>
 <p>Feature requests are welcome, too. I will take votes into consideration, so
 please upvote the features you like.</p>
 <h2 id="sec:acknowledgments"><span class="section-number main-number">6</span> Acknowledgments</h2>
-<p><strong>litedown</strong> would not exist without the packages in the set \(R\) above:
-<a href="https://github.com/yihui/knitr"><strong>knitr</strong></a>,
-<a href="https://github.com/r-lib/evaluate"><strong>evaluate</strong></a>,
-<a href="https://github.com/rstudio/rmarkdown"><strong>rmarkdown</strong></a>,
-<a href="https://github.com/rstudio/bookdown"><strong>bookdown</strong></a>,
-<a href="https://github.com/rstudio/blogdown"><strong>blogdown</strong></a>,
-<a href="https://github.com/rstudio/pagedown"><strong>pagedown</strong></a>,
-<a href="https://github.com/r-lib/pkgdown"><strong>pkgdown</strong></a>,
-<a href="https://github.com/yihui/xaringan"><strong>xaringan</strong></a>,
-<a href="https://github.com/rstudio/tufte"><strong>tufte</strong></a>,
-<a href="https://github.com/rstudio/distill"><strong>distill</strong></a>, and
-<a href="https://github.com/ramnathv/htmlwidgets"><strong>htmlwidgets</strong></a>. Their ideas,
-designs, and years of hard work by their authors and contributors shaped nearly
-every feature here. I am deeply grateful to them, and proud to build on their
-work.</p>
+<p><strong>litedown</strong> was directly inspired by the packages in the set \(R\) above. I wrote
+or co-wrote most of them, and learned a lot from the rest. Thanks to all their
+authors and contributors, and to the users whose questions, bug reports, and
+feedback over the years shaped the design of this package.</p>
 <h2 id="sec:license"><span class="section-number main-number">7</span> License</h2>
 <p>The <strong>litedown</strong> package is licensed under MIT.</p>
 <h2 id="sec:appendix" class="appendix">Appendix</h2>
 <p>To cite the package <strong>litedown</strong> in publications, please use:</p>
 <p>Xie Y (2026). <em>litedown: A Lightweight Version of R Markdown</em>. R
-package version 0.11.18, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>.</p>
+package version 0.11.19, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>.</p>
 <pre><code class="language-latex">@Manual{,
   title = {litedown: A Lightweight Version of R Markdown},
   author = {Yihui Xie},
   year = {2026},
-  note = {R package version 0.11.18},
+  note = {R package version 0.11.19},
   url = {https://github.com/yihui/litedown},
 }
 </code></pre>
@@ -222,7 +217,7 @@ package version 0.11.18, <a href="https://github.com/yihui/litedown">https://git
 </main>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.18</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v0.11.19</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.125/js/appendix.min.js" defer></script>
