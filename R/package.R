@@ -365,16 +365,17 @@ pkg_examples = function(
 }
 
 # retrieve Github repo link from DESCRIPTION; cache it until DESCRIPTION is
-# modified, since this may be called many times (e.g., once per page of a site)
+# modified (mtime can be too coarse to notice quick edits, so also compare the
+# file size), since this may be called many times (e.g., once per page of a site)
 github_link = local({
   cache = list()
   function(path) {
-    f = file.path(path, 'DESCRIPTION'); m = file.mtime(f)
+    f = file.path(path, 'DESCRIPTION'); m = list(file.mtime(f), file.size(f))
     k = normalize_path(f)
-    if (is.null(x <- cache[[k]]) || !identical(x$mtime, m)) {
+    if (is.null(x <- cache[[k]]) || !identical(x$stamp, m)) {
       u = read.dcf(f, 'BugReports')[1, 1]
       cache[[k]] <<- x <- list(
-        mtime = m, url = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
+        stamp = m, url = grep_sub('^(https://github.com/[^/]+/[^/]+/).*', '\\1', u)
       )
     }
     x$url
