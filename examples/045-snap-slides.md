@@ -1,6 +1,7 @@
 ---
 title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
+date: "2026-10-26"
 output:
   html:
     meta:
