@@ -133,7 +133,7 @@
     const t2 = new Date(Math.abs(t)).toISOString().substr(11, 8).replace(/^00:/, '');
     tms.forEach(el => {
       el.innerText = t2;
-      if (t < 0) el.style.opacity = Math.ceiling(t/1000) % 2;
+      if (t < 0) el.style.opacity = Math.ceil(t/1000) % 2;
     });
   }
   function toggleView(e) {

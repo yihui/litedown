@@ -317,7 +317,7 @@ btn = function(t, u = '#', a = character()) {
 
 .icons = c(.open = '&#9998;', .run = '&#9205;', .save = '&#8623;')
 
-new_file = function(path, ext, type, css = NULL, js = NULL) {
+new_file = function(path, ext, type) {
   if (file.exists(path)) return(sprintf("The file '%s' already exists.", path))
   on.exit(xfun:::open_path(path), add = TRUE)
   if (!is_lite_ext(ext)) return(tolower(file.create(path)))

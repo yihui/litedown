@@ -18,59 +18,55 @@ always_on = function(format = 'html') {
   c('rawblock', 'inlineattrs', if (format == 'html') 'attributes')
 }
 
+# call the C renderer; `type` is the cmark output format id, and the markdown_*()
+# wrappers below only differ in the arguments they expose (the rest are defaults)
+render_markdown = function(
+  text, type, extensions, always = NULL, hardbreaks = FALSE, smart = FALSE,
+  normalize = FALSE, sourcepos = FALSE, footnotes = FALSE, width = 0
+) {
+  text = enc2utf8(paste(text, collapse = '\n'))
+  extensions = union(get_extensions(extensions), always)
+  .Call(
+    R_render_markdown, text, type, sourcepos, hardbreaks, smart, normalize,
+    footnotes, as.integer(width), extensions
+  )
+}
+
 markdown_html = function(
   text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, sourcepos = FALSE,
   footnotes = FALSE, extensions = FALSE
 ) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = union(get_extensions(extensions), always_on('html'))
-  .Call(R_render_markdown, text, 1L, sourcepos, hardbreaks, smart, normalize, footnotes, 0L, extensions)
+  render_markdown(
+    text, 1L, extensions, always_on('html'), hardbreaks, smart, normalize,
+    sourcepos, footnotes
+  )
 }
 
 markdown_xml = function(
   text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, sourcepos = FALSE,
   footnotes = FALSE, extensions = FALSE
 ) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
-  .Call(R_render_markdown, text, 2L, sourcepos, hardbreaks, smart, normalize, footnotes, 0L, extensions)
+  render_markdown(
+    text, 2L, extensions, NULL, hardbreaks, smart, normalize, sourcepos, footnotes
+  )
 }
 
-markdown_man = function(
-  text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
-  width = 0, extensions = FALSE
-) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
-  .Call(R_render_markdown, text, 3L, FALSE, hardbreaks, smart, normalize, footnotes, as.integer(width), extensions)
+# man, commonmark, text, and latex take `width` instead of `sourcepos`
+markdown_width = function(type, always = NULL) {
+  function(
+    text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
+    width = 0, extensions = FALSE
+  ) {
+    render_markdown(
+      text, type, extensions, always, hardbreaks, smart, normalize,
+      footnotes = footnotes, width = width
+    )
+  }
 }
-
-markdown_commonmark = function(
-  text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
-  width = 0, extensions = FALSE
-) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
-  .Call(R_render_markdown, text, 4L, FALSE, hardbreaks, smart, normalize, footnotes, as.integer(width), extensions)
-}
-
-markdown_text = function(
-  text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
-  width = 0, extensions = FALSE
-) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = get_extensions(extensions)
-  .Call(R_render_markdown, text, 5L, FALSE, hardbreaks, smart, normalize, footnotes, as.integer(width), extensions)
-}
-
-markdown_latex = function(
-  text, hardbreaks = FALSE, smart = FALSE, normalize = FALSE, footnotes = FALSE,
-  width = 0, extensions = FALSE
-) {
-  text = enc2utf8(paste(text, collapse = '\n'))
-  extensions = union(get_extensions(extensions), always_on('latex'))
-  .Call(R_render_markdown, text, 6L, FALSE, hardbreaks, smart, normalize, footnotes, as.integer(width), extensions)
-}
+markdown_man = markdown_width(3L)
+markdown_commonmark = markdown_width(4L)
+markdown_text = markdown_width(5L)
+markdown_latex = markdown_width(6L, always_on('latex'))
 
 # Parse markdown and return the cmark AST as a nested list. Each node is a list
 # with fields: type, sourcepos (start_line, start_column, end_line, end_column),
