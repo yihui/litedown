@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Rewrite the R versions in the matrix of R-CMD-check.yaml.
 
-Each R version goes to the newest GitHub-hosted Ubuntu runner that has a build
-of it according to r-hub, because old R versions are dropped from new Ubuntu releases.
-Versions that work on the newest runner (called ubuntu-latest) are listed in `r:`, and the rest are added
-as `include:` entries between the BEGIN/END markers with an older runner.
+R versions available for ubuntu-latest (the runner this script runs on) are
+listed in `r:`. Other (old) versions are added as `include:` entries between the
+BEGIN/END markers, each on the newest older GitHub-hosted Ubuntu runner that has
+a build of it according to r-hub, because new Ubuntu releases drop old R.
 """
 import json
+import os
 import re
 import urllib.error
 import urllib.request
@@ -37,17 +38,32 @@ def available(version, ubuntu):
     raise
 
 
+def version_key(v):
+  return tuple(map(int, v.split('.')))
+
+
+def latest_ubuntu():
+  """Ubuntu version of ubuntu-latest (the runner this script runs on)."""
+  if v := os.environ.get('UBUNTU_LATEST'): return v
+  with open('/etc/os-release') as f:
+    info = dict(l.rstrip().split('=', 1) for l in f if '=' in l)
+  if info['ID'] != 'ubuntu': raise SystemExit('Not running on Ubuntu')
+  return info['VERSION_ID'].strip('"')
+
+
 def ubuntu_runners():
   """Ubuntu versions of x64 GitHub-hosted runners, newest first."""
   with urllib.request.urlopen(RUNNERS, timeout=60) as r:
     readme = r.read().decode()
   vers = set(re.findall(r'`ubuntu-(\d+\.\d+)`', readme))
-  return sorted(vers, key=lambda v: tuple(map(int, v.split('.'))),
-                reverse=True)
+  return sorted(vers, key=version_key, reverse=True)
 
 
-candidates = ubuntu_runners()
-latest = candidates[0]
+latest = latest_ubuntu()
+# runners to try: ubuntu-latest first, then older ones, newest first
+candidates = [latest] + [
+  v for v in ubuntu_runners() if version_key(v) < version_key(latest)
+]
 
 release = minor(get('r-release')['version'])
 versions = {
