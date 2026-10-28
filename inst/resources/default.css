@@ -59,8 +59,8 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
   & > ul { padding: 0; columns: 18em; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
-.body h2 { border-bottom: 1px solid #666; }
-.body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
+article h2 { border-bottom: 1px solid #666; }
+article .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
 span[class^="ref-number-"] { font-weight: bold; }
 .ref-number-fig::after, .ref-number-tab::after { content: ":"; }

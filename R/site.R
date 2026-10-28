@@ -318,12 +318,12 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       }
     }
     c(
-      h, sprintf('::: {.chapter .body data-source="%s"}', x),
-      info('before'), '', out, '', info('after'), ':::'
+      h, sprintf('<article class="chapter" data-source="%s">', x), '',
+      info('before'), '', out, '', info('after'), '', '</article>'
     )
   })
   tweak_options(format, yaml, list(
-    body_class = '', css2 = c(site_css, '@book'), js2 = site_js
+    body_tag = 'div', css2 = c(site_css, '@book'), js2 = site_js
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }

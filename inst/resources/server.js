@@ -67,7 +67,7 @@
   // remove empty frontmatter
   const fm = d.querySelector('.frontmatter');
   fm && !fm.innerText.trim() && fm.remove();
-  const chapters = d.querySelectorAll('div[data-source]');
+  const chapters = d.querySelectorAll('article[data-source]');
   // add edit buttons for book chapters
   chapters.length > 1 && chapters.forEach((el, i) => {
     const u = el.dataset.source;

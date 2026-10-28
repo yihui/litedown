@@ -1068,7 +1068,8 @@ which does not make sense on a page.
 ### Paginate other HTML pages {#sec:pages-other}
 
 The `pages` assets are not limited to **litedown** output. They paginate the
-_content root_, which is the first `<main>` (or element with `role="main"`). If
+_content root_, which is the first `<main>` (or element with `role="main"`; if
+it only contains one element, such as `<article>`, that element is used). If
 there is none, the `<article>` elements are used, or the whole `<body>` if there
 is no `<article>`. You can choose another content root with a CSS selector in the
 attribute `data-pages-root` of `<body>`:

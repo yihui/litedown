@@ -125,8 +125,8 @@ assert('fuse_book() renders a book skeleton into a single HTML file', {
   (file_exists(out))
   (basename(out) %==% 'index.html')
   h = readLines(out)
-  # chapters are wrapped in .chapter divs
-  (any(grepl('class="chapter', h, fixed = TRUE)))
+  # chapters are wrapped in <article class="chapter">
+  (any(grepl('<article class="chapter"', h, fixed = TRUE)))
 })
 
 assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
