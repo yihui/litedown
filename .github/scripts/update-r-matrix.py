@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Rewrite the R versions in the matrix of R-CMD-check.yaml.
 
-Each R version goes to the newest Ubuntu runner that has a build of it
-according to r-hub, because old R versions are dropped from new Ubuntu releases.
-Versions that work on ubuntu-latest are listed in `r:`, and the rest are added
+Each R version goes to the newest GitHub-hosted Ubuntu runner that has a build
+of it according to r-hub, because old R versions are dropped from new Ubuntu releases.
+Versions that work on the newest runner (called ubuntu-latest) are listed in `r:`, and the rest are added
 as `include:` entries between the BEGIN/END markers with an older runner.
 """
 import json
-import os
 import re
 import urllib.error
 import urllib.request
@@ -15,8 +14,8 @@ import urllib.request
 WORKFLOW = '.github/workflows/R-CMD-check.yaml'
 API = 'https://api.r-hub.io/rversions'
 OLDEST = (3, 2)
-# Ubuntu runner images (oldest first); add new ones here once they exist
-RUNNERS = ['22.04', '24.04', '26.04']
+# the list of GitHub-hosted runner images is documented in this README
+RUNNERS = 'https://raw.githubusercontent.com/actions/runner-images/main/README.md'
 
 
 def get(path):
@@ -38,21 +37,17 @@ def available(version, ubuntu):
     raise
 
 
-def latest_ubuntu():
-  """Ubuntu version that ubuntu-latest points to (this runs on it)."""
-  if v := os.environ.get('UBUNTU_LATEST'): return v
-  info = dict(
-    l.rstrip().split('=', 1) for l in open('/etc/os-release') if '=' in l
-  )
-  if info['ID'] != 'ubuntu': raise SystemExit('Not running on Ubuntu')
-  return info['VERSION_ID'].strip('"')
+def ubuntu_runners():
+  """Ubuntu versions of x64 GitHub-hosted runners, newest first."""
+  with urllib.request.urlopen(RUNNERS, timeout=60) as r:
+    readme = r.read().decode()
+  vers = set(re.findall(r'`ubuntu-(\d+\.\d+)`', readme))
+  return sorted(vers, key=lambda v: tuple(map(int, v.split('.'))),
+                reverse=True)
 
 
-latest = latest_ubuntu()
-if latest not in RUNNERS:
-  raise SystemExit(f'Add ubuntu-{latest} to RUNNERS in {__file__}')
-# newest first, starting from ubuntu-latest
-candidates = RUNNERS[:RUNNERS.index(latest) + 1][::-1]
+candidates = ubuntu_runners()
+latest = candidates[0]
 
 release = minor(get('r-release')['version'])
 versions = {
