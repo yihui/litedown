@@ -45,7 +45,7 @@ xfun::pkg_bib(c('litedown', 'xfun', 'rbibutils'), 'packages.bib')
 document.querySelectorAll('pre > code[data-output]').forEach(el => {
   const a = document.createElement('a');
   a.className = 'ex-out';
-  a.href = `https://git.yihui.org/litedown/examples/${el.dataset.output}`;
+  a.href = `https://pkg.yihui.org/litedown/examples/${el.dataset.output}`;
   el.after(a);
 });
 ```
