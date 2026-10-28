@@ -353,17 +353,18 @@ relatively easy to use and simple to maintain. The functions `mark()` and
 
 Just to give you a better idea about the "lightweight", as of today:
 
--   As the Markdown converter, Pandoc 3.8.3 binary is about 186Mb, and the 
-    **litedown** binary is under 1Mb on my macOS.
+-   As the Markdown converter, Pandoc 3.12.1 binary is about 257MB, and the
+    **litedown** binary is under 1MB on my macOS.
 
--   Bootstrap's CSS is about 12,000 lines (plus 1500 lines of JS), and
-    **litedown**'s base CSS is about 100 lines (no JS).
+-   Bootstrap 5.3.8's minified CSS is about 232KB, plus 80KB of minified JS
+    (the bundle with Popper). **litedown**'s default CSS is about 3KB minified
+    (no JS).
 
 -   For paginating HTML documents,
-    [paged.js](https://cdn.jsdelivr.net/npm/pagedjs/) has 33,000+ lines of code,
-    and my naive implementation,
-    [pages.js](https://github.com/yihui/lite.js/blob/main/js/pages.js), has
-    about 600 lines (400 lines of JS and 200 lines of CSS).
+    [paged.js](https://cdn.jsdelivr.net/npm/pagedjs/) 0.4.3 is about 503KB
+    minified, and my naive implementation,
+    [pages.js](https://github.com/yihui/lite.js/blob/main/js/pages.js), is about
+    16KB minified (12KB of JS and 4KB of CSS).
 
 Admittedly, pursuing lightweight requires sacrifice in features and quality
 (e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
