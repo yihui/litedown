@@ -81,7 +81,7 @@ jobs:
             clean = FALSE,
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
-          writeLines(covr::to_codecov(cov), 'codecov.json')
+          writeLines(covr:::to_codecov(cov), 'codecov.json')
         shell: Rscript {0}
 
       - uses: codecov/codecov-action@HEAD
