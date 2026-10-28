@@ -61,7 +61,7 @@ jobs:
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
           # install the package itself as we register vignette engine
-          extra-packages: . ${{ env.USE_R_CODECOV == 'true' && ' covr xml2' || '' }}
+          extra-packages: . ${{ env.USE_R_CODECOV == 'true' && ' covr' || '' }}
           # install dependencies for cairo_pdf device
           brew-packages: xquartz
 
@@ -81,15 +81,14 @@ jobs:
             clean = FALSE,
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
-          covr::to_cobertura(cov)
-          xfun::file_string('./cobertura.xml')
+          writeLines(covr::to_codecov(cov), 'codecov.json')
         shell: Rscript {0}
 
       - uses: codecov/codecov-action@HEAD
         if: env.USE_R_CODECOV == 'true'
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' }}
-          files: ./cobertura.xml
+          files: ./codecov.json
           plugins: noop
           disable_search: true
 
