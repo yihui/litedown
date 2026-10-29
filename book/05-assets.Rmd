@@ -157,8 +157,13 @@ output:
 
 How do you know what to write? Right-click the thing you want to change on the
 page and choose "Inspect": your web browser will show its tag name and class,
-which is what you put before the braces `{}` (the "selector"). Below are some
-common ones:
+which is what you put before the braces `{}` (the "selector"). Some common
+ones are listed in @tab:css-selectors:
+
+:::: {.table #tab:css-selectors}
+::: caption
+[ ](#@tab:css-selectors) Common CSS selectors for parts of a page.
+:::
 
 | To change           | Selector                             |
 |---------------------|--------------------------------------|
@@ -170,6 +175,7 @@ common ones:
 | block quotes        | `blockquote`                         |
 | tables              | `table`                              |
 | footnotes           | `.footnotes`                         |
+::::
 
 ### Use CSS/JS from the web
 
