@@ -54,6 +54,11 @@ assert('message', {
 1. **Tests**: every code change needs corresponding test assertions.
 2. **Re-roxygenize**: run `roxygen2::roxygenize('.')` and `./.githooks/pre-commit` after changing roxygen docs.
 3. **Update NEWS.md**: first heading is always `# litedown x.y` (dev version).
+   Keep each entry short and user-facing: say what the feature is for and how
+   to use it, not how it works (no implementation details or edge cases; those
+   belong in the docs). Refer to docs and examples by links on text (e.g.,
+   `[details](https://pkg.yihui.org/litedown/book/#sec:foo)`) to their HTML
+   pages, not bare URLs or source file names.
 4. **Run tests**: `Rscript tests/test-all.R`
 5. **Clean up artifacts**: `rm -rf *.tar.gz *.Rcheck/`
 6. **Site groups**: the manual and examples pages of the site are grouped in

@@ -173,7 +173,7 @@ layout elements so that pages look reasonable without any configuration:
 
 -   The default CSS assets are
     `{r} xfun::join_words(litedown:::site_css, before = "\x60")`, and the default
-    JS assets are `{r} xfun::join_words(litedown:::site_js, before = "\x60")`. In
+    JS assets are `{r} xfun::join_words(c(litedown:::site_js, 'nav-highlight'), before = "\x60")`. In
     other words, each page uses the article format (@sec:article) by default.
 
 -   If `include_before` is not provided, a navigation menu is automatically
