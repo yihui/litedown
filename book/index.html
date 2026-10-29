@@ -3,28 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.20">
+<meta name="generator" content="litedown 0.11.21">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/tabsets.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/prism-xcode.min.css">
 </head>
 <body>
 <header class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-10-28</h3></div>
+<div class="date"><h3>2026-10-29</h3></div>
 </header>
-<main class="">
+<main>
+<div class="">
 <nav id="TOC">
 <ul class="numbered">
 <li><a href="#chp:preface">Preface</a>
@@ -202,7 +203,7 @@
 <ul>
 <li><a href="#sec:meta-css"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</a></li>
 <li><a href="#sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</a></li>
-<li><a href="#sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</a></li>
+<li><a href="#sec:the-body-tag-and-body-class-variables"><span class="section-number">4.3.2.3</span> The <code>body-tag</code> and <code>body-class</code> variables</a></li>
 <li><a href="#sec:the-lang-variable"><span class="section-number">4.3.2.4</span> The <code>lang</code> variable</a></li>
 <li><a href="#sec:the-plain-title-variable"><span class="section-number">4.3.2.5</span> The <code>plain-title</code> variable</a></li>
 <li><a href="#sec:the-generator-variable"><span class="section-number">4.3.2.6</span> The <code>generator</code> variable</a></li>
@@ -266,7 +267,15 @@
 <li><a href="#sec:book"><span class="section-number">5.10</span> HTML books</a></li>
 <li><a href="#sec:chapter-toc"><span class="section-number">5.11</span> Chapter TOC</a></li>
 <li><a href="#sec:toc-highlight"><span class="section-number">5.12</span> Highlight TOC items</a></li>
-<li><a href="#sec:pages"><span class="section-number">5.13</span> Paged HTML</a></li>
+<li><a href="#sec:pages"><span class="section-number">5.13</span> Paged HTML</a>
+<ul>
+<li><a href="#sec:trigger-pagination"><span class="section-number">5.13.1</span> Trigger pagination</a></li>
+<li><a href="#sec:how-elements-are-put-on-pages"><span class="section-number">5.13.2</span> How elements are put on pages</a></li>
+<li><a href="#sec:page-layout-and-styles"><span class="section-number">5.13.3</span> Page layout and styles</a></li>
+<li><a href="#sec:pages-other"><span class="section-number">5.13.4</span> Paginate other HTML pages</a></li>
+<li><a href="#sec:pages-troubleshooting"><span class="section-number">5.13.5</span> Troubleshooting</a></li>
+</ul>
+</li>
 <li><a href="#sec:snap"><span class="section-number">5.14</span> HTML slides</a>
 <ul>
 <li><a href="#sec:creating-slides"><span class="section-number">5.14.1</span> Creating slides</a></li>
@@ -343,7 +352,7 @@
 </li>
 </ul>
 </nav>
-<div class="chapter body" data-source="book/index.Rmd">
+<article class="chapter" data-source="book/index.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/index.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -636,19 +645,20 @@ relatively easy to use and simple to maintain. The functions <code>mark()</code>
 <p>Just to give you a better idea about the “lightweight”, as of today:</p>
 <ul>
 <li>
-<p>As the Markdown converter, Pandoc 3.8.3 binary is about 186Mb, and the
-<strong>litedown</strong> binary is under 1Mb on my macOS.</p>
+<p>As the Markdown converter, Pandoc 3.12.1 binary is about 257MB, and the
+<strong>litedown</strong> binary is under 1MB on my macOS.</p>
 </li>
 <li>
-<p>Bootstrap’s CSS is about 12,000 lines (plus 1500 lines of JS), and
-<strong>litedown</strong>’s base CSS is about 100 lines (no JS).</p>
+<p>Bootstrap 5.3.8’s minified CSS is about 232KB, plus 80KB of minified JS
+(the bundle with Popper). <strong>litedown</strong>’s default CSS is about 3KB minified
+(no JS).</p>
 </li>
 <li>
 <p>For paginating HTML documents,
-<a href="https://cdn.jsdelivr.net/npm/pagedjs/">paged.js</a> has 33,000+ lines of code,
-and my naive implementation,
-<a href="https://github.com/yihui/lite.js/blob/main/js/pages.js">pages.js</a>, has
-about 600 lines (400 lines of JS and 200 lines of CSS).</p>
+<a href="https://cdn.jsdelivr.net/npm/pagedjs/">paged.js</a> 0.4.3 is about 503KB
+minified, and my naive implementation,
+<a href="https://github.com/yihui/lite.js/blob/main/js/pages.js">pages.js</a>, is about
+16KB minified (12KB of JS and 4KB of CSS).</p>
 </li>
 </ul>
 <p>Admittedly, pursuing lightweight requires sacrifice in features and quality
@@ -812,8 +822,8 @@ can know more clearly what has changed in the output, which can help you avoid
 unexpected changes before publishing the output.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/01-start.Rmd">
+</article>
+<article class="chapter" data-source="book/01-start.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/01-start.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -1058,8 +1068,8 @@ package as my last “down” package. After it is done, I wish to lie down.</p>
 <p>Let there be light.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/02-fuse.Rmd">
+</article>
+<article class="chapter" data-source="book/02-fuse.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/02-fuse.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -3272,11 +3282,11 @@ to run an external script immediately, you may set the chunk option
 <h3 id="sec:engine-diagram"><span class="section-number">2.6.3</span> The Pele and Mermaid engines</h3>
 <p>The <code>pele</code> and <code>mermaid</code> engines can be used to draw diagrams from text written
 in the <a href="https://mermaid.js.org">Mermaid</a> syntax. The <code>pele</code> engine renders them
-with <a href="https://pele.run">Pele</a>, which is much more lightweight than
+with <a href="https://pele.run">Pele</a>, which is more lightweight than
 <a href="https://mermaid.js.org">mermaid.js</a> (the <code>mermaid</code> engine), supports all
 diagram types in Mermaid 12.1.0, and renders diagrams synchronously with its own
 layout and visual style, e.g.,</p>
-<pre><code class="language-md">```{pele, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
+<pre><code class="language-md">```{pele, flow-abcd, echo = FALSE, fig.cap = 'A Pele flowchart.'}
 flowchart TD
     A[WEB] --&gt; B[noweb] --&gt; D[Sweave] --&gt; E[knitr]
     A --&gt; C[CWEB]
@@ -3447,8 +3457,8 @@ Pandoc. Some features may never be re-implemented, especially when the
 implementation is not simple enough.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/03-syntax.Rmd">
+</article>
+<article class="chapter" data-source="book/03-syntax.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/03-syntax.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -4133,8 +4143,8 @@ LaTeX beamer, and EPUB. The <strong>litedown</strong> package is unlikely to sup
 formats beyond HTML and LaTeX.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/04-mark.Rmd">
+</article>
+<article class="chapter" data-source="book/04-mark.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/04-mark.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -4668,8 +4678,8 @@ variable.</p>
 <table>
 <thead>
 <tr>
-<th>syntax</th>
-<th>actual URL</th>
+<th>Syntax</th>
+<th>Actual URL</th>
 </tr>
 </thead>
 <tbody>
@@ -4709,8 +4719,13 @@ work after you go offline, please see <a class="cross-ref-sec" href="#sec:embed-
 same as the <code>css</code> variable, e.g., <code>snap</code> means <code>snap.js</code> in this package,
 <code>@snap</code> means a “jsdelivr” resource, and you can use arbitrary paths or URLs to
 other JS files.</p>
-<h4 id="sec:the-body-class-variable"><span class="section-number">4.3.2.3</span> The <code>body-class</code> variable</h4>
-<p>A class name for the main body (the default value is <code>body</code>).</p>
+<h4 id="sec:the-body-tag-and-body-class-variables"><span class="section-number">4.3.2.3</span> The <code>body-tag</code> and <code>body-class</code> variables</h4>
+<p>The main body of the document is wrapped in <code>&lt;main&gt;</code>, and then in an element
+whose tag name is <code>body-tag</code> (the default value is <code>article</code>) and class name is
+<code>body-class</code> (the default value is empty), e.g., `<main><article class="foo">…</p>
+</article></main>`. For example, you can set `body-class: foo` and then style
+the body with the CSS selector `.foo`, or set `body-tag: div` if the content is
+not an article.
 <h4 id="sec:the-lang-variable"><span class="section-number">4.3.2.4</span> The <code>lang</code> variable</h4>
 <p>The language of the HTML document, used to set the <code>lang</code> attribute of the
 <code>&lt;html&gt;</code> tag. It should be a <a href="https://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>
@@ -4806,8 +4821,8 @@ and <code>none</code>.</p>
 </code></pre>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/05-assets.Rmd">
+</article>
+<article class="chapter" data-source="book/05-assets.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/05-assets.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -4826,11 +4841,11 @@ at its core, but you are free to add more features by yourself. In this chapter,
 we introduce some CSS/JS assets from the GitHub repository
 <a href="https://github.com/yihui/lite.js">https://github.com/yihui/lite.js</a>: first the default CSS (<a class="cross-ref-sec" href="#sec:default-css">5.2</a>),
 which you can customize with your own CSS or a stylesheet from the web
-(<a class="cross-ref-sec" href="#sec:custom-assets">5.3</a>), and then optional features that you can turn on with
-extra assets. You can load arbitrary external JS and CSS files via the <code>js</code> and
-<code>css</code> meta variables. There are numerous JS libraries and CSS frameworks on the
-web, and you do not have to use the ones mentioned in this chapter. You can
-also write CSS/JS by yourself to enrich your HTML applications.</p>
+(<a class="cross-ref-sec" href="#sec:custom-assets">5.3</a>), and then optional features that you can turn on with extra
+assets. You can load arbitrary external JS and CSS files via the <code>js</code> and <code>css</code>
+meta variables. There are numerous JS libraries and CSS frameworks on the web,
+and you do not have to use the ones mentioned in this chapter. You can also
+write CSS/JS by yourself to enrich your HTML applications.</p>
 <p>Remember that the CSS and JS are introduced under the output format <code>html</code> in
 YAML metadata, e.g.,</p>
 <pre><code class="language-yaml">---
@@ -4864,11 +4879,11 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 <table>
 <thead>
 <tr>
-<th>feature</th>
-<th>description</th>
-<th>css</th>
-<th>js</th>
-<th>section</th>
+<th>Feature</th>
+<th>Description</th>
+<th>CSS</th>
+<th>JS</th>
+<th>Section</th>
 </tr>
 </thead>
 <tbody>
@@ -5060,8 +5075,12 @@ stays, and your rules (which come later) override it:</p>
 </code></pre>
 <p>How do you know what to write? Right-click the thing you want to change on the
 page and choose “Inspect”: your web browser will show its tag name and class,
-which is what you put before the braces <code>{}</code> (the “selector”). Below are some
-common ones:</p>
+which is what you put before the braces <code>{}</code> (the “selector”). Some common
+ones are listed in <a class="cross-ref-tab" href="#tab:css-selectors">5</a>:</p>
+<div class="table" id="tab:css-selectors">
+<div class="caption">
+<p><span class="ref-number-tab">5</span> Common CSS selectors for parts of a page.</p>
+</div>
 <table>
 <thead>
 <tr>
@@ -5104,6 +5123,7 @@ common ones:</p>
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="sec:use-css-js-from-the-web"><span class="section-number">5.3.2</span> Use CSS/JS from the web</h3>
 <p>Many people have published small stylesheets that make plain HTML pages look
 nice, such as <a href="https://watercss.kognise.dev">Water.css</a>,
@@ -5121,8 +5141,8 @@ e.g., <code>css: [&quot;@npm/water.css/out/water.css&quot;]</code> (see <a class
 syntax).</p>
 <p>All of these work with <strong>litedown</strong> because it produces ordinary HTML. A few
 stylesheets look slightly off (e.g., a title that is not centered), and you can
-fix that with a few rules as shown above. The examples page above
-has many of them, including such small fixes.</p>
+fix that with a few rules as shown above. The examples page above has many of
+them, including such small fixes.</p>
 <p>You are not limited to the CSS/JS assets introduced in this chapter: you can
 include any CSS framework or JS library in the same way, via the <code>css</code> and <code>js</code>
 fields. For example, here is how to use the
@@ -5809,8 +5829,10 @@ js: [&quot;@pages&quot;]
 the page into discrete pages of a fixed size (A4 paper by default), which is
 mainly useful for printing the HTML to PDF (e.g., via a browser’s print dialog)
 with proper page headers, footers, and page numbers.</p>
-<p>Pagination is not applied by default because it can be expensive for long
-documents. There are three ways to trigger it:</p>
+<h3 id="sec:trigger-pagination"><span class="section-number">5.13.1</span> Trigger pagination</h3>
+<p>Pagination is not applied by default after you simply load the CSS/JS assets on
+the page, because it completely reorganizes the original page, and can take a
+while for long documents.<sup class="footnote-ref"><a href="#fn-05-assets-1" id="fnref-05-assets-1" data-footnote-ref>10</a></sup> There are four ways to trigger it:</p>
 <ul>
 <li>
 <p>Press the <code>p</code> key on the page to toggle pagination on and off.</p>
@@ -5819,19 +5841,96 @@ documents. There are three ways to trigger it:</p>
 <p>Append the query parameter <code>?paged=1</code> to the page URL.</p>
 </li>
 <li>
-<p>Print the page (or use the browser’s print preview), which fires the
-<code>beforeprint</code> event that automatically paginates the content.</p>
+<p>Print the page (or use the browser’s print preview), which paginates the
+page automatically.</p>
+</li>
+<li>
+<p>Run <code>dispatchEvent(new Event(&quot;pagesjs:paginate&quot;))</code> in JavaScript. This is
+mainly useful for scripts that control a browser. When the pages are ready,
+the event <code>pagesjs:after</code> is fired on <code>window</code> (and <code>pagesjs:before</code> is
+fired before the pagination starts).</p>
 </li>
 </ul>
-<p>The <code>pages.js</code> script moves elements into page boxes so that each page holds as
-much content as possible without overflowing. Elements that are too tall to fit
-on the current page (such as long paragraphs, lists, tables, and code blocks)
-are fragmented across pages. Each page gets a header showing the document title
-and the current section title, and a footer showing the page number. If the
-document has a TOC, dot leaders and page numbers are added to it.</p>
-<p>The <code>pages.css</code> stylesheet defines the paper geometry through CSS variables,
-which you can override to change the paper size and margins, e.g., for US Letter
-paper:</p>
+<p>To print the page to PDF without opening a browser window, use
+<code>xfun::browser_print()</code> (the version of <strong>xfun</strong> needs to be higher than 0.62),
+and ask it to wait until the pages are ready:</p>
+<pre><code class="language-r">xfun::browser_print(
+  &quot;index.html&quot;, wait = c(trigger = &quot;pagesjs:paginate&quot;, event = &quot;pagesjs:after&quot;)
+)
+</code></pre>
+<p>The function asks the page to paginate itself (<code>trigger</code>), waits for the signal
+that the pages are ready (<code>event</code>), and then prints, so the PDF is always
+complete. You can also save a screenshot of the page by using a <code>.png</code> output
+file, or get the HTML (free of JavaScript) of the paginated page with
+<code>xfun::browser_dom()</code>, which accepts the same <code>wait</code> argument.</p>
+<p>The wait matters because some content changes its size on its own when the width
+of its container changes. For example, a flowchart may be drawn horizontally on
+a wide screen but vertically on a narrow page, and the browser redraws it a
+moment <em>after</em> it is moved into a page. To know the final size of such content,
+the script first puts everything on one temporary page of the right width, waits
+for a fraction of a second, and only then starts to break pages. Printing from
+the print dialog of a browser (or <code>xfun::browser_print(&quot;index.html&quot;)</code> without
+<code>wait</code>) cannot wait, so such content may be measured at the wrong size and
+overflow its page. If your document has such content, paginate it first, as in
+the example above.</p>
+<h3 id="sec:how-elements-are-put-on-pages"><span class="section-number">5.13.2</span> How elements are put on pages</h3>
+<p>The script fills pages one by one with as much content as possible. When an
+element does not fit on the rest of the current page, it is broken into two
+pieces: the first piece stays on the current page, and the rest goes to the next
+page.</p>
+<p>Elements can be broken at any level. A list, a block quote, or a <code>&lt;div&gt;</code> is
+broken between its children (and a child that does not fit is broken in the same
+way), and every piece stays in the same place in the original element. For
+example, if the third-level item of a nested list is moved to the next page, it
+is still indented as much as before, and the numbers of an ordered list continue
+from the previous page. Other elements are broken as follows:</p>
+<ul>
+<li>
+<p>Text (e.g., a paragraph) is broken between lines.</p>
+</li>
+<li>
+<p>A table is broken between rows, and its <code>&lt;thead&gt;</code> and <code>&lt;tfoot&gt;</code> are repeated
+on each page.</p>
+</li>
+<li>
+<p>A code block is broken between lines. Highlighted text that spans multiple
+lines (e.g., a comment) is still highlighted on both pages.</p>
+</li>
+</ul>
+<p>A few elements are never broken: headings, images, SVG, <code>&lt;figure&gt;</code>, <code>.figure</code>,
+<code>&lt;details&gt;</code>, floating or absolutely positioned elements, and flexbox or grid
+containers. You can also keep any element in one piece with the CSS property
+<code>break-inside: avoid</code>:</p>
+<pre><code class="language-css">.keep-together {
+  break-inside: avoid;
+}
+</code></pre>
+<p>An element that is not broken moves to the next page if it does not fit. If it
+is taller than a whole page, it gets a page of its own, which is printed over
+several physical pages (see <a class="cross-ref-sec" href="#sec:pages-troubleshooting">5.13.5</a>).</p>
+<p>The script also tries to make pages look better:</p>
+<ul>
+<li>
+<p>A paragraph is not broken in a way that leaves a single line alone at the
+top of a page (or at the bottom, for a short paragraph).</p>
+</li>
+<li>
+<p>A heading is not left alone at the bottom of a page.</p>
+</li>
+<li>
+<p>If only about one line of a broken block (e.g., the title of a callout, or
+the first item of a list) would stay on a page, the whole block moves to the
+next page.</p>
+</li>
+<li>
+<p>A page may be a few pixels too tall (the margin at its bottom is not counted
+either), so that a tiny overflow does not push the last line to a new page
+or make the page scrollable.</p>
+</li>
+</ul>
+<h3 id="sec:page-layout-and-styles"><span class="section-number">5.13.3</span> Page layout and styles</h3>
+<p>The paper size and margins are defined by CSS variables, which you can override.
+For example, for US Letter paper:</p>
 <pre><code class="language-css">:root {
   --paper-width: 8.5in;
   --paper-height: 11in;
@@ -5841,9 +5940,101 @@ paper:</p>
   --paper-margin-left: 1in;
 }
 </code></pre>
-<p>If <strong>litedown</strong> does not estimate the number of pages for a tall element
-correctly, you can specify the number manually via the <code>data-pages-offset</code>
-attribute on a page element, e.g., <code>&lt;div class=&quot;pagesjs-page&quot; data-pages-offset=&quot;3&quot;&gt;</code>.</p>
+<p>You can also change the height of the header and the footer of a page, and the
+space between them and the content:</p>
+<pre><code class="language-css">:root {
+  --page-header-height: 40px;
+  --page-header-bottom: 40px;
+  --page-footer-height: 40px;
+  --page-footer-top: 40px;
+}
+</code></pre>
+<p>Each page has a header with the document title (on the left) and the title of
+the current section (on the right), and a footer with the page number. These
+texts come from the attributes <code>data-main-title</code>, <code>data-page-title</code>, and
+<code>data-page-number</code> of the header and footer, so you can change what is shown
+with CSS only, e.g.,</p>
+<pre><code class="language-css">.pagesjs-header::after {
+  content: &quot;Draft &quot; attr(data-page-number);
+}
+</code></pre>
+<p>The document title is the first <code>&lt;h1&gt;</code> with the class <code>title</code>, <code>&lt;h1&gt;</code> in the
+frontmatter (see <a class="cross-ref-sec" href="#sec:pages-other">5.13.4</a>), element with the class <code>title</code>, or <code>&lt;h1&gt;</code> in
+the document, in this order of preference. The section title is the last heading
+(<code>&lt;h2&gt;</code>, or <code>&lt;h1&gt;</code> in a book) before the page, i.e., the section in which the
+page starts. If a heading has the attribute <code>data-short-title</code>, its value is
+used in the header instead of the heading, which is handy when the heading is
+too long.</p>
+<p>These classes help you style the pages:</p>
+<ul>
+<li>
+<p><code>page-odd</code> and <code>page-even</code> on pages, e.g., to put the page number on
+different sides of the footer.</p>
+</li>
+<li>
+<p><code>page-multiple</code> on a page that is too tall and is printed over several
+physical pages.</p>
+</li>
+<li>
+<p><code>pagesjs-fragmented</code> on every piece of a broken element. The first piece
+also has the class <code>fragment-first</code>, and the last piece <code>fragment-last</code>, so
+you can style the pieces differently, e.g., to draw the border of a box only
+where the box is not cut:</p>
+<pre><code class="language-css">.box.pagesjs-fragmented {
+  &amp;:not(.fragment-first) { border-top: none; }
+  &amp;:not(.fragment-last) { border-bottom: none; }
+}
+</code></pre>
+<p>By default, the margin, padding, and border are removed where an element is
+cut, and the marker of a list item is shown only once.</p>
+</li>
+</ul>
+<p>If an element is broken, its <code>id</code> is copied to all the pieces, so the same ID
+appears more than once. This is intended: CSS rules that use IDs (such as
+<code>#TOC</code>) still work for all the pieces.</p>
+<p>The table of contents gets dot leaders and page numbers automatically, and the
+footnotes of a page are moved to the bottom of the page. The classes <code>side</code>,
+<code>side-left</code>, and <code>side-right</code> are removed from the table of contents, footnotes,
+and chapter links, because they put these elements in the margins of the screen,
+which does not make sense on a page.</p>
+<h3 id="sec:pages-other"><span class="section-number">5.13.4</span> Paginate other HTML pages</h3>
+<p>The <code>pages</code> assets are not limited to <strong>litedown</strong> output. They paginate the
+<em>content root</em>, which is the first <code>&lt;main&gt;</code> (or element with <code>role=&quot;main&quot;</code>; if
+it only contains one element, such as <code>&lt;article&gt;</code>, that element is used). If
+there is none, the <code>&lt;article&gt;</code> elements are used, or the whole <code>&lt;body&gt;</code> if there
+is no <code>&lt;article&gt;</code>. You can choose another content root with a CSS selector in
+the attribute <code>data-pages-root</code> of <code>&lt;body&gt;</code>:</p>
+<pre><code class="language-html">&lt;body data-pages-root=&quot;#content&quot;&gt;
+</code></pre>
+<p>The frontmatter (title, author, etc.) is the <code>&lt;header&gt;</code> that is a direct child
+of <code>&lt;body&gt;</code>. You can choose another element with the attribute
+<code>data-pages-front</code> (use a selector that matches nothing if there is no
+frontmatter). The rest of the page outside the content root (e.g., the
+navigation bar and sidebar) is hidden.</p>
+<p>Because the content moves into pages, CSS rules that depend on the elements
+around it (e.g., <code>article h2</code> or <code>main h2</code>) would stop working. To avoid this,
+each page contains an empty copy of the content root and the elements around it,
+so these rules still apply. The layout of the copies (e.g., their width,
+margins, padding, and background) is reset so that they do not affect the page.</p>
+<p>A document with more than one <code>&lt;h1&gt;</code> is treated as a book. Every chapter (an
+element that contains an <code>&lt;h1&gt;</code>), the frontmatter, and the table of contents
+start on a new page, and the section title in the header is the <code>&lt;h1&gt;</code> instead
+of the <code>&lt;h2&gt;</code>.</p>
+<p>You can also create pages yourself with <code>&lt;div class=&quot;pagesjs-page&quot;&gt;</code>. An empty
+one is a page break (the content after it goes into this page). One that already
+has content is kept as it is, and the content after it starts on a new page.</p>
+<h3 id="sec:pages-troubleshooting"><span class="section-number">5.13.5</span> Troubleshooting</h3>
+<p>If an element that cannot be broken is taller than a page, the script cannot
+make it fit, so the page is marked with the class <code>page-multiple</code> and printed
+over several physical pages. The number of these pages is estimated for the page
+numbers. If the estimate is wrong, give the right number via the attribute
+<code>data-pages-offset</code> of the page, e.g.,
+<code>&lt;div class=&quot;pagesjs-page&quot; data-pages-offset=&quot;3&quot;&gt;</code>.</p>
+<p>If something looks different after pagination, remember that the content has
+been moved: CSS rules that depend on the position of an element (such as
+<code>main &gt; p</code>, <code>:first-child</code>, or sibling selectors) may not apply to the pieces of
+a broken element. Use the classes <code>pagesjs-fragmented</code>, <code>fragment-first</code>, and
+<code>fragment-last</code> to style the pieces.</p>
 <h2 id="sec:snap"><span class="section-number">5.14</span> HTML slides</h2>
 <p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
@@ -6001,8 +6192,8 @@ separator is kept between them.</p>
 multiple features.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/06-widgets.Rmd">
+</article>
+<article class="chapter" data-source="book/06-widgets.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/06-widgets.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -6100,7 +6291,7 @@ to write raw JS code in an R character string, mark the string with a special
 class, and <code>eval()</code> the string on the JS side. Although <a href="https://rstudio.github.io/DT/002-rowdetails.html">it works
 fine</a>, such “special strings”
 still feel like square pegs in round holes, and the scary <code>eval()</code> will make
-them fit.<sup class="footnote-ref"><a href="#fn-06-widgets-1" id="fnref-06-widgets-1" data-footnote-ref>10</a></sup> The <strong>litedown</strong> approach makes you write (nearly) pure
+them fit.<sup class="footnote-ref"><a href="#fn-06-widgets-1" id="fnref-06-widgets-1" data-footnote-ref>11</a></sup> The <strong>litedown</strong> approach makes you write (nearly) pure
 JS, and you can do whatever JS allows you to do.</p>
 <p>However, I need to warn you that you may have to write a lot more boilerplate
 code with this approach. This problem could be solved by providing R helper
@@ -6132,7 +6323,7 @@ widget’s variables by accident.</p>
 </li>
 </ol>
 <p>With that in mind, let’s start looking at the boring way to generate HTML
-widgets. Plain oatmeal is a bowl of sadness.<sup class="footnote-ref"><a href="#fn-06-widgets-2" id="fnref-06-widgets-2" data-footnote-ref>11</a></sup> So is this chapter
+widgets. Plain oatmeal is a bowl of sadness.<sup class="footnote-ref"><a href="#fn-06-widgets-2" id="fnref-06-widgets-2" data-footnote-ref>12</a></sup> So is this chapter
 (of plain JS).</p>
 <h2 id="sec:simple-dt"><span class="section-number">6.2</span> Simple DataTables</h2>
 <pre><code class="language-md" data-file="021.Rmd" data-output="021-simple-datatables.html">---
@@ -6323,8 +6514,8 @@ new Chart(ctx, {
 </code></pre>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/07-editor.Rmd">
+</article>
+<article class="chapter" data-source="book/07-editor.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/07-editor.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -6472,8 +6663,8 @@ knit: litedown:::knit
 </code></pre>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/08-site.Rmd">
+</article>
+<article class="chapter" data-source="book/08-site.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/08-site.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -6551,7 +6742,7 @@ one place. With this option set, you can print <code>litedown::timing_data()</co
 last chapter to see the timing data for the whole book. Remember to delete the
 data file when you no longer need it.</p>
 <h3 id="sec:previewing-a-single-chapter"><span class="section-number">8.2.1</span> Previewing a single chapter</h3>
-<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-08-site-1" id="fnref-08-site-1" data-footnote-ref>12</a></sup> and unnecessary when
+<p>Rendering a whole book may be time-consuming<sup class="footnote-ref"><a href="#fn-08-site-1" id="fnref-08-site-1" data-footnote-ref>13</a></sup> and unnecessary when
 you work on a book. It may be easier to only preview the single chapter that you
 currently work on. The preview can be done with <code>litedown::roam()</code>:</p>
 <ul>
@@ -6718,7 +6909,7 @@ first, because rendering the site requires the installed version of it, e.g.,
 <code>pkg_manual()</code> reads its help database, and <code>articles.Rmd</code> lists its built
 vignettes.</p>
 <p>The template lives under <code>system.file('site', package = 'litedown')</code> and contains
-the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">5</a>):</p>
+the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">6</a>):</p>
 <pre><code class="language-r">list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 </code></pre>
 <pre><code>#&gt; [1] &quot;_footer.md&quot;   &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;examples.Rmd&quot; &quot;index.Rmd&quot;   
@@ -6726,14 +6917,14 @@ the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">
 </code></pre>
 <div class="table">
 <div class="caption">
-<p><span class="ref-number-tab">5</span> Explanations of site source files.</p>
+<p><span class="ref-number-tab">6</span> Explanations of site source files.</p>
 </div>
 <table>
 <thead>
 <tr>
-<th>source</th>
-<th>description</th>
-<th>content</th>
+<th>Source</th>
+<th>Description</th>
+<th>Content</th>
 </tr>
 </thead>
 <tbody>
@@ -6866,7 +7057,7 @@ exist, the <code>.R</code> version is tried.</p>
 <li>
 <p><code>setup.R</code>: an R script executed once in the webR session after packages are
 installed. It is a good place to install/load the package under
-documentation<sup class="footnote-ref"><a href="#fn-08-site-2" id="fnref-08-site-2" data-footnote-ref>13</a></sup> and define any helpers that users might need.</p>
+documentation<sup class="footnote-ref"><a href="#fn-08-site-2" id="fnref-08-site-2" data-footnote-ref>14</a></sup> and define any helpers that users might need.</p>
 </li>
 </ul>
 <p>If the package has an <code>examples/</code> directory, the <code>.Rmd</code>/<code>.R</code> files under it will
@@ -7052,8 +7243,8 @@ change this path, please remember to adjust the <code>path</code> option for the
 <code>actions/upload-pages-artifact</code> action accordingly.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
-<div class="chapter body" data-source="book/A-misc.Rmd">
+</article>
+<article class="chapter" data-source="book/A-misc.Rmd">
 <div class="chapter-before side side-right">
 <p><a href="https://github.com/yihui/litedown/edit/main/book/A-misc.Rmd">Edit this chapter</a> on GitHub</p>
 </div>
@@ -7104,7 +7295,7 @@ mark('foo.md', output = NA)  # text
 mark('foo.md', output = 'latex')  # text (LaTeX code)
 </code></pre>
 <p>If the input is a file and the <code>output</code> argument takes a file extension (one of
-<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),<sup class="footnote-ref"><a href="#fn-a-misc-1" id="fnref-a-misc-1" data-footnote-ref>14</a></sup>
+<code>.html</code>, <code>.xml</code>, <code>.man</code>, <code>.markdown</code>, <code>.md</code>, <code>.txt</code>, or <code>.tex</code>),<sup class="footnote-ref"><a href="#fn-a-misc-1" id="fnref-a-misc-1" data-footnote-ref>15</a></sup>
 you will get a file output with the same base name as the input file. The <code>.pdf</code>
 extension can also be used if you want to convert Markdown to LaTeX, and then
 render LaTeX to PDF. For example:</p>
@@ -7119,19 +7310,19 @@ the intermediate Markdown text for the target output format, e.g.,</p>
 <p>Depending on the target output format, the intermediate Markdown may be
 different, e.g., for <code>html</code> output, the default graphical device is PNG, whereas
 for <code>latex</code> output, the default device is PDF.</p>
-<p><a class="cross-ref-tab" href="#tab:input-output">6</a> provides a summary of the above rules.</p>
+<p><a class="cross-ref-tab" href="#tab:input-output">7</a> provides a summary of the above rules.</p>
 <div class="table" id="tab:input-output">
 <div class="caption">
-<p><span class="ref-number-tab">6</span> The returned value for different combinations of <code>input</code>
+<p><span class="ref-number-tab">7</span> The returned value for different combinations of <code>input</code>
 and <code>output</code> arguments of <code>mark()</code> / <code>fuse()</code>.</p>
 </div>
 <table>
 <thead>
 <tr>
-<th>function</th>
+<th>Function</th>
 <th><code>input</code></th>
 <th><code>output</code></th>
-<th>returned value</th>
+<th>Returned value</th>
 </tr>
 </thead>
 <tbody>
@@ -7217,7 +7408,7 @@ avoid using the same base filename for two <code>.Rmd</code> and <code>.md</code
 their output files will overwrite each other.</p>
 <div class="chapter-after side side-right">
 </div>
-</div>
+</article>
 <section class="footnotes" data-footnotes>
 <ol>
 <li id="fn-1">
@@ -7275,31 +7466,39 @@ you use the RStudio visual editor to edit Markdown documents, the footnote
 numbers will be automatically generated and updated when new footnotes are
 inserted before existing footnotes. <a href="#fnref-03-syntax-4" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="9" aria-label="Back to reference 9">↩</a></p>
 </li>
+<li id="fn-05-assets-1">
+<p>From my testing, a 200-page book takes about one second to
+render. I have also seen a 1000-page report take more than 20 seconds. It
+depends on the elements in the document. For example, long code blocks,
+tables, paragraphs, deep/long lists, and elements with many children are
+relatively slow to fragment. Pages containing a lot of these elements can be
+slow to render. <a href="#fnref-05-assets-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
+</li>
 <li id="fn-06-widgets-1">
 <p>See
 <a href="https://github.com/rstudio/DT/issues/1080">rstudio/DT#1080</a> for a funny
 story about <code>eval()</code>. Speaking of square pegs, perhaps we can rename <code>eval</code>
-to <code>oval</code> (<code>const oval = eval;</code>)? Oval pegs should fit round holes better. <a href="#fnref-06-widgets-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="10" aria-label="Back to reference 10">↩</a></p>
+to <code>oval</code> (<code>const oval = eval;</code>)? Oval pegs should fit round holes better. <a href="#fnref-06-widgets-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="11" aria-label="Back to reference 11">↩</a></p>
 </li>
 <li id="fn-06-widgets-2">
 <p>My younger son kept repeating this sentence from his audio book
 last year. I asked him why plain oatmeal is a bowl of sadness, but he never
 told me. As a lazy dad, I’m counting on my 9-month old daughter to tell me
-someday. <a href="#fnref-06-widgets-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="11" aria-label="Back to reference 11">↩</a></p>
+someday. <a href="#fnref-06-widgets-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="12" aria-label="Back to reference 12">↩</a></p>
 </li>
 <li id="fn-08-site-1">
 <p>Remember that you can cache time-consuming code chunks to make the
-rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="12" aria-label="Back to reference 12">↩</a></p>
+rendering faster. <a href="#fnref-08-site-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="13" aria-label="Back to reference 13">↩</a></p>
 </li>
 <li id="fn-08-site-2">
 <p>To install the development version of a package,
 <a href="https://docs.r-universe.dev/install/binaries.html">r-universe.dev</a> can be
-helpful. <a href="#fnref-08-site-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="13" aria-label="Back to reference 13">↩</a></p>
+helpful. <a href="#fnref-08-site-2" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="14" aria-label="Back to reference 14">↩</a></p>
 </li>
 <li id="fn-a-misc-1">
 <p>Note that the format name <code>commonmark</code> and the extension
 <code>.markdown</code> are for CommonMark output. It should be rare that you need to
-convert Markdown input to CommonMark output, but it is possible anyway. <a href="#fnref-a-misc-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="14" aria-label="Back to reference 14">↩</a></p>
+convert Markdown input to CommonMark output, but it is possible anyway. <a href="#fnref-a-misc-1" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="15" aria-label="Back to reference 15">↩</a></p>
 </li>
 </ol>
 </section>
@@ -7310,31 +7509,32 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.11.20, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.11.21, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.62.4, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.62.6, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
+</div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/tabsets.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/pele.global.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.128/js/render-pele.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/render-pele.min.js" defer></script>
 </body>
 </html>
