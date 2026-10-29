@@ -14,11 +14,11 @@ at its core, but you are free to add more features by yourself. In this chapter,
 we introduce some CSS/JS assets from the GitHub repository
 <https://github.com/yihui/lite.js>: first the default CSS (@sec:default-css),
 which you can customize with your own CSS or a stylesheet from the web
-(@sec:custom-assets), and then optional features that you can turn on with
-extra assets. You can load arbitrary external JS and CSS files via the `js` and
-`css` meta variables. There are numerous JS libraries and CSS frameworks on the
-web, and you do not have to use the ones mentioned in this chapter. You can
-also write CSS/JS by yourself to enrich your HTML applications.
+(@sec:custom-assets), and then optional features that you can turn on with extra
+assets. You can load arbitrary external JS and CSS files via the `js` and `css`
+meta variables. There are numerous JS libraries and CSS frameworks on the web,
+and you do not have to use the ones mentioned in this chapter. You can also
+write CSS/JS by yourself to enrich your HTML applications.
 
 Remember that the CSS and JS are introduced under the output format `html` in
 YAML metadata, e.g.,
@@ -160,16 +160,16 @@ page and choose "Inspect": your web browser will show its tag name and class,
 which is what you put before the braces `{}` (the "selector"). Below are some
 common ones:
 
-| To change            | Selector                                          |
-|----------------------|---------------------------------------------------|
-| the whole page       | `body` (font, background, and width)              |
-| title, author, date  | `.frontmatter`                                    |
-| table of contents    | `#TOC`, and its links `#TOC a`                    |
-| section headings     | `h1`, `h2`, `h3`, etc.                            |
-| code                 | `pre` (blocks) and `code` (inline)                |
-| block quotes         | `blockquote`                                      |
-| tables               | `table`                                           |
-| footnotes            | `.footnotes`                                      |
+| To change           | Selector                             |
+|---------------------|--------------------------------------|
+| the whole page      | `body` (font, background, and width) |
+| title, author, date | `.frontmatter`                       |
+| table of contents   | `#TOC`, and its links `#TOC a`       |
+| section headings    | `h1`, `h2`, `h3`, etc.               |
+| code                | `pre` (blocks) and `code` (inline)   |
+| block quotes        | `blockquote`                         |
+| tables              | `table`                              |
+| footnotes           | `.footnotes`                         |
 
 ### Use CSS/JS from the web
 
@@ -193,8 +193,8 @@ syntax).
 
 All of these work with **litedown** because it produces ordinary HTML. A few
 stylesheets look slightly off (e.g., a title that is not centered), and you can
-fix that with a few rules as shown above. The examples page above
-has many of them, including such small fixes.
+fix that with a few rules as shown above. The examples page above has many of
+them, including such small fixes.
 
 You are not limited to the CSS/JS assets introduced in this chapter: you can
 include any CSS framework or JS library in the same way, via the `css` and `js`
@@ -222,7 +222,6 @@ I(mtcars)
 new simpleDatatables.DataTable('#mtcars-table > table');
 ```
 ````
-
 
 See @sec:simple-dt for more ways to create this type of table.
 
@@ -890,45 +889,52 @@ with proper page headers, footers, and page numbers.
 
 ### Trigger pagination
 
-Pagination is not applied by default because it can take a while for long
-documents (a small indicator in the center of the screen shows how many pages
-have been finished). There are four ways to trigger it:
+Pagination is not applied by default after you simply load the CSS/JS assets on
+the page, because it completely reorganizes the original page, and can take a
+while for long documents.[^05-assets-1] There are four ways to trigger it:
+
+[^05-assets-1]: From my testing, a 200-page book takes about one second to
+    render. I have also seen a 1000-page report take more than 20 seconds. It
+    depends on the elements in the document. For example, long code blocks,
+    tables, paragraphs, deep/long lists, and elements with many children are
+    relatively slow to fragment. Pages containing a lot of these elements can be
+    slow to render.
 
 -   Press the `p` key on the page to toggle pagination on and off.
 
 -   Append the query parameter `?paged=1` to the page URL.
 
--   Print the page (or use the browser's print preview), which paginates the page
-    automatically.
+-   Print the page (or use the browser's print preview), which paginates the
+    page automatically.
 
 -   Run `dispatchEvent(new Event("pagesjs:paginate"))` in JavaScript. This is
     mainly useful for scripts that control a browser. When the pages are ready,
-    the event `pagesjs:after` is fired on `window` (and `pagesjs:before` is fired
-    before the pagination starts).
+    the event `pagesjs:after` is fired on `window` (and `pagesjs:before` is
+    fired before the pagination starts).
 
 To print the page to PDF without opening a browser window, use
-`xfun::browser_print()` (you need a recent version of **xfun**), and ask it to
-wait until the pages are ready:
+`xfun::browser_print()` (the version of **xfun** needs to be higher than 0.62),
+and ask it to wait until the pages are ready:
 
 ``` r
 xfun::browser_print(
-  "index.html", wait = c(event = "pagesjs:after", trigger = "pagesjs:paginate")
+  "index.html", wait = c(trigger = "pagesjs:paginate", event = "pagesjs:after")
 )
 ```
 
 The function asks the page to paginate itself (`trigger`), waits for the signal
 that the pages are ready (`event`), and then prints, so the PDF is always
 complete. You can also save a screenshot of the page by using a `.png` output
-file, or get the HTML of the paginated page with `xfun::browser_dom()`, which
-accepts the same `wait` argument.
+file, or get the HTML (free of JavaScript) of the paginated page with
+`xfun::browser_dom()`, which accepts the same `wait` argument.
 
 The wait matters because some content changes its size on its own when the width
-of its container changes. For example, a flowchart may be drawn horizontally on a
-wide screen but vertically on a narrow page, and the browser redraws it a moment
-*after* it is moved into a page. To know the final size of such content, the
-script first puts everything on one temporary page of the right width, waits for
-a fraction of a second, and only then starts to break pages. Printing from the
-print dialog of a browser (or `xfun::browser_print("index.html")` without
+of its container changes. For example, a flowchart may be drawn horizontally on
+a wide screen but vertically on a narrow page, and the browser redraws it a
+moment *after* it is moved into a page. To know the final size of such content,
+the script first puts everything on one temporary page of the right width, waits
+for a fraction of a second, and only then starts to break pages. Printing from
+the print dialog of a browser (or `xfun::browser_print("index.html")` without
 `wait`) cannot wait, so such content may be measured at the wrong size and
 overflow its page. If your document has such content, paginate it first, as in
 the example above.
@@ -966,8 +972,8 @@ containers. You can also keep any element in one piece with the CSS property
 }
 ```
 
-An element that is not broken moves to the next page if it does not fit. If it is
-taller than a whole page, it gets a page of its own, which is printed over
+An element that is not broken moves to the next page if it does not fit. If it
+is taller than a whole page, it gets a page of its own, which is printed over
 several physical pages (see @sec:pages-troubleshooting).
 
 The script also tries to make pages look better:
@@ -977,13 +983,13 @@ The script also tries to make pages look better:
 
 -   A heading is not left alone at the bottom of a page.
 
--   If only about one line of a broken block (e.g., the title of a callout, or the
-    first item of a list) would stay on a page, the whole block moves to the next
-    page.
+-   If only about one line of a broken block (e.g., the title of a callout, or
+    the first item of a list) would stay on a page, the whole block moves to the
+    next page.
 
 -   A page may be a few pixels too tall (the margin at its bottom is not counted
-    either), so that a tiny overflow does not push the last line to a new page or
-    make the page scrollable.
+    either), so that a tiny overflow does not push the last line to a new page
+    or make the page scrollable.
 
 ### Page layout and styles
 
@@ -1016,8 +1022,8 @@ space between them and the content:
 Each page has a header with the document title (on the left) and the title of
 the current section (on the right), and a footer with the page number. These
 texts come from the attributes `data-main-title`, `data-page-title`, and
-`data-page-number` of the header and footer, so you can change what is shown with
-CSS only, e.g.,
+`data-page-number` of the header and footer, so you can change what is shown
+with CSS only, e.g.,
 
 ``` css
 .pagesjs-header::after {
@@ -1027,10 +1033,11 @@ CSS only, e.g.,
 
 The document title is the first `<h1>` with the class `title`, `<h1>` in the
 frontmatter (see @sec:pages-other), element with the class `title`, or `<h1>` in
-the document, in this order of preference. The section title is the last heading (`<h2>`, or `<h1>` in a book)
-before the page, i.e., the section in which the page starts. If a heading has the
-attribute `data-short-title`, its value is used in the header instead of the
-heading, which is handy when the heading is too long.
+the document, in this order of preference. The section title is the last heading
+(`<h2>`, or `<h1>` in a book) before the page, i.e., the section in which the
+page starts. If a heading has the attribute `data-short-title`, its value is
+used in the header instead of the heading, which is handy when the heading is
+too long.
 
 These classes help you style the pages:
 
@@ -1040,9 +1047,9 @@ These classes help you style the pages:
 -   `page-multiple` on a page that is too tall and is printed over several
     physical pages.
 
--   `pagesjs-fragmented` on every piece of a broken element. The first piece also
-    has the class `fragment-first`, and the last piece `fragment-last`, so you
-    can style the pieces differently, e.g., to draw the border of a box only
+-   `pagesjs-fragmented` on every piece of a broken element. The first piece
+    also has the class `fragment-first`, and the last piece `fragment-last`, so
+    you can style the pieces differently, e.g., to draw the border of a box only
     where the box is not cut:
 
     ``` css
@@ -1068,49 +1075,50 @@ which does not make sense on a page.
 ### Paginate other HTML pages {#sec:pages-other}
 
 The `pages` assets are not limited to **litedown** output. They paginate the
-_content root_, which is the first `<main>` (or element with `role="main"`; if
+*content root*, which is the first `<main>` (or element with `role="main"`; if
 it only contains one element, such as `<article>`, that element is used). If
 there is none, the `<article>` elements are used, or the whole `<body>` if there
-is no `<article>`. You can choose another content root with a CSS selector in the
-attribute `data-pages-root` of `<body>`:
+is no `<article>`. You can choose another content root with a CSS selector in
+the attribute `data-pages-root` of `<body>`:
 
 ``` html
 <body data-pages-root="#content">
 ```
 
-The frontmatter (title, author, etc.) is the `<header>` that is a direct child of
-`<body>`. You can choose another element with the attribute `data-pages-front`
-(use a selector that matches nothing if there is no frontmatter). The rest of the
-page outside the content root (e.g., the navigation bar and sidebar) is hidden.
+The frontmatter (title, author, etc.) is the `<header>` that is a direct child
+of `<body>`. You can choose another element with the attribute
+`data-pages-front` (use a selector that matches nothing if there is no
+frontmatter). The rest of the page outside the content root (e.g., the
+navigation bar and sidebar) is hidden.
 
-Because the content moves into pages, CSS rules that depend on the elements around
-it (e.g., `article h2` or `main h2`) would stop working. To avoid this, each page
-contains an empty copy of the content root and the elements around it, so these
-rules still apply. The layout of the copies (e.g., their width, margins, padding,
-and background) is reset so that they do not affect the page.
+Because the content moves into pages, CSS rules that depend on the elements
+around it (e.g., `article h2` or `main h2`) would stop working. To avoid this,
+each page contains an empty copy of the content root and the elements around it,
+so these rules still apply. The layout of the copies (e.g., their width,
+margins, padding, and background) is reset so that they do not affect the page.
 
 A document with more than one `<h1>` is treated as a book. Every chapter (an
-element that contains an `<h1>`), the frontmatter, and the table of contents start
-on a new page, and the section title in the header is the `<h1>` instead of the
-`<h2>`.
+element that contains an `<h1>`), the frontmatter, and the table of contents
+start on a new page, and the section title in the header is the `<h1>` instead
+of the `<h2>`.
 
-You can also create pages yourself with `<div class="pagesjs-page">`. An empty one
-is a page break (the content after it goes into this page). One that already has
-content is kept as it is, and the content after it starts on a new page.
+You can also create pages yourself with `<div class="pagesjs-page">`. An empty
+one is a page break (the content after it goes into this page). One that already
+has content is kept as it is, and the content after it starts on a new page.
 
 ### Troubleshooting {#sec:pages-troubleshooting}
 
-If an element that cannot be broken is taller than a page, the script cannot make
-it fit, so the page is marked with the class `page-multiple` and printed over
-several physical pages. The number of these pages is estimated for the page
+If an element that cannot be broken is taller than a page, the script cannot
+make it fit, so the page is marked with the class `page-multiple` and printed
+over several physical pages. The number of these pages is estimated for the page
 numbers. If the estimate is wrong, give the right number via the attribute
-`data-pages-offset` of the page, e.g., `<div class="pagesjs-page"
-data-pages-offset="3">`.
+`data-pages-offset` of the page, e.g.,
+`<div class="pagesjs-page" data-pages-offset="3">`.
 
-If something looks different after pagination, remember that the content has been
-moved: CSS rules that depend on the position of an element (such as `main > p`,
-`:first-child`, or sibling selectors) may not apply to the pieces of a broken
-element. Use the classes `pagesjs-fragmented`, `fragment-first`, and
+If something looks different after pagination, remember that the content has
+been moved: CSS rules that depend on the position of an element (such as
+`main > p`, `:first-child`, or sibling selectors) may not apply to the pieces of
+a broken element. Use the classes `pagesjs-fragmented`, `fragment-first`, and
 `fragment-last` to style the pieces.
 
 ## HTML slides {#sec:snap}
