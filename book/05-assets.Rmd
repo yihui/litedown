@@ -1064,6 +1064,138 @@ The script also tries to make pages look better:
 ### Page layout and styles
 
 The paper size and margins are defined by CSS variables, which you can override.
+@fig:pages-layout shows which variable controls which part of a page. Each tab
+is an element of the page (with its class), and the colored areas are the
+spacing set by the variables.
+
+```{css, echo = FALSE}
+.pd-outer {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .3em;
+  max-width: 40em;
+  margin: 1em auto;
+  font-size: .85em;
+  line-height: 1.4;
+  code { background: none; border: none; padding: 0; }
+  .tabset { margin: 0 !important; }
+  .tab-pane { padding: 0; }
+  > div { text-align: center; }
+}
+.pd-width, .pd-height {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  &::before, &::after { content: ""; flex: 1; border-top: 1px solid; }
+}
+.pd-width { grid-column: 2; }
+.pd-height {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.pd-paper { grid-column: 2; }
+.pd-margins {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  > div { padding: .3em; }
+  .pd-mt, .pd-mb { grid-column: 1 / -1; }
+  .pd-ml, .pd-mr { writing-mode: vertical-rl; }
+  .pd-ml { transform: rotate(180deg); }
+}
+.pd-margins > div:not(.pd-inner), .pd-gap {
+  background: color-mix(in srgb, orange 35%, transparent);
+}
+.pd-gap { padding: .3em; }
+.pd-inner { padding: 0 !important; background: Canvas; }
+.pd-box { padding: .5em; min-height: 3em; text-align: center; }
+.pd-body { min-height: 8em; }
+```
+
+::::: {#fig:pages-layout .figure}
+:::: {.pd-outer}
+::: {.pd-width}
+`--paper-width`
+:::
+
+::: {.pd-height}
+`--paper-height`
+:::
+
+::: {.pd-paper}
+::: tabset
+- `<div class="pagesjs-page">`
+
+  ::::: {.pd-margins}
+  ::: {.pd-mt}
+  `--paper-margin-top`
+  :::
+
+  ::: {.pd-ml}
+  `--paper-margin-left`
+  :::
+
+  :::: {.pd-inner}
+  ::: tabset
+  - `<div class="pagesjs-header">`
+
+    ::: {.pd-box}
+    `--page-header-height`: `data-main-title` ... `data-page-title`
+    :::
+  :::
+
+  ::: {.pd-gap}
+  `--page-header-bottom`
+  :::
+
+  ::: tabset
+  - `<div class="pagesjs-body">`
+
+    ::: {.pd-box .pd-body}
+    ``` html
+    <h2>Title</h2>
+    
+    <p>Content...</p>
+    ```
+    
+    ::: tabset
+    - `<*** class="pagesjs-fragmented my-box">`
+    
+      A fragmented element.
+    :::
+    :::
+  :::
+
+  ::: {.pd-gap}
+  `--page-footer-top`
+  :::
+
+  ::: tabset
+  - `<div class="pagesjs-footer">`
+
+    ::: {.pd-box}
+    `--page-footer-height`: `data-page-number`
+    :::
+  :::
+  ::::
+
+  ::: {.pd-mr}
+  `--paper-margin-right`
+  :::
+
+  ::: {.pd-mb}
+  `--paper-margin-bottom`
+  :::
+  :::::
+:::
+:::
+::::
+
+::: caption
+[ ](#@fig:pages-layout) The CSS variables and elements of a page.
+:::
+:::::
+
 For example, for US Letter paper:
 
 ``` css
@@ -1120,10 +1252,11 @@ These classes help you style the pages:
 -   `pagesjs-fragmented` on every piece of a broken element. The first piece
     also has the class `fragment-first`, and the last piece `fragment-last`, so
     you can style the pieces differently, e.g., to draw the border of a box only
-    where the box is not cut:
+    where the box is not cut (`.my-box` is just an example class here, which
+    you can replace with any class of your own that draws a border):
 
     ``` css
-    .box.pagesjs-fragmented {
+    .my-box.pagesjs-fragmented {
       &:not(.fragment-first) { border-top: none; }
       &:not(.fragment-last) { border-bottom: none; }
     }
@@ -1171,6 +1304,129 @@ A document with more than one `<h1>` is treated as a book. Every chapter (an
 element that contains an `<h1>`), the frontmatter, and the table of contents
 start on a new page, and the section title in the header is the `<h1>` instead
 of the `<h2>`.
+
+For example, suppose the page has the structure below before pagination. The
+`<article>` is the content root because it is the only child of `<main>`, and
+the `<nav>` is outside the content root. Each tab is an element, and its content
+is its children, stacked like the real DOM tree:
+
+```{css, echo = FALSE}
+.dom-tree {
+  .tabset { margin: .3em 0; }
+  .tab-pane {
+    padding: .3em .5em .3em 1em;
+    border-radius: 0 5px 5px 5px;
+    background: color-mix(in srgb, orange 9%, transparent);
+    border-color: color-mix(in srgb, orange 60%, transparent);
+  }
+  > .tabset > .tab-pane { background: none; }
+  .tab-link.active { background: Canvas; }
+  .tab-link { border-color: color-mix(in srgb, orange 60%, transparent); }
+  pre { margin: .3em 0 0; }
+  pre, code { background: none !important; }
+  pre > code { padding: .2em 0; border: none; }
+}
+```
+
+::::: dom-tree
+::: tabset
+- `<body>`
+
+  ::: tabset
+  - `<header>`
+
+    ``` html
+    ...
+    ```
+  :::
+
+  ::: tabset
+  - `<nav>`
+
+    ``` html
+    ...
+    ```
+  :::
+
+  ::: tabset
+  - `<main>`
+
+    ::: tabset
+    - `<article>`
+
+      ``` html
+      <h2>Section A</h2>
+      <p>A long paragraph...</p>
+      <h2>Section B</h2>
+      ```
+    :::
+  :::
+:::
+:::::
+
+If the long paragraph is broken into two pieces by the page boundary, the
+structure after pagination is roughly as follows (the front matter, `<nav>`, `<main>`, and
+the header and footer of the second page are omitted):
+
+::::: dom-tree
+::: tabset
+- `<body class="pagesjs">`
+
+  ::: tabset
+  - `<div class="pagesjs-page page-odd">`
+
+    ::: tabset
+    - `<div class="pagesjs-header" data-main-title="...">`
+
+      ``` html
+      ...
+      ```
+    :::
+
+    ::: tabset
+    - `<div class="pagesjs-body">`
+
+      ::: tabset
+      - `<article class="pagesjs-wrap">`
+
+        ``` html
+        <h2>Section A</h2>
+        <p class="pagesjs-fragmented fragment-first">A long paragraph...</p>
+        ```
+      :::
+    :::
+
+    ::: tabset
+    - `<div class="pagesjs-footer" data-page-number="1">`
+
+      ``` html
+      ...
+      ```
+    :::
+  :::
+
+  ::: tabset
+  - `<div class="pagesjs-page page-even">`
+
+    ::: tabset
+    - `<div class="pagesjs-body">`
+
+      ::: tabset
+      - `<article class="pagesjs-wrap">`
+
+        ``` html
+        <p class="pagesjs-fragmented fragment-last">...the rest.</p>
+        <h2>Section B</h2>
+        ```
+      :::
+    :::
+  :::
+:::
+:::::
+
+Note that the `<main>` and `<article>` on each page are not the originals: they
+are empty copies (`pagesjs-wrap`) made for every page, and the content is moved
+into them.
 
 You can also create pages yourself with `<div class="pagesjs-page">`. An empty
 one is a page break (the content after it goes into this page). One that already
