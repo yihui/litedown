@@ -1048,14 +1048,14 @@ several physical pages (see @sec:pages-troubleshooting).
 
 The script also tries to make pages look better:
 
--   A paragraph is not broken in a way that leaves a single line alone at the
-    top of a page (or at the bottom, for a short paragraph).
+-   A paragraph is not broken in a way that leaves its last line alone on a new
+    page with nothing after it.
 
--   A heading is not left alone at the bottom of a page.
+-   The title of a callout (`<legend>`) is not left alone at the bottom of a
+    page.
 
--   If only about one line of a broken block (e.g., the title of a callout, or
-    the first item of a list) would stay on a page, the whole block moves to the
-    next page.
+-   If only about one line of a broken block (e.g., the first item of a list)
+    would stay on a page, the whole block moves to the next page.
 
 -   A page may be a few pixels too tall (the margin at its bottom is not counted
     either), so that a tiny overflow does not push the last line to a new page
