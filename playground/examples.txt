@@ -26,7 +26,7 @@
 025-option-filter.Rmd
 026-snap-clean.Rmd
 027-raw-text.Rmd
-028-css-playground.Rmd
+028-style-playground.Rmd
 029-css-water.Rmd
 030-css-new.Rmd
 031-css-simple.Rmd

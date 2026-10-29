@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.11.21">
+<meta name="generator" content="litedown 0.11.22">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/tabsets.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/prism-xcode.min.css">
 </head>
 <body>
 <header class="frontmatter">
@@ -226,8 +226,9 @@
 <li><a href="#sec:custom-assets"><span class="section-number">5.3</span> Custom CSS/JS</a>
 <ul>
 <li><a href="#sec:add-a-few-rules-to-a-document"><span class="section-number">5.3.1</span> Add a few rules to a document</a></li>
-<li><a href="#sec:use-css-js-from-the-web"><span class="section-number">5.3.2</span> Use CSS/JS from the web</a></li>
-<li><a href="#sec:global-css"><span class="section-number">5.3.3</span> Apply the styles to all pages</a></li>
+<li><a href="#sec:css-variables"><span class="section-number">5.3.2</span> Customize via CSS variables</a></li>
+<li><a href="#sec:use-css-js-from-the-web"><span class="section-number">5.3.3</span> Use CSS/JS from the web</a></li>
+<li><a href="#sec:global-css"><span class="section-number">5.3.4</span> Apply the styles to all pages</a></li>
 </ul>
 </li>
 <li><a href="#sec:copy-button"><span class="section-number">5.4</span> Copy buttons</a></li>
@@ -267,27 +268,28 @@
 <li><a href="#sec:book"><span class="section-number">5.10</span> HTML books</a></li>
 <li><a href="#sec:chapter-toc"><span class="section-number">5.11</span> Chapter TOC</a></li>
 <li><a href="#sec:toc-highlight"><span class="section-number">5.12</span> Highlight TOC items</a></li>
-<li><a href="#sec:pages"><span class="section-number">5.13</span> Paged HTML</a>
+<li><a href="#sec:nav-highlight"><span class="section-number">5.13</span> Highlight the current page in navigation</a></li>
+<li><a href="#sec:pages"><span class="section-number">5.14</span> Paged HTML</a>
 <ul>
-<li><a href="#sec:trigger-pagination"><span class="section-number">5.13.1</span> Trigger pagination</a></li>
-<li><a href="#sec:how-elements-are-put-on-pages"><span class="section-number">5.13.2</span> How elements are put on pages</a></li>
-<li><a href="#sec:page-layout-and-styles"><span class="section-number">5.13.3</span> Page layout and styles</a></li>
-<li><a href="#sec:pages-other"><span class="section-number">5.13.4</span> Paginate other HTML pages</a></li>
-<li><a href="#sec:pages-troubleshooting"><span class="section-number">5.13.5</span> Troubleshooting</a></li>
+<li><a href="#sec:trigger-pagination"><span class="section-number">5.14.1</span> Trigger pagination</a></li>
+<li><a href="#sec:how-elements-are-put-on-pages"><span class="section-number">5.14.2</span> How elements are put on pages</a></li>
+<li><a href="#sec:page-layout-and-styles"><span class="section-number">5.14.3</span> Page layout and styles</a></li>
+<li><a href="#sec:pages-other"><span class="section-number">5.14.4</span> Paginate other HTML pages</a></li>
+<li><a href="#sec:pages-troubleshooting"><span class="section-number">5.14.5</span> Troubleshooting</a></li>
 </ul>
 </li>
-<li><a href="#sec:snap"><span class="section-number">5.14</span> HTML slides</a>
+<li><a href="#sec:snap"><span class="section-number">5.15</span> HTML slides</a>
 <ul>
-<li><a href="#sec:creating-slides"><span class="section-number">5.14.1</span> Creating slides</a></li>
-<li><a href="#sec:navigating-and-presenting"><span class="section-number">5.14.2</span> Navigating and presenting</a></li>
-<li><a href="#sec:styling-slides"><span class="section-number">5.14.3</span> Styling slides</a></li>
-<li><a href="#sec:printing-and-themes"><span class="section-number">5.14.4</span> Printing and themes</a></li>
+<li><a href="#sec:creating-slides"><span class="section-number">5.15.1</span> Creating slides</a></li>
+<li><a href="#sec:navigating-and-presenting"><span class="section-number">5.15.2</span> Navigating and presenting</a></li>
+<li><a href="#sec:styling-slides"><span class="section-number">5.15.3</span> Styling slides</a></li>
+<li><a href="#sec:printing-and-themes"><span class="section-number">5.15.4</span> Printing and themes</a></li>
 </ul>
 </li>
-<li><a href="#sec:right-quote"><span class="section-number">5.15</span> Right-align a quote footer</a></li>
-<li><a href="#sec:center-img"><span class="section-number">5.16</span> Center images</a></li>
-<li><a href="#sec:external-link"><span class="section-number">5.17</span> Open external links in new windows</a></li>
-<li><a href="#sec:key-buttons"><span class="section-number">5.18</span> Style keyboard shortcuts</a></li>
+<li><a href="#sec:right-quote"><span class="section-number">5.16</span> Right-align a quote footer</a></li>
+<li><a href="#sec:center-img"><span class="section-number">5.17</span> Center images</a></li>
+<li><a href="#sec:external-link"><span class="section-number">5.18</span> Open external links in new windows</a></li>
+<li><a href="#sec:key-buttons"><span class="section-number">5.19</span> Style keyboard shortcuts</a></li>
 </ul>
 </li>
 <li><a href="#chp:widgets"><span class="section-number main-number">6</span> HTML Widgets</a>
@@ -4913,7 +4915,7 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 <td>center images in paragraphs</td>
 <td></td>
 <td><code>@center-img</code></td>
-<td><a class="cross-ref-sec" href="#sec:center-img">5.16</a></td>
+<td><a class="cross-ref-sec" href="#sec:center-img">5.17</a></td>
 </tr>
 <tr>
 <td>chapter-toc</td>
@@ -4941,7 +4943,7 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 <td>open external links in new windows</td>
 <td></td>
 <td><code>@external-link</code></td>
-<td><a class="cross-ref-sec" href="#sec:external-link">5.17</a></td>
+<td><a class="cross-ref-sec" href="#sec:external-link">5.18</a></td>
 </tr>
 <tr>
 <td>fold-details</td>
@@ -4962,35 +4964,42 @@ A reference of CSS/JS assets in the <code>lite.js</code> repository.</p>
 <td>style keyboard shortcuts</td>
 <td><code>@key-buttons</code></td>
 <td><code>@key-buttons</code></td>
-<td><a class="cross-ref-sec" href="#sec:key-buttons">5.18</a></td>
+<td><a class="cross-ref-sec" href="#sec:key-buttons">5.19</a></td>
+</tr>
+<tr>
+<td>nav-highlight</td>
+<td>highlight the current page in the site navigation</td>
+<td><code>@site</code></td>
+<td><code>@nav-highlight</code></td>
+<td><a class="cross-ref-sec" href="#sec:nav-highlight">5.13</a></td>
 </tr>
 <tr>
 <td>pages</td>
 <td>paginate HTML for printing</td>
 <td><code>@pages</code></td>
 <td><code>@pages</code></td>
-<td><a class="cross-ref-sec" href="#sec:pages">5.13</a></td>
+<td><a class="cross-ref-sec" href="#sec:pages">5.14</a></td>
 </tr>
 <tr>
 <td>right-quote</td>
 <td>right-align quote footers</td>
 <td></td>
 <td><code>@right-quote</code></td>
-<td><a class="cross-ref-sec" href="#sec:right-quote">5.15</a></td>
+<td><a class="cross-ref-sec" href="#sec:right-quote">5.16</a></td>
 </tr>
 <tr>
 <td>snap</td>
 <td>snap slides</td>
 <td><code>@snap</code></td>
 <td><code>@snap</code></td>
-<td><a class="cross-ref-sec" href="#sec:snap">5.14</a></td>
+<td><a class="cross-ref-sec" href="#sec:snap">5.15</a></td>
 </tr>
 <tr>
 <td>snap-clean</td>
 <td>clean slide theme</td>
 <td><code>@snap-clean</code></td>
 <td></td>
-<td><a class="cross-ref-sec" href="#sec:snap">5.14</a></td>
+<td><a class="cross-ref-sec" href="#sec:snap">5.15</a></td>
 </tr>
 <tr>
 <td>tabsets</td>
@@ -5052,7 +5061,7 @@ a page behaves.</p>
 <p>To get a feel for it, visit the
 <a href="https://pkg.yihui.org/litedown/examples.html#sec:custom-styles">examples</a>. The
 first one is a
-<a href="https://pkg.yihui.org/litedown/examples/028-css-playground.html">playground</a>,
+<a href="https://pkg.yihui.org/litedown/examples/028-style-playground.html">playground</a>,
 where you can pick a font, colors, and so on with sliders and color pickers, and
 <strong>litedown</strong> shows the CSS code for your choices so you can copy it. The others
 show the same page with different stylesheets from the web.</p>
@@ -5124,7 +5133,66 @@ ones are listed in <a class="cross-ref-tab" href="#tab:css-selectors">5</a>:</p>
 </tbody>
 </table>
 </div>
-<h3 id="sec:use-css-js-from-the-web"><span class="section-number">5.3.2</span> Use CSS/JS from the web</h3>
+<h3 id="sec:css-variables"><span class="section-number">5.3.2</span> Customize via CSS variables</h3>
+<p>Instead of writing rules for selectors, you can change the appearance of the
+CSS assets via CSS variables (names starting with <code>--</code>). Set them on <code>:root</code> in
+your own CSS. Compared with selectors, variables are easier and safer: one
+variable changes every place that uses it (e.g., <code>--accent</code> colors both links
+and the navigation bar), you do not need to inspect the page or outweigh the
+specificity of the default rules, and variables are less likely to break when
+the HTML structure or class names change in future versions. For example:</p>
+<pre><code class="language-css">:root {
+  --accent: seagreen;
+  --muted-bg: #fffbe6;
+}
+</code></pre>
+<p><a class="cross-ref-tab" href="#tab:css-variables">6</a> lists the variables shared by several assets. Their default
+values are defined on <code>:root</code> in <code>default.css</code>, which the other assets (article,
+book, site, manual) build upon, so your CSS must come <em>after</em> <code>default.css</code>
+(see <a class="cross-ref-sec" href="#sec:custom-assets">5.3</a>).</p>
+<div class="table" id="tab:css-variables">
+<div class="caption">
+<p><span class="ref-number-tab">6</span> CSS variables shared by several assets.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--accent</code></td>
+<td><code>steelblue</code></td>
+<td>links and the site navigation bar</td>
+</tr>
+<tr>
+<td><code>--muted-bg</code></td>
+<td><code>#f8f8f8</code></td>
+<td>subtle backgrounds (code, captions, table stripes)</td>
+</tr>
+<tr>
+<td><code>--border-color</code></td>
+<td><code>#eee</code></td>
+<td>light borders of boxes, blocks, and quotes</td>
+</tr>
+<tr>
+<td><code>--rule-color</code></td>
+<td><code>#666</code></td>
+<td>strong rules (table, heading, and footer lines)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A variable defined on a closer element wins over the one on <code>:root</code> for that
+element and its descendants, regardless of the order of the CSS. For example,
+<code>:root { --accent: seagreen; }</code> changes the color of all links and the site
+navigation bar, and <code>.site-nav { --accent: crimson; }</code> changes only the
+navigation bar. Assets with their own variables (e.g., <code>--paper-width</code> in
+<a class="cross-ref-sec" href="#sec:pages">5.14</a>) document them in their sections.</p>
+<h3 id="sec:use-css-js-from-the-web"><span class="section-number">5.3.3</span> Use CSS/JS from the web</h3>
 <p>Many people have published small stylesheets that make plain HTML pages look
 nice, such as <a href="https://watercss.kognise.dev">Water.css</a>,
 <a href="https://newcss.net">new.css</a>, <a href="https://simplecss.org">Simple.css</a>, and
@@ -5168,7 +5236,7 @@ new simpleDatatables.DataTable('#mtcars-table &gt; table');
 ```
 </code></pre>
 <p>See <a class="cross-ref-sec" href="#sec:simple-dt">6.2</a> for more ways to create this type of table.</p>
-<h3 id="sec:global-css"><span class="section-number">5.3.3</span> Apply the styles to all pages</h3>
+<h3 id="sec:global-css"><span class="section-number">5.3.4</span> Apply the styles to all pages</h3>
 <p>For a website or a book (<a class="cross-ref-chp" href="#chp:sites">8</a>), you do not need to repeat the setting in
 every page. Put it in the <code>output</code> field of <code>_litedown.yml</code> instead, and it will
 apply to all pages. For example, if you have saved your rules in <code>custom.css</code> in
@@ -5579,7 +5647,8 @@ larger screens, this means there will be extra space in the left/right margin,
 where we can place auxiliary information, such as the TOC and footnotes. On
 smaller screens, the side content will be collapsed into the body.</p>
 <p>The article frontmatter, body, and optionally the appendix are placed in
-separate boxes.</p>
+separate boxes, whose background color is the CSS variable <code>--article-bg</code>
+(default: <code>#fff</code>; see <a class="cross-ref-sec" href="#sec:css-variables">5.3.2</a>).</p>
 <p>The default typeface is sans-serif, and you can customize it by supplying an
 external CSS file (via the <code>css</code> meta variable) or just embedding CSS in the
 document body, e.g.,</p>
@@ -5806,7 +5875,7 @@ starts with one). This gives readers a local outline of the chapter they are
 about to read, without having to scroll back to the main TOC.</p>
 <p>On wide screens, <code>book.css</code> hides this in-chapter copy by default (since the
 main TOC is already visible in the margin), and only shows it on narrow screens
-or when the page is paginated for printing (<a class="cross-ref-sec" href="#sec:pages">5.13</a>).</p>
+or when the page is paginated for printing (<a class="cross-ref-sec" href="#sec:pages">5.14</a>).</p>
 <h2 id="sec:toc-highlight"><span class="section-number">5.12</span> Highlight TOC items</h2>
 <pre><code class="language-yaml">js: [&quot;@toc-highlight&quot;]
 </code></pre>
@@ -5821,7 +5890,21 @@ item with CSS, e.g., to make it bold:</p>
   font-weight: bold;
 }
 </code></pre>
-<h2 id="sec:pages"><span class="section-number">5.13</span> Paged HTML</h2>
+<h2 id="sec:nav-highlight"><span class="section-number">5.13</span> Highlight the current page in navigation</h2>
+<pre><code class="language-yaml">js: [&quot;@nav-highlight&quot;]
+</code></pre>
+<p><code>nav-highlight.js</code> sets <code>aria-current=&quot;page&quot;</code> on the links in <code>&lt;nav&gt;</code> that point
+to the current page. The file extension <code>.html</code>, <code>index.html</code>, trailing slashes,
+query strings, and hashes are ignored when comparing URLs, so <code>foo.html</code> and
+<code>foo</code> are the same page, but <code>sub/foo.html</code> is not. The <code>site.css</code> asset
+(<a class="cross-ref-sec" href="#sec:site-defaults">8.3.1</a>) underlines such links with the color of the CSS variable
+<code>--accent</code> (<a class="cross-ref-sec" href="#sec:css-variables">5.3.2</a>), which is also the background color of the
+links on hover. You can style the current link with CSS, e.g.,</p>
+<pre><code class="language-css">nav a[aria-current] {
+  font-weight: bold;
+}
+</code></pre>
+<h2 id="sec:pages"><span class="section-number">5.14</span> Paged HTML</h2>
 <pre><code class="language-yaml">css: [&quot;@pages&quot;]
 js: [&quot;@pages&quot;]
 </code></pre>
@@ -5829,7 +5912,7 @@ js: [&quot;@pages&quot;]
 the page into discrete pages of a fixed size (A4 paper by default), which is
 mainly useful for printing the HTML to PDF (e.g., via a browser’s print dialog)
 with proper page headers, footers, and page numbers.</p>
-<h3 id="sec:trigger-pagination"><span class="section-number">5.13.1</span> Trigger pagination</h3>
+<h3 id="sec:trigger-pagination"><span class="section-number">5.14.1</span> Trigger pagination</h3>
 <p>Pagination is not applied by default after you simply load the CSS/JS assets on
 the page, because it completely reorganizes the original page, and can take a
 while for long documents.<sup class="footnote-ref"><a href="#fn-05-assets-1" id="fnref-05-assets-1" data-footnote-ref>10</a></sup> There are four ways to trigger it:</p>
@@ -5873,7 +5956,7 @@ the print dialog of a browser (or <code>xfun::browser_print(&quot;index.html&quo
 <code>wait</code>) cannot wait, so such content may be measured at the wrong size and
 overflow its page. If your document has such content, paginate it first, as in
 the example above.</p>
-<h3 id="sec:how-elements-are-put-on-pages"><span class="section-number">5.13.2</span> How elements are put on pages</h3>
+<h3 id="sec:how-elements-are-put-on-pages"><span class="section-number">5.14.2</span> How elements are put on pages</h3>
 <p>The script fills pages one by one with as much content as possible. When an
 element does not fit on the rest of the current page, it is broken into two
 pieces: the first piece stays on the current page, and the rest goes to the next
@@ -5907,20 +5990,20 @@ containers. You can also keep any element in one piece with the CSS property
 </code></pre>
 <p>An element that is not broken moves to the next page if it does not fit. If it
 is taller than a whole page, it gets a page of its own, which is printed over
-several physical pages (see <a class="cross-ref-sec" href="#sec:pages-troubleshooting">5.13.5</a>).</p>
+several physical pages (see <a class="cross-ref-sec" href="#sec:pages-troubleshooting">5.14.5</a>).</p>
 <p>The script also tries to make pages look better:</p>
 <ul>
 <li>
-<p>A paragraph is not broken in a way that leaves a single line alone at the
-top of a page (or at the bottom, for a short paragraph).</p>
+<p>A paragraph is not broken in a way that leaves its last line alone on a new
+page with nothing after it.</p>
 </li>
 <li>
-<p>A heading is not left alone at the bottom of a page.</p>
+<p>The title of a callout (<code>&lt;legend&gt;</code>) is not left alone at the bottom of a
+page.</p>
 </li>
 <li>
-<p>If only about one line of a broken block (e.g., the title of a callout, or
-the first item of a list) would stay on a page, the whole block moves to the
-next page.</p>
+<p>If only about one line of a broken block (e.g., the first item of a list)
+would stay on a page, the whole block moves to the next page.</p>
 </li>
 <li>
 <p>A page may be a few pixels too tall (the margin at its bottom is not counted
@@ -5928,7 +6011,7 @@ either), so that a tiny overflow does not push the last line to a new page
 or make the page scrollable.</p>
 </li>
 </ul>
-<h3 id="sec:page-layout-and-styles"><span class="section-number">5.13.3</span> Page layout and styles</h3>
+<h3 id="sec:page-layout-and-styles"><span class="section-number">5.14.3</span> Page layout and styles</h3>
 <p>The paper size and margins are defined by CSS variables, which you can override.
 For example, for US Letter paper:</p>
 <pre><code class="language-css">:root {
@@ -5959,7 +6042,7 @@ with CSS only, e.g.,</p>
 }
 </code></pre>
 <p>The document title is the first <code>&lt;h1&gt;</code> with the class <code>title</code>, <code>&lt;h1&gt;</code> in the
-frontmatter (see <a class="cross-ref-sec" href="#sec:pages-other">5.13.4</a>), element with the class <code>title</code>, or <code>&lt;h1&gt;</code> in
+frontmatter (see <a class="cross-ref-sec" href="#sec:pages-other">5.14.4</a>), element with the class <code>title</code>, or <code>&lt;h1&gt;</code> in
 the document, in this order of preference. The section title is the last heading
 (<code>&lt;h2&gt;</code>, or <code>&lt;h1&gt;</code> in a book) before the page, i.e., the section in which the
 page starts. If a heading has the attribute <code>data-short-title</code>, its value is
@@ -5997,7 +6080,7 @@ footnotes of a page are moved to the bottom of the page. The classes <code>side<
 <code>side-left</code>, and <code>side-right</code> are removed from the table of contents, footnotes,
 and chapter links, because they put these elements in the margins of the screen,
 which does not make sense on a page.</p>
-<h3 id="sec:pages-other"><span class="section-number">5.13.4</span> Paginate other HTML pages</h3>
+<h3 id="sec:pages-other"><span class="section-number">5.14.4</span> Paginate other HTML pages</h3>
 <p>The <code>pages</code> assets are not limited to <strong>litedown</strong> output. They paginate the
 <em>content root</em>, which is the first <code>&lt;main&gt;</code> (or element with <code>role=&quot;main&quot;</code>; if
 it only contains one element, such as <code>&lt;article&gt;</code>, that element is used). If
@@ -6023,7 +6106,7 @@ of the <code>&lt;h2&gt;</code>.</p>
 <p>You can also create pages yourself with <code>&lt;div class=&quot;pagesjs-page&quot;&gt;</code>. An empty
 one is a page break (the content after it goes into this page). One that already
 has content is kept as it is, and the content after it starts on a new page.</p>
-<h3 id="sec:pages-troubleshooting"><span class="section-number">5.13.5</span> Troubleshooting</h3>
+<h3 id="sec:pages-troubleshooting"><span class="section-number">5.14.5</span> Troubleshooting</h3>
 <p>If an element that cannot be broken is taller than a page, the script cannot
 make it fit, so the page is marked with the class <code>page-multiple</code> and printed
 over several physical pages. The number of these pages is estimated for the page
@@ -6035,7 +6118,7 @@ been moved: CSS rules that depend on the position of an element (such as
 <code>main &gt; p</code>, <code>:first-child</code>, or sibling selectors) may not apply to the pieces of
 a broken element. Use the classes <code>pagesjs-fragmented</code>, <code>fragment-first</code>, and
 <code>fragment-last</code> to style the pieces.</p>
-<h2 id="sec:snap"><span class="section-number">5.14</span> HTML slides</h2>
+<h2 id="sec:snap"><span class="section-number">5.15</span> HTML slides</h2>
 <p>With <code>snap.css</code> and <code>snap.js</code>, you can create lightweight HTML slides:</p>
 <pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;@snap&quot;]
 js: [&quot;@snap&quot;]
@@ -6045,7 +6128,7 @@ Snap</a>
 technique: each slide is a full-screen section, and scrolling snaps from one
 slide to the next. The <code>snap.js</code> script does the work of grouping the content
 into slide containers, and <code>snap.css</code> styles them.</p>
-<h3 id="sec:creating-slides"><span class="section-number">5.14.1</span> Creating slides</h3>
+<h3 id="sec:creating-slides"><span class="section-number">5.15.1</span> Creating slides</h3>
 <p>Once the assets are loaded, the document is split into slides. There are two
 ways to start a new slide: a horizontal rule (<code>---</code>), or a level-two section
 heading (<code>##</code>). Pick only one way in a document. For example, with horizontal
@@ -6076,7 +6159,7 @@ Content.
 it is tall, and at least 992px wide). On narrower windows or mobile devices, it
 falls back to a normal continuous article, so the same document reads fine on a
 phone.</p>
-<h3 id="sec:navigating-and-presenting"><span class="section-number">5.14.2</span> Navigating and presenting</h3>
+<h3 id="sec:navigating-and-presenting"><span class="section-number">5.15.2</span> Navigating and presenting</h3>
 <p>Since slides are just a scrollable page, you can navigate with the usual scroll
 wheel, arrow keys, or <code>PageUp</code> / <code>PageDown</code>. In addition, <code>snap.js</code> provides a
 few keyboard shortcuts:</p>
@@ -6098,7 +6181,7 @@ appends <code>#N</code> to the URL, so you can link directly to a specific slide
 is shown at the bottom left (starting when you go fullscreen); click it to
 restart. You can turn it into a countdown timer by adding your own
 <code>&lt;span class=&quot;timer&quot; data-total=&quot;1200&quot;&gt;&lt;/span&gt;</code> (seconds).</p>
-<h3 id="sec:styling-slides"><span class="section-number">5.14.3</span> Styling slides</h3>
+<h3 id="sec:styling-slides"><span class="section-number">5.15.3</span> Styling slides</h3>
 <p>You can add attributes to an individual slide with an HTML comment that starts
 with <code>#</code>, whose content is plain HTML attributes applied to the slide container,
 e.g.,</p>
@@ -6124,7 +6207,7 @@ e.g.,</p>
 background image through its <code>style</code> attribute, and a slide with the
 <code>contenteditable</code> attribute can be edited live during a presentation (edits are
 not saved).</p>
-<h3 id="sec:printing-and-themes"><span class="section-number">5.14.4</span> Printing and themes</h3>
+<h3 id="sec:printing-and-themes"><span class="section-number">5.15.4</span> Printing and themes</h3>
 <p>When printed, slides are rendered as a continuous document with a smaller font
 to save paper; if you want one slide per page, print from the overview mode or
 add print CSS (<code>@media print</code>). For a fixed aspect ratio (useful when presenting
@@ -6134,7 +6217,7 @@ on an unknown screen), set the CSS variable <code>--slide-ratio</code>, e.g.,
 style; load it after <code>snap.css</code>, e.g., <code>css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]</code>.</p>
 <p>There are more features and caveats than can be covered here. For the full
 guide, see <a href="https://pkg.yihui.org/litedown/examples/045-snap-slides.html">https://pkg.yihui.org/litedown/examples/045-snap-slides.html</a>.</p>
-<h2 id="sec:right-quote"><span class="section-number">5.15</span> Right-align a quote footer</h2>
+<h2 id="sec:right-quote"><span class="section-number">5.16</span> Right-align a quote footer</h2>
 <p>You can use the script <code>right-quote.js</code> to right-align a blockquote footer if it
 starts with an em-dash (<code>---</code>). More precisely, the script right-aligns any
 paragraph (<code>&lt;p&gt;</code>) whose text starts with an em-dash (<code>—</code>, <code>―</code>, or <code>---</code>), which
@@ -6147,7 +6230,7 @@ of our inner voice. Why should we fry each of our actions like a piece of cake
 on a sensible frying pan?</p>
 <p>—Milan Kundera, <em>Immortal</em></p>
 </blockquote>
-<h2 id="sec:center-img"><span class="section-number">5.16</span> Center images</h2>
+<h2 id="sec:center-img"><span class="section-number">5.17</span> Center images</h2>
 <pre><code class="language-yaml">js: [&quot;@center-img&quot;]
 </code></pre>
 <p>The <code>center-img.js</code> script horizontally centers an image (<code>&lt;img&gt;</code>), video
@@ -6156,7 +6239,7 @@ paragraph. For a standalone <code>&lt;img&gt;</code> that is not already wrapped
 script also wraps it in a link pointing to the image source, so readers can
 click on it to open the full image. In addition, a paragraph containing only the
 horizontal rule marker <code>* * *</code> is centered.</p>
-<h2 id="sec:external-link"><span class="section-number">5.17</span> Open external links in new windows</h2>
+<h2 id="sec:external-link"><span class="section-number">5.18</span> Open external links in new windows</h2>
 <pre><code class="language-yaml">js: [&quot;@external-link&quot;]
 </code></pre>
 <p>The <code>external-link.js</code> script identifies external links (those whose <code>href</code>
@@ -6165,7 +6248,7 @@ so they open in a new tab or window. Links that do not have a <code>title</code>
 get one set to their (decoded) URL, which shows as a tooltip on hover. For a
 bare link whose text is identical to its URL, the leading protocol (and a
 trailing hash) is stripped from the displayed text to make it shorter.</p>
-<h2 id="sec:key-buttons"><span class="section-number">5.18</span> Style keyboard shortcuts</h2>
+<h2 id="sec:key-buttons"><span class="section-number">5.19</span> Style keyboard shortcuts</h2>
 <p>The script <code>key-buttons.js</code> identifies keys and the CSS styles them, which can
 be useful for <a href="https://yihui.org/en/2023/02/key-buttons/">showing keyboard
 shortcuts</a>.</p>
@@ -6817,7 +6900,7 @@ layout elements so that pages look reasonable without any configuration:</p>
 <li>
 <p>The default CSS assets are
 <code>@default</code>, <code>@article</code>, <code>@copy-button</code>, <code>@heading-anchor</code>, and <code>@pages</code>, and the default
-JS assets are <code>@sidenotes</code>, <code>@appendix</code>, <code>@toc-highlight</code>, <code>@copy-button</code>, <code>@heading-anchor</code>, and <code>@pages</code>. In
+JS assets are <code>@sidenotes</code>, <code>@appendix</code>, <code>@toc-highlight</code>, <code>@copy-button</code>, <code>@heading-anchor</code>, <code>@pages</code>, and <code>nav-highlight</code>. In
 other words, each page uses the article format (<a class="cross-ref-sec" href="#sec:article">5.9</a>) by default.</p>
 </li>
 <li>
@@ -6909,7 +6992,7 @@ first, because rendering the site requires the installed version of it, e.g.,
 <code>pkg_manual()</code> reads its help database, and <code>articles.Rmd</code> lists its built
 vignettes.</p>
 <p>The template lives under <code>system.file('site', package = 'litedown')</code> and contains
-the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">6</a>):</p>
+the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">7</a>):</p>
 <pre><code class="language-r">list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 </code></pre>
 <pre><code>#&gt; [1] &quot;_footer.md&quot;   &quot;articles.Rmd&quot; &quot;code.Rmd&quot;     &quot;examples.Rmd&quot; &quot;index.Rmd&quot;   
@@ -6917,7 +7000,7 @@ the following files (explained in <a class="cross-ref-tab" href="#tab:pkg-site">
 </code></pre>
 <div class="table">
 <div class="caption">
-<p><span class="ref-number-tab">6</span> Explanations of site source files.</p>
+<p><span class="ref-number-tab">7</span> Explanations of site source files.</p>
 </div>
 <table>
 <thead>
@@ -7310,10 +7393,10 @@ the intermediate Markdown text for the target output format, e.g.,</p>
 <p>Depending on the target output format, the intermediate Markdown may be
 different, e.g., for <code>html</code> output, the default graphical device is PNG, whereas
 for <code>latex</code> output, the default device is PDF.</p>
-<p><a class="cross-ref-tab" href="#tab:input-output">7</a> provides a summary of the above rules.</p>
+<p><a class="cross-ref-tab" href="#tab:input-output">8</a> provides a summary of the above rules.</p>
 <div class="table" id="tab:input-output">
 <div class="caption">
-<p><span class="ref-number-tab">7</span> The returned value for different combinations of <code>input</code>
+<p><span class="ref-number-tab">8</span> The returned value for different combinations of <code>input</code>
 and <code>output</code> arguments of <code>mark()</code> / <code>fuse()</code>.</p>
 </div>
 <table>
@@ -7509,7 +7592,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 0.11.21, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 0.11.22, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -7518,23 +7601,23 @@ R package version 0.62.6, <a href="https://github.com/yihui/xfun">https://github
 </div>
 </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/tabsets.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/pele.global.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.131/js/render-pele.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/render-pele.min.js" defer></script>
 </body>
 </html>
