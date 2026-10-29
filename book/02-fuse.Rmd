@@ -1598,13 +1598,13 @@ to run an external script immediately, you may set the chunk option
 
 The `pele` and `mermaid` engines can be used to draw diagrams from text written
 in the [Mermaid](https://mermaid.js.org) syntax. The `pele` engine renders them
-with [Pele](https://pele.run), which is much more lightweight than
+with [Pele](https://pele.run), which is more lightweight than
 [mermaid.js](https://mermaid.js.org) (the `mermaid` engine), supports all
 diagram types in Mermaid 12.1.0, and renders diagrams synchronously with its own
 layout and visual style, e.g.,
 
 ```` md
-```{pele, flow-abcd, echo = FALSE, fig.cap = 'A flowchart.'}
+```{pele, flow-abcd, echo = FALSE, fig.cap = 'A Pele flowchart.'}
 flowchart TD
     A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
     A --> C[CWEB]

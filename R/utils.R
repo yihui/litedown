@@ -1082,7 +1082,9 @@ named_bool = function(x, val = TRUE) as.list(set_names(rep(val, length(x)), x))
 # normalize metadata variable names: change _ to -
 normalize_meta = function(x) {
   # make sure some variables are available in metadata
-  x = merge_list(list(classoption = '', documentclass = 'article', body_class = 'body'), x)
+  x = merge_list(list(
+    classoption = '', documentclass = 'article', body_class = '', body_tag = 'article'
+  ), x)
   names(x) = gsub('_', '-', names(x))
   x
 }

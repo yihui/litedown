@@ -167,7 +167,7 @@ pkg_desc = function(name = detect_pkg(), type = c('table', 'dl')) {
   res = one_string(switch(
     type,
     table = c(
-      '<table class="table-full"><tbody>',
+      '<table class="desc-table"><tbody>',
       sprintf('<tr>\n<td>%s</td>\n<td>%s</td>\n</tr>', names(d), d),
       '</tbody></table>'
     ),
@@ -565,6 +565,13 @@ pkg_manual = function(
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
   res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
   res = gsub('<h3>', '<h3 class="unnumbered">', res, fixed = TRUE)
+  # add the class to tables (which may already have a class)
+  res = match_replace(res, '<table\\b[^>]*>', function(x) {
+    ifelse(
+      grepl('\\sclass="', x), sub('(\\sclass=")', '\\1desc-table ', x),
+      sub('<table', '<table class="desc-table"', x, fixed = TRUE)
+    )
+  })
   res = match_replace(res, '<(h[1-6])[^>]*>(?s).+?</\\1>', function(x) {
     gsub('\n', ' ', x)  # remove \n in headings so build_toc() can be correctly build TOC
   })

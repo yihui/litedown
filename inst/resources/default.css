@@ -39,7 +39,7 @@ table {
   &:only-child:not(.table > *) { margin: auto; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
   &:not([class]) {
-    thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+    thead, tfoot, tr:nth-child(even) { background: #f8f8f8; }
     thead th { border-bottom: 1px solid #ddd; }
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
@@ -55,12 +55,12 @@ hr, .footnotes::before { border: 1px dashed #ddd; }
 .frontmatter { text-align: center; }
 #TOC {
   a { text-decoration: none; }
-  ul { list-style: none; padding-left: 1em; columns: 24em; }
-  & > ul { padding: 0; }
+  ul { list-style: none; padding-left: 1em; }
+  & > ul { padding: 0; columns: 18em; }
   ul ul { border-left: 1px solid lightsteelblue; }
 }
-.body h2 { border-bottom: 1px solid #666; }
-.body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
+article h2 { border-bottom: 1px solid #666; }
+article .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .main-number::after { content: "."; }
 span[class^="ref-number-"] { font-weight: bold; }
 .ref-number-fig::after, .ref-number-tab::after { content: ":"; }

@@ -4,12 +4,14 @@
   // find a container that has at least n "slides"
   function findContainer(s, n = 1) {
     if (p.querySelectorAll(s).length >= n) return true;
-    // if body doesn't contain headings or <hr>s, look into children
-    for (let i = 0; i < p.children.length; i++) {
-      if (p.children[i].querySelectorAll(s).length >= n) {
-        p = p.children[i]; break;
+    // if body doesn't contain headings or <hr>s, look into children (and their
+    // children, e.g., <main> > <article>)
+    (function find(el) {
+      for (const c of el.children) {
+        if (c.querySelectorAll(s).length >= n) return p = c;
       }
-    }
+      return [...el.children].some(find);
+    })(p);
     return false;
   }
   function newEl(tag, cls) {
