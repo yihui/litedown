@@ -48,7 +48,7 @@
 
 - Added a JS asset `nav-highlight.js` to highlight the current page in `<nav>`, which is enabled for sites by default ([details](https://pkg.yihui.org/litedown/book/#sec:nav-highlight)).
 
-- The appearance of the default CSS and several other CSS assets can now be customized via CSS variables such as `--accent` and `--muted-bg`, without writing selectors ([details](https://pkg.yihui.org/litedown/book/#sec:css-variables)). The [CSS playground](https://pkg.yihui.org/litedown/examples/028-css-playground.html) generates these variables, too.
+- The appearance of the default CSS and several other CSS assets can now be customized via CSS variables such as `--accent` and `--muted-bg`, without writing selectors ([details](https://pkg.yihui.org/litedown/book/#sec:css-variables)). The [CSS playground](https://pkg.yihui.org/litedown/examples/028-style-playground.html) generates these variables, too.
 
 # CHANGES IN litedown VERSION 0.11
 

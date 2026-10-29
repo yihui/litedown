@@ -127,7 +127,7 @@ a page behaves.
 To get a feel for it, visit the
 [examples](https://pkg.yihui.org/litedown/examples.html#sec:custom-styles). The
 first one is a
-[playground](https://pkg.yihui.org/litedown/examples/028-css-playground.html),
+[playground](https://pkg.yihui.org/litedown/examples/028-style-playground.html),
 where you can pick a font, colors, and so on with sliders and color pickers, and
 **litedown** shows the CSS code for your choices so you can copy it. The others
 show the same page with different stylesheets from the web.
