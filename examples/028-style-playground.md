@@ -3,8 +3,6 @@ title: Customize the look of a page
 subtitle: Tweak the major CSS settings and copy the CSS code
 output:
   html:
-    meta:
-      css: ["@default"]
     options:
       toc: true
 ---
@@ -74,14 +72,25 @@ This section shows how some common elements look. Here is a
 
 > A block quote is a good place to quote someone.
 
-``` {.r}
-summary(cars$speed)
-```
+::: {.fenced-chunk}
 
-```
+```` {.md .code-fence}
+```{r}
+````
+
+```` {.r}
+summary(cars$speed)
+````
+
+````
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>     4.0    12.0    15.0    15.4    19.0    25.0 
+````
+
+```` {.md .code-fence}
 ```
+````
+:::
 
 ``` {.r}
 head(cars, 3)
