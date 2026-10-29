@@ -64,7 +64,8 @@ for (i in c('css', 'js')) a[, i] = ifelse(is.na(a[, i]), NA, paste0('`', a[, i],
 sec = rownames(a)
 sec[sec == 'snap-clean'] = 'snap'  # snap-clean is documented in the slides section
 sec[sec == 'default'] = 'default-css'
-a = cbind(feature = rownames(a), a, section = paste0(' @sec:', sec))
+a = cbind(rownames(a), a, paste0(' @sec:', sec))
+colnames(a) = c('Feature', 'Description', 'CSS', 'JS', 'Section')
 rownames(a) = NULL
 a
 ```
