@@ -1603,12 +1603,14 @@ with [Pele](https://pele.run), which is more lightweight than
 diagram types in Mermaid 12.1.0, and renders diagrams synchronously with its own
 layout and visual style, e.g.,
 
-```{{pele, flow-abcd, fig.cap = 'A flowchart made from Pele.'}}
+```` md
+```{pele, flow-abcd, echo = FALSE, fig.cap = 'A Pele flowchart.'}
 flowchart TD
     A[WEB] --> B[noweb] --> D[Sweave] --> E[knitr]
     A --> C[CWEB]
     D --> F[litedown]
 ```
+````
 
 The two engines take the same input, so you can switch between them by changing
 the engine name. The chunk option `fig.cap` adds a caption to the diagram, and
