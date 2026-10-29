@@ -134,7 +134,7 @@ if (has_rd) assert('Rd_aliases() extracts \\alias entries from an Rd object', {
 
 assert('pkg_desc() renders package metadata as an HTML table or definition list', {
   tab = pkg_desc(pkg, 'table')
-  (any(grepl('<table', tab)))
+  (any(grepl('<table class="desc-table"', tab, fixed = TRUE)))
   (any(grepl('Version', tab)))
   # single quotes in Title/Description are stripped (sans_sq)
   dl = pkg_desc(pkg, 'dl')
@@ -222,6 +222,9 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   (any(grepl('href="#sec:man-', m)))
   # the default index is also in a callout
   (any(grepl('{.callout-tip data-legend="Index"}', m, fixed = TRUE)))
+  # all tables get the class desc-table (once)
+  (has_match(one_string(m), '<table[^>]* class="desc-table[ "]'))
+  (!has_match(one_string(m), '<table(?![^>]*desc-table)', perl = TRUE))
 })
 
 assert('group_items() assigns items to groups with wildcards and an Other group', {

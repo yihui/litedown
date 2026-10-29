@@ -39,7 +39,7 @@ table {
   &:only-child:not(.table > *) { margin: auto; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
   &:not([class]) {
-    thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+    thead, tfoot, tr:nth-child(even) { background: #f8f8f8; }
     thead th { border-bottom: 1px solid #ddd; }
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
