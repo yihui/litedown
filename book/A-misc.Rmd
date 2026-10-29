@@ -91,13 +91,13 @@ for `latex` output, the default device is PDF.
 
 @tab:input-output provides a summary of the above rules.
 
-:::: {#tab:input-output .table}
+:::: {.table #tab:input-output}
 ::: caption
 [ ](#@tab:input-output) The returned value for different combinations of `input`
 and `output` arguments of `mark()` / `fuse()`.
 :::
 
-| function | `input` | `output` | returned value |
+| Function | `input` | `output` | Returned value |
 |----|----|----|----|
 | `mark()` / `fuse()` | file | `NULL` | file |
 |  | text | `NULL` | text |

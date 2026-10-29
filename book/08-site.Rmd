@@ -289,7 +289,7 @@ list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 [ ](#@tab:pkg-site) Explanations of site source files.
 :::
 
-| source | description | content |
+| Source | Description | Content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
 | `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |

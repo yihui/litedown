@@ -586,7 +586,7 @@ URLs. The shorthand syntax is as follows (`*` stands for
 variable.
 :::
 
-| syntax | actual URL |
+| Syntax | Actual URL |
 |----|----|
 | `@foo` | `*/npm/@xiee/utils/css/foo.min.css` |
 | `@foo.css` | `*/npm/@xiee/utils/css/foo.css` |
