@@ -281,6 +281,7 @@ assets = t(data.frame(
   'fold-details' = c('fold elements (e.g., code blocks)', NA, '@fold-details'),
   'heading-anchor' = c('add anchor links to headings', '@heading-anchor', '@heading-anchor'),
   'key-buttons' = c('style keyboard shortcuts', '@key-buttons', '@key-buttons'),
+  'nav-highlight' = c('highlight the current page in the site navigation', '@site', '@nav-highlight'),
   pages = c('paginate HTML for printing', '@pages', '@pages'),
   'right-quote' = c('right-align quote footers', NA, '@right-quote'),
   snap = c('snap slides', '@snap', '@snap'),

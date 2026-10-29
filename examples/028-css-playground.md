@@ -12,7 +12,7 @@ output:
 Change the settings below, and the page will update right away. Only the
 settings you have changed appear in the CSS code, which you can copy into a CSS
 chunk in your document, or into a `.css` file listed in the `css` field of the
-YAML metadata. See
+YAML metadata. Some colors are set via CSS variables (e.g., `--accent`). See
 [Custom CSS/JS](https://pkg.yihui.org/litedown/book/#sec:custom-assets) in the
 book for details.
 
@@ -50,8 +50,14 @@ book for details.
 <input type="color" data-sel="body" data-prop="color"></label>
 <label>Background color
 <input type="color" data-sel="body" data-prop="background"></label>
-<label>Link color
-<input type="color" data-sel="a" data-prop="color"></label>
+<label>Accent color
+<input type="color" data-sel=":root" data-prop="--accent" data-read="a" data-read-prop="color"></label>
+<label>Code background
+<input type="color" data-sel=":root" data-prop="--muted-bg" data-read="p code" data-read-prop="backgroundColor"></label>
+<label>Border color
+<input type="color" data-sel=":root" data-prop="--border-color" data-read="blockquote" data-read-prop="borderLeftColor"></label>
+<label>Rule color
+<input type="color" data-sel=":root" data-prop="--rule-color" data-read="table" data-read-prop="borderTopColor"></label>
 <label>Heading color
 <input type="color" data-sel="h1, h2, h3" data-prop="color" data-read="h2"></label>
 <p><button type="reset">Reset</button> <button type="button" id="copy">Copy CSS</button></p>
@@ -112,7 +118,9 @@ First 3 rows of the `cars` data.
   };
 
 inputs.forEach(el => {
-  const v = init[el.dataset.prop]?.(getComputedStyle(d.querySelector(el.dataset.read ?? el.dataset.sel)));
+  const cs = getComputedStyle(d.querySelector(el.dataset.read ?? el.dataset.sel)),
+    // a CSS variable (e.g., `--accent`) takes the color that it gives to `data-read`
+    v = el.dataset.readProp ? hex(cs[el.dataset.readProp]) : init[el.dataset.prop]?.(cs);
   if (v !== undefined) el.value = v;
   el.dataset.init = el.value;
 });

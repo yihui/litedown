@@ -178,6 +178,48 @@ ones are listed in @tab:css-selectors:
 | footnotes           | `.footnotes`                         |
 ::::
 
+### Customize via CSS variables {#sec:css-variables}
+
+Instead of writing rules for selectors, you can change the appearance of the
+CSS assets via CSS variables (names starting with `--`). Set them on `:root` in
+your own CSS. Compared with selectors, variables are easier and safer: one
+variable changes every place that uses it (e.g., `--accent` colors both links
+and the navigation bar), you do not need to inspect the page or outweigh the
+specificity of the default rules, and variables are less likely to break when
+the HTML structure or class names change in future versions. For example:
+
+``` css
+:root {
+  --accent: seagreen;
+  --muted-bg: #fffbe6;
+}
+```
+
+@tab:css-variables lists the variables shared by several assets. Their default
+values are defined on `:root` in `default.css`, which the other assets (article,
+book, site, manual) build upon, so your CSS must come *after* `default.css`
+(see @sec:custom-assets).
+
+:::: {.table #tab:css-variables}
+::: caption
+[ ](#@tab:css-variables) CSS variables shared by several assets.
+:::
+
+| Variable         | Default     | Meaning                                            |
+|------------------|-------------|----------------------------------------------------|
+| `--accent`       | `steelblue` | links and the site navigation bar                  |
+| `--muted-bg`     | `#f8f8f8`   | subtle backgrounds (code, captions, table stripes) |
+| `--border-color` | `#eee`      | light borders of boxes, blocks, and quotes         |
+| `--rule-color`   | `#666`      | strong rules (table, heading, and footer lines)    |
+::::
+
+A variable defined on a closer element wins over the one on `:root` for that
+element and its descendants, regardless of the order of the CSS. For example,
+`:root { --accent: seagreen; }` changes the color of all links and the site
+navigation bar, and `.site-nav { --accent: crimson; }` changes only the
+navigation bar. Assets with their own variables (e.g., `--paper-width` in
+@sec:pages) document them in their sections.
+
 ### Use CSS/JS from the web
 
 Many people have published small stylesheets that make plain HTML pages look
@@ -638,7 +680,8 @@ where we can place auxiliary information, such as the TOC and footnotes. On
 smaller screens, the side content will be collapsed into the body.
 
 The article frontmatter, body, and optionally the appendix are placed in
-separate boxes.
+separate boxes, whose background color is the CSS variable `--article-bg`
+(default: `#fff`; see @sec:css-variables).
 
 The default typeface is sans-serif, and you can customize it by supplying an
 external CSS file (via the `css` meta variable) or just embedding CSS in the
@@ -878,6 +921,26 @@ item with CSS, e.g., to make it bold:
 
 ``` css
 #TOC a.active {
+  font-weight: bold;
+}
+```
+
+## Highlight the current page in navigation {#sec:nav-highlight}
+
+``` yaml
+js: ["@nav-highlight"]
+```
+
+`nav-highlight.js` sets `aria-current="page"` on the links in `<nav>` that point
+to the current page. The file extension `.html`, `index.html`, trailing slashes,
+query strings, and hashes are ignored when comparing URLs, so `foo.html` and
+`foo` are the same page, but `sub/foo.html` is not. The `site.css` asset
+(@sec:site-defaults) underlines such links with the color of the CSS variable
+`--accent` (@sec:css-variables), which is also the background color of the
+links on hover. You can style the current link with CSS, e.g.,
+
+``` css
+nav a[aria-current] {
   font-weight: bold;
 }
 ```

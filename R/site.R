@@ -62,7 +62,7 @@ fuse_site = function(input = '.') {
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_list(list(
-    css2 = c(site_css, '@site'), js2 = site_js,
+    css2 = c(site_css, '@site'), js2 = c(site_js, '@nav-highlight'),
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(

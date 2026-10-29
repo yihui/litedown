@@ -91,7 +91,9 @@ assert('fuse_site() renders every input file in a site skeleton to HTML', {
   (all(file_exists(out)))
   (file_exists(file.path(d, 'index.html')))
   # the rendered index is non-empty HTML
-  (length(readLines(file.path(d, 'index.html'))) > 0L)
+  x = xfun::read_utf8(file.path(d, 'index.html'))
+  (length(x) > 0L)
+  (has_match(x, 'nav-highlight[.]min[.]js'))
 })
 
 assert('nav_menu() lists all pages even if only one file is being rendered', {
