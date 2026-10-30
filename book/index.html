@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="generator" content="litedown 0.11.22">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/tabsets.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/css/prism-xcode.min.css">
 </head>
 <body>
 <header class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-10-29</h3></div>
+<div class="date"><h3>2026-10-30</h3></div>
 </header>
 <main>
 <div class="">
@@ -272,10 +272,11 @@
 <li><a href="#sec:pages"><span class="section-number">5.14</span> Paged HTML</a>
 <ul>
 <li><a href="#sec:trigger-pagination"><span class="section-number">5.14.1</span> Trigger pagination</a></li>
-<li><a href="#sec:how-elements-are-put-on-pages"><span class="section-number">5.14.2</span> How elements are put on pages</a></li>
-<li><a href="#sec:page-layout-and-styles"><span class="section-number">5.14.3</span> Page layout and styles</a></li>
-<li><a href="#sec:pages-other"><span class="section-number">5.14.4</span> Paginate other HTML pages</a></li>
-<li><a href="#sec:pages-troubleshooting"><span class="section-number">5.14.5</span> Troubleshooting</a></li>
+<li><a href="#sec:pages-events"><span class="section-number">5.14.2</span> Run code before and after pagination</a></li>
+<li><a href="#sec:how-elements-are-put-on-pages"><span class="section-number">5.14.3</span> How elements are put on pages</a></li>
+<li><a href="#sec:page-layout-and-styles"><span class="section-number">5.14.4</span> Page layout and styles</a></li>
+<li><a href="#sec:pages-other"><span class="section-number">5.14.5</span> Paginate other HTML pages</a></li>
+<li><a href="#sec:pages-troubleshooting"><span class="section-number">5.14.6</span> Troubleshooting</a></li>
 </ul>
 </li>
 <li><a href="#sec:snap"><span class="section-number">5.15</span> HTML slides</a>
@@ -5956,7 +5957,33 @@ the print dialog of a browser (or <code>xfun::browser_print(&quot;index.html&quo
 <code>wait</code>) cannot wait, so such content may be measured at the wrong size and
 overflow its page. If your document has such content, paginate it first, as in
 the example above.</p>
-<h3 id="sec:how-elements-are-put-on-pages"><span class="section-number">5.14.2</span> How elements are put on pages</h3>
+<h3 id="sec:pages-events"><span class="section-number">5.14.2</span> Run code before and after pagination</h3>
+<p>The events <code>pagesjs:before</code> and <code>pagesjs:after</code> on <code>window</code> let you change the
+page around pagination. For example, remove the elements that are useful on
+screen but not on paper (such as a comment section or post navigation links)
+before the pages are created:</p>
+<pre><code class="language-js">addEventListener(&quot;pagesjs:before&quot;, () =&gt; {
+  document.querySelectorAll(&quot;.comments, .post-nav&quot;).
+    forEach(el =&gt; el.remove());
+});
+</code></pre>
+<p>Another use is to adapt the page to what the script expects. For example, rename
+the ID of a table of contents (see <a class="cross-ref-sec" href="#sec:pages-other">5.14.5</a>):</p>
+<pre><code class="language-js">addEventListener(&quot;pagesjs:before&quot;, () =&gt; {
+  const toc = document.getElementById(&quot;TableOfContents&quot;);
+  if (toc) toc.id = &quot;TOC&quot;;
+});
+</code></pre>
+<p>After the pages are ready, you can work with them, e.g., report how many pages
+there are:</p>
+<pre><code class="language-js">addEventListener(&quot;pagesjs:after&quot;, () =&gt; {
+  const n = document.querySelectorAll(&quot;.pagesjs-page&quot;).length;
+  console.log(`The document has ${n} pages.`);
+});
+</code></pre>
+<p>Register the listeners before <code>pages.js</code> starts the pagination (e.g., load your
+script before <code>pages.js</code>, as in <a class="cross-ref-sec" href="#sec:pages-other">5.14.5</a>).</p>
+<h3 id="sec:how-elements-are-put-on-pages"><span class="section-number">5.14.3</span> How elements are put on pages</h3>
 <p>The script fills pages one by one with as much content as possible. When an
 element does not fit on the rest of the current page, it is broken into two
 pieces: the first piece stays on the current page, and the rest goes to the next
@@ -5990,7 +6017,7 @@ containers. You can also keep any element in one piece with the CSS property
 </code></pre>
 <p>An element that is not broken moves to the next page if it does not fit. If it
 is taller than a whole page, it gets a page of its own, which is printed over
-several physical pages (see <a class="cross-ref-sec" href="#sec:pages-troubleshooting">5.14.5</a>).</p>
+several physical pages (see <a class="cross-ref-sec" href="#sec:pages-troubleshooting">5.14.6</a>).</p>
 <p>The script also tries to make pages look better:</p>
 <ul>
 <li>
@@ -6011,9 +6038,140 @@ either), so that a tiny overflow does not push the last line to a new page
 or make the page scrollable.</p>
 </li>
 </ul>
-<h3 id="sec:page-layout-and-styles"><span class="section-number">5.14.3</span> Page layout and styles</h3>
+<h3 id="sec:page-layout-and-styles"><span class="section-number">5.14.4</span> Page layout and styles</h3>
 <p>The paper size and margins are defined by CSS variables, which you can override.
-For example, for US Letter paper:</p>
+<a class="cross-ref-fig" href="#fig:pages-layout">9</a> shows which variable controls which part of a page. Each tab
+is an element of the page (with its class), and the colored areas are the
+spacing set by the variables.</p>
+<style type="text/css">
+.pd-outer {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .3em;
+  max-width: 40em;
+  margin: 1em auto;
+  font-size: .85em;
+  line-height: 1.4;
+  code { background: none; border: none; padding: 0; }
+  .tabset { margin: 0 !important; }
+  .tab-pane { padding: 0; }
+  > div { text-align: center; }
+}
+.pd-width, .pd-height {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  &::before, &::after { content: ""; flex: 1; border-top: 1px solid; }
+}
+.pd-width { grid-column: 2; }
+.pd-height {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.pd-paper { grid-column: 2; }
+.pd-margins {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  > div { padding: .3em; }
+  .pd-mt, .pd-mb { grid-column: 1 / -1; }
+  .pd-ml, .pd-mr { writing-mode: vertical-rl; }
+  .pd-ml { transform: rotate(180deg); }
+}
+.pd-margins > div:not(.pd-inner), .pd-gap {
+  background: color-mix(in srgb, orange 35%, transparent);
+}
+.pd-gap { padding: .3em; }
+.pd-inner { padding: 0 !important; background: Canvas; }
+.pd-box { padding: .5em; min-height: 3em; text-align: center; }
+.pd-body { min-height: 8em; }
+</style>
+<div class="figure" id="fig:pages-layout">
+<div class="pd-outer">
+<div class="pd-width">
+<p><code>--paper-width</code></p>
+</div>
+<div class="pd-height">
+<p><code>--paper-height</code></p>
+</div>
+<div class="pd-paper">
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-page&quot;&gt;</code></p>
+<div class="pd-margins">
+<div class="pd-mt">
+<p><code>--paper-margin-top</code></p>
+</div>
+<div class="pd-ml">
+<p><code>--paper-margin-left</code></p>
+</div>
+<div class="pd-inner">
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-header&quot;&gt;</code></p>
+<div class="pd-box">
+<p><code>--page-header-height</code>: <code>data-main-title</code> … <code>data-page-title</code></p>
+</div>
+</li>
+</ul>
+</div>
+<div class="pd-gap">
+<p><code>--page-header-bottom</code></p>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-body&quot;&gt;</code></p>
+<div class="pd-box pd-body">
+<pre><code class="language-html">&lt;h2&gt;Title&lt;/h2&gt;
+
+&lt;p&gt;Content...&lt;/p&gt;
+</code></pre>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;*** class=&quot;pagesjs-fragmented my-box&quot;&gt;</code></p>
+<p>A fragmented element.</p>
+</li>
+</ul>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="pd-gap">
+<p><code>--page-footer-top</code></p>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-footer&quot;&gt;</code></p>
+<div class="pd-box">
+<p><code>--page-footer-height</code>: <code>data-page-number</code></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="pd-mr">
+<p><code>--paper-margin-right</code></p>
+</div>
+<div class="pd-mb">
+<p><code>--paper-margin-bottom</code></p>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="caption">
+<p><span class="ref-number-fig">9</span> The CSS variables and elements of a page.</p>
+</div>
+</div>
+<p>For example, for US Letter paper:</p>
 <pre><code class="language-css">:root {
   --paper-width: 8.5in;
   --paper-height: 11in;
@@ -6042,7 +6200,7 @@ with CSS only, e.g.,</p>
 }
 </code></pre>
 <p>The document title is the first <code>&lt;h1&gt;</code> with the class <code>title</code>, <code>&lt;h1&gt;</code> in the
-frontmatter (see <a class="cross-ref-sec" href="#sec:pages-other">5.14.4</a>), element with the class <code>title</code>, or <code>&lt;h1&gt;</code> in
+frontmatter (see <a class="cross-ref-sec" href="#sec:pages-other">5.14.5</a>), element with the class <code>title</code>, or <code>&lt;h1&gt;</code> in
 the document, in this order of preference. The section title is the last heading
 (<code>&lt;h2&gt;</code>, or <code>&lt;h1&gt;</code> in a book) before the page, i.e., the section in which the
 page starts. If a heading has the attribute <code>data-short-title</code>, its value is
@@ -6062,8 +6220,9 @@ physical pages.</p>
 <p><code>pagesjs-fragmented</code> on every piece of a broken element. The first piece
 also has the class <code>fragment-first</code>, and the last piece <code>fragment-last</code>, so
 you can style the pieces differently, e.g., to draw the border of a box only
-where the box is not cut:</p>
-<pre><code class="language-css">.box.pagesjs-fragmented {
+where the box is not cut (<code>.my-box</code> is just an example class here, which
+you can replace with any class of your own that draws a border):</p>
+<pre><code class="language-css">.my-box.pagesjs-fragmented {
   &amp;:not(.fragment-first) { border-top: none; }
   &amp;:not(.fragment-last) { border-bottom: none; }
 }
@@ -6080,20 +6239,54 @@ footnotes of a page are moved to the bottom of the page. The classes <code>side<
 <code>side-left</code>, and <code>side-right</code> are removed from the table of contents, footnotes,
 and chapter links, because they put these elements in the margins of the screen,
 which does not make sense on a page.</p>
-<h3 id="sec:pages-other"><span class="section-number">5.14.4</span> Paginate other HTML pages</h3>
-<p>The <code>pages</code> assets are not limited to <strong>litedown</strong> output. They paginate the
-<em>content root</em>, which is the first <code>&lt;main&gt;</code> (or element with <code>role=&quot;main&quot;</code>; if
-it only contains one element, such as <code>&lt;article&gt;</code>, that element is used). If
-there is none, the <code>&lt;article&gt;</code> elements are used, or the whole <code>&lt;body&gt;</code> if there
-is no <code>&lt;article&gt;</code>. You can choose another content root with a CSS selector in
-the attribute <code>data-pages-root</code> of <code>&lt;body&gt;</code>:</p>
-<pre><code class="language-html">&lt;body data-pages-root=&quot;#content&quot;&gt;
+<h3 id="sec:pages-other"><span class="section-number">5.14.5</span> Paginate other HTML pages</h3>
+<p>The <code>pages</code> assets are not limited to <strong>litedown</strong> output. They can paginate
+any HTML page, e.g., a blog post generated by Hugo. Load them on the page, e.g.,
+from a CDN (or use local copies):</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@xiee/utils/css/pages.min.css&quot;&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@xiee/utils/js/pages.min.js&quot; defer&gt;&lt;/script&gt;
 </code></pre>
-<p>The frontmatter (title, author, etc.) is the <code>&lt;header&gt;</code> that is a direct child
-of <code>&lt;body&gt;</code>. You can choose another element with the attribute
-<code>data-pages-front</code> (use a selector that matches nothing if there is no
-frontmatter). The rest of the page outside the content root (e.g., the
-navigation bar and sidebar) is hidden.</p>
+<p>Then press <code>p</code> to paginate the page. The script needs to know which part of the
+page is the <em>content root</em> (the content to be paginated) and which is the
+<em>frontmatter</em> (title, author, etc.). It makes a guess, and you can override
+each guess with a CSS selector in a <code>data-*</code> attribute of <code>&lt;body&gt;</code>:</p>
+<ul>
+<li>
+<p>The content root is the first <code>&lt;main&gt;</code> (or element with <code>role=&quot;main&quot;</code>; if
+it only contains one element, such as <code>&lt;article&gt;</code>, that element is used).
+If there is none, the <code>&lt;article&gt;</code> elements are used, or the whole <code>&lt;body&gt;</code>
+if there is no <code>&lt;article&gt;</code>. Use <code>data-pages-root</code> to choose another root.
+The selector can match multiple elements (e.g., <code>&quot;.home, .main&quot;</code>), and each
+of them is a root. If it matches nothing, the guess above is used.</p>
+</li>
+<li>
+<p>The frontmatter is the <code>&lt;header&gt;</code> that is a direct child of <code>&lt;body&gt;</code>. Use
+<code>data-pages-front</code> to choose other elements (e.g., the <code>&lt;div&gt;</code> that has the
+title of a blog post), or a selector that matches nothing if there is no
+frontmatter. The title in the frontmatter is also used as the running title
+in page headers.</p>
+</li>
+</ul>
+<pre><code class="language-html">&lt;body data-pages-root=&quot;.main&quot; data-pages-front=&quot;.article-meta&quot;&gt;
+</code></pre>
+<p>The rest of the page (e.g., the navigation bar and sidebar) is hidden.</p>
+<p>If the page has a table of contents, its ID must be <code>TOC</code> (e.g.,
+<code>&lt;nav id=&quot;TOC&quot;&gt;</code>), so that the script can find it, put it on its own page, and
+add page numbers to its links. Other IDs, such as the <code>TableOfContents</code> that
+Hugo uses by default, are not recognized (you can rename it in a <code>pagesjs:before</code>
+listener, see <a class="cross-ref-sec" href="#sec:pages-events">5.14.2</a>).</p>
+<p>If you cannot edit <code>&lt;body&gt;</code> (e.g., it is generated by a theme), set the
+attributes with a script instead. Pagination starts only after the page is
+fully loaded, so the script can run any time before that, as long as it is
+loaded before <code>pages.js</code>:</p>
+<pre><code class="language-html">&lt;script src=&quot;pages-data.js&quot; defer&gt;&lt;/script&gt;
+&lt;script src=&quot;pages.min.js&quot; defer&gt;&lt;/script&gt;
+</code></pre>
+<p>where <code>pages-data.js</code> is:</p>
+<pre><code class="language-js">Object.assign(document.body.dataset, {
+  pagesRoot: &quot;.main&quot;, pagesFront: &quot;.article-meta&quot;
+});
+</code></pre>
 <p>Because the content moves into pages, CSS rules that depend on the elements
 around it (e.g., <code>article h2</code> or <code>main h2</code>) would stop working. To avoid this,
 each page contains an empty copy of the content root and the elements around it,
@@ -6103,10 +6296,157 @@ margins, padding, and background) is reset so that they do not affect the page.<
 element that contains an <code>&lt;h1&gt;</code>), the frontmatter, and the table of contents
 start on a new page, and the section title in the header is the <code>&lt;h1&gt;</code> instead
 of the <code>&lt;h2&gt;</code>.</p>
+<p>For example, suppose the page has the structure below before pagination. The
+<code>&lt;article&gt;</code> is the content root because it is the only child of <code>&lt;main&gt;</code>, and
+the <code>&lt;nav&gt;</code> is outside the content root. Each tab is an element, and its content
+is its children, stacked like the real DOM tree:</p>
+<style type="text/css">
+.dom-tree {
+  .tabset { margin: .3em 0; }
+  .tab-pane {
+    padding: .3em .5em .3em 1em;
+    border-radius: 0 5px 5px 5px;
+    background: color-mix(in srgb, orange 9%, transparent);
+    border-color: color-mix(in srgb, orange 60%, transparent);
+  }
+  > .tabset > .tab-pane { background: none; }
+  .tab-link.active { background: Canvas; }
+  .tab-link { border-color: color-mix(in srgb, orange 60%, transparent); }
+  pre { margin: .3em 0 0; }
+  pre, code { background: none !important; }
+  pre > code { padding: .2em 0; border: none; }
+}
+</style>
+<div class="dom-tree">
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;body&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;header&gt;</code></p>
+<pre><code class="language-html">...
+</code></pre>
+</li>
+</ul>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;nav&gt;</code></p>
+<pre><code class="language-html">...
+</code></pre>
+</li>
+</ul>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;main&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;article&gt;</code></p>
+<pre><code class="language-html">&lt;h2&gt;Section A&lt;/h2&gt;
+&lt;p&gt;A long paragraph...&lt;/p&gt;
+&lt;h2&gt;Section B&lt;/h2&gt;
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<p>If the long paragraph is broken into two pieces by the page boundary, the
+structure after pagination is roughly as follows (the front matter, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, and
+the header and footer of the second page are omitted):</p>
+<div class="dom-tree">
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;body class=&quot;pagesjs&quot;&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-page page-odd&quot;&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-header&quot; data-main-title=&quot;...&quot;&gt;</code></p>
+<pre><code class="language-html">...
+</code></pre>
+</li>
+</ul>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-body&quot;&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;article class=&quot;pagesjs-wrap&quot;&gt;</code></p>
+<pre><code class="language-html">&lt;h2&gt;Section A&lt;/h2&gt;
+&lt;p class=&quot;pagesjs-fragmented fragment-first&quot;&gt;A long paragraph...&lt;/p&gt;
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-footer&quot; data-page-number=&quot;1&quot;&gt;</code></p>
+<pre><code class="language-html">...
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-page page-even&quot;&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;div class=&quot;pagesjs-body&quot;&gt;</code></p>
+<div class="tabset">
+<ul>
+<li>
+<p><code>&lt;article class=&quot;pagesjs-wrap&quot;&gt;</code></p>
+<pre><code class="language-html">&lt;p class=&quot;pagesjs-fragmented fragment-last&quot;&gt;...the rest.&lt;/p&gt;
+&lt;h2&gt;Section B&lt;/h2&gt;
+</code></pre>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<p>Note that the <code>&lt;main&gt;</code> and <code>&lt;article&gt;</code> on each page are not the originals: they
+are empty copies (<code>pagesjs-wrap</code>) made for every page, and the content is moved
+into them.</p>
 <p>You can also create pages yourself with <code>&lt;div class=&quot;pagesjs-page&quot;&gt;</code>. An empty
 one is a page break (the content after it goes into this page). One that already
 has content is kept as it is, and the content after it starts on a new page.</p>
-<h3 id="sec:pages-troubleshooting"><span class="section-number">5.14.5</span> Troubleshooting</h3>
+<h3 id="sec:pages-troubleshooting"><span class="section-number">5.14.6</span> Troubleshooting</h3>
 <p>If an element that cannot be broken is taller than a page, the script cannot
 make it fit, so the page is marked with the class <code>page-multiple</code> and printed
 over several physical pages. The number of these pages is estimated for the page
@@ -7601,23 +7941,23 @@ R package version 0.62.6, <a href="https://github.com/yihui/xfun">https://github
 </div>
 </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/appendix.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/appendix.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/tabsets.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/pele.global.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.133/js/render-pele.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.134/js/render-pele.min.js" defer></script>
 </body>
 </html>
