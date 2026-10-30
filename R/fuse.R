@@ -450,8 +450,8 @@ block_order = function(res, N = length(res)) {
 #'   `output = '.md'` or `output = 'markdown'` without further calling `mark()`.
 #'
 #'   Chunks tagged with the chunk option `compute` evaluate via the executor
-#'   registered in the global option `compute.executor` (for example
-#'   `mirai::register_render()`), typically in another R process. Use
+#'   function registered in the global option `compute.executor`, typically in
+#'   another R process (a future version of \pkg{mirai} will provide one). Use
 #'   `#| compute: gpu` to route to the profile `"gpu"`, or `#| compute: true`
 #'   for the backend's default profile. Routed chunks on the same profile
 #'   share the executing process's global environment. Objects created in one
@@ -1246,8 +1246,9 @@ eng_r = function(x, inline = FALSE, ...) {
   # record_remote() in another process and returns its result bundle
   ex = getOption('compute.executor')
   if (!is.function(ex)) stop(
-    "the 'compute' chunk option requires a registered executor; set one with ",
-    "options(compute.executor = ...), for example mirai::register_render()"
+    "the 'compute' chunk option requires a registered executor function; set ",
+    "one with options(compute.executor = ...); a future version of mirai will ",
+    "provide one"
   )
   out = ex(record_remote, list(code = x$source, args = args), profile)
   record_unpack(out, args$dev.path)

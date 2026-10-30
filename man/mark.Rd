@@ -84,8 +84,8 @@ For \code{fuse()}, you can generate the intermediate Markdown output via
 \code{output = '.md'} or \code{output = 'markdown'} without further calling \code{mark()}.
 
 Chunks tagged with the chunk option \code{compute} evaluate via the executor
-registered in the global option \code{compute.executor} (for example
-\code{mirai::register_render()}), typically in another R process. Use
+function registered in the global option \code{compute.executor}, typically in
+another R process (a future version of \pkg{mirai} will provide one). Use
 \verb{#| compute: gpu} to route to the profile \code{"gpu"}, or \verb{#| compute: true}
 for the backend's default profile. Routed chunks on the same profile
 share the executing process's global environment. Objects created in one
