@@ -83,6 +83,22 @@ The function \code{mark()} renders Markdown to an output format via the bundled
 For \code{fuse()}, you can generate the intermediate Markdown output via
 \code{output = '.md'} or \code{output = 'markdown'} without further calling \code{mark()}.
 
+Chunks tagged with the chunk option \code{compute} evaluate via the executor
+function registered in the global option \code{compute.executor}, typically in
+another R process (a future version of \pkg{mirai} will provide one). Use
+\verb{#| compute: gpu} to route to the profile \code{"gpu"}, or \verb{#| compute: true}
+for the backend's default profile. Routed chunks on the same profile
+share the executing process's global environment. Objects created in one
+routed chunk are visible to later chunks on the same profile.
+
+Untagged chunks and inline code always evaluate host-side in
+\code{\link[=fuse_env]{fuse_env()}}, and neither side can see the other's state. Note that
+\code{cache = TRUE} on a routed chunk writes to \code{cache.path} on the executing
+process's filesystem. This is correct for local workers, but ineffective
+for remote ones. A tagged chunk raises an error when no executor is
+registered. An invalid \code{compute} value warns, and the chunk evaluates
+locally as if untagged.
+
 If the global option \code{litedown.tinypng} is set to \code{TRUE} and the
 \pkg{tinyimg} package is installed, PNG plots generated from code chunks
 will be optimized by \code{\link[tinyimg:tinypng]{tinyimg::tinypng()}} to reduce file size. To optimize
