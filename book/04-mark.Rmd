@@ -612,10 +612,10 @@ other JS files.
 
 The main body of the document is wrapped in `<main>`, and then in an element
 whose tag name is `body-tag` (the default value is `article`) and class name is
-`body-class` (the default value is empty), e.g., `<main><article class="foo">...
-</article></main>`. For example, you can set `body-class: foo` and then style
-the body with the CSS selector `.foo`, or set `body-tag: div` if the content is
-not an article.
+`body-class` (the default value is empty), e.g.,
+`<main><article class="foo">...</article></main>`. For example, you can set
+`body-class: foo` and then style the body with the CSS selector `.foo`, or set
+`body-tag: div` if the content is not an article.
 
 #### The `lang` variable
 
