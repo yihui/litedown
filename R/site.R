@@ -106,7 +106,7 @@ fuse_site = function(input = '.') {
 
 # common css/js for sites/books
 site_css = c('@default', '@article', '@copy-button', '@heading-anchor', '@pages')
-site_js = c('@sidenotes', '@appendix', '@toc-highlight', '@copy-button', '@heading-anchor', '@pages')
+site_js = c('@sidenotes', '@toc-highlight', '@copy-button', '@heading-anchor', '@pages')
 
 # set global options litedown.html.[meta|options] read from _litedown.yml
 set_site_options = function(opts, input, root, extra = NULL) {

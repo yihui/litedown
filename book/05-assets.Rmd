@@ -657,7 +657,7 @@ You can style an HTML page in an article format via the following CSS and JS:
 
 ``` yaml
 css: ["@default", "@article"]
-js: ["@sidenotes", "@appendix"]
+js: ["@sidenotes"]
 ```
 
 The `article.css` is mainly for styling the article frontmatter, body, and side
@@ -666,8 +666,6 @@ content.
 -   The `sidenotes.js` is required only if you want to place certain elements on
     the left or right side, such as the table of contents (TOC), footnotes, and
     sidenotes.
-
--   The `appendix.js` is required only if you have an appendix in the article.
 
 The web version of this book is also based on the article format, so you know
 what an article format looks like when you read the HTML version of the book.
@@ -679,9 +677,9 @@ larger screens, this means there will be extra space in the left/right margin,
 where we can place auxiliary information, such as the TOC and footnotes. On
 smaller screens, the side content will be collapsed into the body.
 
-The article frontmatter, body, and optionally the appendix are placed in
-separate boxes, whose background color is the CSS variable `--article-bg`
-(default: `#fff`; see @sec:css-variables).
+The article frontmatter and body are placed in separate boxes, whose background
+color is the CSS variable `--article-bg` (default: `#fff`; see
+@sec:css-variables).
 
 The default typeface is sans-serif, and you can customize it by supplying an
 external CSS file (via the `css` meta variable) or just embedding CSS in the
@@ -866,7 +864,7 @@ article assets:
 
 ``` yaml
 css: ["@default", "@article", "@book"]
-js: ["@sidenotes", "@appendix"]
+js: ["@sidenotes"]
 ```
 
 The web version of this book is rendered exactly this way. The `book.css`

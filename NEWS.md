@@ -50,6 +50,8 @@
 
 - The appearance of the default CSS and several other CSS assets can now be customized via CSS variables such as `--accent` and `--muted-bg`, without writing selectors ([details](https://pkg.yihui.org/litedown/book/#sec:css-variables)). The [CSS playground](https://pkg.yihui.org/litedown/examples/028-style-playground.html) generates these variables, too.
 
+- The `@appendix` JS asset is no longer loaded by the `article` feature of `vest()` or by sites and books. A heading with the attribute `.appendix` is no longer wrapped in a `div.appendix` container; it only has the class `appendix`.
+
 # CHANGES IN litedown VERSION 0.11
 
 - The `bibliography` field can now point to an R file containing `bibentry()` calls (e.g., `inst/REFERENCES.R`) in addition to `.bib` files, and both types can be mixed (thanks, @marberts, #136).

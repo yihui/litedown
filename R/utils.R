@@ -270,7 +270,7 @@ vest = function(feature = NULL, css = NULL, js = NULL) {
 }
 
 assets = t(data.frame(
-  article = c('side notes, floats, and full-width elements for articles', '@article', '@sidenotes, @appendix'),
+  article = c('side notes, floats, and full-width elements for articles', '@article', '@sidenotes'),
   book = c('cover and chapter pages for books', '@book', NA),
   callout = c('frames with legends', '@callout', '@callout'),
   'center-img' = c('center images in paragraphs', NA, '@center-img'),
