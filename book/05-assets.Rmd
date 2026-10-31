@@ -1081,7 +1081,8 @@ containers. You can also keep any element in one piece with the CSS property
 
 An element that is not broken moves to the next page if it does not fit. If it
 is taller than a whole page, it gets a page of its own, which is printed over
-several physical pages (see @sec:pages-troubleshooting).
+several physical pages (see @sec:pages-troubleshooting). Figures with captions
+are treated specially (see @sec:pages-floats).
 
 The script also tries to make pages look better:
 
@@ -1098,7 +1099,59 @@ The script also tries to make pages look better:
     either), so that a tiny overflow does not push the last line to a new page
     or make the page scrollable.
 
-### Page layout and styles
+### Floats {#sec:pages-floats}
+
+Like floating environments in LaTeX, a *float* does not leave a big gap at the
+bottom of a page. Floats are figures with captions (a `<figure>` or `.figure`
+that contains a `<figcaption>` or `.caption`) and any element with the class
+`float`, e.g.,
+
+``` html
+<div class="float">...</div>
+```
+
+In Markdown, anything can be made a float with a fenced `Div`
+(@sec:fenced-divs), e.g.,
+
+``` md
+::: float
+Any content, such as a long list or a code block.
+:::
+```
+
+You usually get floats for free: a plot with a caption (the chunk option
+`fig.cap`) is put in a figure environment, which is `.figure` by default (see
+`fig.env` in @sec:option-fig), and the caption is `.caption`. So such plots
+float when necessary, without extra work. Plots without captions are not
+floats, and neither are tables (see below).
+
+A float is never broken. If it does not fit on the rest of the current page, it
+waits for the next page, and the content after it moves up to fill the gap. So
+a float may appear later than where it is written, but floats keep their order,
+and none waits beyond the end of its chapter (in a book) or content root. The
+float stays in its wrappers (e.g., the `.chapter` that contains it), and has the
+class `pagesjs-float` if it has waited.
+
+Because the content after a float can move before it, a float may be the first
+element on a page, followed by the last piece of an element that was broken on
+the previous page (`fragment-last`, see @sec:pages-styles).
+
+Tables are not floats by default, so they can still be broken between pages. If
+you want a table to float, add the class `float` to its environment via the
+chunk option `tab.env` (see @sec:option-tab), e.g., `tab.env = '.table .float'`.
+
+A float taller than 70% of the page body takes a whole page: nothing else goes
+on that page, and the float is centered vertically (the page has the class
+`page-float`). Use the attribute `data-pages-float-page` of `<body>` to change
+this threshold, which is a percentage of the height of the page body, e.g.,
+
+``` html
+<body data-pages-float-page="60">
+```
+
+A value of `100` means that no float takes a whole page by itself.
+
+### Page layout and styles {#sec:pages-styles}
 
 The paper size and margins are defined by CSS variables, which you can override.
 @fig:pages-layout shows which variable controls which part of a page. Each tab
