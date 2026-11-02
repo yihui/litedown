@@ -1,5 +1,6 @@
 # CHANGES IN litedown VERSION 1.1
 
+- `pkg_site()` and `fuse_site()` can add a [giscus](https://giscus.app) comment section to the footer of every page, configured via `site: giscus` in `_litedown.yml` ([details](https://pkg.yihui.org/litedown/book/#sec:site-giscus)).
 
 # CHANGES IN litedown VERSION 1.0
 

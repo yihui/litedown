@@ -153,3 +153,12 @@ assert('set_site_options() marks the site menu with class site-nav', {
   (has_match(getOption('litedown.html.meta')$include_before, '^<nav class="site-nav">'))
   (has_match(getOption('litedown.html.meta')$include_after, '^<footer>'))
 })
+
+assert('giscus_html() builds a giscus script from site config', {
+  (is.null(giscus_html(NULL)))
+  x = giscus_html(list(repo = 'a/b', repo_id = 'R_x'))
+  (has_match(x, 'data-repo="a/b"'))
+  (has_match(x, 'data-repo-id="R_x"'))
+  (has_match(x, 'data-strict="1"'))
+  (has_match(giscus_html(list(mapping = 'title')), 'data-mapping="title"'))
+})

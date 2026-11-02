@@ -1,4 +1,9 @@
 site:
+  giscus:
+    repo: "yihui/yihui.org"
+    repo_id: "MDEwOlJlcG9zaXRvcnk4MDc3NDg0NA=="
+    category: "Comments"
+    category_id: "DIC_kwDOBNCGvM4COkjD"
   standalone: ["0??-snap-*", "0??-css-*"]
   manual:
     Render documents:

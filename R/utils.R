@@ -1106,6 +1106,11 @@ normalize_meta = function(x) {
   x = merge_list(list(
     classoption = '', documentclass = 'article', body_class = '', body_tag = 'article'
   ), x)
+  dash_names(x)
+}
+
+# change _ to - in names
+dash_names = function(x) {
   names(x) = gsub('_', '-', names(x))
   x
 }

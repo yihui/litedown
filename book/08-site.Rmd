@@ -205,6 +205,30 @@ Absolute paths in links (i.e., paths starting with `/`) are automatically
 rewritten to relative paths, so a link like `[Home](/index.html)` will work
 correctly no matter which subdirectory the current page is in.
 
+### Comments {#sec:site-giscus}
+
+To add a [giscus](https://giscus.app) comment section to every page of a
+website, provide its settings under `giscus` in the field `site` of
+`_litedown.yml`. Each field becomes a `data-*` attribute of the giscus script,
+with `_` changed to `-` (e.g., `repo_id` becomes `data-repo-id`). You can get the
+values from the giscus website.
+
+``` yaml
+site:
+  giscus:
+    repo: "user/repo"
+    repo_id: "R_xxx"
+    category: "Comments"
+    category_id: "DIC_xxx"
+```
+
+Fields that you do not provide use giscus's own defaults, except for these:
+`{r} xfun::join_words(sprintf('%s: %s', names(litedown:::giscus_defaults), unlist(litedown:::giscus_defaults)), before = "\x60")`.
+The comment section (`<section class="comments">`) is placed
+right before the page footer. This also works for the package sites built by
+`pkg_site()`, in which case the config goes in the `_litedown.yml` in the site
+directory.
+
 ## R package documentation {#sec:pkg-site}
 
 R package developers can build the full package documentation as either a book
