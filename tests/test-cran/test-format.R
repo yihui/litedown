@@ -79,6 +79,12 @@ assert('yaml_field() falls back to top-level fields; nested ones win', {
   (yaml_field(y, 'html', 'keep_md') %==% TRUE)
   (is.null(yaml_field(y, 'html', 'template')))
   (names(yaml_field(y, 'html', c('meta', 'options'))) %==% c('meta', 'options'))
+  # title etc. are top-level fields, too
+  y$title = 'T'
+  (yaml_field(y, 'html', 'meta')$title %==% 'T')
+  y$output$html$meta$title = 'H'
+  (yaml_field(y, 'html', 'meta')$title %==% 'H')
+  (yaml_field(y, 'latex', 'meta')$title %==% 'T')
 })
 
 assert('top-level YAML fields work in mark()', {

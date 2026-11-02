@@ -515,10 +515,11 @@ header_includes: "\usepackage{microtype}"
 ---
 ```
 
-The top-level variables that are not tied to the title block are `css`, `js`,
-`css2`, `js2`, `lang`, `body-class`, `body-tag`, `header-includes`,
-`include-before`, `include-after`, `documentclass`, and `classoption`. A variable
-that the output format does not use (e.g., `css` for LaTeX) is ignored.
+The supported top-level variables are the ones above (`title`, `author`, etc.),
+plus `css`, `js`, `css2`, `js2`, `lang`, `body-class`, `body-tag`,
+`header-includes`, `include-before`, `include-after`, `documentclass`, and
+`classoption`. A variable that the output format does not use (e.g., `css` for
+LaTeX) is ignored.
 
 To set a variable for one output format only, or to override a top-level value,
 put it under `output -> * -> meta`, where `*` can be `html` or `latex`, e.g.,

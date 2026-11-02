@@ -126,12 +126,15 @@ normalize_yaml = function(x) {
   x
 }
 
+top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
+
 # fields that can be written at the top level of YAML as shortcuts of
 # `output -> <format> -> <field>`; the nested values take precedence
 top_fields = list(
   meta = c(
-    'css', 'js', 'css2', 'js2', 'lang', 'include_before', 'include_after', 'header_includes',
-    'documentclass', 'classoption', 'body_class', 'body_tag'
+    top_meta, 'css', 'js', 'css2', 'js2', 'lang', 'include_before',
+    'include_after', 'header_includes', 'documentclass', 'classoption',
+    'body_class', 'body_tag'
   ),
   options = c(
     'toc', 'number_sections', 'embed_resources', 'js_math', 'js_highlight',
