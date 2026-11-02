@@ -2,12 +2,8 @@
 title: "litedown with Water.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/water.css/out/water.css"]
-    options:
-      toc: true
+css: ["@npm/water.css/out/water.css"]
+toc: true
 ---
 
 This page is styled by [Water.css](https://watercss.kognise.dev), which is

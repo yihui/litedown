@@ -2,12 +2,8 @@
 title: "litedown with Simple.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/simpledotcss/simple.min.css"]
-    options:
-      toc: true
+css: ["@npm/simpledotcss/simple.min.css"]
+toc: true
 ---
 
 This page is styled by [Simple.css](https://simplecss.org), which is loaded

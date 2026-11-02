@@ -72,10 +72,8 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   output = auto_output(input, output, format)
   out_dir = dirname(output_path(input, output) %||% '.')
 
-  # title/author/date can be provided as top-level YAML options
   meta = merge_list(
     get_option('meta', format),
-    yaml[intersect(names(yaml), top_meta)],
     yaml_field(yaml, format),
     list(generator = I(paste('litedown', packageVersion('litedown')))),
     meta
@@ -354,7 +352,6 @@ sub_vars = function(tpl, meta, ...) {
   tpl
 }
 
-top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
 tag_meta = c('h1', 'h2', 'h2', 'h3', '')
 names(tag_meta) = top_meta
 cmd_meta = c(sprintf('\\%s{%%s}', top_meta[-5]), '\\begin{abstract}\n%s\\end{abstract}')

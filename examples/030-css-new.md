@@ -2,12 +2,8 @@
 title: "litedown with new.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/@exampledev/new.css/new.min.css"]
-    options:
-      toc: true
+css: ["@npm/@exampledev/new.css/new.min.css"]
+toc: true
 ---
 
 This page is styled by [new.css](https://newcss.net), which is loaded from a

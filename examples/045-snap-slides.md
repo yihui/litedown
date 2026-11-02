@@ -2,14 +2,10 @@
 title: Making HTML Slides with the **litedown** Package
 author: "[Yihui Xie](https://yihui.org)"
 date: "2026-10-26"
-output:
-  html:
-    meta:
-      css: ["@default", "@snap", "@key-buttons", "@heading-anchor"]
-      js: ["@snap", "@key-buttons", "@external-link", "@heading-anchor"]
-    options:
-      toc: true
-      number_sections: true
+css: ["@default", "@snap", "@key-buttons", "@heading-anchor"]
+js: ["@snap", "@key-buttons", "@external-link", "@heading-anchor"]
+toc: true
+number_sections: true
 ---
 
 ## Get started
@@ -19,11 +15,8 @@ metadata:
 
 ``` yaml
 ---
-output:
-  html:
-    meta:
-      css: [default, snap]
-      js: [snap]
+css: [default, snap]
+js: [snap]
 ---
 ```
 
@@ -133,11 +126,8 @@ under the same directory as the Markdown input file:
 
 ``` yaml
 ---
-output:
-  html:
-    meta:
-      css: [default, snap, extra.css]
-      js: [snap]
+css: [default, snap, extra.css]
+js: [snap]
 ---
 ```
 

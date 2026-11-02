@@ -67,6 +67,35 @@ assert('yaml_field() extracts a named field under an output format', {
   (is.null(yaml_field(y, 'latex', 'meta')))
 })
 
+assert('yaml_field() falls back to top-level fields; nested ones win', {
+  y = list(
+    css = 'a', toc = TRUE, 'number-sections' = TRUE, 'header-includes' = 'h',
+    keep_md = TRUE, foo = 1,
+    output = list(html = list(meta = list(css = 'b'), options = list(toc = FALSE)))
+  )
+  (yaml_field(y, 'html', 'meta') %==% list(css = 'b', header_includes = 'h'))
+  (yaml_field(y, 'html', 'options') %==% list(toc = FALSE, number_sections = TRUE))
+  (yaml_field(y, 'latex', 'meta')$css %==% 'a')
+  (yaml_field(y, 'html', 'keep_md') %==% TRUE)
+  (is.null(yaml_field(y, 'html', 'template')))
+  (names(yaml_field(y, 'html', c('meta', 'options'))) %==% c('meta', 'options'))
+  # title etc. are top-level fields, too
+  y$title = 'T'
+  (yaml_field(y, 'html', 'meta')$title %==% 'T')
+  y$output$html$meta$title = 'H'
+  (yaml_field(y, 'html', 'meta')$title %==% 'H')
+  (yaml_field(y, 'latex', 'meta')$title %==% 'T')
+})
+
+assert('top-level YAML fields work in mark()', {
+  x = c('---', 'title: T', 'css: https://x.org/foo.css', 'js: https://x.org/bar.js', 'lang: fr', 'toc: true',
+        '---', '', '# A', '', '## B', '', 'text')
+  (has_match(mark(x), '<link rel="stylesheet" href="https://x.org/foo.css"'))
+  (has_match(mark(x), '<script src="https://x.org/bar.js"'))
+  (has_match(mark(x), '<html lang="fr"'))
+  (has_match(mark(x), '<nav id="TOC"'))
+})
+
 assert('map_args() maps rmarkdown html_document arguments to litedown options', {
   a = map_args(toc = TRUE, toc_depth = 2, number_sections = TRUE)
   (a$options$toc$depth %==% 2)

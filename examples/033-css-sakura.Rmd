@@ -2,12 +2,8 @@
 title: "litedown with Sakura"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@gh/oxalorg/sakura/css/sakura.css"]
-    options:
-      toc: true
+css: ["@gh/oxalorg/sakura/css/sakura.css"]
+toc: true
 ---
 
 This page is styled by [Sakura](https://oxal.org/projects/sakura/), which is

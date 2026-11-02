@@ -1,10 +1,7 @@
 ---
 title: Customize the look of a page
 subtitle: Tweak the major CSS settings and copy the CSS code
-output:
-  html:
-    options:
-      toc: true
+toc: true
 ---
 
 Change the settings below, and the page will update right away. Only the

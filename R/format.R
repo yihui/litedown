@@ -29,16 +29,16 @@ output_format = function(to, options, meta, ...) {
 #' directly. They can be used to configure output formats in YAML, but you are
 #' recommended to use the file format names instead of these function names.
 #'
-#' To configure output formats in the YAML metadata of the Markdown document,
-#' simply use the output format names such as `html` or `latex` in the `output`
-#' field in YAML, e.g.,
+#' Common settings (e.g., `toc`, `css`, `js`, `keep_md`) can be written as
+#' top-level fields in the YAML metadata of the Markdown document. To configure
+#' a specific format, use the output format names such as `html` or `latex` in
+#' the `output` field, which take precedence over the top-level fields, e.g.,
 #'
 #' ```yaml
 #' ---
+#' toc: true
 #' output:
 #'   html:
-#'     options:
-#'       toc: true
 #'     keep_md: true
 #'   latex:
 #'     latex_engine: pdflatex
@@ -126,11 +126,46 @@ normalize_yaml = function(x) {
   x
 }
 
-# get metadata from a certain field under an output format
+top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
+
+# fields that can be written at the top level of YAML as shortcuts of
+# `output -> <format> -> <field>`; the nested values take precedence
+top_fields = list(
+  meta = c(
+    top_meta, 'css', 'js', 'css2', 'js2', 'lang', 'include_before',
+    'include_after', 'header_includes', 'documentclass', 'classoption',
+    'body_class', 'body_tag'
+  ),
+  options = c(
+    'toc', 'number_sections', 'embed_resources', 'js_math', 'js_highlight',
+    'offline', 'cleveref'
+  ),
+  other = c('template', 'keep_md', 'keep_tex', 'latex_engine', 'citation_package')
+)
+
+# get top-level YAML fields in a whitelist (hyphens in names are treated as _)
+yaml_top = function(yaml, names) {
+  if (!is.list(yaml)) return(list())
+  x = yaml[!duplicated(names(yaml))]
+  names(x) = gsub('-', '_', names(x))
+  x[intersect(names, names(x))]
+}
+
+# get metadata from a certain field under an output format, falling back to
+# the top-level field of the same name
 yaml_field = function(yaml, format, name = 'meta') {
-  if (is.list(out <- yaml[['output']]) && is.list(out <- out[[format]])) {
-    if (length(name) == 1) out[[name]] else out[name]
-  }
+  out = yaml[['output']]
+  out = if (is.list(out)) out[[format]]
+  if (!is.list(out)) out = list()
+  res = lapply(set_names(name, name), function(n) {
+    nested = n %in% c('meta', 'options')
+    top = yaml_top(yaml, top_fields[[if (nested) n else 'other']])
+    if (nested) {
+      x = merge_list(top, out[[n]])
+      if (length(x)) x
+    } else out[[n]] %||% top[[n]]
+  })
+  if (length(name) == 1) res[[1]] else res
 }
 
 # get output format from YAML's `output` field

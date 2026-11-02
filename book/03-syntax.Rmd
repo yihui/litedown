@@ -725,9 +725,7 @@ set via the `citation_package` option of the output format in YAML metadata,
 e.g.,
 
 ``` yaml
-output:
-  latex:
-    citation_package: biblatex
+citation_package: biblatex
 ```
 
 The default is `natbib`. The table below shows the LaTeX commands corresponding

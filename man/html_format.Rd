@@ -36,15 +36,15 @@ directly. They can be used to configure output formats in YAML, but you are
 recommended to use the file format names instead of these function names.
 }
 \details{
-To configure output formats in the YAML metadata of the Markdown document,
-simply use the output format names such as \code{html} or \code{latex} in the \code{output}
-field in YAML, e.g.,
+Common settings (e.g., \code{toc}, \code{css}, \code{js}, \code{keep_md}) can be written as
+top-level fields in the YAML metadata of the Markdown document. To configure
+a specific format, use the output format names such as \code{html} or \code{latex} in
+the \code{output} field, which take precedence over the top-level fields, e.g.,
 
 \if{html}{\out{<div class="sourceCode yaml">}}\preformatted{---
+toc: true
 output:
   html:
-    options:
-      toc: true
     keep_md: true
   latex:
     latex_engine: pdflatex
