@@ -11,6 +11,29 @@
 > ---Jamie Michalak, *Frank and Bean: Food Truck Fiasco*
 :::
 
+An HTML widget is an interactive part of a page, such as a sortable table, a
+chart, or a map. R prepares the data, and JavaScript libraries render the widget
+in the browser. Let's start with one.
+
+## Simple DataTables {#sec:simple-dt}
+
+The first example is a sortable table from the
+[simple-datatables](https://github.com/fiduswriter/simple-datatables/) library.
+Assets such as CSS and JS files can be added via the `css` and `js` fields in
+YAML, e.g., for this library:
+
+``` yaml
+css: "@npm/simple-datatables/dist/style"
+js: "@npm/simple-datatables"
+```
+
+The same assets can be added in R code with `litedown::vest()`, which the
+example below uses:
+
+`{r} .ex(21)`
+
+## The dilemma
+
 [I was excited](https://youtu.be/dV4gtARPvu8) about HTML widgets when Ramnath
 came up with the idea [in
 2014](https://github.com/ramnathv/htmlwidgets/graphs/contributors). I often find
@@ -18,8 +41,6 @@ it hard to resist playing with things that are interactive. Although it feels a
 little embarrassing to confess, I have clicked the buttons in @sec:new-road for
 more than 20 times, knowing clearly what will happen every time but still...
 There is certainly a lot more fun interacting with HTML widgets.
-
-## The dilemma
 
 The existing [HTML widgets](https://www.htmlwidgets.org) framework is very
 friendly and convenient to R users, since it doesn't require knowledge about
@@ -71,19 +92,9 @@ means:
 Despite the flexibility, this approach has a major downside that most R users
 may dislike: you can't avoid JS. In fact, you will primarily write JS to render
 the widgets. The only help you receive from **litedown** is that you can
-interpolate your JS code with R code (@sec:option-fill). For example, you can
-pass R objects to JS as JSON objects, and then I wish you good luck with your JS
-adventure:
-
-```` md
-```{js, type = 'module', fill = xfun::tojson}
-// R objects serialized to JSON via xfun::tojson
-const iris = `{ iris }`, euro = `{ euro }`;
-
-console.log('The iris data has', Object.keys(iris).length, 'columns.')
-const euro10 = euro.map(x => Math.log10(x));
-```
-````
+interpolate your JS code with R code (@sec:option-fill). For example, the
+Simple DataTables example above passes R objects such as `` `{ names(iris) }` ``
+to JS as JSON, and then I wish you good luck with your JS adventure.
 
 This approach solves one pain point that I have had with HTML widgets for a long
 time: most of the time, the APIs at the R level look nice and do a great job of
@@ -113,9 +124,15 @@ perfect solution. It's fine to tie yourself to potentially very old versions of
 dependencies if these old versions work perfectly and you are able to give up
 new features or bug fixes in newer versions.
 
-The following sections will give basic examples of some popular JS libraries. If
-you want to pin their versions, you may specify the version number at the end of
-the JS package name, e.g.,
+To pin a library to a version, add the version number after the package name in
+the asset path, e.g., in YAML:
+
+``` yaml
+css: "@npm/leaflet@1.9.3/dist/leaflet"
+js: "@npm/leaflet@1.9.3"
+```
+
+Or in R code:
 
 ``` r
 litedown::vest(css = '@npm/leaflet@1.9.3/dist/leaflet', js = '@npm/leaflet@1.9.3')
@@ -142,18 +159,20 @@ widgets. Plain oatmeal is a bowl of sadness.[^06-widgets-2] So is this chapter
     told me. As a lazy dad, I'm counting on my 9-month old daughter to tell me
     someday.
 
-## Simple DataTables {#sec:simple-dt}
-
-`{r} .ex(21)`
-
 ## Dygraphs
+
+Time series charts with **dygraphs**.
 
 `{r} .ex(22)`
 
 ## Leaflet
 
+Interactive maps with **leaflet**.
+
 `{r} .ex(23)`
 
 ## Chart.js
+
+Charts with **Chart.js**.
 
 `{r} .ex(24)`
