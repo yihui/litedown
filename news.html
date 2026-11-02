@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.2">
+<meta name="generator" content="litedown 1.0.3">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -48,7 +48,12 @@
 </nav>
 <h2 id="sec:litedown-1-1" class="unnumbered">litedown 1.1</h2>
 <ul>
-<li><code>pkg_site()</code> and <code>fuse_site()</code> can add a <a href="https://giscus.app">giscus</a> comment section to the footer of every page, configured via <code>site: giscus</code> in <code>_litedown.yml</code> (<a href="https://pkg.yihui.org/litedown/book/#sec:site-giscus">details</a>).</li>
+<li>
+<p>Common YAML settings can now be written as top-level fields instead of deeply nested under <code>output -&gt; html -&gt; meta/options</code>, e.g., <code>css</code>, <code>js</code>, <code>lang</code>, <code>toc</code>, <code>number_sections</code>, <code>embed_resources</code>, <code>js_math</code>, <code>js_highlight</code>, <code>include_before</code>, <code>include_after</code>, <code>template</code>, and <code>keep_md</code>. The nested form still works and takes precedence (<a href="https://pkg.yihui.org/litedown/book/#sec:yaml-metadata">details</a>).</p>
+</li>
+<li>
+<p><code>pkg_site()</code> and <code>fuse_site()</code> can add a <a href="https://giscus.app">giscus</a> comment section to the footer of every page, configured via <code>site: giscus</code> in <code>_litedown.yml</code> (<a href="https://pkg.yihui.org/litedown/book/#sec:site-giscus">details</a>).</p>
+</li>
 </ul>
 <h2 id="sec:litedown-1-0" class="unnumbered">litedown 1.0</h2>
 <ul>
@@ -452,7 +457,7 @@ graph TD;
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/toc-highlight.min.js" defer></script>

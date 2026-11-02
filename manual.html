@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.2">
+<meta name="generator" content="litedown 1.0.3">
 <title>Help pages</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -337,15 +337,15 @@ values are <code>none</code>, <code>natbib</code>, and <code>biblatex</code>.</p
 </td></tr>
 </table>
 <h3 id="sec:details_1" class="unnumbered">Details</h3>
-<p>To configure output formats in the YAML metadata of the Markdown document,
-simply use the output format names such as <code>html</code> or <code>latex</code> in the <code>output</code>
-field in YAML, e.g.,
+<p>Common settings (e.g., <code>toc</code>, <code>css</code>, <code>js</code>, <code>keep_md</code>) can be written as
+top-level fields in the YAML metadata of the Markdown document. To configure
+a specific format, use the output format names such as <code>html</code> or <code>latex</code> in
+the <code>output</code> field, which take precedence over the top-level fields, e.g.,
 </p>
 <pre><code class="language-yaml">---
+toc: true
 output:
   html:
-    options:
-      toc: true
     keep_md: true
   latex:
     latex_engine: pdflatex
@@ -509,7 +509,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/var/folders/n6/hn37q6pj7sj_9dmqqc2113800000gn/T//Rtmph8rwPx/file158a15ead2b4&quot;
+<pre><code>#&gt; [1] &quot;/var/folders/n6/hn37q6pj7sj_9dmqqc2113800000gn/T//Rtmp4xubVc/file15a5563e8a6f&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -1468,7 +1468,7 @@ raw content, click on the link on its file size instead.
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/toc-highlight.min.js" defer></script>

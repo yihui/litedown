@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.2">
+<meta name="generator" content="litedown 1.0.3">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -199,7 +199,7 @@
 <li><a href="#sec:yaml-metadata"><span class="section-number">4.3</span> YAML metadata</a>
 <ul>
 <li><a href="#sec:top-level-variables"><span class="section-number">4.3.1</span> Top-level variables</a></li>
-<li><a href="#sec:format-specific-variables"><span class="section-number">4.3.2</span> Format-specific variables</a>
+<li><a href="#sec:other-variables"><span class="section-number">4.3.2</span> Other variables</a>
 <ul>
 <li><a href="#sec:meta-css"><span class="section-number">4.3.2.1</span> The <code>css</code> variable</a></li>
 <li><a href="#sec:the-js-variable"><span class="section-number">4.3.2.2</span> The <code>js</code> variable</a></li>
@@ -1468,11 +1468,8 @@ Define CSS rules for the classes in the `#example-a` chunk:
 <p>Here is an example of creating a callout (<a class="cross-ref-sec" href="#sec:callout">5.7</a>) from a code chunk:</p>
 <pre><code class="language-md" data-file="003.Rmd" data-output="003-attr-callout.html">---
 title: Create a callout via the option `attr.chunk`
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@callout&quot;]
-      js: [&quot;@callout&quot;]
+css: [&quot;@default&quot;, &quot;@callout&quot;]
+js: [&quot;@callout&quot;]
 ---
 
 If you use the class name `.callout-*` on a chunk, you can turn it into a callout, e.g.,
@@ -1987,11 +1984,8 @@ contain one or more plots. If you need multiple figure environments, you have to
 write separate code chunks.</p>
 <pre><code class="language-md" data-file="009.Rmd" data-output="009-option-figure-decoration.html">---
 title: Decorating figures
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@article&quot;]
-      js: [&quot;@sidenotes&quot;]
+css: [&quot;@default&quot;, &quot;@article&quot;]
+js: [&quot;@sidenotes&quot;]
 ---
 
 Place two plots side by side via the `width` attribute:
@@ -3315,10 +3309,7 @@ the latest version of Pele (or mermaid.js) will be added to the <code>js</code> 
 specific version, you can add it manually to the YAML metadata, e.g.,</p>
 <pre><code class="language-md">---
 title: &quot;A mermaid diagram&quot;
-output:
-  html:
-    meta:
-      js: [&quot;@npm/mermaid@11.3.0/dist/mermaid.min.js&quot;]
+js: [&quot;@npm/mermaid@11.3.0/dist/mermaid.min.js&quot;]
 ---
 
 ```{mermaid}
@@ -4070,9 +4061,7 @@ default. If you want it to appear elsewhere, you can provide an empty Div there.
 <p>For LaTeX output, the citation style depends on the LaTeX package, which you can
 set via the <code>citation_package</code> option of the output format in YAML metadata,
 e.g.,</p>
-<pre><code class="language-yaml">output:
-  latex:
-    citation_package: biblatex
+<pre><code class="language-yaml">citation_package: biblatex
 </code></pre>
 <p>The default is <code>natbib</code>. The table below shows the LaTeX commands corresponding
 to the Markdown citation syntax:</p>
@@ -4171,19 +4160,15 @@ discipline of balancing is “giving up.”</p>
 </blockquote>
 </div>
 <p>The main function to convert Markdown to other formats is <code>litedown::mark()</code>.</p>
-<p>The output format can be specified in the <code>output</code> (or <code>format</code>) field in YAML
-metadata (<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>), e.g.,</p>
+<p>Most settings can be written as top-level fields in YAML metadata
+(<a class="cross-ref-sec" href="#sec:yaml-metadata">4.3</a>), e.g.,</p>
 <pre><code class="language-yaml">---
-output:
-  html:
-    options:
-      js_math:
-        package: &quot;katex&quot;
-        version: &quot;0.16.4&quot;
-      number_sections: true
-      embed_resources: [&quot;local&quot;, &quot;https&quot;]
-    meta:
-      css: &quot;custom.css&quot;
+number_sections: true
+embed_resources: [&quot;local&quot;, &quot;https&quot;]
+css: &quot;custom.css&quot;
+js_math:
+  package: &quot;katex&quot;
+  version: &quot;0.16.4&quot;
 ---
 </code></pre>
 <h2 id="sec:markdown-options"><span class="section-number">4.1</span> Markdown options</h2>
@@ -4499,9 +4484,7 @@ option <code>litedown.FORMAT.template</code> (where <code>FORMAT</code> is the o
 Alternatively, you can pass a template path to the <code>template</code> argument of the
 output format <code>html</code> or <code>latex</code> in an individual document, e.g.,</p>
 <pre><code class="language-yaml">---
-output:
-  html:
-    template: &quot;path/to/my/template.html&quot;
+template: &quot;path/to/my/template.html&quot;
 ---
 </code></pre>
 <p>The template path can also take a logical value: <code>TRUE</code> means to use the default
@@ -4612,20 +4595,32 @@ output:
     meta:
       title: &quot;Title for LaTeX output&quot;
 </code></pre>
-<h3 id="sec:format-specific-variables"><span class="section-number">4.3.2</span> Format-specific variables</h3>
-<p>Other variables need to be specified under <code>output -&gt; * -&gt; meta</code>, where <code>*</code> can
-be <code>html</code> or <code>latex</code>, e.g.,</p>
+<h3 id="sec:other-variables"><span class="section-number">4.3.2</span> Other variables</h3>
+<p>Other variables can also be written as top-level fields, e.g.,</p>
 <pre><code class="language-yaml">---
 title: &quot;My Title&quot;
+css: &quot;style.css&quot;
+js: &quot;script.js&quot;
+documentclass: &quot;book&quot;
+header_includes: &quot;\usepackage{microtype}&quot;
+---
+</code></pre>
+<p>The supported top-level variables are the ones above (<code>title</code>, <code>author</code>, etc.),
+plus <code>css</code>, <code>js</code>, <code>css2</code>, <code>js2</code>, <code>lang</code>, <code>body-class</code>, <code>body-tag</code>,
+<code>header-includes</code>, <code>include-before</code>, <code>include-after</code>, <code>documentclass</code>, and
+<code>classoption</code>. A variable that the output format does not use (e.g., <code>css</code> for
+LaTeX) is ignored.</p>
+<p>To set a variable for one output format only, or to override a top-level value,
+put it under <code>output -&gt; * -&gt; meta</code>, where <code>*</code> can be <code>html</code> or <code>latex</code>, e.g.,</p>
+<pre><code class="language-yaml">---
+css: &quot;style.css&quot;
 output:
   html:
     meta:
-      css: &quot;style.css&quot;
-      js: &quot;script.js&quot;
+      css: &quot;html-only.css&quot;
   latex:
     meta:
       documentclass: &quot;book&quot;
-      header_includes: &quot;\usepackage{microtype}&quot;
 ---
 </code></pre>
 <p>The following metadata variables are supported for both HTML and LaTeX
@@ -4745,10 +4740,7 @@ language tag such as <code>en</code>, <code>en-US</code>, or <code>zh-CN</code>.
 automatically detected from the system locale (via <code>Sys.getlocale('LC_CTYPE')</code>)
 if the locale is in the POSIX format (e.g., <code>en_US.UTF-8</code>). You can override it
 in YAML, e.g.,</p>
-<pre><code class="language-yaml">output:
-  html:
-    meta:
-      lang: &quot;zh-CN&quot;
+<pre><code class="language-yaml">lang: &quot;zh-CN&quot;
 </code></pre>
 <h4 id="sec:the-plain-title-variable"><span class="section-number">4.3.2.5</span> The <code>plain-title</code> variable</h4>
 <p>The plain-text version of the title, used in the <code>&lt;title&gt;</code> tag of the HTML
@@ -4779,20 +4771,30 @@ template, you can use arbitrary variable names following the naming convention
 and the values of variables in the metadata will be passed to your template.</p>
 <h3 id="sec:setting-options-in-yaml"><span class="section-number">4.3.5</span> Setting options in YAML</h3>
 <p>Besides metadata variables, the aforementioned Markdown options
-(<a class="cross-ref-sec" href="#sec:markdown-options">4.1</a>) can also be set in YAML under <code>output -&gt; * -&gt; options</code>,
-e.g.,</p>
-<pre><code class="language-yaml">output:
+(<a class="cross-ref-sec" href="#sec:markdown-options">4.1</a>) can also be set in YAML. The common ones (<code>toc</code>,
+<code>number_sections</code>, <code>embed_resources</code>, <code>js_math</code>, <code>js_highlight</code>, <code>offline</code>, and
+<code>cleveref</code>) can be top-level fields, e.g.,</p>
+<pre><code class="language-yaml">toc: true
+js_highlight:
+  package: highlight
+  theme: github
+  languages: [diff, latex]
+</code></pre>
+<p>Options not in this list (e.g., <code>hardbreaks</code>) must be nested under
+<code>output -&gt; * -&gt; options</code>. You also need the nested form when an option should
+differ between formats, because a top-level value applies to all formats and
+the nested value takes precedence, e.g., a TOC for HTML only:</p>
+<pre><code class="language-yaml">toc: false
+output:
   html:
     options:
       toc: true
-      js_highlight:
-        package: highlight
-        theme: github
-        languages: [diff, latex]
+      hardbreaks: true
 </code></pre>
 <h3 id="sec:other-fields-in-yaml"><span class="section-number">4.3.6</span> Other fields in YAML</h3>
 <p>In addition to <code>meta</code> and <code>options</code>, a few other fields can be specified under
-the format name. These fields correspond to the arguments of the output format
+the format name, or at the top level (they then apply to all formats). These
+fields correspond to the arguments of the output format
 functions <code>litedown::html_format()</code> and <code>litedown::latex_format()</code>.</p>
 <p>The fields supported by both formats are:</p>
 <ul>
@@ -4824,11 +4826,18 @@ and <code>none</code>.</p>
 </li>
 </ul>
 <p>For example:</p>
+<pre><code class="language-yaml">latex_engine: xelatex
+keep_tex: true
+citation_package: biblatex
+</code></pre>
+<p>A top-level <code>template</code> applies to all formats, which is rarely what you want
+because HTML and LaTeX templates are different. Use the nested form to specify
+one template per format (the same applies to the other fields above when their
+values should differ between formats):</p>
 <pre><code class="language-yaml">output:
+  html:
+    template: custom-template.html
   latex:
-    latex_engine: xelatex
-    keep_tex: true
-    citation_package: biblatex
     template: custom-template.tex
 </code></pre>
 <div class="chapter-after side side-right">
@@ -4858,19 +4867,15 @@ assets. You can load arbitrary external JS and CSS files via the <code>js</code>
 meta variables. There are numerous JS libraries and CSS frameworks on the web,
 and you do not have to use the ones mentioned in this chapter. You can also
 write CSS/JS by yourself to enrich your HTML applications.</p>
-<p>Remember that the CSS and JS are introduced under the output format <code>html</code> in
+<p>Remember that the CSS and JS are introduced via the <code>css</code> and <code>js</code> fields in
 YAML metadata, e.g.,</p>
 <pre><code class="language-yaml">---
-output:
-  html:
-    meta:
-      css: [&quot;one.css&quot;, &quot;two.css&quot;]
-      js: [&quot;three.js&quot;, &quot;four.js&quot;]
+css: [&quot;one.css&quot;, &quot;two.css&quot;]
+js: [&quot;three.js&quot;, &quot;four.js&quot;]
 ---
 </code></pre>
-<p>For the sake of brevity, we will omit the full YAML fields in examples
-throughout this chapter but only use the <code>css</code> and <code>js</code> fields. A file name
-<code>foo.js</code> denotes the file under the <code>js/</code> directory of the aforementioned
+<p>In examples throughout this chapter, we will show only the <code>css</code> and <code>js</code>
+fields. A file name <code>foo.js</code> denotes the file under the <code>js/</code> directory of the aforementioned
 <a href="https://github.com/yihui/lite.js"><code>lite.js</code> repository</a>. Similarly, <code>foo.css</code>
 is under the <code>css/</code> directory.</p>
 <p>All these CSS/JS resources can be used offline, and there are several ways to do
@@ -5087,10 +5092,7 @@ a, h1, h2, h3 { color: crimson; }
 <p>Alternatively, save the rules in a file (say, <code>my.css</code>) and list it in the YAML
 metadata. Keep <code>@default</code> in front of it so that <strong>litedown</strong>’s default look
 stays, and your rules (which come later) override it:</p>
-<pre><code class="language-yaml">output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;my.css&quot;]
+<pre><code class="language-yaml">css: [&quot;@default&quot;, &quot;my.css&quot;]
 </code></pre>
 <p>How do you know what to write? Right-click the thing you want to change on the
 page and choose “Inspect”: your web browser will show its tag name and class,
@@ -5208,10 +5210,7 @@ nice, such as <a href="https://watercss.kognise.dev">Water.css</a>,
 <a href="https://newcss.net">new.css</a>, <a href="https://simplecss.org">Simple.css</a>, and
 <a href="https://picocss.com">Pico</a>. You can use one by adding its address to the <code>css</code>
 field. These stylesheets are complete by themselves, so leave out <code>@default</code>:</p>
-<pre><code class="language-yaml">output:
-  html:
-    meta:
-      css: [&quot;https://newcss.net/new.min.css&quot;]
+<pre><code class="language-yaml">css: [&quot;https://newcss.net/new.min.css&quot;]
 </code></pre>
 <p>If a stylesheet is on <a href="https://www.jsdelivr.com">jsDelivr</a>, you can use the
 shorthand <code>@npm/</code> (or <code>@gh/</code> for GitHub) followed by the package and file name,
@@ -5228,11 +5227,8 @@ fields. For example, here is how to use the
 to create interactive tables:</p>
 <pre><code class="language-md">---
 title: Display Tables with the JS Library DataTables
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@npm/simple-datatables/dist/style&quot;]
-      js: [&quot;@npm/simple-datatables&quot;]
+css: [&quot;@default&quot;, &quot;@npm/simple-datatables/dist/style&quot;]
+js: [&quot;@npm/simple-datatables&quot;]
 ---
 
 ::: {#mtcars-table}
@@ -5248,13 +5244,10 @@ new simpleDatatables.DataTable('#mtcars-table &gt; table');
 <p>See <a class="cross-ref-sec" href="#sec:simple-dt">6.2</a> for more ways to create this type of table.</p>
 <h3 id="sec:global-css"><span class="section-number">5.3.4</span> Apply the styles to all pages</h3>
 <p>For a website or a book (<a class="cross-ref-chp" href="#chp:sites">8</a>), you do not need to repeat the setting in
-every page. Put it in the <code>output</code> field of <code>_litedown.yml</code> instead, and it will
+every page. Put it in <code>_litedown.yml</code> instead, and it will
 apply to all pages. For example, if you have saved your rules in <code>custom.css</code> in
 the project folder, this adds them to the default look of the site:</p>
-<pre><code class="language-yaml">output:
-  html:
-    meta:
-      css2: [&quot;custom.css&quot;]
+<pre><code class="language-yaml">css2: [&quot;custom.css&quot;]
 </code></pre>
 <p>The field <code>css2</code> means “add to the defaults”, whereas <code>css</code> means “replace the
 defaults”. So if you want to use a stylesheet from the web for all pages, use
@@ -7261,12 +7254,9 @@ are likely to customize the <code>meta</code> variables <code>css</code>, <code>
   pattern: &quot;[.]R?md$&quot;
   standalone: [&quot;slides-*.Rmd&quot;]
 
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;]
-      include_before: &quot;[Home](/) [About](/about.html)&quot;
-      include_after: &quot;&amp;copy; 2024 | [Edit]($input$)&quot;
+css: [&quot;@default&quot;]
+include_before: &quot;[Home](/) [About](/about.html)&quot;
+include_after: &quot;&amp;copy; 2024 | [Edit]($input$)&quot;
 </code></pre>
 <p>Basically, <code>include_before</code> can take a file or text input that will be used as
 the header of each web page, and <code>include_after</code> will be the footer.</p>
@@ -8010,11 +8000,11 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.3, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
-R package version 0.62.8, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
+R package version 0.62.9, <a href="https://github.com/yihui/xfun">https://github.com/yihui/xfun</a>. 
 </p>
 </div>
 </div>

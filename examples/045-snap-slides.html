@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.2">
+<meta name="generator" content="litedown 1.0.3">
 <title>Making HTML Slides with the litedown Package</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/snap.min.css">
@@ -77,11 +77,8 @@
 <p>Specify at least one CSS file (<code>snap.css</code>) and one JS script (<code>snap.js</code>) in YAML
 metadata:</p>
 <pre><code class="language-yaml">---
-output:
-  html:
-    meta:
-      css: [default, snap]
-      js: [snap]
+css: [default, snap]
+js: [snap]
 ---
 </code></pre>
 <p>You will learn more about <code>snap.css</code> and <code>snap.js</code> at the end of this
@@ -177,11 +174,8 @@ toggle the overview mode and navigate to the clicked slide. Basically,
 <p>You can pass more CSS files to the <code>css</code> option, e.g., if you have <code>extra.css</code>
 under the same directory as the Markdown input file:</p>
 <pre><code class="language-yaml">---
-output:
-  html:
-    meta:
-      css: [default, snap, extra.css]
-      js: [snap]
+css: [default, snap, extra.css]
+js: [snap]
 ---
 </code></pre>
 <hr />

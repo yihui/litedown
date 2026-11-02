@@ -2,12 +2,8 @@
 title: "litedown with LaTeX.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/latex.css/dist/style.css"]
-    options:
-      toc: true
+css: ["@npm/latex.css/dist/style.css"]
+toc: true
 ---
 
 This page is styled by [LaTeX.css](https://latex.vercel.app), which is loaded

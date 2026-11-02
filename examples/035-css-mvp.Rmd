@@ -2,12 +2,8 @@
 title: "litedown with MVP.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/mvp.css/mvp.css"]
-    options:
-      toc: true
+css: ["@npm/mvp.css/mvp.css"]
+toc: true
 ---
 
 This page is styled by [MVP.css](https://andybrewer.github.io/mvp/), which is

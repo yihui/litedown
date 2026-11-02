@@ -2,12 +2,8 @@
 title: "litedown with Concrete.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/concrete.css/concrete.min.css"]
-    options:
-      toc: true
+css: ["@npm/concrete.css/concrete.min.css"]
+toc: true
 ---
 
 This page is styled by [Concrete.css](https://concrete.style), which is loaded

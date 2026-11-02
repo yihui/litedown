@@ -2,12 +2,8 @@
 title: "litedown with Holiday.css"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/holiday.css/dist/holiday.css"]
-    options:
-      toc: true
+css: ["@npm/holiday.css/dist/holiday.css"]
+toc: true
 ---
 
 This page is styled by [Holiday.css](https://holidaycss.js.org), which is

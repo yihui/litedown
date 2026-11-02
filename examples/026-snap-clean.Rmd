@@ -3,13 +3,9 @@ title: litedown slides with the clean theme
 subtitle: A minimalist and elegant presentation theme
 author: "Grant McDermott"
 date: "May 6, 2026"
-output:
-  html:
-    meta:
-      css: ["@default", "@snap", "@snap-clean"]
-      js: ["@snap"]
-    options:
-      embed_resources: null
+css: ["@default", "@snap", "@snap-clean"]
+js: ["@snap"]
+embed_resources: null
 ---
 
 ```{r setup, include = FALSE}
@@ -27,11 +23,8 @@ Add the extra CSS asset
 [`@snap-clean`](https://github.com/yihui/lite.js/blob/main/css/snap-clean.css):
 
 ```yaml
-output:
-  html:
-    meta:
-      css: ["@default", "@snap", "@snap-clean"]
-      js: ["@snap"]
+css: ["@default", "@snap", "@snap-clean"]
+js: ["@snap"]
 ```
 
 ## Example slide

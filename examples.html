@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.2">
+<meta name="generator" content="litedown 1.0.3">
 <title>Examples</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -347,11 +347,8 @@ plot(cars)
 </div>
 <pre><code class="language-md">---
 title: Decorating figures
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@article&quot;]
-      js: [&quot;@sidenotes&quot;]
+css: [&quot;@default&quot;, &quot;@article&quot;]
+js: [&quot;@sidenotes&quot;]
 ---
 
 Place two plots side by side via the `width` attribute:
@@ -474,11 +471,8 @@ Define CSS rules for the classes in the `#example-a` chunk:
 </div>
 <pre><code class="language-md">---
 title: Create a callout via the option `attr.chunk`
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@callout&quot;]
-      js: [&quot;@callout&quot;]
+css: [&quot;@default&quot;, &quot;@callout&quot;]
+js: [&quot;@callout&quot;]
 ---
 
 If you use the class name `.callout-*` on a chunk, you can turn it into a callout, e.g.,
@@ -879,13 +873,9 @@ title: litedown slides with the clean theme
 subtitle: A minimalist and elegant presentation theme
 author: &quot;Grant McDermott&quot;
 date: &quot;May 6, 2026&quot;
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]
-      js: [&quot;@snap&quot;]
-    options:
-      embed_resources: null
+css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]
+js: [&quot;@snap&quot;]
+embed_resources: null
 ---
 
 ```{r setup, include = FALSE}
@@ -903,11 +893,8 @@ Add the extra CSS asset
 [`@snap-clean`](https://github.com/yihui/lite.js/blob/main/css/snap-clean.css):
 
 ```yaml
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]
-      js: [&quot;@snap&quot;]
+css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@snap-clean&quot;]
+js: [&quot;@snap&quot;]
 ```
 
 ## Example slide
@@ -1106,14 +1093,10 @@ Render with `litedown::fuse()`.
 title: Making HTML Slides with the **litedown** Package
 author: &quot;[Yihui Xie](https://yihui.org)&quot;
 date: &quot;2026-10-26&quot;
-output:
-  html:
-    meta:
-      css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@key-buttons&quot;, &quot;@heading-anchor&quot;]
-      js: [&quot;@snap&quot;, &quot;@key-buttons&quot;, &quot;@external-link&quot;, &quot;@heading-anchor&quot;]
-    options:
-      toc: true
-      number_sections: true
+css: [&quot;@default&quot;, &quot;@snap&quot;, &quot;@key-buttons&quot;, &quot;@heading-anchor&quot;]
+js: [&quot;@snap&quot;, &quot;@key-buttons&quot;, &quot;@external-link&quot;, &quot;@heading-anchor&quot;]
+toc: true
+number_sections: true
 ---
 
 ## Get started
@@ -1123,11 +1106,8 @@ metadata:
 
 ``` yaml
 ---
-output:
-  html:
-    meta:
-      css: [default, snap]
-      js: [snap]
+css: [default, snap]
+js: [snap]
 ---
 ```
 
@@ -1237,11 +1217,8 @@ under the same directory as the Markdown input file:
 
 ``` yaml
 ---
-output:
-  html:
-    meta:
-      css: [default, snap, extra.css]
-      js: [snap]
+css: [default, snap, extra.css]
+js: [snap]
 ---
 ```
 
@@ -1731,10 +1708,7 @@ uncompressed) and have no dependencies. They were written from scratch.
 <pre><code class="language-md">---
 title: Customize the look of a page
 subtitle: Tweak the major CSS settings and copy the CSS code
-output:
-  html:
-    options:
-      toc: true
+toc: true
 ---
 
 Change the settings below, and the page will update right away. Only the
@@ -1902,12 +1876,8 @@ update();
 title: &quot;litedown with Water.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/water.css/out/water.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/water.css/out/water.css&quot;]
+toc: true
 ---
 
 This page is styled by [Water.css](https://watercss.kognise.dev), which is
@@ -1926,12 +1896,8 @@ page: litedown's default stylesheet is not used.
 title: &quot;litedown with new.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/@exampledev/new.css/new.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/@exampledev/new.css/new.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [new.css](https://newcss.net), which is loaded from a
@@ -1950,12 +1916,8 @@ default stylesheet is not used.
 title: &quot;litedown with Simple.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/simpledotcss/simple.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/simpledotcss/simple.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Simple.css](https://simplecss.org), which is loaded
@@ -1974,12 +1936,8 @@ litedown's default stylesheet is not used.
 title: &quot;litedown with Pico CSS&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/@picocss/pico/css/pico.classless.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/@picocss/pico/css/pico.classless.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Pico CSS](https://picocss.com), which is loaded from a
@@ -1998,12 +1956,8 @@ default stylesheet is not used.
 title: &quot;litedown with Sakura&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@gh/oxalorg/sakura/css/sakura.css&quot;]
-    options:
-      toc: true
+css: [&quot;@gh/oxalorg/sakura/css/sakura.css&quot;]
+toc: true
 ---
 
 This page is styled by [Sakura](https://oxal.org/projects/sakura/), which is
@@ -2022,12 +1976,8 @@ page: litedown's default stylesheet is not used.
 title: &quot;litedown with Buttondown&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@gh/ryangray/buttondown/buttondown.css&quot;]
-    options:
-      toc: true
+css: [&quot;@gh/ryangray/buttondown/buttondown.css&quot;]
+toc: true
 ---
 
 This page is styled by [Buttondown](https://github.com/ryangray/buttondown),
@@ -2046,12 +1996,8 @@ to the page: litedown's default stylesheet is not used.
 title: &quot;litedown with MVP.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/mvp.css/mvp.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/mvp.css/mvp.css&quot;]
+toc: true
 ---
 
 This page is styled by [MVP.css](https://andybrewer.github.io/mvp/), which is
@@ -2070,12 +2016,8 @@ page: litedown's default stylesheet is not used.
 title: &quot;litedown with Bamboo&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/bamboo.css/dist/bamboo.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/bamboo.css/dist/bamboo.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Bamboo](https://rilwis.github.io/bamboo/), which is
@@ -2094,12 +2036,8 @@ page: litedown's default stylesheet is not used.
 title: &quot;litedown with Tufte CSS&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/tufte-css/tufte.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/tufte-css/tufte.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Tufte CSS](https://edwardtufte.github.io/tufte-css/),
@@ -2118,12 +2056,8 @@ to the page: litedown's default stylesheet is not used.
 title: &quot;litedown with LaTeX.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/latex.css/dist/style.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/latex.css/dist/style.css&quot;]
+toc: true
 ---
 
 This page is styled by [LaTeX.css](https://latex.vercel.app), which is loaded
@@ -2142,12 +2076,8 @@ litedown's default stylesheet is not used.
 title: &quot;litedown with Marx&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/marx-css/css/marx.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/marx-css/css/marx.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Marx](https://mblode.github.io/marx/), which is loaded
@@ -2176,12 +2106,8 @@ header {
 title: &quot;litedown with Holiday.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/holiday.css/dist/holiday.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/holiday.css/dist/holiday.css&quot;]
+toc: true
 ---
 
 This page is styled by [Holiday.css](https://holidaycss.js.org), which is
@@ -2200,12 +2126,8 @@ page: litedown's default stylesheet is not used.
 title: &quot;litedown with Concrete.css&quot;
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: [&quot;@npm/concrete.css/concrete.min.css&quot;]
-    options:
-      toc: true
+css: [&quot;@npm/concrete.css/concrete.min.css&quot;]
+toc: true
 ---
 
 This page is styled by [Concrete.css](https://concrete.style), which is loaded
@@ -2458,10 +2380,7 @@ When a line has leading spaces that are not meaningful,
 <pre><code class="language-md">---
 title: 多字节字符测试
 author: 谢益辉
-output:
-  html:
-    options:
-      number_sections: true
+number_sections: true
 ---
 
 ## 简介 {#sec:intro}
@@ -2665,7 +2584,7 @@ iris
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.2</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.3</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/toc-highlight.min.js" defer></script>
