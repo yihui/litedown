@@ -11,8 +11,23 @@
 :::
 
 Books and websites are usually based on multiple input files under a directory.
-For a directory to be recognized as a book or website project, it needs to
-contain a configuration file named `_litedown.yml`.
+A minimal book looks like this:
+
+```text
+my-book/
+├── _litedown.yml
+├── index.Rmd
+└── 01-intro.Rmd
+```
+
+and `_litedown.yml` only needs the field `book`, which uses all defaults:
+
+``` yaml
+book:
+```
+
+A directory is recognized as a book or website project because its
+`_litedown.yml` has a top-level `book` or `site` field (see below for more).
 
 The project type (book or website) is determined by the presence of a top-level
 `book` or `site` field in `_litedown.yml`. If both fields exist, or you want to
@@ -84,6 +99,7 @@ use `.md` or `.R` files if you want), and additional information to be included
 before/after each chapter, in which you can use some variables such as
 `$input$`, which is the path of each input file.
 
+::: callout-note
 The `time` option provides a convenient way to collect timing data
 (@sec:timing-data) across all chapters of a book. It takes a file path where
 the timing data is stored (a relative path is interpreted as relative to the
@@ -92,6 +108,7 @@ chunk option to the same file path in every chapter, but easier to configure in
 one place. With this option set, you can print `litedown::timing_data()` in the
 last chapter to see the timing data for the whole book. Remember to delete the
 data file when you no longer need it.
+:::
 
 ### Previewing a single chapter
 
@@ -126,7 +143,45 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-## Websites
+## Websites {#sec:websites}
+
+### Default assets and layout {#sec:site-defaults}
+
+When building a website, **litedown** applies a set of default CSS/JS assets and
+layout elements so that pages look reasonable without any configuration:
+
+-   The default CSS assets are
+    `{r} xfun::join_words(litedown:::site_css, before = "\x60")`, and the default
+    JS assets are `{r} xfun::join_words(c(litedown:::site_js, 'nav-highlight'), before = "\x60")`. In
+    other words, each page uses the article format (@sec:article) by default.
+
+-   If `include_before` is not provided, a navigation menu is automatically
+    generated from the top-level input files under the site root (plus any
+    one-level subdirectories that contain an `index.html`, such as
+    `playground/index.html`). The menu titles are derived from the filenames
+    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home").
+
+-   If `include_after` is not provided, a copyright footer (`© <year>`) is
+    automatically added.
+
+-   The options `embed_resources` (@sec:embed-resources) and `toc` (@sec:toc)
+    default to `false` and `true`, respectively.
+
+If you want to customize the assets, you should provide the `css` and `js` meta
+variables as usual, which will *override* the defaults. If you want to *add* to
+the default assets instead of replacing them, use the `css2` and `js2` variables
+(which are appended to the built-in defaults), e.g.,
+
+``` yaml
+css2: ["custom.css"]
+js2: ["custom.js"]
+```
+
+Absolute paths in links (i.e., paths starting with `/`) are automatically
+rewritten to relative paths, so a link like `[Home](/index.html)` will work
+correctly no matter which subdirectory the current page is in.
+
+### Configuration
 
 The `_litedown.yml` file should contain a top-level field named `site`, and you
 are likely to customize the `meta` variables `css`, `include_before`, and
@@ -165,42 +220,6 @@ plain `fuse()` call without site-level CSS, JS, navigation, or footer being
 injected. This is useful for standalone pages such as slides that need their own
 self-contained styles and should not inherit the site layout.
 
-### Default assets and layout {#sec:site-defaults}
-
-When building a website, **litedown** applies a set of default CSS/JS assets and
-layout elements so that pages look reasonable without any configuration:
-
--   The default CSS assets are
-    `{r} xfun::join_words(litedown:::site_css, before = "\x60")`, and the default
-    JS assets are `{r} xfun::join_words(c(litedown:::site_js, 'nav-highlight'), before = "\x60")`. In
-    other words, each page uses the article format (@sec:article) by default.
-
--   If `include_before` is not provided, a navigation menu is automatically
-    generated from the top-level input files under the site root (plus any
-    one-level subdirectories that contain an `index.html`, such as
-    `playground/index.html`). The menu titles are derived from the filenames
-    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home").
-
--   If `include_after` is not provided, a copyright footer (`© <year>`) is
-    automatically added.
-
--   The options `embed_resources` (@sec:embed-resources) and `toc` (@sec:toc)
-    default to `false` and `true`, respectively.
-
-If you want to customize the assets, you should provide the `css` and `js` meta
-variables as usual, which will *override* the defaults. If you want to *add* to
-the default assets instead of replacing them, use the `css2` and `js2` variables
-(which are appended to the built-in defaults), e.g.,
-
-``` yaml
-css2: ["custom.css"]
-js2: ["custom.js"]
-```
-
-Absolute paths in links (i.e., paths starting with `/`) are automatically
-rewritten to relative paths, so a link like `[Home](/index.html)` will work
-correctly no matter which subdirectory the current page is in.
-
 ### Comments {#sec:site-giscus}
 
 To add a [giscus](https://giscus.app) comment section to every page of a
@@ -228,56 +247,10 @@ directory.
 ## R package documentation {#sec:pkg-site}
 
 R package developers can build the full package documentation as either a book
-or a website.
-
-### The `pkg_*()` helper functions
-
-A series of helper functions have been provided in **litedown** to get various
-information about the package, such as the package description (`pkg_desc()`),
-news (`pkg_news()`), citation (`pkg_citation()`), source code (`pkg_code()`),
-vignettes (`pkg_articles()`), and all manual pages (`pkg_manual()`). You can
-call these functions in code chunks to print out the desired information.
-
-For example, you may call them in the appendix (@sec:appendices) of a book:
-
-```` md
-# Appendix {.appendix}
-
-# Package Metadata
-
-```{r, echo = FALSE}
-litedown::pkg_desc()
-```
-
-To cite the package:
-
-```{r, echo = FALSE}
-litedown::pkg_citation()
-```
-
-# News
-
-```{r, echo = FALSE}
-litedown::pkg_news(recent = 0)  # show full news
-```
-
-# Manual pages
-
-```{r, echo = FALSE}
-litedown::pkg_manual()
-```
-
-# Source code
-
-```{r, echo = FALSE}
-litedown::pkg_code()
-```
-````
-
-Alternatively, you can build a package website by calling these functions in
-separate `.Rmd` files, e.g., `pkg_desc()` in `index.Rmd`, `pkg_news()` in
-`news.Rmd`, and so on. You do not have to write these files yourself, since
-**litedown** ships a site template that does it for you (@sec:pkg-site-fun).
+or a website. The easiest way is to call `pkg_site()` (@sec:pkg-site-fun), which
+builds a complete website from a template. If you want more control, you can use
+the `pkg_*()` helper functions (@sec:pkg-helpers) to put pieces of the
+documentation in your own pages.
 
 ### Package sites via `pkg_site()` {#sec:pkg-site-fun}
 
@@ -288,7 +261,8 @@ separate `.Rmd` files, e.g., `pkg_desc()` in `index.Rmd`, `pkg_news()` in
 litedown::pkg_site()
 ```
 
-Like the other `pkg_*()` functions, it detects the package from the `DESCRIPTION`
+Like the `pkg_*()` helper functions (@sec:pkg-helpers), it detects the package
+from the `DESCRIPTION`
 file in the current or an upper-level directory, which can also be specified via
 the `name` argument. It copies the template to the `site/` directory (which can
 be changed via the `output` argument), deletes the pages that do not apply to the
@@ -430,7 +404,60 @@ If the package has an `examples/` directory, the `.Rmd`/`.R` files under it will
 show up in the "Load example..." dropdown of the playground. Selecting an
 example loads its source into the editor.
 
-### Package sites via GitHub Action {#sec:pkg-site-gha}
+### The `pkg_*()` helper functions {#sec:pkg-helpers}
+
+`pkg_site()` is built on a series of helper functions that you can also call
+yourself to get various information about the package, such as the package
+description (`pkg_desc()`), news (`pkg_news()`), citation (`pkg_citation()`),
+source code (`pkg_code()`), vignettes (`pkg_articles()`), and all manual pages
+(`pkg_manual()`). You can call these functions in code chunks to print out the
+desired information.
+
+For example, you may call them in the appendix (@sec:appendices) of a book:
+
+```` md
+# Appendix {.appendix}
+
+# Package Metadata
+
+```{r, echo = FALSE}
+litedown::pkg_desc()
+```
+
+To cite the package:
+
+```{r, echo = FALSE}
+litedown::pkg_citation()
+```
+
+# News
+
+```{r, echo = FALSE}
+litedown::pkg_news(recent = 0)  # show full news
+```
+
+# Manual pages
+
+```{r, echo = FALSE}
+litedown::pkg_manual()
+```
+
+# Source code
+
+```{r, echo = FALSE}
+litedown::pkg_code()
+```
+````
+
+Alternatively, you can build a package website by calling these functions in
+separate `.Rmd` files, e.g., `pkg_desc()` in `index.Rmd`, `pkg_news()` in
+`news.Rmd`, and so on. You do not have to write these files yourself, since
+**litedown** ships a site template that does it for you (@sec:pkg-site-fun).
+
+### Deploying with GitHub Actions and surge.sh {#sec:pkg-site-gha}
+
+This section is about publishing the site automatically, and you can skip it if
+you deploy the output directory by other means.
 
 You may use GitHub Actions to automatically build and deploy package websites.
 The key is to call `litedown::pkg_site()`. I have provided [a simple GitHub

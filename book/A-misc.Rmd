@@ -5,8 +5,21 @@
 ## For rmarkdown users {#sec:rmarkdown}
 
 The **litedown** package can partially recognize the output format names
-`html_document`, `html_vignette`, and `pdf_document` from **rmarkdown**: Some
-options of these output formats are mapped to **litedown**'s options internally.
+`html_document`, `html_vignette`, and `pdf_document` from **rmarkdown**, and map
+some of their options to **litedown**'s options. Not all **rmarkdown** options
+are supported, and not even all supported options have exactly the same effects
+in **litedown**. The mapping is as follows:
+
+| rmarkdown option | litedown equivalent |
+|----|----|
+| `toc: true` / `toc_depth` | `options: toc` (with `depth` for `toc_depth`) |
+| `number_sections` | `options: number_sections` |
+| `self_contained` | `options: embed_resources` (same value) |
+| `anchor_sections: true` | adds `@heading-anchor` to `css` and `js` |
+| `math_method: mathjax` | `options: js_math: mathjax` |
+| `code_folding` (not `none`) | adds `@fold-details` to `js` |
+| `css` | appended to `css` after `default` |
+| `includes`: `in_header`, `before_body`, `after_body` | `header_includes`, `include_before`, `include_after` |
 
 For example, for an R Markdown document with the following output format:
 
@@ -19,24 +32,9 @@ output:
     self_contained: false
 ```
 
-It will be transformed to:
-
-``` yaml
-output:
-  html:
-    options:
-      toc: true
-      number_sections: true
-      embed_resources: false
-    meta:
-      css: ["default", "@heading-anchor"]
-      js: ["@heading-anchor"]
-```
-
-Note that not all **rmarkdown** options are supported, and not even all
-supported options have exactly the same effects in **litedown**. The supported
-options include:
-`` {r} xfun::join_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.
+the options are mapped to litedown's options for the `html` format, so they are
+nested under `html` (the same options written at the top level would also apply
+to LaTeX output, which these **rmarkdown** options did not).
 
 ## Calling `mark()` in R {#sec:mark-r}
 
@@ -74,9 +72,10 @@ arguments of `mark()` take precedence over YAML.
 
 ## File or text output {#sec:file-text}
 
-By default, `mark()` and `fuse()` follow the rule of "file in, file out; text
-in, text out". That is, if you pass an input file, you get an output file. If
-you pass text input, you get text output. For example:
+This section only matters if you call `mark()` or `fuse()` in R code. By default,
+`mark()` and `fuse()` follow the rule of "file in, file out; text in, text out".
+That is, if you pass an input file, you get an output file. If you pass text
+input, you get text output. For example:
 
 ``` r
 fuse('foo.Rmd')  # returns a file 'foo.html' or 'foo.tex', etc.
@@ -169,6 +168,30 @@ vignette: >
   %\VignetteIndexEntry{Your vignette title}
   %\VignetteEncoding{UTF-8}
 ```
+
+The output format of a vignette can be specified in the `output` field of the
+YAML metadata, e.g., `html` (for HTML vignettes) or `latex` (for PDF vignettes).
+If no output format is specified, the default is HTML.
+
+A complete minimal vignette, `vignettes/intro.Rmd`, looks like this:
+
+```` md
+---
+output: html
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Getting started
+
+A code chunk runs when the vignette is built:
+
+```{r}
+1 + 1
+```
+````
 
 The output format of a vignette can be specified in the `output` field of the
 YAML metadata, e.g., `html` (for HTML vignettes) or `latex` (for PDF vignettes).
