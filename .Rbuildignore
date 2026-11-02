@@ -12,3 +12,4 @@ Makefile
 .*\.tar\.gz$
 .*\.Rcheck$
 ^\.githooks$
+^NEWS.md$
