@@ -75,17 +75,20 @@ fuse_site = function(input = '.') {
     ))
     res = if (grepl('[.]md$', x)) {
       if (!alone) {
-        opts = set_site_options(opts, x, root); on.exit(options(opts))
+        opts = set_site_options(opts, x, root, giscus = cfg[['giscus']])
+        on.exit(options(opts))
       }
       mark(x, full_output)
     } else {
       Rscript_call(
-        function(x, opts, set, root, flag, output) {
-          if (!is.null(opts)) set(opts, x, root, list(litedown.roaming = flag))
+        function(x, opts, set, root, flag, output, giscus) {
+          if (!is.null(opts)) set(
+            opts, x, root, list(litedown.roaming = flag), giscus
+          )
           litedown::fuse(x, output, envir = globalenv())
         },
         list(x, if (!alone) opts, set_site_options,
-          root, is_roaming(), full_output),
+          root, is_roaming(), full_output, cfg[['giscus']]),
         fail = paste('Failed to run litedown::fuse() on', x)
       )
     }
@@ -109,7 +112,7 @@ site_css = c('@default', '@article', '@copy-button', '@heading-anchor', '@pages'
 site_js = c('@sidenotes', '@toc-highlight', '@copy-button', '@heading-anchor', '@pages')
 
 # set global options litedown.html.[meta|options] read from _litedown.yml
-set_site_options = function(opts, input, root, extra = NULL) {
+set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
   m = opts[['meta']]
   edit = edit_page_url(input, root) %||% ''
   for (i in c('include_before', 'include_after')) {
@@ -124,9 +127,30 @@ set_site_options = function(opts, input, root, extra = NULL) {
     if (!nav && edit == '') m[[i]] = gsub(
       '<p><a [^>]*class="edit-page"[^>]*>.*?</a></p>\n?', '', m[[i]]
     )
+    # comments go before the footer, not inside it
+    if (!nav) m[[i]] = paste0(giscus_html(giscus), m[[i]])
   }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
+}
+
+# giscus settings that differ from giscus's own defaults (documented in the book)
+giscus_defaults = list(
+  strict = 1, theme = 'preferred_color_scheme', loading = 'lazy'
+)
+
+# giscus comment section from `site: giscus` in _litedown.yml
+giscus_html = function(cfg) {
+  if (!is.list(cfg) || !length(cfg)) return()
+  cfg = merge_list(giscus_defaults, cfg)
+  attrs = sprintf(
+    ' data-%s="%s"', names(dash_names(cfg)), html_escape(unlist(cfg), TRUE)
+  )
+  sprintf(paste0(
+    '<section class="comments">\n',
+    '<script src="https://giscus.app/client.js"%s crossorigin="anonymous" ',
+    'async></script>\n</section>\n'
+  ), paste(attrs, collapse = ''))
 }
 
 # GitHub URL for editing a page, if the page source also exists (at the same

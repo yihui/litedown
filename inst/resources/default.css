@@ -13,7 +13,7 @@ body {
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
-.abstract, .footnotes, footer, #refs, div:has(> .caption) { font-size: .9em; }
+.abstract, .footnotes, .chapter-toc, footer, #refs, div:has(> .caption) { font-size: .9em; }
 li li { font-size: .95em; }
 ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
 *, :before, :after { box-sizing: border-box; }

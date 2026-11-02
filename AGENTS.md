@@ -43,6 +43,13 @@ assert('message', {
 8. **US spelling**: "color" not "colour", etc.
 9. **DRY**: factor shared logic into helpers; never duplicate code blocks
 
+## Hard links
+
+`inst/resources/{default.css,snap.css,snap.js}` are hard links to files in the
+sibling repo `../lite.js` (created by `make`), so they show up as modified
+whenever `lite.js` changes. This is intentional: never revert or "clean up" them
+(e.g., via `git checkout`); edit them in `../lite.js` only.
+
 ## Git workflow
 
 1. Never force push unless explicitly told to.
