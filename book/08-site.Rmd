@@ -25,8 +25,10 @@ book:
   new_session: true
 ```
 
-If you want to customize the output formats for books or websites, you should do
-it in `_litedown.yml`, e.g.,
+If you want to customize the output formats for books or websites, put the
+fields in `_litedown.yml`. Top-level fields apply to every page, nested fields
+under `output` apply to one format and take precedence, and a page's own YAML
+overrides both. For example,
 
 ``` yaml
 output:
@@ -191,11 +193,8 @@ the default assets instead of replacing them, use the `css2` and `js2` variables
 (which are appended to the built-in defaults), e.g.,
 
 ``` yaml
-output:
-  html:
-    meta:
-      css2: ["custom.css"]
-      js2: ["custom.js"]
+css2: ["custom.css"]
+js2: ["custom.js"]
 ```
 
 Absolute paths in links (i.e., paths starting with `/`) are automatically
@@ -305,7 +304,7 @@ the following files (explained in @tab:pkg-site):
 list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 ```
 
-:::: table
+:::: {.table #tab:pkg-site}
 ::: caption
 [ ](#@tab:pkg-site) Explanations of site source files.
 :::

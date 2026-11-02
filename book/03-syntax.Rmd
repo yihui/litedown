@@ -320,7 +320,7 @@ a^{2}+b^{2} & =  c^{2}\\
 \end{equation}
 ```
 
-These math environments can be written as either nake LaTeX code or raw LaTeX
+These math environments can be written as either plain LaTeX code or raw LaTeX
 blocks (```` ```{=latex} ````), but we recommend that you use raw LaTeX blocks
 because they are more robust. LaTeX math environments work for both LaTeX and
 HTML output.
@@ -458,7 +458,7 @@ will be treated as the appendix. If section numbering is enabled
 (@sec:number-sections), the appendix section headings will be numbered
 differently.
 
-### Fenced `Div`s
+### Fenced `Div`s {#sec:fenced-divs}
 
 A fenced `Div` can be written in `:::` fences. Note that the opening fence must
 have at least one attribute, such as the class name. For example:
@@ -510,6 +510,8 @@ example,
 
 ``` markdown
 ::: {.minipage data-latex="{.5\linewidth}"}
+Some content.
+:::
 ```
 
 will be converted to:
@@ -760,7 +762,7 @@ t(as.matrix(setNames(p, sprintf('`%s`', names(p)))))
 
 ## Comparison to Pandoc
 
-As mentioned earlier, a lot of features in Pandoc's Markdown are not supported
+A lot of features in Pandoc's Markdown are not supported
 in the **litedown** package. Any feature that you find missing in previous
 sections is likely to be unavailable. In addition, a lot of R Markdown and
 Quarto (both are based on Pandoc) features are not supported, either. Some HTML

@@ -1,5 +1,4 @@
-# Authoring
-
+# Authoring {#chp:authoring}
 ::: epigraph
 > I don’t hide from you that I don’t detest the countryside—having been brought
 > up there, snatches of memories from past times, yearnings for that infinite of

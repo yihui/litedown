@@ -48,8 +48,12 @@ a global \link[=options]{option} \code{litedown.progress.delay} (the default is 
 THe progress bar output can be set via a global option
 \code{litedown.progress.output} (the default is \code{\link[=stderr]{stderr()}}).}
 
-\item{options}{Options to be passed to the renderer. See \code{\link[=markdown_options]{markdown_options()}}
-for details. This argument can take either a character vector of the form
+\item{options}{Options to be passed to the renderer, e.g., \code{"+toc"} to add a
+table of contents. Options can also be set as fields in the YAML metadata
+of the input (which is the recommended way, see the
+\href{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}{documentation}),
+and this argument takes precedence over YAML. See \code{\link[=markdown_options]{markdown_options()}} for
+all options. This argument can take either a character vector of the form
 \code{"+option1 option2-option3"} (use \code{+} or a space to enable an option, and
 \code{-} to disable an option), or a list of the form \code{list(option1 = value1, option2 = value2, ...)}. A string \code{"+option1"} is equivalent to
 \code{list(option1 = TRUE)}, and \code{"-option2"} means \code{list(option2 = FALSE)}.
@@ -57,9 +61,12 @@ Options that do not take logical values must be specified via a list, e.g.,
 \code{list(width = 30)}.}
 
 \item{meta}{A named list of metadata. Elements in the metadata will be used
-to fill out the template by their names and values, e.g., \code{list(title = ...)} will replace the \verb{$title$} variable in the template. See the Section
-\dQuote{YAML metadata} \href{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}{in the documentation} for supported
-variables.}
+to fill out the template by their names and values, e.g., \code{list(title = ...)} will replace the \verb{$title$} variable in the template. It has an effect
+only when a template is used, i.e., when the output is a full document
+(the input has YAML metadata, or \code{output} is a file). These variables can
+also be set as fields in YAML, and this argument takes precedence over YAML.
+See the Section \dQuote{YAML metadata} \href{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}{in the documentation} for
+supported variables.}
 }
 \value{
 The output file path if output is written to a file, otherwise a
@@ -105,6 +112,10 @@ mark(text = "This is *not* a file.md")
 
 # output to a file
 (mark("_Hello_, **World**!", output = tempfile()))
+
+# options (usually set in YAML instead)
+mark(c("# Intro", "", "## Details"), options = "+toc")
+mark(c("# Intro", "", "## Details"), options = list(number_sections = TRUE))
 
 # convert to other formats
 mark("Hello _World_!", ".tex")

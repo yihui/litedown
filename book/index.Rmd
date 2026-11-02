@@ -59,6 +59,13 @@ document.querySelectorAll('pre > code[data-file]').forEach(el => {
 
 # Preface {.unnumbered}
 
+::: callout-warning
+This book documents the development version of **litedown**, which may be newer
+than the version on CRAN, so some features described here may not be available
+in your installed version. To get the development version, run
+`install.packages("litedown", repos = "https://yihui.r-universe.dev")`.
+:::
+
 ::: epigraph
 > You may say I'm a dreamer\
 > But I'm not the only one\
@@ -375,7 +382,7 @@ Just to give you a better idea about the "lightweight", as of today:
 
 Admittedly, pursuing lightweight requires sacrifice in features and quality
 (e.g., my pages.js is far less sophisticated than paged.js), but overall I feel
-the trade-off should be reasonable to those who prefer minimalism. With a 2Mb
+the trade-off should be reasonable to those who prefer minimalism. With a 2 MB
 footprint (the total file size of **litedown** and **xfun**),
 you can:
 

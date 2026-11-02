@@ -38,6 +38,40 @@ supported options have exactly the same effects in **litedown**. The supported
 options include:
 `` {r} xfun::join_words(setdiff(names(formals(litedown:::map_args)), '...'), before='`') ``.
 
+## Calling `mark()` in R {#sec:mark-r}
+
+Normally you configure the output via YAML (@chp:mark). If you call `mark()` in
+R code, e.g., in a script or another package, you can also use its arguments.
+See `?litedown::mark` for all arguments; the two that correspond to YAML are:
+
+-   `options`: Markdown options (@sec:markdown-options). It takes either a list
+    or a string, where `+` enables an option and `-` disables it:
+
+    ``` r
+    litedown::mark("# Hello\n\n## World", options = list(toc = TRUE, smart = FALSE))
+    litedown::mark("# Hello\n\n## World", options = "+toc-smart")
+    ```
+
+-   `meta`: Template variables (@sec:meta-vars), e.g.,
+    `meta = list(title = "My Title", css = "style.css")`. They are used only
+    when a template is used, i.e., when the output is a full document. They
+    override the same fields in YAML.
+
+To set them for all documents, use global options of the form
+`litedown.FORMAT.meta` and `litedown.FORMAT.options` (and
+`litedown.FORMAT.template`, @sec:templates), where `FORMAT` is `html` or
+`latex`, e.g., in `.Rprofile`:
+
+``` r
+options(
+  litedown.html.meta = list(css = c("@default", "@article")),
+  litedown.html.options = list(toc = TRUE)
+)
+```
+
+Fields in a document's YAML take precedence over these global options, and the
+arguments of `mark()` take precedence over YAML.
+
 ## File or text output {#sec:file-text}
 
 By default, `mark()` and `fuse()` follow the rule of "file in, file out; text
