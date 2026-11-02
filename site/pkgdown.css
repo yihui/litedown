@@ -19,7 +19,6 @@
   --pk-nav-fg: rgba(0, 0, 0, .65);
   --pk-nav-fg-hover: rgba(0, 0, 0, .8);
   --pk-nav-h: 56px;
-  --pk-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   /* tokens of syntax highlighting */
   --pk-tk-comment: #5e5e5e;
   --pk-tk-string: #20794d;
@@ -70,42 +69,25 @@
 
 /* base */
 html { scroll-padding-top: var(--pk-nav-h); }
-html body {
+body {
   max-width: 1140px;
   padding: 0 12px;
   background: var(--pk-bg);
   color: var(--pk-fg);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  @media (min-width: 87.5em) { font-size: 18px; }
 }
 a {
   color: var(--pk-primary);
   &:hover { color: var(--pk-link-hover); }
 }
 :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0 0 .5rem;
   font-weight: 500;
-  line-height: 1.2;
-  color: inherit;
 }
-:is(h1, h2, h3, h4, h5, h6) .section-number { display: none; }
-article :is(h2, h3, h4, h5, h6) { border: 0; }
-article h2 { margin-top: 1.5rem; font-size: 1.75rem; }
-article h3 { margin-top: 1rem; font-size: 1.25rem; font-weight: bold; }
-article h4 { font-size: 1.1rem; font-weight: bold; }
-article :is(h5, h6) { font-size: 1rem; font-weight: bold; }
-li li { font-size: inherit; }
-dd { margin: 0 0 .25rem; padding-left: 1.5rem; }
+article h2 { border: 0; }
 blockquote {
   background: none;
-  color: inherit;
-  padding: .625rem 1.25rem;
-  margin-bottom: 1rem;
   border-left: .25rem solid var(--pk-border);
 }
-hr, .footnotes::before { border: 0; border-top: 1px solid; opacity: .25; }
-mark { background: color-mix(in srgb, var(--pk-primary) 25%, transparent); color: inherit; }
-.side { background: none; }
 
 /* navbar: tinted, full-bleed, stays on top */
 .site-nav {
