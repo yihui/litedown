@@ -295,9 +295,9 @@ assets = t(data.frame(
 # feature presets for new files in roam()
 feature_presets = list(
   Blank = character(),
-  Article = c('default', 'article', 'heading-anchor', 'toc-highlight'),
-  Slides = c('default', 'snap', 'snap-clean'),
-  Book = c('default', 'book', 'chapter-toc', 'heading-anchor', 'toc-highlight')
+  Article = c('default', 'article'),
+  Slides = c('default', 'snap'),
+  Book = c('default', 'article', 'book')
 )
 
 # an HTML form for creating new files in roam()
