@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.1">
+<meta name="generator" content="litedown 1.0.2">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -330,6 +330,7 @@
 <li><a href="#sec:websites"><span class="section-number">8.3</span> Websites</a>
 <ul>
 <li><a href="#sec:site-defaults"><span class="section-number">8.3.1</span> Default assets and layout</a></li>
+<li><a href="#sec:site-giscus"><span class="section-number">8.3.2</span> Comments</a></li>
 </ul>
 </li>
 <li><a href="#sec:pkg-site"><span class="section-number">8.4</span> R package documentation</a>
@@ -7330,6 +7331,25 @@ the default assets instead of replacing them, use the <code>css2</code> and <cod
 <p>Absolute paths in links (i.e., paths starting with <code>/</code>) are automatically
 rewritten to relative paths, so a link like <code>[Home](/index.html)</code> will work
 correctly no matter which subdirectory the current page is in.</p>
+<h3 id="sec:site-giscus"><span class="section-number">8.3.2</span> Comments</h3>
+<p>To add a <a href="https://giscus.app">giscus</a> comment section to every page of a
+website, provide its settings under <code>giscus</code> in the field <code>site</code> of
+<code>_litedown.yml</code>. Each field becomes a <code>data-*</code> attribute of the giscus script,
+with <code>_</code> changed to <code>-</code> (e.g., <code>repo_id</code> becomes <code>data-repo-id</code>). You can get the
+values from the giscus website.</p>
+<pre><code class="language-yaml">site:
+  giscus:
+    repo: &quot;user/repo&quot;
+    repo_id: &quot;R_xxx&quot;
+    category: &quot;Comments&quot;
+    category_id: &quot;DIC_xxx&quot;
+</code></pre>
+<p>Fields that you do not provide use giscus’s own defaults, except for these:
+<code>strict: 1</code>, <code>theme: preferred_color_scheme</code>, and <code>loading: lazy</code>.
+The comment section (<code>&lt;section class=&quot;comments&quot;&gt;</code>) is placed
+right before the page footer. This also works for the package sites built by
+<code>pkg_site()</code>, in which case the config goes in the <code>_litedown.yml</code> in the site
+directory.</p>
 <h2 id="sec:pkg-site"><span class="section-number">8.4</span> R package documentation</h2>
 <p>R package developers can build the full package documentation as either a book
 or a website.</p>
@@ -7990,7 +8010,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.1, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.2, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
