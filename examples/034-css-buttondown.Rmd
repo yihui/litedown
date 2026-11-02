@@ -2,12 +2,8 @@
 title: "litedown with Buttondown"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@gh/ryangray/buttondown/buttondown.css"]
-    options:
-      toc: true
+css: ["@gh/ryangray/buttondown/buttondown.css"]
+toc: true
 ---
 
 This page is styled by [Buttondown](https://github.com/ryangray/buttondown),

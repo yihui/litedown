@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 1.1
 
+- Common YAML settings can now be written as top-level fields instead of deeply nested under `output -> html -> meta/options`, e.g., `css`, `js`, `lang`, `toc`, `number_sections`, `embed_resources`, `js_math`, `js_highlight`, `include_before`, `include_after`, `template`, and `keep_md`. The nested form still works and takes precedence ([details](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata)).
+
 - `pkg_site()` and `fuse_site()` can add a [giscus](https://giscus.app) comment section to the footer of every page, configured via `site: giscus` in `_litedown.yml` ([details](https://pkg.yihui.org/litedown/book/#sec:site-giscus)).
 
 # CHANGES IN litedown VERSION 1.0

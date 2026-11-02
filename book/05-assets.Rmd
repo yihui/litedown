@@ -20,22 +20,18 @@ meta variables. There are numerous JS libraries and CSS frameworks on the web,
 and you do not have to use the ones mentioned in this chapter. You can also
 write CSS/JS by yourself to enrich your HTML applications.
 
-Remember that the CSS and JS are introduced under the output format `html` in
+Remember that the CSS and JS are introduced via the `css` and `js` fields in
 YAML metadata, e.g.,
 
 ``` yaml
 ---
-output:
-  html:
-    meta:
-      css: ["one.css", "two.css"]
-      js: ["three.js", "four.js"]
+css: ["one.css", "two.css"]
+js: ["three.js", "four.js"]
 ---
 ```
 
-For the sake of brevity, we will omit the full YAML fields in examples
-throughout this chapter but only use the `css` and `js` fields. A file name
-`foo.js` denotes the file under the `js/` directory of the aforementioned
+In examples throughout this chapter, we will show only the `css` and `js`
+fields. A file name `foo.js` denotes the file under the `js/` directory of the aforementioned
 [`lite.js` repository](https://github.com/yihui/lite.js). Similarly, `foo.css`
 is under the `css/` directory.
 
@@ -150,10 +146,7 @@ metadata. Keep `@default` in front of it so that **litedown**'s default look
 stays, and your rules (which come later) override it:
 
 ``` yaml
-output:
-  html:
-    meta:
-      css: ["@default", "my.css"]
+css: ["@default", "my.css"]
 ```
 
 How do you know what to write? Right-click the thing you want to change on the
@@ -229,10 +222,7 @@ nice, such as [Water.css](https://watercss.kognise.dev),
 field. These stylesheets are complete by themselves, so leave out `@default`:
 
 ``` yaml
-output:
-  html:
-    meta:
-      css: ["https://newcss.net/new.min.css"]
+css: ["https://newcss.net/new.min.css"]
 ```
 
 If a stylesheet is on [jsDelivr](https://www.jsdelivr.com), you can use the
@@ -254,11 +244,8 @@ to create interactive tables:
 ```` md
 ---
 title: Display Tables with the JS Library DataTables
-output:
-  html:
-    meta:
-      css: ["@default", "@npm/simple-datatables/dist/style"]
-      js: ["@npm/simple-datatables"]
+css: ["@default", "@npm/simple-datatables/dist/style"]
+js: ["@npm/simple-datatables"]
 ---
 
 ::: {#mtcars-table}
@@ -277,15 +264,12 @@ See @sec:simple-dt for more ways to create this type of table.
 ### Apply the styles to all pages {#sec:global-css}
 
 For a website or a book (@chp:sites), you do not need to repeat the setting in
-every page. Put it in the `output` field of `_litedown.yml` instead, and it will
+every page. Put it in `_litedown.yml` instead, and it will
 apply to all pages. For example, if you have saved your rules in `custom.css` in
 the project folder, this adds them to the default look of the site:
 
 ``` yaml
-output:
-  html:
-    meta:
-      css2: ["custom.css"]
+css2: ["custom.css"]
 ```
 
 The field `css2` means "add to the defaults", whereas `css` means "replace the

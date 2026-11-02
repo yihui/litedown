@@ -2,12 +2,8 @@
 title: "litedown with Pico CSS"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/@picocss/pico/css/pico.classless.min.css"]
-    options:
-      toc: true
+css: ["@npm/@picocss/pico/css/pico.classless.min.css"]
+toc: true
 ---
 
 This page is styled by [Pico CSS](https://picocss.com), which is loaded from a

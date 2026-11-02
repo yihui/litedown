@@ -2,12 +2,8 @@
 title: "litedown with Tufte CSS"
 author: Yihui Xie
 date: 2026-10-26
-output:
-  html:
-    meta:
-      css: ["@npm/tufte-css/tufte.min.css"]
-    options:
-      toc: true
+css: ["@npm/tufte-css/tufte.min.css"]
+toc: true
 ---
 
 This page is styled by [Tufte CSS](https://edwardtufte.github.io/tufte-css/),

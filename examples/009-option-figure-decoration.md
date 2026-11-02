@@ -1,10 +1,7 @@
 ---
 title: Decorating figures
-output:
-  html:
-    meta:
-      css: ["@default", "@article"]
-      js: ["@sidenotes"]
+css: ["@default", "@article"]
+js: ["@sidenotes"]
 ---
 
 Place two plots side by side via the `width` attribute:

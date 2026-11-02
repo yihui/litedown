@@ -1,10 +1,7 @@
 ---
 title: 多字节字符测试
 author: 谢益辉
-output:
-  html:
-    options:
-      number_sections: true
+number_sections: true
 ---
 
 ## 简介 {#sec:intro}

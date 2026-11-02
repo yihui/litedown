@@ -1625,10 +1625,7 @@ specific version, you can add it manually to the YAML metadata, e.g.,
 ```` md
 ---
 title: "A mermaid diagram"
-output:
-  html:
-    meta:
-      js: ["@npm/mermaid@11.3.0/dist/mermaid.min.js"]
+js: ["@npm/mermaid@11.3.0/dist/mermaid.min.js"]
 ---
 
 ```{mermaid}

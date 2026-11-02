@@ -136,12 +136,9 @@ site:
   pattern: "[.]R?md$"
   standalone: ["slides-*.Rmd"]
 
-output:
-  html:
-    meta:
-      css: ["@default"]
-      include_before: "[Home](/) [About](/about.html)"
-      include_after: "&copy; 2024 | [Edit]($input$)"
+css: ["@default"]
+include_before: "[Home](/) [About](/about.html)"
+include_after: "&copy; 2024 | [Edit]($input$)"
 ```
 
 Basically, `include_before` can take a file or text input that will be used as

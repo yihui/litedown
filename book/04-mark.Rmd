@@ -11,21 +11,17 @@
 
 The main function to convert Markdown to other formats is `litedown::mark()`.
 
-The output format can be specified in the `output` (or `format`) field in YAML
-metadata (@sec:yaml-metadata), e.g.,
+Most settings can be written as top-level fields in YAML metadata
+(@sec:yaml-metadata), e.g.,
 
 ``` yaml
 ---
-output:
-  html:
-    options:
-      js_math:
-        package: "katex"
-        version: "0.16.4"
-      number_sections: true
-      embed_resources: ["local", "https"]
-    meta:
-      css: "custom.css"
+number_sections: true
+embed_resources: ["local", "https"]
+css: "custom.css"
+js_math:
+  package: "katex"
+  version: "0.16.4"
 ---
 ```
 
@@ -405,9 +401,7 @@ output format `html` or `latex` in an individual document, e.g.,
 
 ``` yaml
 ---
-output:
-  html:
-    template: "path/to/my/template.html"
+template: "path/to/my/template.html"
 ---
 ```
 
@@ -507,23 +501,38 @@ output:
       title: "Title for LaTeX output"
 ```
 
-### Format-specific variables
+### Other variables
 
-Other variables need to be specified under `output -> * -> meta`, where `*` can
-be `html` or `latex`, e.g.,
+Other variables can also be written as top-level fields, e.g.,
 
 ``` yaml
 ---
 title: "My Title"
+css: "style.css"
+js: "script.js"
+documentclass: "book"
+header_includes: "\usepackage{microtype}"
+---
+```
+
+The top-level variables that are not tied to the title block are `css`, `js`,
+`css2`, `js2`, `lang`, `body-class`, `body-tag`, `header-includes`,
+`include-before`, `include-after`, `documentclass`, and `classoption`. A variable
+that the output format does not use (e.g., `css` for LaTeX) is ignored.
+
+To set a variable for one output format only, or to override a top-level value,
+put it under `output -> * -> meta`, where `*` can be `html` or `latex`, e.g.,
+
+``` yaml
+---
+css: "style.css"
 output:
   html:
     meta:
-      css: "style.css"
-      js: "script.js"
+      css: "html-only.css"
   latex:
     meta:
       documentclass: "book"
-      header_includes: "\usepackage{microtype}"
 ---
 ```
 
@@ -627,10 +636,7 @@ if the locale is in the POSIX format (e.g., `en_US.UTF-8`). You can override it
 in YAML, e.g.,
 
 ``` yaml
-output:
-  html:
-    meta:
-      lang: "zh-CN"
+lang: "zh-CN"
 ```
 
 #### The `plain-title` variable
@@ -677,24 +683,37 @@ and the values of variables in the metadata will be passed to your template.
 ### Setting options in YAML
 
 Besides metadata variables, the aforementioned Markdown options
-(@sec:markdown-options) can also be set in YAML under `output -> * -> options`,
-e.g.,
+(@sec:markdown-options) can also be set in YAML. The common ones (`toc`,
+`number_sections`, `embed_resources`, `js_math`, `js_highlight`, `offline`, and
+`cleveref`) can be top-level fields, e.g.,
 
 ``` yaml
+toc: true
+js_highlight:
+  package: highlight
+  theme: github
+  languages: [diff, latex]
+```
+
+Options not in this list (e.g., `hardbreaks`) must be nested under
+`output -> * -> options`. You also need the nested form when an option should
+differ between formats, because a top-level value applies to all formats and
+the nested value takes precedence, e.g., a TOC for HTML only:
+
+``` yaml
+toc: false
 output:
   html:
     options:
       toc: true
-      js_highlight:
-        package: highlight
-        theme: github
-        languages: [diff, latex]
+      hardbreaks: true
 ```
 
 ### Other fields in YAML
 
 In addition to `meta` and `options`, a few other fields can be specified under
-the format name. These fields correspond to the arguments of the output format
+the format name, or at the top level (they then apply to all formats). These
+fields correspond to the arguments of the output format
 functions `litedown::html_format()` and `litedown::latex_format()`.
 
 The fields supported by both formats are:
@@ -722,10 +741,20 @@ The LaTeX format supports these additional fields:
 For example:
 
 ``` yaml
+latex_engine: xelatex
+keep_tex: true
+citation_package: biblatex
+```
+
+A top-level `template` applies to all formats, which is rarely what you want
+because HTML and LaTeX templates are different. Use the nested form to specify
+one template per format (the same applies to the other fields above when their
+values should differ between formats):
+
+``` yaml
 output:
+  html:
+    template: custom-template.html
   latex:
-    latex_engine: xelatex
-    keep_tex: true
-    citation_package: biblatex
     template: custom-template.tex
 ```
