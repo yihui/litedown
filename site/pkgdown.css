@@ -1,0 +1,361 @@
+/* Make a site look like a pkgdown site (Bootstrap 5): a tinted top navbar, a
+   page header with a rule, text on the left and a sidebar on the right ("On
+   this page" or the package info), pale code blocks, and a simple footer.
+   Values come from pkgdown's own CSS. Load it after the default site CSS and
+   pair it with pkgdown.js. */
+:root {
+  --pk-primary: #0054ad;
+  --pk-link-hover: #00438a;
+  --pk-fg: #212529;
+  --pk-fg-muted: rgba(33, 37, 41, .75);
+  --pk-bg: #fff;
+  --pk-border: #dee2e6;
+  --pk-pre-bg: #f1f3f5;
+  --pk-code-bg: rgba(0, 0, 0, .04);
+  --pk-code-fg: #000;
+  --pk-soft: rgba(33, 37, 41, .1);
+  --pk-hover: rgba(0, 84, 173, .1);
+  --pk-nav-bg: color-mix(in oklab, color-mix(in oklab, var(--pk-bg) 95%, var(--pk-primary)) 95%, var(--pk-fg));
+  --pk-nav-fg: rgba(0, 0, 0, .65);
+  --pk-nav-fg-hover: rgba(0, 0, 0, .8);
+  --pk-nav-h: 56px;
+  --pk-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* tokens of syntax highlighting */
+  --pk-tk-comment: #5e5e5e;
+  --pk-tk-string: #20794d;
+  --pk-tk-number: #ad0000;
+  --pk-tk-fun: #4758ab;
+  --pk-tk-keyword: #003b4f;
+  --pk-tk-prop: #657422;
+  /* map to the variables of default.css and article.css */
+  --accent: var(--pk-primary);
+  --muted-bg: var(--pk-code-bg);
+  --border-color: var(--pk-border);
+  --rule-color: var(--pk-border);
+  --article-bg: transparent;
+  --side-width: 16.3rem;
+  --side-gap: 2.7rem;
+}
+@media (max-width: 62em) {
+  :root { --side-width: 12rem; --side-gap: 1.5rem; }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pk-primary: #6ea8fe;
+    --pk-link-hover: #8bb9fe;
+    --pk-fg: #dee2e6;
+    --pk-fg-muted: rgba(222, 226, 230, .75);
+    --pk-bg: #212529;
+    --pk-border: #495057;
+    --pk-pre-bg: rgba(222, 226, 230, .1);
+    --pk-code-bg: rgba(222, 226, 230, .1);
+    --pk-code-fg: #dee2e6;
+    --pk-soft: rgba(222, 226, 230, .1);
+    --pk-hover: rgba(110, 168, 254, .1);
+    --pk-nav-fg: rgba(255, 255, 255, .65);
+    --pk-nav-fg-hover: rgba(255, 255, 255, .8);
+    --pk-tk-comment: #f8f8f2;
+    --pk-tk-string: #abe338;
+    --pk-tk-number: #d4d0ab;
+    --pk-tk-fun: #ffa07a;
+    --pk-tk-keyword: #ffa07a;
+    --pk-tk-prop: #00e0e0;
+  }
+  /* default.css inverts the whole page in dark mode; use the colors above */
+  :is(html, video, iframe):not(.no-invert, .no-invert *) { filter: none; }
+  .site-nav a.right img { filter: invert(1); }
+  /* keep badges and icons as they are */
+  a > img, .orcid { filter: none; }
+}
+
+/* base */
+html { scroll-padding-top: var(--pk-nav-h); }
+html body {
+  max-width: 1140px;
+  padding: 0 12px;
+  background: var(--pk-bg);
+  color: var(--pk-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  @media (min-width: 87.5em) { font-size: 18px; }
+}
+a {
+  color: var(--pk-primary);
+  &:hover { color: var(--pk-link-hover); }
+}
+:is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 .5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: inherit;
+}
+:is(h1, h2, h3, h4, h5, h6) .section-number { display: none; }
+article :is(h2, h3, h4, h5, h6) { border: 0; }
+article h2 { margin-top: 1.5rem; font-size: 1.75rem; }
+article h3 { margin-top: 1rem; font-size: 1.25rem; font-weight: bold; }
+article h4 { font-size: 1.1rem; font-weight: bold; }
+article :is(h5, h6) { font-size: 1rem; font-weight: bold; }
+li li { font-size: inherit; }
+dd { margin: 0 0 .25rem; padding-left: 1.5rem; }
+blockquote {
+  background: none;
+  color: inherit;
+  padding: .625rem 1.25rem;
+  margin-bottom: 1rem;
+  border-left: .25rem solid var(--pk-border);
+}
+hr, .footnotes::before { border: 0; border-top: 1px solid; opacity: .25; }
+mark { background: color-mix(in srgb, var(--pk-primary) 25%, transparent); color: inherit; }
+.side { background: none; }
+
+/* navbar: tinted, full-bleed, stays on top */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  padding: .5rem 0;
+  min-height: 54px;
+  background: var(--pk-nav-bg);
+  box-shadow: 0 0 0 100vmax var(--pk-nav-bg);
+  clip-path: inset(0 -100vmax);
+  line-height: initial;
+  & > p {
+    align-items: center;
+    margin: 0;
+    &, &:last-child { border: 0; }
+  }
+  a {
+    margin: 0;
+    padding: .5rem;
+    border-radius: .5rem;
+    background: none;
+    color: var(--pk-nav-fg);
+    &:hover { background: var(--pk-hover); color: var(--pk-nav-fg-hover); }
+    &[aria-current] { box-shadow: none; margin-bottom: 0; background: var(--pk-soft); }
+    &.brand {
+      padding: 5px 0;
+      font-size: 1.25rem;
+      color: var(--pk-fg);
+      background: none;
+    }
+    &.right {
+      margin-left: auto;
+      img { width: 20px; height: 20px; opacity: .65; }
+      &:hover img { opacity: .8; }
+    }
+  }
+  .version {
+    margin: 0 1rem 0 .5rem;
+    font-size: .875em;
+    color: var(--pk-fg-muted);
+  }
+}
+
+/* pkgdown shows no date, and no outline on the home page */
+.frontmatter .date, body:has(.pkg-desc) #TOC { display: none; }
+
+/* the article is no longer a card; the sidebar goes in its right padding */
+article:not(.pagesjs *), .frontmatter {
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+article:not(.pagesjs *) {
+  max-width: calc(48.5rem + var(--side-width) + var(--side-gap));
+  padding-right: calc(var(--side-width) + var(--side-gap));
+}
+@media (min-width: 50.01em) {
+  body:not(.pagesjs) article > .side:is(.side-left, .side-right) {
+    float: right;
+    clear: right;
+    width: var(--side-width);
+    margin: 0 var(--side-margin) 0 0;
+    padding: 0;
+    max-height: none;
+    background: none;
+    color: inherit;
+  }
+  body:not(.pagesjs) #TOC.side {
+    position: sticky;
+    top: var(--pk-nav-h);
+    max-height: calc(100vh - var(--pk-nav-h) - 1rem);
+    overflow-y: auto;
+    border: 0;
+  }
+}
+@media (max-width: 50em) {
+  body:not(.pagesjs) article:not(.pagesjs *) { padding-right: 0; }
+  body:not(.pagesjs) article > .side:is(.side-left, .side-right) {
+    padding: 0 1rem 1rem;
+    border-radius: .5rem;
+    background: var(--pk-soft);
+  }
+  #TOC.side { display: none; }
+}
+
+/* page header: title with a rule below */
+.frontmatter {
+  max-width: 48.5rem;
+  min-height: 88px;
+  margin: 1.5rem 0 .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--pk-border);
+  text-align: left;
+  .title h1 {
+    margin: 0 0 .5rem;
+    font-size: calc(1.375rem + 1.5vw);
+    @media (min-width: 75em) { font-size: 2.5rem; }
+  }
+  .date h3 {
+    margin: 0;
+    font-size: .875em;
+    font-weight: 400;
+    color: var(--pk-fg-muted);
+  }
+}
+
+/* right sidebar: "On this page" and package info */
+#TOC.side {
+  font-size: 1rem;
+  &::before {
+    content: "On this page";
+    display: block;
+    margin: 1.5rem 0 .5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  & > ul { columns: auto; }
+  ul { display: block; width: auto; list-style: none; margin: 0 0 1rem; padding: 0; }
+  li { display: block; margin: 0; }
+  ul ul {
+    display: none;
+    margin: 0;
+    border: 0;
+  }
+  li:has(.active) > ul { display: block; }
+  a {
+    display: block;
+    margin-bottom: 2px;
+    padding: 4px 8px;
+    border-radius: .5rem;
+    color: inherit;
+    text-decoration: none;
+    &:hover { background: var(--pk-hover); }
+  }
+  ul ul a { margin-left: .5rem; }
+  .section-number { display: none; }
+  /* neutralize the highlight styles of article.css */
+  & > ul > li:has(.active) { background: none; padding: 0; }
+  a.active { background: var(--pk-soft); color: inherit; }
+  li li a.active { border: 0; margin-left: .5rem; padding-left: 8px; }
+}
+.pkg-desc {
+  font-size: 1rem;
+  dt {
+    margin: 1.5rem 0 .5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  dd { margin: 0 0 .5rem; padding: 0; }
+}
+/* the 1st sidebar block starts at the page header's level */
+.side.side-right:first-child .pkg-desc dt:first-child { margin-top: 1.5rem; }
+
+/* heading anchors with a link icon */
+.anchor {
+  margin-left: 2px;
+  & > a {
+    display: inline-block;
+    width: .9em;
+    height: .9em;
+    vertical-align: top;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+    &::before { content: none; }
+  }
+}
+
+/* code */
+pre {
+  margin: 0 0 1rem;
+  font-size: .875em;
+  font-family: var(--pk-mono);
+}
+pre > code {
+  &, &[class] {
+    padding: .75rem;
+    border: 1px solid var(--pk-border);
+    border-radius: .5rem;
+    background: var(--pk-pre-bg);
+    color: var(--pk-code-fg);
+    font-family: inherit;
+    font-size: inherit;
+  }
+}
+:not(pre, th) > code, code[class]:not(pre > *) {
+  padding: .125rem .25rem;
+  border-radius: .5rem;
+  background: var(--pk-code-bg);
+  color: var(--pk-code-fg);
+  font-family: var(--pk-mono);
+  font-size: .875em;
+}
+code a:any-link, a > code { color: inherit; }
+.token {
+  &.comment { color: var(--pk-tk-comment); }
+  &.punctuation, &.operator { color: var(--pk-tk-comment); background: none; }
+  &.string, &.char, &.attr-value { color: var(--pk-tk-string); }
+  &.boolean, &.number, &.constant, &.symbol { color: var(--pk-tk-number); }
+  &.function, &.class-name { color: var(--pk-tk-fun); }
+  &.keyword, &.builtin, &.atrule { color: var(--pk-tk-keyword); }
+  &.property, &.attr-name, &.tag, &.selector { color: var(--pk-tk-prop); }
+  &.variable, &.regex, &.important { color: var(--pk-fg); }
+}
+.copy-button {
+  inset: 5px 5px auto auto;
+  width: 28px;
+  height: 26px;
+  border: 1px solid #6c757d;
+  border-radius: .375rem;
+  box-shadow: none;
+  background: none;
+  color: #6c757d;
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25z'/%3E%3Cpath d='M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25z'/%3E%3C/svg%3E") center / 50% no-repeat;
+  }
+  &:hover { background: #6c757d; color: var(--pk-bg); }
+}
+.copy-success { background: #198754; border-color: #198754; color: #fff; }
+
+/* tables */
+table:not([class]), .desc-table {
+  width: 100%;
+  margin: 0 0 1rem;
+  border: 0;
+  th, td { padding: .5rem; border-bottom: 1px solid var(--pk-border); }
+  thead, tfoot, tr:nth-child(even) { background: none; }
+  thead th { border-bottom: 2px solid; }
+}
+
+/* footer */
+footer {
+  margin: 1rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--pk-border);
+  font-size: .875em;
+  color: var(--pk-fg-muted);
+  p { margin: 0; }
+  .flex-col {
+    gap: 1rem;
+    @media (max-width: 35.99em) { flex-direction: column; }
+    @media (min-width: 36em) { & > :last-child { text-align: right; } }
+  }
+}
+.comments { margin-top: 1rem; }
