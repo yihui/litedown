@@ -509,7 +509,7 @@ mark(text = &quot;This is *not* a file.md&quot;)
 <pre><code class="language-r"># output to a file
 (mark(&quot;_Hello_, **World**!&quot;, output = tempfile()))
 </code></pre>
-<pre><code>#&gt; [1] &quot;/var/folders/n6/hn37q6pj7sj_9dmqqc2113800000gn/T//RtmpYLYH1g/file18a6618b2aa3&quot;
+<pre><code>#&gt; [1] &quot;/var/folders/n6/hn37q6pj7sj_9dmqqc2113800000gn/T//Rtmpj4TSC8/file60bd275149d0&quot;
 </code></pre>
 <pre><code class="language-r"># convert to other formats
 mark(&quot;Hello _World_!&quot;, &quot;.tex&quot;)
@@ -592,13 +592,13 @@ available features. Each feature will be mapped to CSS/JS.</p>
 <pre><code class="language-r">litedown:::assets[, -1]
 </code></pre>
 <pre><code>#&gt;                css               js               
+#&gt; default        &quot;@default&quot;        NA               
 #&gt; article        &quot;@article&quot;        &quot;@sidenotes&quot;     
 #&gt; book           &quot;@book&quot;           NA               
 #&gt; callout        &quot;@callout&quot;        &quot;@callout&quot;       
 #&gt; center-img     NA                &quot;@center-img&quot;    
 #&gt; chapter-toc    NA                &quot;@chapter-toc&quot;   
 #&gt; copy-button    &quot;@copy-button&quot;    &quot;@copy-button&quot;   
-#&gt; default        &quot;@default&quot;        NA               
 #&gt; external-link  NA                &quot;@external-link&quot; 
 #&gt; fold-details   NA                &quot;@fold-details&quot;  
 #&gt; heading-anchor &quot;@heading-anchor&quot; &quot;@heading-anchor&quot;
