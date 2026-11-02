@@ -157,6 +157,12 @@ assert('btn() adds default tooltips to icon buttons', {
 assert('new_yaml() and feature_list() build YAML for selected features', {
   (feature_list('new:snap,bogus,tabsets') %==% c('snap', 'tabsets'))
   (feature_list('yaml:') %==% character())
+  # default CSS must come first, no matter in which order features are requested
+  (feature_list('new:tabsets,snap,default,article') %==%
+    c('default', 'article', 'snap', 'tabsets'))
+  (rownames(assets)[1] %==% 'default')
+  y = new_yaml(feature_list('new:snap-clean,snap,default'))
+  (has_match(y, 'css: \\["@default", "@snap", "@snap-clean"\\]'))
   y = new_yaml('tabsets')
   (y[1] %==% '---' && y[length(y)] %==% '---')
   (has_match(y, '@tabsets'))

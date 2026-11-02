@@ -460,7 +460,8 @@ btn = function(t, u = '#', a = character()) {
 # features selected in a request of the type `new:a,b` or `yaml:a,b`
 feature_list = function(type) {
   x = strsplit(sub('^[a-z]+:', '', type), ',')[[1]]
-  intersect(x, rownames(assets))
+  # in the order of assets (e.g., default first), not the order of the request
+  intersect(rownames(assets), x)
 }
 
 # YAML frontmatter for a new file with selected features

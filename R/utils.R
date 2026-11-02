@@ -269,14 +269,15 @@ vest = function(feature = NULL, css = NULL, js = NULL) {
   new_asis(c(resolve_files(css, 'css'), resolve_files(js, 'js')), raw = TRUE)
 }
 
+# default comes first because the order matters (CSS/JS are loaded in this order)
 assets = t(data.frame(
+  default = c('default CSS', '@default', NA),
   article = c('side notes, floats, and full-width elements for articles', '@article', '@sidenotes'),
   book = c('cover and chapter pages for books', '@book', NA),
   callout = c('frames with legends', '@callout', '@callout'),
   'center-img' = c('center images in paragraphs', NA, '@center-img'),
   'chapter-toc' = c('add TOC to each chapter', NA, '@chapter-toc'),
   'copy-button' = c('copy buttons', '@copy-button', '@copy-button'),
-  default = c('default CSS', '@default', NA),
   'external-link' = c('open external links in new windows', NA, '@external-link'),
   'fold-details' = c('fold elements (e.g., code blocks)', NA, '@fold-details'),
   'heading-anchor' = c('add anchor links to headings', '@heading-anchor', '@heading-anchor'),
