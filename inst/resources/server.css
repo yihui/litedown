@@ -22,7 +22,6 @@
 .btn-lite {
   font-style: normal;
   text-decoration: none;
-  font-size: 1.3em;
   /* a larger hit area for touch */
   display: inline-block;
   min-width: 1.6em;
@@ -35,6 +34,7 @@
 }
 button.btn-lite {
   font-family: inherit;
+  font-size: 1.3em;
   color: var(--accent);
   background: none;
   border: none;
