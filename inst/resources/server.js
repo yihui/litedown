@@ -183,7 +183,8 @@
           create = $$('.actions button', el)[0];
           names = $$('#file-list option', el).map(o => o.value);
           input.oninput = () => check(el);
-          input.onkeydown = e => e.key === 'Enter' && (e.preventDefault(), submit(el));
+          // an on* handler returning false cancels the key, so act on Enter only
+          input.onkeydown = e => { if (e.key === 'Enter') (e.preventDefault(), submit(el)); };
           // presets select a group of features
           const boxes = $$('input[type="checkbox"]', el);
           $$('.presets button', el).forEach(b => b.onclick = () => {
