@@ -10,7 +10,7 @@
 > Letters*](https://vangoghletters.org/vg/letters/let628/letter.html)
 :::
 
-## Live preview
+## Live preview {#sec:live-preview}
 
 Unless it has become your muscle memory to click on the `Knit` button in
 RStudio, you may try to switch to `litedown::roam()` to preview your HTML output
@@ -27,11 +27,25 @@ and save a file. If you prefer building the document only when you want to, you
 can turn off the live preview via `litedown::roam(live = FALSE)`. In this case,
 the document will be rebuilt only when you refresh the page by yourself.
 
+When the page is reloaded automatically, the scroll position is kept, and
+polling pauses while the browser tab is in the background. If the R session
+running `roam()` stops, a banner will appear at the top of the page, and the
+page reloads by itself once the server is back. If a file cannot be previewed
+due to an error, the error is displayed on the page with a traceback of your code
+(with a link to the failing line of a code chunk, or to the source line of any
+call in your own functions), and the page recovers after you fix the file. Use
+the `Back` link on the error page to go back to where you came from.
+
 ### The file listing
 
 After launching the preview via `litedown::roam()`, a file listing will be
 displayed, which shows the first few lines of `*.R`, `*.Rmd`, and `*.md` files
-in boxes, followed by the list of other files.
+in boxes, followed by the list of other files (a `.md` file that has an `.Rmd` or
+`.qmd` file of the same name is not shown as a box, because it is generated from
+that file). Modification times are displayed as relative times
+(hover over them to see the exact time). Files whose names start with `_` or `.`
+are dimmed. When the directory has many files, a filter box (press `/` to focus
+it) and a sorting menu (by name or modification time) appear above the listing.
 
 By clicking on plain-text files, you will see their full content. For binary
 files, they may be opened in your browser; if they cannot be opened, the browser
@@ -46,7 +60,7 @@ The full path of the file or directory being previewed is displayed at the top
 left.
 
 For `.R`, `.Rmd`, and `.md` files, you can click on the "Run" button
-([⏵](){.larger}) to render them to HTML in memory and preview the output. This
+([►](){.larger}) to render them to HTML in memory and preview the output. This
 button is displayed at the top right of each file box on the listing page, and
 at the top right of the preview page of an individual file.
 
@@ -59,7 +73,10 @@ the computing (e.g., via caching).
 
 ### The buttons
 
-There is a button group at the top right of the preview page.
+There is a button group at the top right of the preview page (which stays at
+the top when you scroll). Each button has a tooltip and an accessible label. The
+messages from the buttons (e.g., the path of the file rendered to disk, with a
+link to open it) appear as toasts at the bottom right of the page.
 
 -   The `render` button (with the lightning or voltage icon, [↯](){.larger}):
     Render a document or project in a new R session and save the output file(s)
@@ -102,16 +119,17 @@ automatically, and you will have to explicitly click on it.
 ### Creating new files {#sec:new-file}
 
 The `add` button ([+](){.larger}) opens a dialog to create a new file. You type
-a filename in the input box (a dropdown list of existing files is provided, and
-existing filenames are marked with ❌ so that you do not accidentally overwrite
-them). If you do not provide a filename extension, `.Rmd` will be appended
-automatically.
+a filename in the input box (a dropdown list of existing files is provided). The
+dialog tells you whether the file will be created, or the name is invalid or
+already exists, so that you do not accidentally overwrite files. If you do not
+provide a filename extension, `.Rmd` will be appended automatically.
 
 For `.Rmd` / `.md` / `.R` files, you can also select HTML features via
 checkboxes, such as callouts (@sec:callout), tabsets (@sec:tabsets), and the
 article format (@sec:article). See @tab:assets for the full list of features.
 The corresponding CSS/JS assets will be added to the YAML metadata of the new
-file automatically.
+file automatically. You can also start from a preset (blank, article, slides, or
+book), and a preview of the YAML frontmatter is displayed in the dialog.
 
 The new file will be seeded with a YAML frontmatter containing a placeholder
 title, the author name (detected from the system username), and the current

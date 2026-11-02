@@ -44,21 +44,15 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       litedown.roaming = TRUE
     )
     on.exit(options(opt), add = TRUE)
-    # capture errors in fuse() because I don't know if it's possible to capture
-    # general errors in the handler; without capturing errors, users will see a
-    # plain-text error page, which may be hard to understand
-    opts = reactor(error = TRUE); on.exit(reactor(opts), add = TRUE)
     query = as.list(query)
     ext = tolower(file_ext(path))
     # we keep POSTing to the page assets' URLs, and if an asset file has been
-    # modified, we return a response telling the browser to update it
-    type = if (length(headers)) grep_sub(
-      '.*\nlitedown-data: ([^[:space:]]+).*', '\\1', rawToChar(headers)
-    )
-    if (length(type) != 1) type = ''
-    # we may need to check rawToChar(headers) to decide what to do for the
-    # request; for now, we simply ignore request headers, and treat the POST
-    # body as the type of request
+    # modified, we return a response telling the browser to update it; the
+    # request headers tell us what to do for the request, and the POST body is
+    # ignored
+    type = req_header(headers, 'litedown-data')
+    # a heartbeat, so the browser can tell if the server is alive
+    if (type == 'ping') return(list(payload = ''))
     if (type == 'open') {
       xfun:::open_path(
         query[['path']] %||% path, !dir.exists(path) && is_text_file(file = path),
@@ -66,6 +60,9 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       )
       return(list(payload = 'done'))
     }
+    # preview the YAML of a new file with selected features
+    if (grepl('^yaml:', type))
+      return(list(payload = one_string(new_yaml(feature_list(type)))))
     # create a new file with selected features
     if (grepl('^new($|:)', type))
       return(list(payload = if (type == 'new') feature_form(path) else new_file(path, ext, type)))
@@ -118,7 +115,11 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
       }
       return(list(payload = resp))
     }
-    res = lite_handler(path, query, post, headers)
+    # show errors on a page (instead of a plain-text error) so that the page
+    # keeps being live and recovers once the error is fixed
+    res = catch_page(
+      lite_handler(path, query, post, headers), asset_url('default.css')
+    )
     # inject js to communicate with the R server via POST for live preview
     p = res$payload
     if (is.null(p) || (res[['content-type']] %||% 'text/html') != 'text/html')
@@ -138,6 +139,111 @@ roam = function(dir = '.', live = TRUE, ...) in_dir(dir, {
   }, ...)
 })
 
+# get the value of a request header (case-insensitive); '' if not found
+req_header = function(headers, name) {
+  if (!length(headers)) return('')
+  x = grep_sub(
+    sprintf('.*\n%s: ([^[:space:]]+).*', name), '\\1', rawToChar(headers),
+    ignore.case = TRUE
+  )
+  if (length(x) == 1) x else ''
+}
+
+# evaluate an expression that generates a page, and return an error page with a
+# traceback if it fails
+catch_page = function(expr, css) {
+  steps = NULL
+  tryCatch(
+    withCallingHandlers(expr, error = function(e) {
+      calls = sys.calls()
+      # only keep the calls evaluated by `expr`, i.e., after withCallingHandlers()
+      i = max(which(vapply(calls, is_call, NA, 'withCallingHandlers')))
+      # exclude the two frames of the error handler itself (h() and this function)
+      k = seq_len(length(calls) - 2L)[-seq_len(i)]
+      # drop calls of package functions and eval() (not user code)
+      k = k[!vapply(k, function(j) {
+        is_call(calls[[j]], c('eval', 'evalq')) || isNamespace(environment(sys.function(j)))
+      }, NA)]
+      # steps innermost first
+      steps <<- lapply(rev(k), function(j) step_info(calls[[j]]))
+      # the error occurs in the innermost function (not a call frame itself), so
+      # link to where it is defined; if no function is involved, it is a line of
+      # the code chunk (top-level expression)
+      if (length(k) && !is.null(cl <- conditionCall(e))) {
+        r = attr(sys.function(max(k)), 'srcref')
+        steps <<- c(list(step_info(cl, r)), steps)
+      }
+      else steps <<- c(steps, dropNULL(list(chunk_step())))
+    }),
+    error = function(e) list(
+      payload = error_page(css, e, steps), `status code` = 500L
+    )
+  )
+}
+
+is_call = function(x, f) is.symbol(x[[1]]) && as.character(x[[1]]) %in% f
+
+# the call (or a string) of a traceback step and the source location (if available) as a
+# list(call, file, line); file is NULL if there is no source reference
+step_info = function(x, r = attr(x, 'srcref')) {
+  f = l = NULL
+  if (inherits(r, 'srcref') && !is.null(sf <- attr(r, 'srcfile'))) {
+    f = sf$filename
+    if (!is_abs_path(f)) f = file.path(sf$wd %||% '.', f)
+    if (file_exists(f)) {
+      f = normalizePath(f); l = r[1]
+    } else f = NULL
+  }
+  if (!is.character(x)) x = paste(deparse(x, width.cutoff = 60L)[1], collapse = '')
+  list(call = x, file = f, line = l)
+}
+
+# if an error occurs in a top-level expression of a code chunk in fuse(), the
+# source line of the expression as a traceback step (NULL if not in a chunk)
+chunk_step = function() {
+  # xfun::record() parses the code with source references (the `src` argument),
+  # and `expr` in its frame is the expression being evaluated
+  for (j in rev(seq_len(sys.nframe()))) {
+    if (!identical(sys.function(j), xfun::record)) next
+    # TODO: no source references with xfun < 0.62.8; remove this check later
+    if (is.null(r <- attr(get0('expr', sys.frame(j), inherits = FALSE), 'srcref'))) return()
+    s = step_info(trimws(as.character(r[[1]])[1]), r[[1]])
+    return(if (!is.null(s$file)) s)
+  }
+}
+
+# an HTML page that displays an error when previewing a file, with the traceback
+# of source steps (each step is list(call, file, line))
+error_page = function(css, e, steps = list()) {
+  msg = if (is.character(e)) e else conditionMessage(e)
+  cl = if (!is.character(e) && !is.null(cl <- conditionCall(e)))
+    paste(deparse(cl, width.cutoff = 60L)[1], collapse = '')
+  li = vapply(steps, function(s) sprintf(
+    '<li%s><code>%s</code>%s</li>', if (is.null(s$file)) ' class="muted"' else '',
+    html_escape(substr(s$call, 1, 100)), if (is.null(s$file)) '' else sprintf(
+      ' <a href="?path=%s&amp;line=%d" title="Open %s in editor">%s#%d</a>',
+      URLencode(s$file, TRUE), s$line, html_escape(s$file, TRUE),
+      html_escape(basename(s$file)), s$line
+    )
+  ), '')
+  one_string(c(
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error</title>',
+    sprintf('<link rel="stylesheet" href="%s"></head><body><main>', css),
+    '<p><a href="javascript:history.back()" class="btn-lite">&larr; Back</a></p>',
+    '<h3>Failed to preview the file</h3>',
+    # no line breaks between the tags and the message (else <pre> shows them)
+    paste0(
+      '<pre><code class="error">',
+      one_string(html_escape(c(if (!is.null(cl)) paste('Error in', cl), msg))),
+      '</code></pre>'
+    ),
+    if (length(li)) c(
+      sprintf('<details open><summary>Traceback (%d, innermost first)</summary>', length(li)),
+      '<ol class="traceback">', li, '</ol></details>'
+    ), '</main></body></html>'
+  ), '\n')
+}
+
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
   if (dir.exists(path)) list(payload = dir_page(path)) else {
@@ -149,41 +255,64 @@ dir_page = function(dir = '.') {
   files = list.files(dir, full.names = TRUE)
   # index.* files should appear first
   files = files[order(!sans_ext(basename(files)) == 'index')]
-  # show file size and mtime
-  info = function(f, b, extra = '') {
+  # show file size and mtime (as relative time, which is computed in JS)
+  info = function(f, b) {
+    t = file.mtime(f)
     sprintf(
-      '_( [%s](<%s>){title="Raw file"} %s%s%s)_', file_size(f), b, file_time(f),
-      if (is_text_file(file = f)) btn('.open', b) else '', extra
+      '_( [%s](<%s>){title="Raw file"} <time datetime="%s" data-ms="%.0f" title="%s">%s</time>)_',
+      file_size(f), b, format(t, '%Y-%m-%dT%H:%M:%S%z'), as.numeric(t) * 1000,
+      format(t), format(t)
     )
   }
   # create link to preview a file
   p_link = function(f, t = f, n = 1, a = NULL) {
     btn(t, sprintf('%s?preview=%d', f, n), a)
   }
+  # files starting with _ or . are dimmed
+  muted = function(f) if (grepl('^[_.]', basename(f))) '.muted' else NULL
   i1 = is_lite_ext(file = files)
+  # a .md file is not a box if a .Rmd/.qmd file of the same name exists (it is
+  # listed as a plain file below), same as find_input()
+  i1 = i1 & !(
+    tolower(file_ext(files)) == 'md' &
+      sans_ext(basename(files)) %in% sub('[.][Rq]md$', '', basename(files))
+  )
   # order first by folder, then by .Rmd/.R, and other files go to the end
-  res = lapply(files[i1][order(grepl('^[_.]', basename(files[i1])))], function(f) {
+  boxes = lapply(files[i1][order(grepl('^[_.]', basename(files[i1])))], function(f) {
     b = basename(f)
+    txt = readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE)
     fenced_div(c(
       fenced_div(c(
-        p_link(b, a = NULL), info(f, b, btn('.save', b)),
+        p_link(b, a = NULL), info(f, b),
         p_link(b, '.run', 2, 'title="Run in memory"')
       ), '.caption .name'),
-      fenced_block(readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE))
-    ), '.box')
+      fenced_block(txt)
+    ), c('.box', muted(f)))
   })
+  # the boxes are laid out in a grid (see listing.css)
+  res = if (length(boxes)) fenced_div(unlist(boxes), '.boxes')
   files = files[!i1]
   i2 = dir.exists(files)
   res = c(res, '', lapply(files[order(!i2, files)], function(f) {
     b = basename(f)
     if (d <- dir.exists(f)) b = paste0(b, '/')
     sprintf(
-      '- [%s](<%s%s>) %s', b, b, if (d) '' else '?preview=1',
+      '- [%s](<%s%s>)%s %s', b, b, if (d) '' else '?preview=1',
+      if (length(m <- muted(f))) paste0('{', m, '}') else '',
       if (d) '' else info(f, b)
     )
   }))
-  mark_full(unlist(res), meta = list(title = dir_title(dir)))
+  tools = if (length(list.files(dir)) > 4) list_tools()
+  mark_full(c(tools, unlist(res)), meta = list(title = dir_title(dir)))
 }
+
+# a filter box and a sorting menu for the file listing
+list_tools = function() c(
+  '<div class="listing-tools">',
+  '<input type="search" placeholder="Filter files (press / to focus)" aria-label="Filter files">',
+  '<label>Sort by <select><option value="">default</option><option value="name">name</option>',
+  '<option value="time">modified time</option></select></label></div>', ''
+)
 
 # add directory navigation to the top of the page
 file_page = function(x, preview) {
@@ -299,15 +428,22 @@ dir_title = function(f, preview = '1') {
         btn('.save'), if (preview != '2')
           btn('.run', sprintf('%s?preview=2', b), 'title="Run"')
       ),
-      if (is_text_file(file = f)) btn('.open')
+      if (file_exists(f) && is_text_file(file = f)) btn('.open')
     )
   }
-  txt = one_string(c(sprintf('_%s:_', normalize_path('.')), links), ' ')
+  # show the folder name only; the full path is in the tooltip
+  w = normalize_path('.')
+  txt = one_string(c(
+    sprintf('_<span title="%s">%s:</span>_', html_escape(w, TRUE), html_escape(basename(w))),
+    links
+  ), ' ')
   markdown_html(txt, smart = TRUE)
 }
 
 btn = function(t, u = '#', a = character()) {
   if (startsWith(t, '.')) {
+    # default tooltips for icons (unless provided)
+    if (!any(grepl('title=', a))) a = c(a, sprintf('title="%s"', .titles[t]))
     a = c(t, a); t = .icons[t]
   }
   a = if (is.character(a)) one_string(c('.btn-lite', a), ' ')
@@ -315,13 +451,20 @@ btn = function(t, u = '#', a = character()) {
   sprintf(' [%s](<%s>)%s ', t, u, a)
 }
 
-.icons = c(.open = '&#9998;', .run = '&#9205;', .save = '&#8623;')
+.icons = c(.open = '&#9998;', .run = '&#9658;', .save = '&#8623;')
+.titles = c(
+  .open = 'Open in editor', .run = 'Run in memory and preview',
+  .save = 'Render to disk in a fresh R session'
+)
 
-new_file = function(path, ext, type) {
-  if (file.exists(path)) return(sprintf("The file '%s' already exists.", path))
-  on.exit(xfun:::open_path(path), add = TRUE)
-  if (!is_lite_ext(ext)) return(tolower(file.create(path)))
-  features = strsplit(sub('^new:', '', type), ',')[[1]]
+# features selected in a request of the type `new:a,b` or `yaml:a,b`
+feature_list = function(type) {
+  x = strsplit(sub('^[a-z]+:', '', type), ',')[[1]]
+  intersect(x, rownames(assets))
+}
+
+# YAML frontmatter for a new file with selected features
+new_yaml = function(features = NULL) {
   a = assets[features, , drop = FALSE]
   m = list(
     title = 'Comfortably Untitled',
@@ -331,7 +474,14 @@ new_file = function(path, ext, type) {
   if (nrow(a)) m$output$html = list(meta = list(
     css = I(na_omit(a[, 'css'])), js = I(na_omit(a[, 'js']))
   ))
-  txt = c('---', xfun::taml_save(m), '---', '', 'Relax. I need some information first.')
+  c('---', xfun::taml_save(m), '---')
+}
+
+new_file = function(path, ext, type) {
+  if (file.exists(path)) return(sprintf("The file '%s' already exists.", path))
+  on.exit(xfun:::open_path(path), add = TRUE)
+  if (!is_lite_ext(ext)) return(tolower(file.create(path)))
+  txt = c(new_yaml(feature_list(type)), '', 'Relax. I need some information first.')
   if (ext == 'r') txt = paste("#'", split_lines(txt))
   write_utf8(txt, path)
   'view'

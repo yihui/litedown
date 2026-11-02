@@ -109,3 +109,141 @@ assert('lite_handler() dispatches directories and files', {
   # a file path yields a file response
   (!is.null(lite_handler(file.path(d, 'a.md'), list(preview = '1'), NULL, NULL)$payload))
 })
+
+assert('req_header() extracts request headers case-insensitively', {
+  h = charToRaw('GET / HTTP/1.1\nLitedown-Data: ping\nHost: x\n')
+  (req_header(h, 'litedown-data') %==% 'ping')
+  (req_header(h, 'nothing') %==% '')
+  (req_header(NULL, 'litedown-data') %==% '')
+})
+
+assert('error_page() escapes the message and links the CSS', {
+  p = error_page('a.css', '<b>oops</b>')
+  (has_match(p, 'href="a.css"'))
+  (has_match(p, '&lt;b&gt;oops'))
+})
+
+assert('error_page() starts the error box with the message, without blank lines', {
+  p = error_page('a.css', simpleError('oops', quote(f(x))))
+  (has_match(p, '<code class="error">Error in f\\(x\\)\noops</code>'))
+})
+
+assert('catch_page() returns an error page with a traceback and source links', {
+  f = tempfile(fileext = '.R')
+  writeLines(c('g = function() stop("boom")', 'h = function() {', '  g()', '}'), f)
+  on.exit(unlink(f), add = TRUE)
+  env = new.env()
+  sys.source(f, env, keep.source = TRUE)
+  r = catch_page(env$h(), 'a.css')
+  (r[['status code']] %==% 500L)
+  (has_match(r$payload, 'boom'))
+  (has_match(r$payload, 'Traceback'))
+  # links to the lines in the source file (innermost call first)
+  (has_match(r$payload, 'line=3'))
+  (has_match(r$payload, sprintf('%s#3', basename(f))))
+  # no error: the value of the expression
+  (catch_page(1 + 1, 'a.css') %==% 2)
+  # errors without source references still have a traceback, but no links
+  r2 = catch_page(stop('no srcref'), 'a.css')
+  (has_match(r2$payload, 'no srcref'))
+  (!any(grepl('?path=', r2$payload, fixed = TRUE)))
+})
+
+assert('btn() adds default tooltips to icon buttons', {
+  (has_match(btn('.run'), 'title="Run in memory'))
+  (has_match(btn('.run', a = 'title="Run"'), 'title="Run"'))
+})
+
+assert('new_yaml() and feature_list() build YAML for selected features', {
+  (feature_list('new:snap,bogus,tabsets') %==% c('snap', 'tabsets'))
+  (feature_list('yaml:') %==% character())
+  y = new_yaml('tabsets')
+  (y[1] %==% '---' && y[length(y)] %==% '---')
+  (has_match(y, '@tabsets'))
+  (!any(grepl('output', new_yaml())))
+  # all presets only use known features
+  (all(unlist(feature_presets) %in% rownames(assets)))
+})
+
+assert('feature_form() includes the filename hint, presets, and YAML preview', {
+  f = feature_form('.')
+  (has_match(f, 'id="filename-hint"'))
+  (has_match(f, 'data-features='))
+  (has_match(f, 'id="yaml-preview"'))
+})
+
+assert('dir_page() shows relative-time data, and dims files starting with _', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('---', 'title: "My <Doc>"', '---', 'x'), file.path(d, 'a.Rmd'))
+  writeLines('x', file.path(d, '_b.md'))
+  for (i in 1:5) writeLines('x', file.path(d, sprintf('f%d.txt', i)))
+  p = paste(as.character(dir_page(d)), collapse = '\n')
+  # the title is shown once (in the content of the box), not in the box title
+  (length(gregexpr('My &lt;Doc&gt;', p)[[1]]) %==% 1L)
+  (has_match(p, 'data-ms='))
+  (has_match(p, 'class="box muted"'))
+  (has_match(p, 'class="boxes"'))
+  (has_match(p, 'class="listing-tools"'))
+})
+
+# TODO: remove the condition after requiring xfun >= 0.62.8 (`src` in record())
+if ('src' %in% names(formals(xfun::record))) assert('catch_page() links tracebacks to source lines of code chunks in fuse()', {
+  rmd = tempfile(fileext = '.Rmd')
+  on.exit(unlink(rmd), add = TRUE)
+  # fuse() the file and return the traceback as (call, link text) pairs
+  trace = function(lines) {
+    writeLines(lines, rmd)
+    r = suppressMessages(catch_page(fuse(rmd, 'markdown', quiet = TRUE), 'a.css'))
+    x = regmatches(r$payload, gregexpr('<li><code>.*?</li>', r$payload))[[1]]
+    list(
+      status = r[['status code']],
+      call = sub('<li><code>(.*?)</code>.*', '\\1', x),
+      link = sub('.*>(.*?)</a></li>', '\\1', x)
+    )
+  }
+  # fuse() assigns chunk objects to the global env, so avoid the names f and g
+  # innermost first: the failing function (where it is defined), the call of
+  # g() in f(), and the call of f() in the chunk
+  x = trace(c(
+    'Text', '', '```{r}', 'g = function() stop("bad")', 'f = function() g()',
+    'f()', '```'
+  ))
+  (x$status %==% 500L)
+  (x$call %==% c('g()', 'g()', 'f()'))
+  (x$link %==% paste0(basename(rmd), c('#4', '#5', '#6')))
+  # an error in a top-level expression of the second chunk, after the pipe
+  # comments and other chunks, is located by the line in the file
+  x = trace(c(
+    '```{r}', 'x = 1', '```', '', 'Text', '', '```{r}', '#| echo: false',
+    '#| label: second', 'y = 2', 'stop(1)', '```'
+  ))
+  (x$status %==% 500L)
+  (x$call %==% 'stop(1)')
+  (x$link %==% paste0(basename(rmd), '#11'))
+})
+
+assert('listing pages only have Run buttons, while file pages have edit and render buttons', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  for (f in c('a.Rmd', 'b.md', 'c.txt')) writeLines('x', file.path(d, f))
+  # icons in the rendered HTML are characters instead of entities
+  ico = function(x) intToUtf8(as.integer(gsub('\\D', '', .icons[[x]])))
+  p = paste(as.character(dir_page(d)), collapse = '\n')
+  # one Run button for each of the two documents, none for the text file
+  (lengths(gregexpr(ico('.run'), p, fixed = TRUE)) %==% 2L)
+  (!has_match(p, ico('.open')))
+  (!has_match(p, ico('.save')))
+  nav = file_page(file.path(d, 'a.Rmd'), '1')$payload
+  (has_match(nav, ico('.open')))
+  (has_match(nav, ico('.save')))
+})
+
+assert('dir_page() lists foo.md as a plain file when foo.Rmd exists', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  for (f in c('foo.Rmd', 'foo.md', 'bar.md')) writeLines('x', file.path(d, f))
+  p = paste(as.character(dir_page(d)), collapse = '\n')
+  (length(gregexpr('class="box"', p)[[1]]) %==% 2L)
+  (has_match(p, '<li><a href="foo.md\\?preview=1"'))
+})

@@ -365,7 +365,7 @@ pkg_examples = function(
     # put example source in a box (and keep the names to match groups)
     structure(fenced_div(c(
       fenced_div(
-        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9205;](%s){.run}', i, t, h, b, src, h),
+        sprintf('%s[%s](%s) _(source: [%s](%s))_ [&#9658;](%s){.run}', i, t, h, b, src, h),
         '.caption .name'
       ),
       fenced_block(x, '.md')

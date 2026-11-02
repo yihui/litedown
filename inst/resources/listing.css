@@ -46,3 +46,12 @@ li {
   display: inline-block;
   margin-right: 2em;
 }
+.muted {
+  opacity: .6;
+}
+[hidden] {
+  display: none !important;
+}
+.box > .name time, li time {
+  cursor: help;
+}

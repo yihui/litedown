@@ -1222,6 +1222,11 @@ eng_r = function(x, inline = FALSE, ...) {
     hash = opts$cache.hash, extra = opts$cache.extra, keep = opts$cache.keep,
     id = opts$label, rw = opts$cache.rw
   )
+  # source references of the code point to the input file (for tracebacks)
+  # TODO: require xfun >= 0.62.8 (which has `src`) and remove the condition
+  if (!is.null(f <- .env$full_input) && !is.null(x$code_start) &&
+      'src' %in% names(formals(xfun::record)))
+    args$src = list(file = f, line = x$code_start)
   do.call(xfun::record, c(list(code = x$source, envir = fuse_env()), args))
 }
 

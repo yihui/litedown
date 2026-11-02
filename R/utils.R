@@ -291,6 +291,14 @@ assets = t(data.frame(
   row.names = c('description', 'css', 'js'), check.names = FALSE
 ))
 
+# feature presets for new files in roam()
+feature_presets = list(
+  Blank = character(),
+  Article = c('article', 'heading-anchor', 'toc-highlight'),
+  Slides = c('snap', 'snap-clean'),
+  Book = c('book', 'chapter-toc', 'heading-anchor', 'toc-highlight')
+)
+
 # an HTML form for creating new files in roam()
 feature_form = function(path) {
   nms = rownames(assets)
@@ -298,17 +306,28 @@ feature_form = function(path) {
   files = basename(files[file_exists(files)])
   one_string(c(
     '<h3>New File</h3>',
-    '<p><label>Filename: <input type="text" id="filename-input" list="file-list" placeholder="enter a new filename (not in the list)" /></label></p>',
+    '<p><label>Filename: <input type="text" id="filename-input" list="file-list" placeholder="e.g., notes.Rmd (.Rmd is added if no extension)" autocomplete="off" /></label></p>',
+    '<p id="filename-hint" aria-live="polite"></p>',
     if (length(files)) c(
       '<datalist id="file-list">',
-      sprintf('<option value="&#10060; %s">', html_escape(files, TRUE)),
+      sprintf('<option value="%s">', html_escape(files, TRUE)),
       '</datalist>'
     ),
-    '<p><b>Select HTML features</b></p>', '<p style="columns:20em;">',
+    '<div id="feature-section">',
+    '<p><b>Start from</b> <span class="presets">',
+    sprintf(
+      '<button type="button" data-features="%s" aria-pressed="false">%s</button>',
+      vapply(feature_presets, paste, '', collapse = ','), names(feature_presets)
+    ),
+    '</span></p>',
+    '<details><summary>HTML features (<span id="features-count">none</span>)</summary>',
+    '<p style="columns:20em;">',
     sprintf(
       '<label><input name="%s" type="checkbox" /> <a href="https://pkg.yihui.org/litedown/book/#sec:%s" target="_blank"><code>%s</code></a>: %s</label>',
       nms, nms, nms, html_escape(assets[, 'description'])
-    ), '</p>'
+    ), '</p></details>',
+    '<p><b>YAML preview</b></p><pre><code id="yaml-preview"></code></pre>',
+    '</div>'
   ))
 }
 
