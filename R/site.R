@@ -176,10 +176,15 @@ nav_menu = function(info) {
   root = sub('/+$', '', info$root)  # strip any trailing slash for reliable dirname() comparison
   # list all pages, since `inputs` may be a single file when previewing
   b = basename(find_input(root, FALSE, info$yaml[['site']][['pattern']]))
+  urls = if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
   links = sprintf(
-    '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))),
-    if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
+    '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))), urls
   )
+  # the package name and version replace the Home link of a package site
+  if (!is.null(brand <- nav_brand(root))) {
+    i = is_index(b)
+    links[i] = sprintf(brand, paste0('/', urls[i]))
+  }
   # add subdirs that already have an index.html (same exclusion as find_input),
   # except `doc/` whose index.html is the vignette index of an R package
   sub_dirs = list.dirs(root, recursive = FALSE)
@@ -187,6 +192,13 @@ nav_menu = function(info) {
   sub_dirs = sub_dirs[basename(sub_dirs) != 'doc']
   dnames = basename(sub_dirs)
   c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames), nav_github(root))
+}
+
+# link of the package name and version (`%s` is the URL), NULL if not a package
+nav_brand = function(root = '.') {
+  if (is.null(pkg <- in_dir(root, detect_pkg(error = FALSE)))) return()
+  v = read_desc(pkg, 'Version')[[1]]
+  sprintf('[%s](%%s){.brand} <small class="version">%s</small>', pkg, v)
 }
 
 # a GitHub icon pushed to the right end of the menu (see site.css), if the
