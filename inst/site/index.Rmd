@@ -34,7 +34,7 @@ litedown::pkg_desc(pkg_name, if (has_readme) 'dl' else 'table')
 if (has_readme) xfun::raw_string(readme)
 ```
 
-## Appendix {.appendix}
+## Citation {-}
 
 To cite the package **`{r} pkg_name`** in publications, please use:
 
