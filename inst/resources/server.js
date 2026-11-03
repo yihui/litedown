@@ -327,7 +327,7 @@
   times(); setInterval(times, 30000);
   const tools = $('.listing-tools');
   if (tools) {
-    const items = () => $$('.box, article > ul > li'),
+    const items = () => $$('.box, .listing > ul > li'),
       input = $('input', tools), sel = $('select', tools);
     const name = el => ($('a', el)?.innerText || '').toLowerCase(),
       ms = el => +($('time[data-ms]', el)?.dataset.ms || 0);

@@ -75,6 +75,8 @@ assert('dir_page() renders a directory listing to HTML', {
   p = as.character(dir_page(d))
   (any(grepl('<', p)))          # HTML output
   (any(grepl('index.md', p)))   # lists the files
+  # plain files are in a .listing block, which scopes listing.css
+  (has_match(p, '<div class="listing">\n<ul>'))
 })
 
 assert('file_resp() sends raw, verbatim, or rendered responses by preview level', {

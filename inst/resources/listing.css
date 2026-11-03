@@ -1,19 +1,11 @@
-body {
+/* Boxes of examples (pkg_examples()) and of directory pages (roam()); the file
+   list of a directory page is wrapped in `.listing` (see dir_page()). */
+body:has(.boxes, .listing) {
   max-width: none;
 }
 .boxes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(30em, 100%), 1fr));
-}
-ul {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  padding-left: .5em;
-}
-h1 {
-  text-align: left;
-  font-size: 1em;
 }
 .box {
   margin: .5em;
@@ -22,6 +14,7 @@ h1 {
     p {
       margin: .5em 0;
     }
+    time { cursor: help; }
   }
   em {
     font-size: .9em;
@@ -32,26 +25,36 @@ h1 {
   .run {
     float: right;
   }
+  pre {
+    white-space: pre;
+    & > code:not([class]) {
+      border: none;
+      padding: 0 1em 1em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
-pre > code:not([class]) {
-  border: none;
-  padding: 0 1em 1em;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.listing {
+  & > ul {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding-left: .5em;
+    & > li {
+      display: inline-block;
+      margin-right: 2em;
+      time { cursor: help; }
+    }
+  }
 }
-pre, pre:hover {
-  white-space: pre;
-}
-li {
-  display: inline-block;
-  margin-right: 2em;
-}
-.muted {
+:is(.box, .listing li).muted {
   opacity: .6;
 }
-[hidden] {
+:is(.box, .listing > ul > li)[hidden] {
   display: none !important;
 }
-.box > .name time, li time {
-  cursor: help;
+body:has(.listing) .frontmatter h1 {
+  text-align: left;
+  font-size: 1em;
 }

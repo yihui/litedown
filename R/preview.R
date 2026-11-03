@@ -293,7 +293,7 @@ dir_page = function(dir = '.') {
   res = if (length(boxes)) fenced_div(unlist(boxes), '.boxes')
   files = files[!i1]
   i2 = dir.exists(files)
-  res = c(res, '', lapply(files[order(!i2, files)], function(f) {
+  items = lapply(files[order(!i2, files)], function(f) {
     b = basename(f)
     if (d <- dir.exists(f)) b = paste0(b, '/')
     sprintf(
@@ -301,7 +301,9 @@ dir_page = function(dir = '.') {
       if (length(m <- muted(f))) paste0('{', m, '}') else '',
       if (d) '' else info(f, b)
     )
-  }))
+  })
+  # the file list is styled by listing.css (`.listing`)
+  if (length(items)) res = c(res, '', fenced_div(unlist(items), '.listing'))
   tools = if (length(list.files(dir)) > 4) list_tools()
   mark_full(c(tools, unlist(res)), meta = list(title = dir_title(dir)))
 }
