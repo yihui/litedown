@@ -410,6 +410,10 @@ is_text_file = function(ext = file_ext(file), type = mime_type(file), file) {
   (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
+is_html_file = function(x) {
+  file_exists(x) && tolower(file_ext(x)) %in% c('html', 'htm')
+}
+
 is_roaming = function() isTRUE(getOption('litedown.roaming'))
 
 # return a raw file response
@@ -429,7 +433,8 @@ dir_title = function(f, preview = '1') {
       if (file_exists(f)) b, if (is_lite_ext(file = f)) c(
         btn('.save'), if (preview != '2')
           btn('.run', sprintf('%s?preview=2', b), 'title="Run"')
-      ),
+      ) else if (is_html_file(f))
+        btn('.run', b, 'title="View the HTML page"'),
       if (file_exists(f) && is_text_file(file = f)) btn('.open')
     )
   }

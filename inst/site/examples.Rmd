@@ -15,6 +15,7 @@ litedown::vest(css = paste0(
     overflow: hidden;
     text-overflow: ellipsis;
     background: none;
+    border: none;
   }
   &:not(:focus) code {
     cursor: pointer;
