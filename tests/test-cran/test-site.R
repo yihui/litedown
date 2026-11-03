@@ -106,6 +106,17 @@ assert('nav_menu() lists all pages even if only one file is being rendered', {
   (grepl('/about.html', m[2], fixed = TRUE))
 })
 
+assert('nav_menu() labels the home link with the package name and version', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  writeLines(c('Package: foo', 'Version: 1.2.3'), file.path(d, 'DESCRIPTION'))
+  m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
+  (grepl('[foo](/index.html){.brand}', m[1], fixed = TRUE))
+  (grepl('1.2.3', m[1], fixed = TRUE))
+  (!grepl('Home', m[1], fixed = TRUE))
+})
+
 assert('nav_menu() ignores doc/index.html (vignette index)', {
   d = tempfile()
   on.exit(unlink(d, recursive = TRUE), add = TRUE)

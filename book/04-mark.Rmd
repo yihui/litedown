@@ -321,6 +321,11 @@ a link to this heading. You can also set a sub-option:
       depth: 3
     ```
 
+-   `class`: The class name(s) of the TOC. By default, it is `side side-left`
+    (a floating TOC on the left) if the `@sidenotes` JS asset is used, and
+    empty otherwise. For example, `class: side side-right` moves the TOC to the
+    right.
+
 To exclude a certain heading from the TOC, assign a class name `unlisted` to it.
 For example:
 
