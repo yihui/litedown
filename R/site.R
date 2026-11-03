@@ -160,6 +160,11 @@ edit_page_url = function(input, root) {
     return()
   # normalize both paths so that symlinked/short temp dirs compare equal
   f = relative_path(normalize_path(input), normalize_path(root))
+  # articles/ in the site may come from vignettes/, vignettes/articles/, etc.
+  if (dirname(f) == 'articles') f = Find(
+    function(a) basename(a) == basename(f), article_sources(attr(pkg, 'path')),
+    nomatch = f
+  )
   github_file_url(attr(pkg, 'path'), f, TRUE)
 }
 

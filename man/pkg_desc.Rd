@@ -141,9 +141,13 @@ and BibTeX formats.
 
 \code{pkg_manual()} returns all manual pages of the package in HTML.
 
-\code{pkg_articles()} returns a list of links to the built vignettes of
-the package (and their source files) in Markdown. It also copies the
-\code{doc} directory of the installed package to the current directory.
+\code{pkg_articles()} returns a list of links to the articles of the
+package (and their source files) in Markdown. Articles are the built
+vignettes (the \code{doc} directory of the installed package is copied to the
+current directory), plus the \code{.Rmd}/\code{.md} files under \verb{vignettes/articles/}
+and \verb{articles/} in the package source directory. Vignettes
+that use the \code{litedown::vignette} engine and these extra articles are
+rendered again as normal site pages under \verb{articles/} by \code{\link[=pkg_site]{pkg_site()}}.
 }
 \description{
 Helper functions to retrieve various types of package information that can be
