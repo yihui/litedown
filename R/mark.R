@@ -197,7 +197,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # number sections
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
     # build table of contents
-    ret = add_toc(ret, options)
+    ret = add_toc(ret, options, c(meta[['js2']], meta[['js']], acc_var('js')))
     # a raw LaTeX/TeX math environment (```{=latex} \begin{...} ... ```) is
     # rendered as math in HTML by the C 'rawblock' extension regardless of the
     # 'latex_math' option, so it must load a math library even when math is off.

@@ -293,7 +293,7 @@ dir_page = function(dir = '.') {
   res = if (length(boxes)) fenced_div(unlist(boxes), '.boxes')
   files = files[!i1]
   i2 = dir.exists(files)
-  res = c(res, '', lapply(files[order(!i2, files)], function(f) {
+  items = lapply(files[order(!i2, files)], function(f) {
     b = basename(f)
     if (d <- dir.exists(f)) b = paste0(b, '/')
     sprintf(
@@ -301,7 +301,9 @@ dir_page = function(dir = '.') {
       if (length(m <- muted(f))) paste0('{', m, '}') else '',
       if (d) '' else info(f, b)
     )
-  }))
+  })
+  # the file list is styled by listing.css (`.listing`)
+  if (length(items)) res = c(res, '', fenced_div(unlist(items), '.listing'))
   tools = if (length(list.files(dir)) > 4) list_tools()
   mark_full(c(tools, unlist(res)), meta = list(title = dir_title(dir)))
 }
@@ -408,6 +410,10 @@ is_text_file = function(ext = file_ext(file), type = mime_type(file), file) {
   (ext %in% c('js', 'latex', 'qmd', 'tex', 'xml') || grepl('^text/', type))
 }
 
+is_html_file = function(x) {
+  file_exists(x) && tolower(file_ext(x)) %in% c('html', 'htm')
+}
+
 is_roaming = function() isTRUE(getOption('litedown.roaming'))
 
 # return a raw file response
@@ -427,7 +433,8 @@ dir_title = function(f, preview = '1') {
       if (file_exists(f)) b, if (is_lite_ext(file = f)) c(
         btn('.save'), if (preview != '2')
           btn('.run', sprintf('%s?preview=2', b), 'title="Run"')
-      ),
+      ) else if (is_html_file(f))
+        btn('.run', b, 'title="View the HTML page"'),
       if (file_exists(f) && is_text_file(file = f)) btn('.open')
     )
   }
