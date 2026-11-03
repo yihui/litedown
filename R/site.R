@@ -198,7 +198,7 @@ nav_menu = function(info) {
 nav_brand = function(root = '.') {
   if (is.null(pkg <- in_dir(root, detect_pkg(error = FALSE)))) return()
   v = read_desc(pkg, 'Version')[[1]]
-  sprintf('[%s](%%s){.brand} <small class="version">%s</small>', pkg, v)
+  sprintf('[%s](%%s){.brand} <small class="version">v%s</small>', pkg, v)
 }
 
 # a GitHub icon pushed to the right end of the menu (see site.css), if the
