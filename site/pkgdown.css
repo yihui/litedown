@@ -20,18 +20,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --pk-primary: #6ea8fe;
-    --pk-fg: #dee2e6;
-    --pk-muted: rgba(222, 226, 230, .75);
-    --pk-bg: #212529;
-    --pk-border: #495057;
-    --pk-code-bg: rgba(222, 226, 230, .1);
-    --pk-soft: rgba(222, 226, 230, .1);
-    /* use the dark palette above instead of inverting the page */
-    --invert-filter: none;
+    --pk-bg: #deddd8;
   }
-  body { background: var(--pk-bg); }
-  .site-nav a.right img { filter: invert(1); }
 }
 
 body {
