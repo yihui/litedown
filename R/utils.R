@@ -654,7 +654,7 @@ bib_meta = function(meta, bib, package) {
 }
 
 # find headings and build a table of contents as an unordered list
-build_toc = function(html, n = 3) {
+build_toc = function(html, n = 3, class = NULL) {
   if (n <= 0) return()
   if (n > 6) n = 6
   r = sprintf('<(h[1-%d])( id="[^"]+")?[^>]*>(.+?)</\\1>', n)
@@ -674,16 +674,19 @@ build_toc = function(html, n = 3) {
   # add class 'numbered' to the first <ul> if any heading is numbered
   if (length(grep('<span class="section-number[^"]*">', x)))
     x = sub('<ul>', '<ul class="numbered">', x)
-  paste0('<nav id="TOC">\n', x, '</nav>')
+  cls = if (length(class)) sprintf(' class="%s"', one_string(class, ' '))
+  paste0('<nav id="TOC"', cls, '>\n', x, '</nav>')
 }
 
 # add TOC to the html body
-add_toc = function(html, options) {
+add_toc = function(html, options, js = NULL) {
   o = options[['toc']]
   if (is.null(o) || isFALSE(o)) return(html)
   if (isTRUE(o)) o = list()
   if (!is.numeric(o$depth)) o$depth = 3
-  one_string(c(build_toc(html, o$depth), html))
+  # float the TOC on the left when sidenotes.js is used (set `class` to change)
+  if (is.null(o$class)) o$class = if (any(grepl('sidenotes', js))) 'side side-left'
+  one_string(c(build_toc(html, o$depth, o$class), html))
 }
 
 sec_levels = c('subsubsection', 'subsection', 'section', 'chapter', 'part')

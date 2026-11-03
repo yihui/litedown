@@ -100,7 +100,7 @@ section.footnotes {
 }
 @media (prefers-color-scheme: dark) {
   :is(html, img, video, iframe) {
-    &:not(.no-invert, .no-invert *), .no-invert:not(&) { filter: invert(1); }
+    &:not(.no-invert, .no-invert *), .no-invert:not(&) { filter: var(--invert-filter, invert(1)); }
   }
   body { background: #ededed; }
 }
