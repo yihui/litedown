@@ -41,7 +41,6 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 a { color: var(--pk-primary); }
-:is(h1, h2, h3, h4, h5, h6) { font-weight: 500; }
 article h2 { border: 0; }
 
 /* tinted full-bleed navbar */
@@ -65,9 +64,9 @@ article h2 { border: 0; }
     color: inherit;
     &:hover { background: var(--pk-soft); color: inherit; }
     &[aria-current] { box-shadow: none; margin-bottom: 0; background: var(--pk-soft); }
-    &.brand { font-size: 1.25rem; padding-left: 0; }
+    &.brand { font-size: 1.25rem; }
   }
-  .version { color: var(--pk-muted); }
+  .version { color: var(--pk-muted); margin-right: 1em; }
 }
 
 /* page without card; header with a rule below */
@@ -81,7 +80,6 @@ article:not(.pagesjs *), .frontmatter {
   padding-bottom: .5rem;
   border-bottom: 1px solid var(--pk-border);
   text-align: left;
-  .date { display: none; }
 }
 
 /* make room for the sidebar, which hangs in the right margin of the article */
@@ -101,7 +99,6 @@ article:not(.pagesjs *), .frontmatter {
     font-weight: 500;
   }
   a { color: inherit; }
-  .section-number { display: none; }
 }
 
 /* code */
