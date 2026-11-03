@@ -52,6 +52,8 @@ output:
     meta:
       include_after: "_footer.md"
       # root-relative URLs, resolved per page by fuse_site()
-      header_includes: ['<link rel="stylesheet" href="/pkgdown.css">', '<script src="/pkgdown.js" defer></script>']
+      header_includes: '<link rel="stylesheet" href="/pkgdown.css">'
     options:
       number_sections: true
+      toc:
+        class: side side-right
