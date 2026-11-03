@@ -208,6 +208,17 @@ assert('build_toc() builds a nested TOC from HTML headings', {
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b" class="unlisted">B</h2>'))))
   # n <= 0 disables the TOC
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'), 0)))
+  # TOC class
+  h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
+  (grepl('<nav id="TOC" class="side side-right">', build_toc(h, 3, c('side', 'side-right')), fixed = TRUE))
+})
+
+assert('add_toc() uses side classes only when sidenotes.js is used', {
+  h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
+  (grepl('<nav id="TOC">', add_toc(h, list(toc = TRUE)), fixed = TRUE))
+  (has_match(add_toc(h, list(toc = TRUE), '@sidenotes'), '<nav id="TOC" class="side side-left">'))
+  (has_match(add_toc(h, list(toc = list(class = 'side side-right')), '@sidenotes'), 'class="side side-right"'))
+  (grepl('<nav id="TOC" class="x">', add_toc(h, list(toc = list(class = 'x'))), fixed = TRUE))
 })
 
 assert('number_sections() prefixes hierarchical numbers to HTML headings', {
