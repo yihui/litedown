@@ -313,7 +313,7 @@ list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 | Source | Description | Content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |
+| `articles` | package vignettes and articles | `pkg_articles()` (the `doc/` folder of the installed package, plus `vignettes/articles/` and `articles/`) |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
@@ -335,14 +335,24 @@ You can exclude certain template pages from the site via the field `exclude`
 under `site` in `_litedown.yml` in the site directory (the pages will not be
 copied). By default, `code.Rmd` is excluded, and
 
--   `articles.Rmd` is excluded if the package does not have the `vignettes/`
-    directory;
+-   `articles.Rmd` is excluded if the package has neither the `vignettes/` nor
+    the `articles/` directory;
 
 -   `examples.Rmd` is excluded if the package does not have the `examples/`
     directory;
 
 -   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
     the package.
+
+Articles are collected from three places: the built vignettes in `vignettes/`,
+and the `.Rmd`/`.md` files under `vignettes/articles/` and
+`articles/` in the package root, which are not installed with the package.
+Vignettes using the `litedown::vignette` engine and all files in the latter two
+directories are copied to `articles/` in the site directory and rendered as
+normal site pages (with the menu and footer), while other vignettes are copied
+from the `doc/` folder as built. Files starting with `_` in these directories
+(e.g., child documents) and other non-source files such as images are copied
+along.
 
 For example, if you do not want to include the news (or the source code,
 either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
