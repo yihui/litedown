@@ -173,3 +173,31 @@ assert('giscus_html() builds a giscus script from site config', {
   (has_match(x, 'data-strict="1"'))
   (has_match(giscus_html(list(mapping = 'title')), 'data-mapping="title"'))
 })
+
+assert('pkg_readme() and pkg_logo() prepare the home page of a package site', {
+  d = tempfile(); dir.create(file.path(d, 'man/figures'), recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  p = structure('foo', path = d)
+  (is.null(pkg_readme(p)))
+  (is.null(pkg_logo(p)))
+  file.create(file.path(d, 'man/figures/logo.svg'))
+  (pkg_logo(p) %==% '![foo logo](man/figures/logo.svg){.logo}')
+  # lines before the badges and the title are dropped; badges go to the sidebar
+  writeLines(c(
+    '![](man/figures/logo.svg)', '# foo', '<!-- badges: start -->', 'badge',
+    '<!-- badges: end -->', 'text'
+  ), file.path(d, 'README.md'))
+  x = pkg_readme(p)
+  (x[1] %==% '::: {.side .side-right}')
+  (x[length(x)] %==% 'text')
+  (!any(x == '# foo'))
+  # a logo in the site dir (current dir) takes precedence
+  d2 = tempfile(); dir.create(d2); on.exit(unlink(d2, recursive = TRUE), add = TRUE)
+  file.create(file.path(d2, 'logo.png'))
+  (in_dir(d2, pkg_logo(p)) %==% '![foo logo](logo.png){.logo}')
+  # the logo only in the dropped lines is still added
+  (has_match(pkg_logo(p), 'logo.svg', fixed = TRUE))
+  # but not when the README shows it
+  writeLines(c('# foo', 'text', '![](man/figures/logo.svg)'), file.path(d, 'README.md'))
+  (is.null(pkg_logo(p)))
+})

@@ -803,6 +803,10 @@ run_examples = function(html, config, path) {
 #' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
 #' `code.Rmd` is excluded, and `exclude: NA` means to exclude nothing.
 #'
+#' If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png`
+#' (or `.svg`, `.jpg`, etc.), it will be shown at the top right of the home page.
+#' A file `logo.png` (or other formats) under `output` takes precedence.
+#'
 #' If the package contains a book project (i.e., `book/_litedown.yml` exists),
 #' the book will be built via [fuse_book()] and placed under the `book/`
 #' subdirectory of the site.
@@ -869,6 +873,42 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   })
   invisible(res)
 }
+
+# README.md of a package prepared for the home page of its site (NULL if none):
+# badges go to the right sidebar, and lines before them and the title are removed
+pkg_readme = function(name = detect_pkg()) {
+  f = file.path(attr(name, 'path'), 'README.md')
+  if (!file_exists(f)) return()
+  x = read_utf8(f)
+  i = which(x == '<!-- badges: start -->')
+  if (length(i)) {
+    j = which(x == '<!-- badges: end -->')
+    # put badges in the right sidebar
+    if (length(j <- j[j > i[1]])) x = append(append(
+      x, c('', ':::', ''), j[1]
+    ), c('::: {.side .side-right}', ''), i[1] - 1)
+    # remove lines before badges since they usually contain duplicated info (e.g., title)
+    x = x[seq_along(x) >= i[1]]
+  }
+  i = which(tolower(x) == paste('#', tolower(name)))
+  # remove the title line if it still exists
+  if (length(i)) x = x[-i[1]]
+  x
+}
+
+# Markdown of the package logo (e.g., a hex sticker) with the class `logo`: the
+# logo file in the current (site) dir, or man/figures/ of the package; NULL if
+# there is none or the (prepared) README already shows it. The home page copies
+# man/figures to its own dir.
+pkg_logo = function(name = detect_pkg(), readme = pkg_readme(name)) {
+  dirs = c('.', file.path(attr(name, 'path'), 'man/figures'))
+  for (i in 1:2) if (length(x <- list.files(dirs[i], logo_regex))) break
+  if (!length(x) || any(grepl(x[1], readme, fixed = TRUE))) return()
+  # styled by .logo in site.css
+  sprintf('![%s logo](%s%s){.logo}', name, c('', 'man/figures/')[i], x[1])
+}
+
+logo_regex = '^logo[.](png|jpe?g|gif|svg|webp)$'
 
 # fill in the pre-computed variables in the footer file (included by
 # _litedown.yml); $edit$ is left for set_site_options() since it differs from

@@ -370,6 +370,12 @@ start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
 `DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
 icon on the right.
 
+If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png` (or
+`.svg`, `.jpg`, etc.), it is floated to the right on the home page, unless
+`README.md` already shows it. A `logo.png` in the site directory takes
+precedence. The image has the class `logo`, which you can restyle in your own
+CSS.
+
 If you publish the site to GitHub Pages yourself instead of using the GitHub
 action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
 site directory, because Jekyll ignores files and directories whose names start
@@ -467,7 +473,7 @@ You can copy it to the `.github/workflows/` directory of the R package's Git
 repository and commit/push it via Git. Within a few minutes, the package site
 should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
 username, and `pkg` is the repository name, e.g.,
-<https://yihui.github.io/litedown/>.
+`https://yihui.github.io/litedown/`.
 
 The workflow also deploys a preview of the site for each pull request to
 [surge.sh](https://surge.sh) at `https://USER-REPO-pr-N.surge.sh` (`N` is the
