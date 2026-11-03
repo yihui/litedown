@@ -90,6 +90,7 @@ article:not(.pagesjs *), .frontmatter {
   }
   a { color: inherit; }
 }
+body:has(.pkg-desc) #TOC { display: none; }
 
 /* code */
 pre > code, pre > code[class] {
