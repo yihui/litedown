@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.3">
+<meta name="generator" content="litedown 1.0.4">
 <title></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/prism-xcode.min.css">
 </head>
 <body>
-<nav class="site-nav"><p><a href="../index.html">Home</a>
+<nav class="site-nav"><p><a href="../index.html" class="brand">litedown</a> <small class="version">v1.0.4</small>
 <a href="../examples.html">Examples</a>
 <a href="../manual.html">Manual</a>
 <a href="../news.html">News</a>
@@ -30,7 +30,7 @@
 </header>
 <main>
 <article class="">
-<nav id="TOC">
+<nav id="TOC" class="side side-left">
 <ul class="numbered">
 <li><a href="#sec:test-markdown-options"><span class="section-number">0.1</span> Test Markdown options</a></li>
 <li><a href="#sec:html-output-of-above-examples"><span class="section-number">0.2</span> HTML output of above examples</a></li>
@@ -55,7 +55,7 @@ mkd &lt;- c('# Header 1', 'p1', '## Header 2', 'p2')
 
 mark(mkd, options = '+number_sections')
 </code></pre>
-<pre><code class="language-html plain">&lt;nav id=&quot;TOC&quot;&gt;
+<pre><code class="language-html plain">&lt;nav id=&quot;TOC&quot; class=&quot;side side-left&quot;&gt;
 &lt;ul class=&quot;numbered&quot;&gt;
 &lt;li&gt;&lt;a href=&quot;#chp:header-1&quot;&gt;&lt;span class=&quot;section-number main-number&quot;&gt;1&lt;/span&gt; Header 1&lt;/a&gt;
 &lt;ul&gt;
@@ -71,7 +71,7 @@ mark(mkd, options = '+number_sections')
 </code></pre>
 <pre><code class="language-r">mark(mkd, options = '+number_sections+toc')
 </code></pre>
-<pre><code class="language-html plain">&lt;nav id=&quot;TOC&quot;&gt;
+<pre><code class="language-html plain">&lt;nav id=&quot;TOC&quot; class=&quot;side side-left&quot;&gt;
 &lt;ul class=&quot;numbered&quot;&gt;
 &lt;li&gt;&lt;a href=&quot;#chp:header-1&quot;&gt;&lt;span class=&quot;section-number main-number&quot;&gt;1&lt;/span&gt; Header 1&lt;/a&gt;
 &lt;ul&gt;
@@ -351,7 +351,7 @@ mkd &lt;- c('# Header 1', 'p1', '## Header 2', 'p2')
 
 mark(mkd, options = '+number_sections')
 </code></pre>
-<nav id="TOC">
+<nav id="TOC" class="side side-left">
 <ul class="numbered">
 <li><a href="#chp:header-1"><span class="section-number main-number">1</span> Header 1</a>
 <ul>
@@ -366,7 +366,7 @@ mark(mkd, options = '+number_sections')
 <p>p2</p>
 <pre><code class="language-r">mark(mkd, options = '+number_sections+toc')
 </code></pre>
-<nav id="TOC">
+<nav id="TOC" class="side side-left">
 <ul class="numbered">
 <li><a href="#chp:header-1"><span class="section-number main-number">1</span> Header 1</a>
 <ul>
@@ -884,7 +884,7 @@ mark(mkd)
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
 <p><a href="https://github.com/yihui/litedown/edit/main/examples/test-options.Rmd" class="edit-page">Edit this page</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.3</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.4</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/toc-highlight.min.js" defer></script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.3">
+<meta name="generator" content="litedown 1.0.4">
 <title>News</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/article.min.css">
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/css/prism-xcode.min.css">
 </head>
 <body>
-<nav class="site-nav"><p><a href="index.html">Home</a>
+<nav class="site-nav"><p><a href="index.html" class="brand">litedown</a> <small class="version">v1.0.4</small>
 <a href="examples.html">Examples</a>
 <a href="manual.html">Manual</a>
 <a href="news.html">News</a>
@@ -29,7 +29,7 @@
 </header>
 <main>
 <article class="">
-<nav id="TOC">
+<nav id="TOC" class="side side-left">
 <ul>
 <li><a href="#sec:litedown-1-1">litedown 1.1</a></li>
 <li><a href="#sec:litedown-1-0">litedown 1.0</a></li>
@@ -53,6 +53,12 @@
 </li>
 <li>
 <p><code>pkg_site()</code> and <code>fuse_site()</code> can add a <a href="https://giscus.app">giscus</a> comment section to the footer of every page, configured via <code>site: giscus</code> in <code>_litedown.yml</code> (<a href="https://pkg.yihui.org/litedown/book/#sec:site-giscus">details</a>).</p>
+</li>
+<li>
+<p>In the navigation bar of a package site, the Home link is now the package name followed by its version.</p>
+</li>
+<li>
+<p>The <code>toc</code> option gains a sub-option <code>class</code> to set the TOC’s class names (e.g., <code>side side-right</code> to float the TOC on the right); it defaults to <code>side side-left</code> when <code>@sidenotes</code> is used (<a href="https://pkg.yihui.org/litedown/book/#sec:mark-options">details</a>).</p>
 </li>
 </ul>
 <h2 id="sec:litedown-1-0" class="unnumbered">litedown 1.0</h2>
@@ -457,7 +463,7 @@ graph TD;
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.3</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.4</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.140/js/toc-highlight.min.js" defer></script>
