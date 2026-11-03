@@ -376,6 +376,29 @@ default, and listed only if a group names them. You can also pass the groups to
 the `groups` argument of `pkg_manual()`, `pkg_articles()`, and `pkg_examples()`
 as a list of lists with the fields `title`, `desc`, and `contents`.
 
+### A pkgdown-like look {#sec:pkg-site-pkgdown}
+
+If your users are familiar with **pkgdown** sites (Bootstrap themes), you can
+give your package site a similar look by adding the CSS asset `@pkgdown-like` in
+the `_litedown.yml` in the site directory, and moving the table of contents to
+the right with the `class` option of `toc` (@sec:toc):
+
+``` yaml
+output:
+  html:
+    meta:
+      css: "@pkgdown-like"
+    options:
+      toc:
+        class: side side-right
+```
+
+Use `css` here instead of `css2`, so that the default CSS assets of the site
+(@sec:site-defaults) are kept and `@pkgdown-like` is added after them. The
+navigation menu starts with the package name and version, and the theme is
+darkened by inverting colors in the dark color scheme, which can be turned off
+by setting the CSS variable `--invert-filter` to `none`.
+
 ### Package playground
 
 The site template also includes a `playground/` subpage, which provides an
