@@ -3,7 +3,10 @@ title: Examples
 ---
 
 ```{r, echo = FALSE}
-litedown::vest(css = 'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/listing.css')
+litedown::vest(css = paste0(
+  'https://cdn.jsdelivr.net/gh/yihui/litedown/inst/resources/listing.css?v=',
+  packageVersion('litedown')
+))
 ```
 
 ```{css, echo = FALSE}
