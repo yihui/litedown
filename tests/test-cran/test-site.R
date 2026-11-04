@@ -165,6 +165,34 @@ assert('set_site_options() marks the site menu with class site-nav', {
   (has_match(getOption('litedown.html.meta')$include_after, '^<footer>'))
 })
 
+assert('root-relative css/js resolve to the page dir, other paths are kept', {
+  o = options(); on.exit(options(o))
+  d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)
+  f = file.path(d, 'foo', 'bar.md'); writeLines('hi', f)
+  set_site_options(list(meta = list(
+    css = '/style.css', js = c('/a.js', '//cdn.test/b.js', 'c.js'),
+    css2 = '/extra.css'
+  )), f, d)
+  m = getOption('litedown.html.meta')
+  (m$css %==% '../style.css')
+  (m$css2 %==% '../extra.css')
+  (m$js %==% c('../a.js', '//cdn.test/b.js', 'c.js'))
+})
+
+assert('fuse_site() links root-relative css from pages in subdirs', {
+  d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('site:', '  rebuild: always', 'css: /style.css'), file.path(d, '_litedown.yml'))
+  writeLines('body {}', file.path(d, 'style.css'))
+  writeLines('# hi', file.path(d, 'index.md'))
+  writeLines('# bar', file.path(d, 'foo', 'bar.md'))
+  fuse_site(d)
+  x = xfun::read_utf8(file.path(d, 'foo', 'bar.html'))
+  (has_match(x, 'href="../style.css"'))
+  y = xfun::read_utf8(file.path(d, 'index.html'))
+  (has_match(y, 'href="style.css"'))
+})
+
 assert('giscus_html() builds a giscus script from site config', {
   (is.null(giscus_html(NULL)))
   x = giscus_html(list(repo = 'a/b', repo_id = 'R_x'))

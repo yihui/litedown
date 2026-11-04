@@ -198,9 +198,13 @@ output:
       js2: ["custom.js"]
 ```
 
-Absolute paths in links (i.e., paths starting with `/`) are automatically
+Absolute paths (i.e., paths starting with `/`) in links are automatically
 rewritten to relative paths, so a link like `[Home](/index.html)` will work
-correctly no matter which subdirectory the current page is in.
+correctly no matter which subdirectory the current page is in. The same applies
+to the `css`, `js`, `css2`, and `js2` variables: `css: ["/style.css"]` refers to
+`style.css` under the site root, and becomes `../style.css` on a page in a
+subdirectory such as `foo/bar.md`. A path without the leading `/` is used as is,
+i.e., it is relative to each page, so it breaks for pages in other directories.
 
 ### Comments {#sec:site-giscus}
 

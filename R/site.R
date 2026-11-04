@@ -130,6 +130,14 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
     # comments go before the footer, not inside it
     if (!nav) m[[i]] = paste0(giscus_html(giscus), m[[i]])
   }
+  # root-relative css/js (e.g., /style.css) become relative to the page
+  if (!is.na(root)) {
+    up = relative_path(root, dirname(input))
+    if (up == '.') up = ''
+    for (i in c('css', 'js', 'css2', 'js2')) if (is.character(m[[i]])) {
+      m[[i]] = sub('^/(?!/)', up, m[[i]], perl = TRUE)
+    }
+  }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
 }
