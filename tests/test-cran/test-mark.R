@@ -251,3 +251,16 @@ assert('the HTML template uses semantic elements for frontmatter, body, and TOC'
   (has_match(x, '<article class="">'))
   (has_match(x, '<nav id="TOC">'))
 })
+
+assert('citations in headings do not leave <a> nested in the TOC', {
+  bib = tempfile(fileext = '.bib')
+  on.exit(unlink(bib), add = TRUE)
+  writeLines('@book{bar, title={Bar}, author={A B}, year=2020, publisher={P}}', bib)
+  x = mark(I(c(
+    sprintf('---\nbibliography: %s\n---', bib), '', '## foo @bar', '', '## baz [@bar]', '', 'text'
+  )), '.html', options = 'toc')
+  toc = gsub('(?s).*<nav id="TOC">(.*?)</nav>.*', '\\1', x, perl = TRUE)
+  (has_match(toc, '<a href="#sec:foo-bar">foo B'))
+  (!has_match(toc, '<a[^>]*><a'))
+  (!has_match(toc, '</a>[^<]*</a>'))
+})
