@@ -51,5 +51,8 @@ output:
   html:
     meta:
       include_after: "_footer.md"
+      css: '@pkgdown-like'
     options:
       number_sections: true
+      toc:
+        class: side side-right
