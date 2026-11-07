@@ -10,78 +10,59 @@
 > Letters*](https://vangoghletters.org/vg/letters/let628/letter.html)
 :::
 
-You can write **litedown** documents in any text editor. To see the result, call
-`litedown::roam()` to preview them in your browser (@sec:live-preview), or click
-the `Knit` button if you use RStudio (@sec:knit-button). Since the Markdown
-syntax of **litedown** can be viewed as a subset of Pandoc's Markdown, you can
-also use RStudio's visual Markdown editor to author documents. Please bear in
-mind that most common, but not all, Markdown features are supported.
-
 ## Live preview {#sec:live-preview}
 
 Unless it has become your muscle memory to click on the `Knit` button in
 RStudio, you may try to switch to `litedown::roam()` to preview your HTML output
-by clicking on the `run` buttons in the user interface. There are two ways to
-build a document there, and the difference is worth remembering:
-
--   `Run`: the preview takes place *in memory only*. Although you see an HTML
-    page rendered from a file in the preview, the page is not rendered to disk.
-
--   `render` (@sec:the-buttons): the output is written to disk. You can also
-    call `litedown::fuse()` (@chp:fuse) or `mark()` (@chp:mark) on the file to
-    do the same.
+by clicking on the `run` buttons in the user interface. Note that the preview
+takes place *in memory only*. Although you see an HTML page rendered from a file
+in the preview, the page is not rendered to disk, unless you click on the
+`render` button (@sec:the-buttons), or call `litedown::fuse()` (@chp:fuse) or
+`mark()` (@chp:mark) on the file.
 
 ### Live reload
 
--   By default, the preview will automatically refresh the content after you
-    edit and save a file. If you prefer building the document only when you want
-    to, you can turn off the live preview via `litedown::roam(live = FALSE)`. In
-    this case, the document will be rebuilt only when you refresh the page by
-    yourself.
+By default, the preview will automatically refresh the content after you edit
+and save a file. If you prefer building the document only when you want to, you
+can turn off the live preview via `litedown::roam(live = FALSE)`. In this case,
+the document will be rebuilt only when you refresh the page by yourself.
 
--   When the page is reloaded automatically, the scroll position is kept, and
-    polling pauses while the browser tab is in the background.
-
--   If the R session running `roam()` stops, a banner will appear at the top of
-    the page, and the page reloads by itself once the server is back.
-
--   If a file cannot be previewed due to an error, the error is displayed on the
-    page with a traceback of your code (with a link to the failing line of a
-    code chunk, or to the source line of any call in your own functions), and
-    the page recovers after you fix the file. Use the `Back` link on the error
-    page to go back to where you came from.
+When the page is reloaded automatically, the scroll position is kept, and
+polling pauses while the browser tab is in the background. If the R session
+running `roam()` stops, a banner will appear at the top of the page, and the
+page reloads by itself once the server is back. If a file cannot be previewed
+due to an error, the error is displayed on the page with a traceback of your code
+(with a link to the failing line of a code chunk, or to the source line of any
+call in your own functions), and the page recovers after you fix the file. Use
+the `Back` link on the error page to go back to where you came from.
 
 ### The file listing
 
 After launching the preview via `litedown::roam()`, a file listing will be
-displayed:
+displayed, which shows the first few lines of `*.R`, `*.Rmd`, and `*.md` files
+in boxes, followed by the list of other files (a `.md` file that has an `.Rmd` or
+`.qmd` file of the same name is not shown as a box, because it is generated from
+that file). Modification times are displayed as relative times
+(hover over them to see the exact time). Files whose names start with `_` or `.`
+are dimmed. When the directory has many files, a filter box (press `/` to focus
+it) and a sorting menu (by name or modification time) appear above the listing.
 
--   It shows the first few lines of `*.R`, `*.Rmd`, and `*.md` files in boxes,
-    followed by the list of other files (a `.md` file that has an `.Rmd` or
-    `.qmd` file of the same name is not shown as a box, because it is generated
-    from that file).
+By clicking on plain-text files, you will see their full content. For binary
+files, they may be opened in your browser; if they cannot be opened, the browser
+may prompt to download the file.
 
--   Modification times are displayed as relative times (hover over them to see
-    the exact time). Files whose names start with `_` or `.` are dimmed. When
-    the directory has many files, a filter box (press `/` to focus it) and a
-    sorting menu (by name or modification time) appear above the listing.
+Each file will have its size displayed after the filename, with a link attached
+to the file size. The link points to the raw file (the behavior of the link is
+up to the browser—the file may be opened or downloaded), and **litedown** will
+not process it at all.
 
--   By clicking on plain-text files, you will see their full content. For binary
-    files, they may be opened in your browser; if they cannot be opened, the
-    browser may prompt to download the file.
+The full path of the file or directory being previewed is displayed at the top
+left.
 
--   Each file has its size displayed after the filename, with a link attached to
-    the file size. The link points to the raw file (the behavior of the link is
-    up to the browser—the file may be opened or downloaded), and **litedown**
-    will not process it at all.
-
--   The full path of the file or directory being previewed is displayed at the
-    top left.
-
--   For `.R`, `.Rmd`, and `.md` files, you can click on the "Run" button
-    ([►](){.larger}) to render them to HTML in memory and preview the output.
-    This button is displayed at the top right of each file box on the listing
-    page, and at the top right of the preview page of an individual file.
+For `.R`, `.Rmd`, and `.md` files, you can click on the "Run" button
+([►](){.larger}) to render them to HTML in memory and preview the output. This
+button is displayed at the top right of each file box on the listing page, and
+at the top right of the preview page of an individual file.
 
 ::: callout-caution
 Rendering `.R` and `.Rmd` files via the `Run` button means *the full R code* in
@@ -183,10 +164,21 @@ Please also note that when caching is enabled (via the chunk option
 be cleaned up, because when a code chunk is cached, it will not be re-evaluated
 or re-generate plots next time (unless the cache is invalidated).
 
+## Visual editor
+
+Since the Markdown syntax of **litedown** can be viewed as a subset of Pandoc's
+Markdown, you can use RStudio's visual Markdown editor to author documents.
+Please bear in mind that most common, but not all, Markdown features are
+supported.
+
 ## The `Knit` button {#sec:knit-button}
 
-If you use the RStudio IDE, add this to the YAML metadata of your document, and
-the `Knit` button will render it with **litedown**:
+If you use the RStudio IDE, the `Knit` button can render R Markdown to a
+**litedown** output format specified in YAML (e.g., `html` or `latex`). Please
+also remember to add a top-level setting `knit: litedown:::knit` in YAML,
+otherwise RStudio will either throw an error if you use the output format `html`
+or `latex`, or use `rmarkdown::render()` instead of `litedown::fuse()` to render
+the document.
 
 ``` yaml
 ---
@@ -194,9 +186,3 @@ output: html
 knit: litedown:::knit
 ---
 ```
-
-The `output` field can be any **litedown** output format (e.g., `html` or
-`latex`). Please remember the top-level setting `knit: litedown:::knit`:
-without it, RStudio will either throw an error if you use the output format
-`html` or `latex`, or use `rmarkdown::render()` instead of `litedown::fuse()` to
-render the document.
