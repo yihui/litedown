@@ -10,11 +10,12 @@
 To get started:
 
 1.  Install the package with `install.packages("litedown")`.
+
 2.  Run `litedown::roam()` to open the preview in your browser.
-3.  Open a file in the browser, or create a new one with the [+](){.larger}
-    button.
-4.  Click the `Run` button ([►](){.larger}) to preview it in memory, or the
-    `Render` button ([↯](){.larger}) to write the output file.
+
+3.  Open a file in the browser, or create a new one with the [+](){.larger} button.
+
+4.  Click the `Run` button ([►](){.larger}) to preview it in memory, or the `Render` button ([↯](){.larger}) to write the output file.
 
 R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.
