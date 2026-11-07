@@ -117,6 +117,7 @@ jobs:
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:
           r-universe: yihui
-          extra-packages: .
+          dependencies: Depends, Imports, LinkingTo
+          extra-packages: testit .
 
       - uses: yihui/actions/check-r-package@HEAD

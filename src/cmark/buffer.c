@@ -89,7 +89,9 @@ void cmark_strbuf_set(cmark_strbuf *buf, const unsigned char *data,
       memmove(buf->ptr, data, len);
     }
     buf->size = len;
-    buf->ptr[buf->size] = '\0';
+    // always true after grow(); the check makes the bound explicit for GCC 15,
+    // which warns -Wstringop-overflow on the store into the 1-byte initbuf
+    if (buf->asize > len) buf->ptr[len] = '\0';
   }
 }
 
