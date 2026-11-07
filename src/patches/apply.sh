@@ -25,7 +25,3 @@ apply html-block-code-fence-end.diff
 # Render task list checkboxes without disabled="" (litedown), so they are
 # interactive. litedown-specific (GitHub renders them disabled), not for upstream.
 apply tasklist-no-disable.diff
-# Avoid a GCC 15 -Wstringop-overflow false positive (-O2 -flto, seen on Alpine)
-# in cmark_strbuf_set() by making the bound of the NUL store explicit. To be
-# submitted upstream to github/cmark-gfm.
-apply buffer-nul-guard.diff

@@ -110,9 +110,13 @@ jobs:
 
     steps:
       - name: Install system dependencies
-        run: apk add --no-cache bash tar curl git R R-dev R-doc g++ make musl-dev
+        run: apk add --no-cache bash tar curl git patch R R-dev R-doc g++ make musl-dev
 
       - uses: actions/checkout@HEAD
+
+      # GCC 15 -Wstringop-overflow false positive in cmark (only seen on Alpine)
+      - name: Apply cmark patch
+        run: patch -p1 -d src < src/patches/buffer-nul-guard.diff
 
       - uses: yihui/actions/setup-r-dependencies@HEAD
         with:

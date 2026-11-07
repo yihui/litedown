@@ -94,8 +94,9 @@ Current patches (see `apply.sh`):
   renders task lists as disabled), not intended for upstream.
 - `buffer-nul-guard.diff` — litedown: make the bound of the NUL store in
   `cmark_strbuf_set()` explicit, avoiding a GCC 15 `-Wstringop-overflow` false
-  positive under `-O2 -flto` (seen on Alpine). To be submitted upstream to
-  github/cmark-gfm.
+  positive under `-O2 -flto` (seen on Alpine). **Not** applied by `apply.sh`
+  nor to the committed sources; the Alpine CI job applies it with `patch`
+  before installing. To be submitted upstream to github/cmark-gfm.
 
 Prefer adding new features as standalone files under `src/extensions/` rather
 than as patches to core files: extensions survive upstream syncs untouched,
