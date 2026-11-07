@@ -196,8 +196,6 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     if (isTRUE(options[['auto_identifiers']])) ret = auto_identifier(ret)
     # number sections
     if (isTRUE(options[['number_sections']])) ret = number_sections(ret)
-    # build table of contents
-    ret = add_toc(ret, options, c(meta[['js2']], meta[['js']], acc_var('js')))
     # a raw LaTeX/TeX math environment (```{=latex} \begin{...} ... ```) is
     # rendered as math in HTML by the C 'rawblock' extension regardless of the
     # 'latex_math' option, so it must load a math library even when math is off.
@@ -249,6 +247,10 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     ret = in_dir(out_dir, add_citation(ret, bib, format))
     if (format == 'latex') meta = bib_meta(meta, bib, pkg_cite)
   }
+
+  # build TOC last, so citations/cross-references in headings are resolved
+  if (format == 'html')
+    ret = add_toc(ret, options, c(meta[['js2']], meta[['js']], acc_var('js')))
 
   # convert some meta variables in case they use Markdown syntax
   if (is.character(template)) for (i in top_meta) if (meta_len <- length(meta[[i]])) {

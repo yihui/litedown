@@ -1,12 +1,18 @@
 # CHANGES IN litedown VERSION 1.1
 
-- Common YAML settings can now be written as top-level fields instead of deeply nested under `output -> html -> meta/options`, e.g., `css`, `js`, `lang`, `toc`, `number_sections`, `embed_resources`, `js_math`, `js_highlight`, `include_before`, `include_after`, `template`, and `keep_md`. The nested form still works and takes precedence ([details](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata)).
+- [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 
-- `pkg_site()` and `fuse_site()` can add a [giscus](https://giscus.app) comment section to the footer of every page, configured via `site: giscus` in `_litedown.yml` ([details](https://pkg.yihui.org/litedown/book/#sec:site-giscus)).
+- `pkg_site()` and `fuse_site()` can add a [comment section](https://pkg.yihui.org/litedown/book/#sec:site-giscus) powered by [giscus](https://giscus.app) to every page.
 
-- In the navigation bar of a package site, the Home link is now the package name followed by its version.
+- The Home link in the navigation bar of a package site now shows the package name and version.
 
-- The `toc` option gains a sub-option `class` to set the TOC's class names (e.g., `side side-right` to float the TOC on the right); it defaults to `side side-left` when `@sidenotes` is used ([details](https://pkg.yihui.org/litedown/book/#sec:mark-options)).
+- The [`toc` option](https://pkg.yihui.org/litedown/book/#sec:toc) gains a `class` sub-option to set the TOC's class names, e.g., to float it on the right.
+
+- `pkg_articles()` now also lists articles under `vignettes/articles/` and `articles/`, and `pkg_site()` renders them, along with vignettes that use the `litedown::vignette` engine, as [site pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun) with the menu and footer.
+
+- In `pkg_site()` and `fuse_site()`, a root-relative [`css` or `js` path](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `/style.css` now refers to the site root, so pages in subdirectories find it.
+
+- `pkg_site()` shows the package logo (e.g., a hex sticker at `man/figures/logo.png`) at the top right of the home page.
 
 # CHANGES IN litedown VERSION 1.0
 

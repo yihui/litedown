@@ -177,9 +177,13 @@ css2: ["custom.css"]
 js2: ["custom.js"]
 ```
 
-Absolute paths in links (i.e., paths starting with `/`) are automatically
+Absolute paths (i.e., paths starting with `/`) in links are automatically
 rewritten to relative paths, so a link like `[Home](/index.html)` will work
-correctly no matter which subdirectory the current page is in.
+correctly no matter which subdirectory the current page is in. The same applies
+to the `css`, `js`, `css2`, and `js2` variables: `css: ["/style.css"]` refers to
+`style.css` under the site root, and becomes `../style.css` on a page in a
+subdirectory such as `foo/bar.md`. A path without the leading `/` is used as is,
+i.e., it is relative to each page, so it breaks for pages in other directories.
 
 ### Configuration
 
@@ -286,7 +290,7 @@ list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 | Source | Description | Content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |
+| `articles` | package vignettes and articles | `pkg_articles()` (the `doc/` folder of the installed package, plus `vignettes/articles/` and `articles/`) |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
@@ -308,14 +312,24 @@ You can exclude certain template pages from the site via the field `exclude`
 under `site` in `_litedown.yml` in the site directory (the pages will not be
 copied). By default, `code.Rmd` is excluded, and
 
--   `articles.Rmd` is excluded if the package does not have the `vignettes/`
-    directory;
+-   `articles.Rmd` is excluded if the package has neither the `vignettes/` nor
+    the `articles/` directory;
 
 -   `examples.Rmd` is excluded if the package does not have the `examples/`
     directory;
 
 -   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
     the package.
+
+Articles are collected from three places: the built vignettes in `vignettes/`,
+and the `.Rmd`/`.md` files under `vignettes/articles/` and
+`articles/` in the package root, which are not installed with the package.
+Vignettes using the `litedown::vignette` engine and all files in the latter two
+directories are copied to `articles/` in the site directory and rendered as
+normal site pages (with the menu and footer), while other vignettes are copied
+from the `doc/` folder as built. Files starting with `_` in these directories
+(e.g., child documents) and other non-source files such as images are copied
+along.
 
 For example, if you do not want to include the news (or the source code,
 either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
@@ -332,6 +346,12 @@ start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
 `url` under `site` in `_litedown.yml`). If the `BugReports` field of
 `DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
 icon on the right.
+
+If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png` (or
+`.svg`, `.jpg`, etc.), it is floated to the right on the home page, unless
+`README.md` already shows it. A `logo.png` in the site directory takes
+precedence. The image has the class `logo`, which you can restyle in your own
+CSS.
 
 If you publish the site to GitHub Pages yourself instead of using the GitHub
 action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
@@ -506,7 +526,7 @@ You can copy it to the `.github/workflows/` directory of the R package's Git
 repository and commit/push it via Git. Within a few minutes, the package site
 should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
 username, and `pkg` is the repository name, e.g.,
-<https://yihui.github.io/litedown/>.
+`https://yihui.github.io/litedown/`.
 
 The workflow also deploys a preview of the site for each pull request to
 [surge.sh](https://surge.sh) at `https://USER-REPO-pr-N.surge.sh` (`N` is the

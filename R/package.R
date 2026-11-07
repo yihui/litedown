@@ -357,8 +357,7 @@ pkg_examples = function(
     h = if (is_roaming()) paste0(f2, '?preview=2') else with_ext(f2, 'html')
     x = read_utf8(f)
     # get title
-    t = grep_sub('^title: ["\']?(.+?)["\']?\\s*$', '\\1', x)
-    t = if (length(t)) t[1] else sans_ext(b)
+    t = md_title(x, b)
     # get example number
     i = grep_sub('^([0-9]+).*', '\\1', b)
     i = if (length(i)) paste0(i, '\\. ') else ''
@@ -588,35 +587,97 @@ pkg_manual = function(
   new_asis(c(toc, res, vest('callout', css = '@manual')))
 }
 
-#' @return `pkg_articles()` returns a list of links to the built vignettes of
-#'   the package (and their source files) in Markdown. It also copies the
-#'   `doc` directory of the installed package to the current directory.
+#' @return `pkg_articles()` returns a list of links to the articles of the
+#'   package (and their source files) in Markdown. Articles are the built
+#'   vignettes (the `doc` directory of the installed package is copied to the
+#'   current directory), plus the `.Rmd`/`.md` files under `vignettes/articles/`
+#'   and `articles/` in the package source directory. Vignettes
+#'   that use the `litedown::vignette` engine and these extra articles are
+#'   rendered again as normal site pages under `articles/` by [pkg_site()].
 #' @rdname pkg_desc
 #' @export
 pkg_articles = function(name = detect_pkg(), groups = site_groups('articles')) {
-  res = tools::getVignetteInfo(name)
-  if (!nrow(res)) return('This package has no vignettes.')
-  file.copy(system.file('doc', package = name), './', recursive = TRUE)
-  vigs = res[, 'PDF']
-  # redirect doc/index.html to articles.html
-  if (!'index.html' %in% vigs) writeLines(
-    "<script>location.href = location.href.replace(/\\/[^\\/]*$/, '') + '/../articles.html';</script>",
-    'doc/index.html'
-  )
-  # clean up .R files
-  file.remove(file.path('doc', setdiff(res[, 'R'], '')))
-  src = res[, 'File']
-  # link the sources to GitHub if they are found in the package source directory
   path = attr(name, 'path') %||% system.file(package = name)
-  links = vapply(src, function(f) {
-    (if (!is_roaming()) github_file_url(path, file.path('vignettes', f))) %||%
-      file.path('doc', f)
-  }, '')
+  res = tools::getVignetteInfo(name)
+  arts = article_sources(path)
+  if (!nrow(res) && !length(arts)) return('This package has no vignettes.')
+  src = res[, 'File']
+  if (nrow(res)) {
+    file.copy(system.file('doc', package = name), './', recursive = TRUE)
+    # redirect doc/index.html to articles.html
+    if (!'index.html' %in% res[, 'PDF']) writeLines(
+      "<script>location.href = location.href.replace(/\\/[^\\/]*$/, '') + '/../articles.html';</script>",
+      'doc/index.html'
+    )
+    # clean up .R files
+    file.remove(file.path('doc', setdiff(res[, 'R'], '')))
+    # litedown vignettes are listed as site pages, so drop the built copies
+    unlink(file.path('doc', res[src %in% basename(arts), 'PDF']))
+  }
+  # link the sources to GitHub if they are found in the package source directory
+  link = function(f, local) {
+    (if (!is_roaming()) github_file_url(path, f)) %||% local
+  }
   # TODO: show excerpts of vignettes if possible
-  items = sprintf('- [%s](doc/%s) (source: [%s](%s))\n', res[, 'Title'], vigs, src, links)
+  rows = c(
+    lapply(which(!src %in% basename(arts)), function(i) {
+      list(res[i, 'Title'], file.path('doc', res[i, 'PDF']), src[i],
+           link(file.path('vignettes', src[i]), file.path('doc', src[i])))
+    }),
+    lapply(arts, function(a) {
+      b = basename(a)
+      # use the copy under articles/ (in the site dir) if it exists
+      f = if (file_exists(f2 <- file.path('articles', b))) f2 else
+        relative_path(file.path(path, a))
+      h = if (is_roaming()) paste0(f, '?preview=2') else with_ext(f, 'html')
+      list(md_title(read_utf8(file.path(path, a)), b), h, b, link(a, f))
+    })
+  )
+  items = vapply(rows, function(r) {
+    sprintf('- [%s](%s) (source: [%s](%s))\n', r[[1]], r[[2]], r[[3]], r[[4]])
+  }, '')
   if (!length(groups)) return(new_asis(items))
-  keys = .mapply(c, sans_ext(src), src, res[, 'Title'])
+  keys = lapply(rows, function(r) c(sans_ext(r[[3]]), r[[3]], r[[1]]))
   new_asis(group_blocks(items, keys, groups))
+}
+
+# title from the YAML field `title` of a Markdown file, or the filename
+md_title = function(x, file) {
+  t = grep_sub('^title: ["\']?(.+?)["\']?\\s*$', '\\1', x)
+  if (length(t)) t[1] else sans_ext(file)
+}
+
+# paths (relative to the package root `path`) of articles that are rendered as
+# site pages: vignettes using the litedown engine, and all articles under
+# vignettes/articles/ and articles/. The first of files with the
+# same name wins.
+article_sources = function(path) {
+  engine = '%\\\\VignetteEngine\\{litedown::vignette\\}'
+  one = function(d, all) {
+    fs = list.files(file.path(path, d), '[.]R?md$')
+    fs = fs[!grepl('^[_.]', fs) & tolower(sans_ext(fs)) != 'readme']
+    if (!all) fs = fs[vapply(fs, function(f) {
+      any(grepl(engine, read_utf8(file.path(path, d, f)), perl = TRUE))
+    }, NA)]
+    file.path(d, fs)
+  }
+  x = c(one('vignettes', FALSE), one('vignettes/articles', TRUE), one('articles', TRUE))
+  x[!duplicated(basename(x))]
+}
+
+# copy article sources and their supporting files (images, data, child
+# documents, etc.) to the `articles/` directory of the site
+copy_articles = function(path, files, to = 'articles') {
+  if (!length(files)) return()
+  dir_create(to)
+  for (d in unique(dirname(files))) {
+    fs = list.files(file.path(path, d), all.files = TRUE, no.. = TRUE, full.names = TRUE)
+    # other inputs (and outputs) are not articles, except _* files (e.g., children)
+    b = basename(fs)
+    skip = (grepl('[.](R?md|html|R)$', b) & !grepl('^_', b)) | b == 'articles'
+    file.copy(fs[!skip], to, recursive = TRUE, overwrite = TRUE)
+  }
+  file.copy(file.path(path, files), to, overwrite = TRUE)
 }
 
 # a block of links in the TOC, optionally with a heading and a description
@@ -742,6 +803,10 @@ run_examples = function(html, config, path) {
 #' `exclude: [code.Rmd, news.Rmd]`. They will not be copied. By default, only
 #' `code.Rmd` is excluded, and `exclude: NA` means to exclude nothing.
 #'
+#' If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png`
+#' (or `.svg`, `.jpg`, etc.), it will be shown at the top right of the home page.
+#' A file `logo.png` (or other formats) under `output` takes precedence.
+#'
 #' If the package contains a book project (i.e., `book/_litedown.yml` exists),
 #' the book will be built via [fuse_book()] and placed under the `book/`
 #' subdirectory of the site.
@@ -809,6 +874,42 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   invisible(res)
 }
 
+# README.md of a package prepared for the home page of its site (NULL if none):
+# badges go to the right sidebar, and lines before them and the title are removed
+pkg_readme = function(name = detect_pkg()) {
+  f = file.path(attr(name, 'path'), 'README.md')
+  if (!file_exists(f)) return()
+  x = read_utf8(f)
+  i = which(x == '<!-- badges: start -->')
+  if (length(i)) {
+    j = which(x == '<!-- badges: end -->')
+    # put badges in the right sidebar
+    if (length(j <- j[j > i[1]])) x = append(append(
+      x, c('', ':::', ''), j[1]
+    ), c('::: {.side .side-right}', ''), i[1] - 1)
+    # remove lines before badges since they usually contain duplicated info (e.g., title)
+    x = x[seq_along(x) >= i[1]]
+  }
+  i = which(tolower(x) == paste('#', tolower(name)))
+  # remove the title line if it still exists
+  if (length(i)) x = x[-i[1]]
+  x
+}
+
+# Markdown of the package logo (e.g., a hex sticker) with the class `logo`: the
+# logo file in the current (site) dir, or man/figures/ of the package; NULL if
+# there is none or the (prepared) README already shows it. The home page copies
+# man/figures to its own dir.
+pkg_logo = function(name = detect_pkg(), readme = pkg_readme(name)) {
+  dirs = c('.', file.path(attr(name, 'path'), 'man/figures'))
+  for (i in 1:2) if (length(x <- list.files(dirs[i], logo_regex))) break
+  if (!length(x) || any(grepl(x[1], readme, fixed = TRUE))) return()
+  # styled by .logo in site.css
+  sprintf('![%s logo](%s%s){.logo}', name, c('', 'man/figures/')[i], x[1])
+}
+
+logo_regex = '^logo[.](png|jpe?g|gif|svg|webp)$'
+
 # fill in the pre-computed variables in the footer file (included by
 # _litedown.yml); $edit$ is left for set_site_options() since it differs from
 # page to page.
@@ -847,7 +948,9 @@ site_skeleton = function(output, path) {
     if (file.copy(file.path(tpl, f), f2)) copied = c(copied, f)
   }
   in_dir(output, {
-    if (!dir.exists(file.path(path, 'vignettes'))) unlink('articles.Rmd')
+    if (!any(dir.exists(file.path(path, c('vignettes', 'articles')))))
+      unlink('articles.Rmd')
+    copy_articles(path, article_sources(path))
     if (!any(file_exists(file.path(path, c('NEWS.md', 'inst/NEWS.Rd')))))
       unlink('news.Rmd')
     if (dir.exists(d <- file.path(path, 'examples'))) {

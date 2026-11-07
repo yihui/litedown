@@ -204,6 +204,11 @@ assert('build_toc() builds a nested TOC from HTML headings', {
   (grepl('<nav id="TOC">', toc, fixed = TRUE))
   (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
   (grepl('<a href="#b">B</a>', toc, fixed = TRUE))
+  # links in headings are removed to avoid nested <a>
+  toc = build_toc(c('<h1 id="a"><a href="#x">A</a></h1>', '<h2 id="b"><a>B</a> <a id="c" class="k">C</a></h2>'))
+  (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
+  (grepl('<a href="#b">B C</a>', toc, fixed = TRUE))
+  (!grepl('<a[^>]*><a', toc))
   # headings marked class="unlisted" are excluded, dropping the TOC below 2 items
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b" class="unlisted">B</h2>'))))
   # n <= 0 disables the TOC
