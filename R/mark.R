@@ -25,8 +25,10 @@
 #'   format is detected or provided, the default is HTML.
 #' @param text A character vector as the text input. By default, it is read from
 #'   the `input` file if provided.
-#' @param options Options to be passed to the renderer. See [markdown_options()]
-#'   for details. This argument can take either a character vector of the form
+#' @param options Options to be passed to the renderer, e.g., `"+toc"` to add a
+#'   table of contents. Options can also be set as fields in the YAML metadata
+#'   of the input (which is the recommended way), and this argument takes precedence over YAML. See [markdown_options()] for
+#'   all options. This argument can take either a character vector of the form
 #'   `"+option1 option2-option3"` (use `+` or a space to enable an option, and
 #'   `-` to disable an option), or a list of the form `list(option1 = value1,
 #'   option2 = value2, ...)`. A string `"+option1"` is equivalent to
@@ -35,13 +37,17 @@
 #'   `list(width = 30)`.
 #' @param meta A named list of metadata. Elements in the metadata will be used
 #'   to fill out the template by their names and values, e.g., `list(title =
-#'   ...)` will replace the `$title$` variable in the template. See the Section
-#'   \dQuote{YAML metadata} [in the
-#'   documentation](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) for supported
-#'   variables.
+#'   ...)` will replace the `$title$` variable in the template. It has an effect
+#'   only when a template is used, i.e., when the output is a full document
+#'   (the input has YAML metadata, or `output` is a file). These variables can
+#'   also be set as fields in YAML, and this argument takes precedence over YAML.
+#'   See the Section \dQuote{YAML metadata} in the documentation (see
+#'   References) for supported variables.
 #' @return The output file path if output is written to a file, otherwise a
 #'   character vector of the rendered output (wrapped in [xfun::raw_string()]
 #'   for clearer printing).
+#' @references The documentation of YAML metadata:
+#'   <https://pkg.yihui.org/litedown/book/#sec:yaml-metadata>
 #' @seealso The spec of GitHub Flavored Markdown:
 #'   <https://github.github.com/gfm/>
 #' @import utils
@@ -56,6 +62,10 @@
 #'
 #' # output to a file
 #' (mark("_Hello_, **World**!", output = tempfile()))
+#'
+#' # options (usually set in YAML instead)
+#' mark(c("# Intro", "", "## Details"), options = "+toc")
+#' mark(c("# Intro", "", "## Details"), options = list(number_sections = TRUE))
 #'
 #' # convert to other formats
 #' mark("Hello _World_!", ".tex")

@@ -7,6 +7,16 @@
 > ---Ralph Waldo Emerson, *Ode, Inscribed to William H. Channing*
 :::
 
+To get started:
+
+1.  Install the package with `install.packages("litedown")`.
+
+2.  Run `litedown::roam()` to open the preview in your browser.
+
+3.  Open a file in the browser, or create a new one with the [+](){.larger} button.
+
+4.  Click the `Run` button ([►](){.larger}) to preview it in memory, or the `Render` button ([↯](){.larger}) to write the output file.
+
 R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.
 
@@ -40,7 +50,9 @@ and @chp:mark.
 
 ::: callout-tip
 If you do not do computing in Markdown, you do not need to learn
-`fuse()`---`mark()` will be enough.
+`fuse()`---`mark()` will be enough. Unless you use **litedown** programmatically
+(i.e., in scripts), you rarely need to call `fuse()` or `mark()` directly---
+`litedown::roam()` calls them for you behind the scenes.
 :::
 
 ## A new road to `roam()` {#sec:new-road}
@@ -69,14 +81,6 @@ please see @sec:knit-button for how to continue to use the `Knit` button with
 You can learn more about the `Render` and `Run` buttons in @sec:live-preview.
 Basically, the `Render` button renders a document to an output file, whereas the
 `Run` button renders a document in memory without writing to disk.
-
-::: callout-tip
-Unless you use **litedown** programmatically (i.e., in scripts), you should
-rarely need to call `fuse()` or `mark()` directly---`litedown::roam()` will call
-`fuse()` and `mark()` for you behind the scenes.
-:::
-
-You can also create new documents with the [+](){.larger} button on the toolbar.
 
 ## A minimal example
 

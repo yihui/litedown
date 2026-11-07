@@ -269,12 +269,11 @@ apply to all pages. For example, if you have saved your rules in `custom.css` in
 the project folder, this adds them to the default look of the site:
 
 ``` yaml
-css2: ["custom.css"]
+css: ["custom.css"]
 ```
 
-The field `css2` means "add to the defaults", whereas `css` means "replace the
-defaults". So if you want to use a stylesheet from the web for all pages, use
-`css` as above. See @sec:site-defaults for more details.
+You can also use a stylesheet from the web for all pages in the same way. See
+@sec:site-defaults for more details.
 
 ## Copy buttons {#sec:copy-button}
 
@@ -1086,17 +1085,17 @@ The script also tries to make pages look better:
 Like floating environments in LaTeX, a *float* does not leave a big gap at the
 bottom of a page. Floats are figures with captions (a `<figure>` or `.figure`
 that contains a `<figcaption>` or `.caption`) and any element with the class
-`float`, e.g.,
+`pagesjs-float`, e.g.,
 
 ``` html
-<div class="float">...</div>
+<div class="pagesjs-float">...</div>
 ```
 
 In Markdown, anything can be made a float with a fenced `Div`
 (@sec:fenced-divs), e.g.,
 
 ``` md
-::: float
+::: pagesjs-float
 Any content, such as a long list or a code block.
 :::
 ```
@@ -1112,15 +1111,15 @@ waits for the next page, and the content after it moves up to fill the gap. So
 a float may appear later than where it is written, but floats keep their order,
 and none waits beyond the end of its chapter (in a book) or content root. The
 float stays in its wrappers (e.g., the `.chapter` that contains it), and has the
-class `pagesjs-float` if it has waited.
+class `pagesjs-waited` if it has waited.
 
 Because the content after a float can move before it, a float may be the first
 element on a page, followed by the last piece of an element that was broken on
 the previous page (`fragment-last`, see @sec:pages-styles).
 
 Tables are not floats by default, so they can still be broken between pages. If
-you want a table to float, add the class `float` to its environment via the
-chunk option `tab.env` (see @sec:option-tab), e.g., `tab.env = '.table .float'`.
+you want a table to float, add the class `pagesjs-float` to its environment via the
+chunk option `tab.env` (see @sec:option-tab), e.g., `tab.env = '.table .pagesjs-float'`.
 
 A float taller than 70% of the page body takes a whole page: nothing else goes
 on that page, and the float is centered vertically (the page has the class
@@ -1132,6 +1131,37 @@ this threshold, which is a percentage of the height of the page body, e.g.,
 ```
 
 A value of `100` means that no float takes a whole page by itself.
+
+### Wide pages {#sec:pages-wide}
+
+A table with many columns or a wide figure may not fit the width of a portrait
+page, even if you make it full-width (@sec:article). Give such an element the
+class `pagesjs-wide`, and it will be put on a landscape page of its own, e.g.,
+
+``` html
+<div class="pagesjs-wide">...</div>
+```
+
+In Markdown, use a fenced `Div` (`::: pagesjs-wide`). The script does not detect
+wide elements by itself, so only the elements that you mark are moved.
+
+A wide element behaves like a float that takes a whole page (@sec:pages-floats):
+it is never broken; if it does not fit on the rest of the current page, it goes
+to a new page, the content after it fills the gap, and it is centered vertically
+on its page. The page has the classes `page-float` and `page-wide`, and it has
+the header, the footer, and a page number as usual. The class `fullwidth` is
+removed from the element if it has one, since the landscape page is already as
+wide as it can be. If the element is taller than the landscape page, it
+overflows (the button for problems below lists it).
+
+The size of a landscape page is that of the paper turned sideways (i.e., the
+values of `--paper-width` and `--paper-height` are swapped on `.page-wide`). When
+you print the page, a CSS named page (`@page wide`) makes the browser print it on
+a landscape sheet, so that the other pages stay in portrait. On the screen, the
+text is never rotated: the landscape page is just a wider sheet than the other
+pages, so readers do not have to turn their heads or screens. In a window that is
+narrower than the sheet, scroll horizontally, as for other pages (pages keep
+their paper size).
 
 ### Page layout and styles {#sec:pages-styles}
 
@@ -1544,12 +1574,29 @@ You can also create pages yourself with `<div class="pagesjs-page">`. An empty
 one is a page break (the content after it goes into this page). One that already
 has content is kept as it is, and the content after it starts on a new page.
 
+### Toolbar buttons {#sec:pages-tools}
+
+After the pagination, buttons appear at the top left of the window (they are not
+printed):
+
+-   `☰` opens the table of contents (a copy of the TOC of the document, with
+    page numbers), so that readers can jump to a section at any time. The button
+    is shown if the document has a TOC.
+
+-   `⚠` opens a list of problems, if any: pages that overflow (`page-multiple`),
+    elements with scrollbars whose content is cut off, and elements that cannot
+    be broken (e.g., figures and images) but stick out of the page. Click an item to scroll to the element, which is
+    outlined in red. The button is not shown if there is no problem.
+
+Click the button again, press `Esc`, or click elsewhere to close the panel.
+
 ### Troubleshooting {#sec:pages-troubleshooting}
 
-If an element that cannot be broken is taller than a page, the script cannot
-make it fit, so the page is marked with the class `page-multiple` and printed
-over several physical pages. The number of these pages is estimated for the page
-numbers. If the estimate is wrong, give the right number via the attribute
+Use the button for problems (@sec:pages-tools) to find the pages and elements
+that need your attention. If an element that cannot be broken is taller than a
+page, the script cannot make it fit, so the page is marked with the class
+`page-multiple` and printed over several physical pages. The number of these
+pages is estimated for the page numbers. If the estimate is wrong, give the right number via the attribute
 `data-pages-offset` of the page, e.g.,
 `<div class="pagesjs-page" data-pages-offset="3">`.
 
@@ -1668,11 +1715,11 @@ on an unknown screen), set the CSS variable `--slide-ratio`, e.g.,
 `:root { --slide-ratio: .75; }`.
 
 The alternative theme `snap-clean.css` provides a cleaner, more minimal slide
-style; load it after `snap.css`, e.g., `css: ["@default", "@snap",
-"@snap-clean"]`.
+style; load it after `snap.css`, e.g., `css: ["@default", "@snap", "@snap-clean"]`.
 
-There are more features and caveats than can be covered here. For the full
-guide, see <https://pkg.yihui.org/litedown/examples/045-snap-slides.html>.
+There are more features and caveats than can be covered here. For [the full
+guide](https://pkg.yihui.org/litedown/examples/045-snap-slides.html), see the
+examples page.
 
 ## Right-align a quote footer {#sec:right-quote}
 
