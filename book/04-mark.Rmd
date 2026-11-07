@@ -11,7 +11,7 @@
 
 Markdown is converted to HTML, LaTeX, and other formats by the function
 `litedown::mark()`. You rarely need to call it yourself: `fuse()` calls it for
-`.Rmd` files, and the `run` and `render` buttons (@chp:authoring) call these
+`.Rmd` files, and the `Run` and `Render` buttons (@chp:authoring) call these
 functions for you. What you control is *how* the conversion is done, and for
 that, the YAML metadata at the top of the document is usually all you need. This
 chapter shows how to write it. If you do want to call `mark()` in R code, see
@@ -334,6 +334,7 @@ Whether to clean up plot files after they have been embedded in HTML output (see
 @sec:embed-resources). This option is `true` by default.
 
 ### `embed_resources` {#sec:embed-resources}
+
 Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (all images except for SVG) or raw content (SVG/CSS/JS).
 Possible values are:
