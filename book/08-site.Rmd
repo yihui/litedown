@@ -187,20 +187,18 @@ layout elements so that pages look reasonable without any configuration:
 -   The options `embed_resources` (@sec:embed-resources) and `toc` (@sec:toc)
     default to `false` and `true`, respectively.
 
-If you want to customize the assets, you should provide the `css` and `js` meta
-variables as usual, which will *override* the defaults. If you want to *add* to
-the default assets instead of replacing them, use the `css2` and `js2` variables
-(which are appended to the built-in defaults), e.g.,
+To add your own assets, provide the `css` and `js` meta variables as usual,
+which are added after the default assets, e.g.,
 
 ``` yaml
-css2: ["custom.css"]
-js2: ["custom.js"]
+css: ["custom.css"]
+js: ["custom.js"]
 ```
 
 Absolute paths (i.e., paths starting with `/`) in links are automatically
 rewritten to relative paths, so a link like `[Home](/index.html)` will work
 correctly no matter which subdirectory the current page is in. The same applies
-to the `css`, `js`, `css2`, and `js2` variables: `css: ["/style.css"]` refers to
+to the `css` and `js` variables: `css: ["/style.css"]` refers to
 `style.css` under the site root, and becomes `../style.css` on a page in a
 subdirectory such as `foo/bar.md`. A path without the leading `/` is used as is,
 i.e., it is relative to each page, so it breaks for pages in other directories.

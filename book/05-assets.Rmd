@@ -269,12 +269,11 @@ apply to all pages. For example, if you have saved your rules in `custom.css` in
 the project folder, this adds them to the default look of the site:
 
 ``` yaml
-css2: ["custom.css"]
+css: ["custom.css"]
 ```
 
-The field `css2` means "add to the defaults", whereas `css` means "replace the
-defaults". So if you want to use a stylesheet from the web for all pages, use
-`css` as above. See @sec:site-defaults for more details.
+You can also use a stylesheet from the web for all pages in the same way. See
+@sec:site-defaults for more details.
 
 ## Copy buttons {#sec:copy-button}
 
