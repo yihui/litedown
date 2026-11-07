@@ -50,9 +50,7 @@ THe progress bar output can be set via a global option
 
 \item{options}{Options to be passed to the renderer, e.g., \code{"+toc"} to add a
 table of contents. Options can also be set as fields in the YAML metadata
-of the input (which is the recommended way, see the
-\href{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}{documentation}),
-and this argument takes precedence over YAML. See \code{\link[=markdown_options]{markdown_options()}} for
+of the input (which is the recommended way), and this argument takes precedence over YAML. See \code{\link[=markdown_options]{markdown_options()}} for
 all options. This argument can take either a character vector of the form
 \code{"+option1 option2-option3"} (use \code{+} or a space to enable an option, and
 \code{-} to disable an option), or a list of the form \code{list(option1 = value1, option2 = value2, ...)}. A string \code{"+option1"} is equivalent to
@@ -65,8 +63,8 @@ to fill out the template by their names and values, e.g., \code{list(title = ...
 only when a template is used, i.e., when the output is a full document
 (the input has YAML metadata, or \code{output} is a file). These variables can
 also be set as fields in YAML, and this argument takes precedence over YAML.
-See the Section \dQuote{YAML metadata} \href{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}{in the documentation} for
-supported variables.}
+See the Section \dQuote{YAML metadata} in the documentation (see
+References) for supported variables.}
 }
 \value{
 The output file path if output is written to a file, otherwise a
@@ -121,6 +119,10 @@ mark(c("# Intro", "", "## Details"), options = list(number_sections = TRUE))
 mark("Hello _World_!", ".tex")
 mark("Hello _**`World`**_!", "xml")
 mark("Hello _**`World`**_!", "text")
+}
+\references{
+The documentation of YAML metadata:
+\url{https://pkg.yihui.org/litedown/book/#sec:yaml-metadata}
 }
 \seealso{
 \code{\link[=sieve]{sieve()}}, for the syntax of R scripts to be passed to \code{\link[=fuse]{fuse()}}.

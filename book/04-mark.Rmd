@@ -11,7 +11,7 @@
 
 Markdown is converted to HTML, LaTeX, and other formats by the function
 `litedown::mark()`. You rarely need to call it yourself: `fuse()` calls it for
-`.Rmd` files, and the "Run" and "Knit" buttons (@chp:authoring) call these
+`.Rmd` files, and the `run` and `render` buttons (@chp:authoring) call these
 functions for you. What you control is *how* the conversion is done, and for
 that, the YAML metadata at the top of the document is usually all you need. This
 chapter shows how to write it. If you do want to call `mark()` in R code, see
@@ -123,7 +123,12 @@ For top-level variables, `mark()` will also create the "underscore" versions for
 templates, which contain HTML and LaTeX markups. For example, for the `$title$`
 variable, `$title_$` will also be available to the template. The following table
 shows the values of the underscore variables, assuming the original value of a
-variable is `TEXT`:
+variable is `TEXT` (@tab:underscore-vars):
+
+:::: {.table #tab:underscore-vars}
+::: caption
+[ ](#@tab:underscore-vars) Values of the underscore variables.
+:::
 
 | Variables | HTML | LaTeX |
 |----|----|----|
@@ -132,6 +137,8 @@ variable is `TEXT`:
 | `$author_$` | `<div class="author"> <h2>TEXT</h2> </div>` | `\author{TEXT}` |
 | `$date_$` | `<div class="date"> <h3>TEXT</h3> </div>` | `\date{TEXT}` |
 | `$abstract_$` | `<div class="abstract"> <p>TEXT</p> </div>` | `\begin{abstract} TEXT \end{abstract}` |
+
+::::
 
 If an original variable is empty or missing, its underscore version will also be
 empty. For the `$author_$` variable, if the `$author$` variable contains

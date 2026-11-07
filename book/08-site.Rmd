@@ -439,9 +439,8 @@ output:
         class: side side-right
 ```
 
-Use `css` here instead of `css2`, so that the default CSS assets of the site
-(@sec:site-defaults) are kept and `@pkgdown-like` is added after them. The
-navigation menu starts with the package name and version, and the theme is
+The default CSS assets of the site (@sec:site-defaults) are kept, and
+`@pkgdown-like` is added after them. The navigation menu starts with the package name and version, and the theme is
 darkened by inverting colors in the dark color scheme, which can be turned off
 by setting the CSS variable `--invert-filter` to `none`.
 

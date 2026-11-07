@@ -7,12 +7,14 @@
 > ---Ralph Waldo Emerson, *Ode, Inscribed to William H. Channing*
 :::
 
-**litedown** renders R Markdown and Markdown to HTML or LaTeX. To get started:
+To get started:
 
 1.  Install the package with `install.packages("litedown")`.
 2.  Run `litedown::roam()` to open the preview in your browser.
-3.  Open a file in the browser, or create a new one with the + button.
-4.  Click **Run** to preview it, or **Render** to write the output file.
+3.  Open a file in the browser, or create a new one with the [+](){.larger}
+    button.
+4.  Click the `run` button ([►](){.larger}) to preview it in memory, or the
+    `render` button ([↯](){.larger}) to write the output file.
 
 R Markdown documents need to be compiled to Markdown before being rendered to a
 target output format such as HTML and LaTeX.
@@ -159,7 +161,7 @@ and LaTeX.
 
 :::: {#fig:humpty-dumpty .figure}
 ![Humpty
-Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg){width="200px"}
+Dumpty](https://upload.wikimedia.org/wikipedia/commons/b/b2/Humpty_Dumpty_1_-_WW_Denslow_-_Project_Gutenberg_etext_18546.jpg){width="250px"}
 
 ::: caption
 [ ](#@fig:humpty-dumpty) After raising two kids for a few years, I have been so
@@ -175,9 +177,11 @@ Take the following document for example:
 ```` {.md data-file="*.Rmd"}
 ---
 title: "A Report on the Wall"
+author: "`{r} who`"
+date: "`{r} Sys.Date()`"
 ---
 
-```{r}
+```{r, order = 0}
 who = 'Humpty Dumpty'
 ```
 
@@ -199,12 +203,14 @@ Humpty together again by paste(broken, collapse = ' ').
 -->
 ````
 
-The YAML metadata is provided between `---` and `---` in the beginning.
+The YAML metadata is provided between `---` and `---` in the beginning. Note
+that it can also contain code to be evaluated, such as the variable `who` and
+the function call `Sys.Date()`.
 
-The document has two code chunks in triple-backtick (```` ``` ````) fences. You
-can do any computing in code chunks and generate text results or graphics.
-Chunk options such as `echo` or `order` control this behavior (@sec:option-order
-covers `order`).
+The document has two code chunks in triple-backtick (```` ``` ````) fences. The
+first code chunk contains a chunk option `order = 0` (you may see
+@sec:option-order for its meaning later). You can do any computing in code
+chunks and generate text results or graphics.
 
 There are two text chunks: one between the two code chunks, and one after the
 second code chunk. These text chunks contain inline R code expressions in
