@@ -122,6 +122,6 @@ jobs:
         with:
           r-universe: yihui
           dependencies: Depends, Imports, LinkingTo
-          extra-packages: testit .
+          extra-packages: rbibutils testit .
 
       - uses: yihui/actions/check-r-package@HEAD
