@@ -92,3 +92,36 @@ jobs:
           plugins: noop
           disable_search: true
 
+  # Alpine (glibc-based runners may catch other problems)
+  R-CMD-check-alpine:
+    runs-on: ubuntu-latest
+
+    name: alpine (R release)
+
+    container:
+      image: alpine:latest
+      options: --user root
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      _R_CHECK_FORCE_SUGGESTS_: false
+      _R_CHECK_RD_XREFS_: false
+
+    steps:
+      - name: Install system dependencies
+        run: apk add --no-cache bash tar curl git patch R R-dev R-doc g++ make musl-dev
+
+      - uses: actions/checkout@HEAD
+
+      # GCC 15 -Wstringop-overflow false positive in cmark (only seen on Alpine)
+      - name: Apply cmark patch
+        run: patch -p1 -d src < src/patches/buffer-nul-guard.diff
+
+      - uses: yihui/actions/setup-r-dependencies@HEAD
+        with:
+          r-universe: yihui
+          dependencies: Depends, Imports, LinkingTo
+          extra-packages: testit .
+
+      - uses: yihui/actions/check-r-package@HEAD
