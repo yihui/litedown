@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.10">
+<meta name="generator" content="litedown 1.0.11">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/article.min.css">
@@ -342,7 +342,8 @@
 <li><a href="#sec:websites"><span class="section-number">8.3</span> Websites</a>
 <ul>
 <li><a href="#sec:site-defaults"><span class="section-number">8.3.1</span> Default assets and layout</a></li>
-<li><a href="#sec:site-giscus"><span class="section-number">8.3.2</span> Comments</a></li>
+<li><a href="#sec:site-nav"><span class="section-number">8.3.2</span> Navigation menu</a></li>
+<li><a href="#sec:site-giscus"><span class="section-number">8.3.3</span> Comments</a></li>
 </ul>
 </li>
 <li><a href="#sec:pkg-site"><span class="section-number">8.4</span> R package documentation</a>
@@ -7461,7 +7462,8 @@ other words, each page uses the article format (<a class="cross-ref-sec" href="#
 generated from the top-level input files under the site root (plus any
 one-level subdirectories that contain an <code>index.html</code>, such as
 <code>playground/index.html</code>). The menu titles are derived from the filenames
-(e.g., <code>about.Rmd</code> becomes “About”, and <code>index.Rmd</code> becomes “Home”).</p>
+(e.g., <code>about.Rmd</code> becomes “About”, and <code>index.Rmd</code> becomes “Home”). You can
+customize the order and text of the menu items (<a class="cross-ref-sec" href="#sec:site-nav">8.3.2</a>).</p>
 </li>
 <li>
 <p>If <code>include_after</code> is not provided, a copyright footer (<code>© &lt;year&gt;</code>) is
@@ -7484,7 +7486,31 @@ to the <code>css</code> and <code>js</code> variables: <code>css: [&quot;/style.
 <code>style.css</code> under the site root, and becomes <code>../style.css</code> on a page in a
 subdirectory such as <code>foo/bar.md</code>. A path without the leading <code>/</code> is used as is,
 i.e., it is relative to each page, so it breaks for pages in other directories.</p>
-<h3 id="sec:site-giscus"><span class="section-number">8.3.2</span> Comments</h3>
+<h3 id="sec:site-nav"><span class="section-number">8.3.2</span> Navigation menu</h3>
+<p>By default, the items of the automatic navigation menu are sorted by filenames,
+with <code>index</code> first. To change the order or the text of the items, add the field
+<code>nav</code> under <code>site</code> in <code>_litedown.yml</code>. It is a map from item names to item text,
+and the menu shows the items in the order that you specify. An item name is a
+filename without the extension (e.g., <code>get-started</code> for <code>get-started.Rmd</code>, and
+<code>index</code> for the home page) or the name of a subdirectory. If the text is empty,
+the default text is used. Items not listed in <code>nav</code> follow the listed ones in
+the default order.</p>
+<pre><code class="language-yaml">site:
+  nav:
+    index: Home
+    get-started: Get Started
+    reference:
+    changelog: News
+</code></pre>
+<p>To remove items from the menu (the pages are still built), list their names
+under <code>nav_hide</code>. The names can contain the wildcards <code>*</code> and <code>?</code>:</p>
+<pre><code class="language-yaml">site:
+  nav_hide: [privacy, &quot;draft-*&quot;]
+</code></pre>
+<p>A name that matches nothing, or a name in both <code>nav</code> and <code>nav_hide</code>, is an
+error. For full control of the menu, provide <code>include_before</code> instead
+(<a class="cross-ref-sec" href="#sec:websites">8.3</a>), which disables the automatic menu.</p>
+<h3 id="sec:site-giscus"><span class="section-number">8.3.3</span> Comments</h3>
 <p>To add a <a href="https://giscus.app">giscus</a> comment section to every page of a
 website, provide its settings under <code>giscus</code> in the field <code>site</code> of
 <code>_litedown.yml</code>. Each field becomes a <code>data-*</code> attribute of the giscus script,
@@ -8239,7 +8265,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.10, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.11, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
