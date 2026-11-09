@@ -264,20 +264,21 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
 })
 
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
-  idx = pkg_manual(pkg, examples = FALSE, pages = TRUE)
+  idx = pkg_manual(pkg, examples = FALSE, individual = TRUE)
   # the index links to the pages and has no help page content
   (has_match(idx, '<a href="manual/mark[.]html"><code>mark[(][)]</code></a>'))
   (!any(grepl('<h2', idx)))
   pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
   (has_match(pg, '<h2 id="sec:man-mark"'))
-  (has_match(pg, '<a href="../manual.html">'))
+  (!has_match(pg, 'All help pages'))
+  (!has_match(idx, 'callout-tip'))
   # links to other pages are in the same dir
   (has_match(one_string(pg), 'href="markdown-options[.]html"'))
   (has_error(pkg_manual(pkg, examples = FALSE, topic = 'nonexistent'), 'nonexistent'))
   # one md file per page, in manual/
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
-  fs = in_dir(d, manual_pages(pkg, examples = FALSE, groups = NULL))
+  fs = in_dir(d, write_manual(pkg, examples = FALSE, groups = NULL))
   (file_exists(file.path(d, 'manual/mark.md')))
   (file.path('manual', 'mark.md') %in% fs)
   (has_match(read_utf8(file.path(d, 'manual/mark.md')), 'title: "mark"'))

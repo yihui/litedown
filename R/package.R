@@ -459,22 +459,22 @@ tweak_citation = function(x) {
 #'
 #'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
 #'   `pkg_articles()` and `pkg_examples()` list all items in a single list.
-#' @param pages Whether to build each help page as a separate page (under
+#' @param individual Whether to build each help page as a separate page (under
 #'   `manual/`) instead of putting all of them on a single page. If `TRUE`,
 #'   `pkg_manual()` only returns the index, which links to the pages. The pages
 #'   are written by [pkg_site()] before it renders the site, so this is enabled
-#'   by the field `manual_pages: true` under `site` in `_litedown.yml` (the
+#'   by the field `individual_manual: true` under `site` in `_litedown.yml` (the
 #'   default), not by the argument alone.
 #' @param topic The name of a help page (an Rd filename, with or without
 #'   `.Rd`). If provided, only the body of this page is returned, with links to
-#'   other pages for use in a separate page (see `pages`).
+#'   other pages for use in a separate page (see `individual`).
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
   examples = list(), groups = site_groups('manual'),
-  pages = site_flag('manual_pages'), topic = NULL
+  individual = site_flag('individual_manual'), topic = NULL
 ) {
   m = manual_db(name, groups, overview)
   db = m$db; al = m$al; groups = m$groups; intro = m$intro
@@ -484,10 +484,10 @@ pkg_manual = function(
     )
     db = db[i]
   }
-  # `pages`: this call only builds the index, which links to the pages of
+  # `individual`: this call only builds the index, which links to the pages of
   # topics (one file per topic under manual/, written by pkg_site() before the
   # site is rendered); `topic`: this call builds the body of one such page
-  index_only = isTRUE(pages) && is.null(topic)
+  index_only = isTRUE(individual) && is.null(topic)
   paged = index_only || !is.null(topic)
   links = tools::findHTMLlinks('')
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
@@ -561,9 +561,10 @@ pkg_manual = function(
         toc_block(c(sprintf('<b>-- <kbd>%s</kbd> --</b>', i), l[[i]]))
       }), use.names = FALSE)
     }
-    # put the index in a callout (blank lines make it a fenced Div, not HTML)
-    c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::')
-  } else '<p><a href="../manual.html">&larr; All help pages</a></p>'
+    # put the index in a callout (blank lines make it a fenced Div, not HTML),
+    # unless it is a page of its own
+    if (index_only) toc else c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::')
+  }
   toc = c(toc, '')
 
   r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
@@ -593,7 +594,7 @@ pkg_manual = function(
     res, fixed = TRUE
   )
   # the callout assets are not in the default site assets
-  new_asis(c(toc, res, vest(if (is.null(topic)) 'callout', css = '@manual')))
+  new_asis(c(toc, res, vest(if (!paged) 'callout', css = '@manual')))
 }
 
 # Rd pages of a package, their aliases, and groups (with filenames, instead of
@@ -634,17 +635,17 @@ site_flag = function(key) isTRUE(yml_config('.')[['site']][[key]])
 # directory, which fuse_site() renders as normal pages (so they must exist
 # before it starts; manual.Rmd only builds the index that links to them).
 # Returns the file paths.
-manual_pages = function(name, examples = list(), groups = site_groups('manual')) {
+write_manual = function(name, examples = list(), groups = site_groups('manual')) {
   dir_create('manual')
   db = manual_db(name, groups)$db
   in_dir('manual', uapply(names(db), function(i) {
     f = paste0(manual_file(i), '.md')
     x = pkg_manual(
       name, number_sections = FALSE, examples = examples, groups = groups,
-      pages = TRUE, topic = i
+      individual = TRUE, topic = i
     )
     write_utf8(c(
-      '---', sprintf('title: "%s"', sans_ext(i)), '---', '', unclass(x)
+      '---', sprintf('title: "%s"', sans_ext(i)), '---', '', x
     ), f)
     file.path('manual', f)
   }))
@@ -919,7 +920,7 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
       dir_create('book'); file.create('book/index.html')
     }
     # per-topic help pages must exist before fuse_site() collects the inputs
-    pages = if (site_flag('manual_pages')) manual_pages(name)
+    pages = if (site_flag('individual_manual')) write_manual(name)
     out = fuse_site('.')
     unlink(pages)
     if (book) {
