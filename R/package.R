@@ -550,7 +550,9 @@ pkg_manual = function(
       ov = intersect(intro, names(db))
       unlist(use.names = FALSE, lapply(c(
         if (length(ov)) list(list(title = 'Overview', i = ov)), groups
-      ), function(g) toc_block(toc_links(toc[g$i]), g$title, g$desc)))
+      ), function(g) {
+        toc_block(toc_links(toc[g$i]), g$title, g$desc, index_only)
+      }))
     } else {
       # group by first character of aliases
       g = toupper(substr(unlist(al), 1, 1))
@@ -762,9 +764,11 @@ copy_articles = function(path, files, to = 'articles') {
   file.copy(file.path(path, files), to, overwrite = TRUE)
 }
 
-# a block of links in the TOC, optionally with a heading and a description
-toc_block = function(x, title = NULL, desc = NULL) {
-  c(if (length(title)) sprintf('<h3 class="unnumbered unlisted">%s</h3>', title),
+# a block of links in the TOC, optionally with a heading and a description; the
+# heading is a normal section (h2) if the block is the content of a page
+toc_block = function(x, title = NULL, desc = NULL, page = FALSE) {
+  c(if (length(title)) if (page) sprintf('<h2>%s</h2>', title) else
+      sprintf('<h3 class="unnumbered unlisted">%s</h3>', title),
     if (length(desc)) sprintf('<p>%s</p>', desc), '<p>', x, '</p>')
 }
 

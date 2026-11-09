@@ -267,6 +267,12 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
   # the index links to the pages and has no help page content
   (has_match(idx, I('<a href="manual/mark.html"><code>mark()</code></a>')))
+  # group headings of the index are normal sections
+  ig = pkg_manual(pkg, examples = FALSE, full = FALSE, groups = list(
+    list(title = 'First', contents = 'mark')
+  ))
+  (has_match(ig, I('<h2>First</h2>')))
+  (has_match(ig, !I('unlisted')))
   (!any(grepl('<h2', idx)))
   pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
   # the Rd title becomes the page title, and h3 sections are raised to h2
