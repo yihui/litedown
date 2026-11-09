@@ -27,7 +27,10 @@ assert('message', {
   statements (setup, `on.exit()`) run as usual, so no `local()` wrapper is needed.
 - To test whether output matches a string or pattern, prefer `has_match(x,
   pattern)` over `grepl()`: on mismatch it prints `x`, so we can see what went
-  wrong, whereas `grepl()` only gives a vague `TRUE`/`FALSE`.
+  wrong, whereas `grepl()` only gives a vague `TRUE`/`FALSE`. Wrap a fixed
+  string in `I()` (e.g., `has_match(x, I('a.b'))`) to match it literally. To
+  assert that a pattern does not match, prefix it with `!`, e.g.,
+  `has_match(x, !'pattern')`.
 - Use `has_error()` instead of `tryCatch()` for error testing.
 - Never use `:::` to access internal functions; `testit` exposes them automatically.
 
@@ -63,9 +66,9 @@ whenever `lite.js` changes. This is intentional: never revert or "clean up" them
 3. **Update NEWS.md**: first heading is always `# litedown x.y` (dev version).
    Keep each entry short and user-facing: say what the feature is for and how
    to use it, not how it works (no implementation details or edge cases; those
-   belong in the docs). Refer to docs and examples by links on text (e.g.,
-   `[details](https://pkg.yihui.org/litedown/book/#sec:foo)`) to their HTML
-   pages, not bare URLs or source file names.
+   belong in the docs). Refer to docs and examples by links on text that names
+   the target (e.g., `[site groups](https://pkg.yihui.org/litedown/book/#sec:pkg-site-groups)`),
+   not generic text like "details", and not bare URLs or source file names.
 4. **Run tests**: `Rscript tests/test-all.R`
 5. **Clean up artifacts**: `rm -rf *.tar.gz *.Rcheck/`
 6. **Site groups**: the manual and examples pages of the site are grouped in
