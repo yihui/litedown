@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.9">
+<meta name="generator" content="litedown 1.0.10">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/article.min.css">
@@ -22,7 +22,7 @@
 <header class="frontmatter">
 <div class="title"><h1>litedown: R Markdown Reimagined</h1></div>
 <div class="author"><h2>Yihui Xie</h2></div>
-<div class="date"><h3>2026-11-08</h3></div>
+<div class="date"><h3>2026-11-09</h3></div>
 </header>
 <main>
 <div class="">
@@ -351,6 +351,7 @@
 <li><a href="#sec:pkg-site-fun"><span class="section-number">8.4.2</span> Package sites via <code>pkg_site()</code></a>
 <ul>
 <li><a href="#sec:pkg-site-groups"><span class="section-number">8.4.2.1</span> Grouping manual pages, articles, and examples</a></li>
+<li><a href="#sec:pkg-site-individual-manual"><span class="section-number">8.4.2.2</span> One page per help topic</a></li>
 </ul>
 </li>
 <li><a href="#sec:pkg-site-pkgdown"><span class="section-number">8.4.3</span> A pkgdown-like look</a></li>
@@ -2482,10 +2483,10 @@ provided via the chunk option <code>print</code>, which defaults to the S3 gener
 <code>xfun::record_print()</code>, with the following methods:</p>
 <pre><code class="language-r">methods(xfun::record_print)
 </code></pre>
-<pre><code>#&gt; [1] record_print.data.frame*     record_print.default        
-#&gt; [3] record_print.knitr_kable*    record_print.matrix*        
-#&gt; [5] record_print.record_asis     record_print.tbl_df*        
-#&gt; [7] record_print.xfun_raw_string
+<pre><code>#&gt; [1] record_print.data.frame*      record_print.default         
+#&gt; [3] record_print.knitr_kable*     record_print.matrix*         
+#&gt; [5] record_print.record_asis      record_print.tbl_df*         
+#&gt; [7] record_print.xfun_md_viewable record_print.xfun_raw_string 
 #&gt; see '?methods' for accessing help and source code
 </code></pre>
 <p>These methods are mainly for generating tables from rectangular data objects,
@@ -5554,6 +5555,7 @@ xfun::tabset(cfg, dput)
 </li>
 </ul>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/tabsets.min.js" defer></script>
 <p>I have never loved YAML, but this time, I feel that YAML is adorable.</p>
 <h3 id="sec:from-sections"><span class="section-number">5.5.2</span> From sections</h3>
 <p>The second way to create a tabset is through section headings. If you add a
@@ -7705,6 +7707,21 @@ keyword <code>internal</code> (e.g., the page of re-exported functions) are hidd
 default, and listed only if a group names them. You can also pass the groups to
 the <code>groups</code> argument of <code>pkg_manual()</code>, <code>pkg_articles()</code>, and <code>pkg_examples()</code>
 as a list of lists with the fields <code>title</code>, <code>desc</code>, and <code>contents</code>.</p>
+<h4 id="sec:pkg-site-individual-manual"><span class="section-number">8.4.2.2</span> One page per help topic</h4>
+<p>In a site built by <code>pkg_site()</code>, each help page has its own page
+<code>manual/{topic}.html</code> (e.g., <code>manual/mark.html</code>), and <code>manual.html</code> only shows
+an index: a bullet list with one bullet per help page, showing its function
+names and title, grouped if <code>manual</code> groups are provided (see
+<a class="cross-ref-sec" href="#sec:pkg-site-groups">8.4.2.1</a>). Functions documented on the same help page share a
+bullet. Links between help pages point to these pages. To put all help pages
+on a single page <code>manual.html</code> instead, add <code>full_manual: true</code> under <code>site</code> in
+<code>_litedown.yml</code> in the site directory:</p>
+<pre><code class="language-yaml">site:
+  full_manual: true
+</code></pre>
+<p>The pages are written by <code>pkg_site()</code> before the site is rendered. Outside
+<code>pkg_site()</code> (e.g., in a book), <code>pkg_manual()</code> returns all help pages in full by
+default; <code>pkg_manual(full = FALSE)</code> is only useful with those pages.</p>
 <h3 id="sec:pkg-site-pkgdown"><span class="section-number">8.4.3</span> A pkgdown-like look</h3>
 <p>If your users are familiar with <strong>pkgdown</strong> sites (Bootstrap themes), you can
 give your package site a similar look by adding the CSS asset <code>@pkgdown-like</code> in
@@ -8222,7 +8239,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.9, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.10, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -8241,7 +8258,6 @@ R package version 0.62.16, <a href="https://github.com/yihui/xfun">https://githu
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/right-quote.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/key-buttons.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/callout.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/tabsets.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/render-katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 1.0.10">
+<title>Mark a character vector as raw output</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/prism-xcode.min.css">
+</head>
+<body>
+<nav class="site-nav"><p><a href="../index.html" class="brand">litedown</a> <small class="version">v1.0.10</small>
+<a href="../examples.html">Examples</a>
+<a href="../manual.html">Manual</a>
+<a href="../news.html">News</a>
+<a href="../book/">Book</a>
+<a href="../playground/">Playground</a>
+<a href="https://github.com/yihui/litedown/" class="right"><img src="https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/mark-github-24.svg" alt="GitHub" class="no-invert" /></a></p></nav>
+<header class="frontmatter">
+<div class="title"><h1>Mark a character vector as raw output</h1></div>
+
+
+
+</header>
+<main>
+<article class="">
+<nav id="TOC" class="side side-left">
+<ul>
+<li><a href="#sec:description">Description</a></li>
+<li><a href="#sec:usage">Usage</a></li>
+<li><a href="#sec:arguments">Arguments</a></li>
+<li><a href="#sec:value">Value</a></li>
+<li><a href="#sec:examples">Examples</a></li>
+</ul>
+</nav>
+<h2 id="sec:description" class="unnumbered">Description</h2>
+<p>This function should be called inside a code chunk, and its effect is the
+same as the chunk option <code>results = "asis"</code>. The input character vector will
+be written verbatim to the output (and interpreted as Markdown).
+</p>
+<h2 id="sec:usage" class="unnumbered">Usage</h2>
+<pre><code class="language-r">raw_text(x, format = NULL)</code></pre>
+<h2 id="sec:arguments" class="unnumbered">Arguments</h2>
+<table class="desc-table" role = "presentation">
+<tr><td><code>x</code></td>
+<td>
+<p>A character vector (each element will be treated as a line).</p>
+</td></tr>
+<tr><td><code>format</code></td>
+<td>
+<p>An output format name, e.g., <code>html</code> or <code>latex</code>. If provided,
+<code>x</code> will be wrapped in a fenced code block, e.g., <code> ```{=html}</code>.</p>
+</td></tr>
+</table>
+<h2 id="sec:value" class="unnumbered">Value</h2>
+<p>A character vector with a special class to indicate that it should be
+treated as raw output.
+</p>
+<h2 id="sec:examples" class="unnumbered">Examples</h2>
+<pre><code class="language-r">litedown::raw_text(c(&quot;**This**&quot;, &quot;_is_&quot;, &quot;[Markdown](#).&quot;))
+</code></pre>
+<pre><code>**This**
+_is_
+[Markdown](#).
+</code></pre>
+<pre><code class="language-r">litedown::raw_text(&quot;&lt;b&gt;Bold&lt;/b&gt;&quot;, &quot;html&quot;)
+</code></pre>
+<pre><code>``` {=html}
+&lt;b&gt;Bold&lt;/b&gt;
+```
+</code></pre>
+<pre><code class="language-r">litedown::raw_text(&quot;\\textbf{Bold}&quot;, &quot;latex&quot;)
+</code></pre>
+<pre><code>``` {=latex}
+\textbf{Bold}
+```
+</code></pre>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/css/manual.min.css">
+
+</article>
+</main>
+<section class="comments">
+<script src="https://giscus.app/client.js" data-strict="1" data-theme="preferred_color_scheme" data-loading="lazy" data-repo="yihui/yihui.org" data-repo-id="MDEwOlJlcG9zaXRvcnk4MDc3NDg0NA==" data-category="Comments" data-category-id="DIC_kwDOBNCGvM4COkjD" crossorigin="anonymous" async></script>
+</section>
+<footer><div class="flex-col">
+<p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.10</p>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.14.154/js/nav-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+</body>
+</html>
