@@ -266,9 +266,9 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
   idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
   # the index links to the pages and has no help page content
-  # one bullet per title, linking to the pages of the topics
-  (has_match(idx, I('[`mark()`](manual/mark.html): Render Markdown, R Markdown, and R scripts')))
-  (has_match(idx, I('[`latex_format()`](manual/html-format.html): Output formats in YAML metadata')))
+  # one bullet per title; the function names link to the page of the (first) topic
+  (has_match(idx, I('- [`mark()`](manual/mark.html): Render Markdown, R Markdown, and R scripts')))
+  (has_match(idx, I('- [`html_format()`, `latex_format()`](manual/html-format.html): Output formats in YAML metadata')))
   # group headings of the index are normal sections
   ig = pkg_manual(pkg, examples = FALSE, full = FALSE, groups = list(
     list(title = 'First', contents = 'mark')

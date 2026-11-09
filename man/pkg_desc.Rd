@@ -124,9 +124,10 @@ If no groups are provided, \code{pkg_manual()} lists topics alphabetically, and
 examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
 
 \item{full}{Whether to put all help pages on a single page. If \code{FALSE},
-\code{pkg_manual()} only returns the index, a list of the form \verb{fn1(), fn2(): title} (topics with the same title are combined, and the list is divided
-by \code{groups} if provided), which links to the pages of individual help
-topics under \verb{manual/}. \code{\link[=pkg_site]{pkg_site()}} writes these pages
+\code{pkg_manual()} only returns the index, a list with one bullet per help
+page of the form \verb{fn1(), fn2(): title} (the list is divided by \code{groups}
+if provided), in which the function names link to the page under
+\verb{manual/}. \code{\link[=pkg_site]{pkg_site()}} writes these pages
 before it renders the site, so the default is \code{FALSE} only when a site is
 being built by it (unless \code{full_manual: true} is set under \code{site} in
 \verb{_litedown.yml}), and \code{TRUE} otherwise.}

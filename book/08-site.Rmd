@@ -424,11 +424,12 @@ as a list of lists with the fields `title`, `desc`, and `contents`.
 
 In a site built by `pkg_site()`, each help page has its own page
 `manual/{topic}.html` (e.g., `manual/mark.html`), and `manual.html` only shows
-an index: a bullet list of the topics with their titles, grouped if `manual`
-groups are provided (see @sec:pkg-site-groups). Topics with the same title are
-combined in one bullet. Links between help pages point to these pages. To put
-all help pages on a single page `manual.html` instead, add `full_manual: true`
-under `site` in `_litedown.yml` in the site directory:
+an index: a bullet list with one bullet per help page, showing its function
+names and title, grouped if `manual` groups are provided (see
+@sec:pkg-site-groups). Functions documented on the same help page share a
+bullet. Links between help pages point to these pages. To put all help pages
+on a single page `manual.html` instead, add `full_manual: true` under `site` in
+`_litedown.yml` in the site directory:
 
 ``` yaml
 site:

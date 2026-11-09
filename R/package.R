@@ -460,10 +460,10 @@ tweak_citation = function(x) {
 #'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
 #'   `pkg_articles()` and `pkg_examples()` list all items in a single list.
 #' @param full Whether to put all help pages on a single page. If `FALSE`,
-#'   `pkg_manual()` only returns the index, a list of the form `fn1(), fn2():
-#'   title` (topics with the same title are combined, and the list is divided
-#'   by `groups` if provided), which links to the pages of individual help
-#'   topics under `manual/`. [pkg_site()] writes these pages
+#'   `pkg_manual()` only returns the index, a list with one bullet per help
+#'   page of the form `fn1(), fn2(): title` (the list is divided by `groups`
+#'   if provided), in which the function names link to the page under
+#'   `manual/`. [pkg_site()] writes these pages
 #'   before it renders the site, so the default is `FALSE` only when a site is
 #'   being built by it (unless `full_manual: true` is set under `site` in
 #'   `_litedown.yml`), and `TRUE` otherwise.
@@ -533,16 +533,11 @@ pkg_manual = function(
         if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
       })
     })
-    # bullets of the form `fn1(), fn2(): title` (topics with the same title are
-    # combined), linking to the page of each topic
+    # one bullet per help page: `[fn1(), fn2()](page): title`
     toc_items = function(ids) {
       t = vapply(ids, function(i) rd_title(rd2html(db[[i]], links, i)), '')
-      unlist(lapply(split(ids, factor(t, unique(t))), function(is) {
-        a = unlist(lapply(is, function(i) {
-          sprintf('[`%s`](manual/%s.html)', toc[[i]], manual_file(i))
-        }))
-        sprintf('- %s: %s', paste(a, collapse = ', '), t[match(is[1], ids)])
-      }), use.names = FALSE)
+      fn = vapply(ids, function(i) paste(sprintf('`%s`', toc[[i]]), collapse = ', '), '')
+      sprintf('- [%s](manual/%s.html): %s', fn, manual_file(ids), t)
     }
     toc_links = function(toc) {
       unlist(.mapply(function(fn, target) {
