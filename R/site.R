@@ -183,28 +183,62 @@ filter_outdated = function(x, x2, n, deps = NULL) {
   is.na(m2) | m1 - m2 > n
 }
 
-# build a nav menu from filenames under root directory
+# build a nav menu from filenames under root directory; the fields `nav` and
+# `nav_hide` under `site` customize the order, text, and visibility of items
 nav_menu = function(info) {
   if (is.na(info$root)) return('[Home](/index.html)')
   root = sub('/+$', '', info$root)  # strip any trailing slash for reliable dirname() comparison
+  site = info$yaml[['site']]
   # list all pages, since `inputs` may be a single file when previewing
-  b = basename(find_input(root, FALSE, info$yaml[['site']][['pattern']]))
-  urls = if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
-  links = sprintf(
-    '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))), urls
-  )
-  # the package name and version replace the Home link of a package site
-  if (!is.null(brand <- nav_brand(root))) {
-    i = is_index(b)
-    links[i] = sprintf(brand, paste0('/', urls[i]))
-  }
+  b = basename(find_input(root, FALSE, site[['pattern']]))
   # add subdirs that already have an index.html (same exclusion as find_input),
   # except `doc/` whose index.html is the vignette index of an R package
   sub_dirs = list.dirs(root, recursive = FALSE)
   sub_dirs = sub_dirs[file.exists(file.path(sub_dirs, 'index.html'))]
-  sub_dirs = sub_dirs[basename(sub_dirs) != 'doc']
-  dnames = basename(sub_dirs)
-  c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames), nav_github(root))
+  dnames = setdiff(basename(sub_dirs), 'doc')
+  key = c(sans_ext(b), dnames)
+  urls = c(
+    if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html'),
+    paste0(dnames, '/')
+  )
+  nav_link = function(text, i) sprintf('[%s](/%s)', text, urls[i])
+  text = menu_name(c(ifelse(is_index(b), 'home', sans_ext(b)), dnames))
+  links = nav_link(text, seq_along(key))
+  # the package name and version replace the Home link of a package site
+  if (!is.null(brand <- nav_brand(root))) {
+    i = which(key == 'index')
+    links[i] = sprintf(brand, paste0('/', urls[i]))
+  }
+  links = nav_arrange(links, key, nav_link, site[['nav']], site[['nav_hide']])
+  c(links, nav_github(root))
+}
+
+# reorder menu items by the names in `nav` (unlisted items follow in their
+# default order), replace the text of an item if `nav` gives one, and drop items
+# matching the patterns in `hide`
+nav_arrange = function(links, key, link, nav, hide) {
+  if (!length(nav) && !length(hide)) return(links)
+  # a plain list of names only sets the order
+  nms = if (is.null(names(nav))) as.character(unlist(nav)) else names(nav)
+  text = if (is.null(names(nav))) rep('', length(nms)) else
+    vapply(nav, function(x) paste(x, collapse = ''), '')
+  pats = as.character(unlist(hide))
+  hit = lapply(pats, function(p) grepl(glob2rx(p), key))
+  bad = c(setdiff(nms, key), pats[lengths(lapply(hit, which)) == 0])
+  if (length(bad)) stop(
+    'No match for the following items in the nav menu: ',
+    paste0('"', bad, '"', collapse = ', '), call. = FALSE
+  )
+  hidden = Reduce(`|`, hit, rep(FALSE, length(key)))
+  if (any(i <- nms %in% key[hidden])) stop(
+    'Items cannot be both in `nav` and `nav_hide`: ',
+    paste0('"', nms[i], '"', collapse = ', '), call. = FALSE
+  )
+  i = match(nms, key)
+  j = text != ''
+  links[i[j]] = link(text[j], i[j])
+  i = c(i, setdiff(seq_along(key), i))
+  links[i[!hidden[i]]]
 }
 
 # link of the package name and version (`%s` is the URL), NULL if not a package

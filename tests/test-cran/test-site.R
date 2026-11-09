@@ -117,6 +117,53 @@ assert('nav_menu() labels the home link with the package name and version', {
   (!grepl('Home', m[1], fixed = TRUE))
 })
 
+# write a site config with the given lines under `site`, return the nav menu
+nav_with = function(d, ...) {
+  writeLines(c('site:', ...), file.path(d, '_litedown.yml'))
+  nav_menu(proj_info(file.path(d, 'about.Rmd')))
+}
+
+assert('nav_menu() orders items and sets their text from `nav`', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  m = nav_with(d, '  nav:', '    about: About Us', '    index: Start')
+  (has_match(m[1], I('[About Us](/about.html)')))
+  (has_match(m[2], I('[Start](/index.html)')))
+  m = nav_with(d, '  nav: [about, index]')
+  (has_match(m[1], I('[About](/about.html)')))
+  (has_match(m[2], I('[Home](/index.html)')))
+})
+
+assert('nav_menu() puts unlisted items after `nav` items in default order', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  m = nav_with(d, '  nav:', '    about:')
+  (has_match(m[1], I('[About](/about.html)')))
+  (has_match(m[2], I('[Home](/index.html)')))
+})
+
+assert('nav_menu() drops items matching `nav_hide`', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  m = nav_with(d, '  nav_hide: ["ab*"]')
+  (length(m) %==% 1L)
+  (has_match(m, I('[Home](/index.html)')))
+  m = nav_with(d, '  nav_hide: [about]')
+  (!any(grepl('/about.html', m, fixed = TRUE)))
+})
+
+assert('nav_menu() errors on unknown or conflicting `nav`/`nav_hide` items', {
+  d = tempfile()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  proj_skeleton(d, 'site')
+  (has_error(nav_with(d, '  nav: [nope]')))
+  (has_error(nav_with(d, '  nav_hide: [nope]')))
+  (has_error(nav_with(d, '  nav: [about]', '  nav_hide: [about]')))
+})
+
 assert('nav_menu() ignores doc/index.html (vignette index)', {
   d = tempfile()
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
