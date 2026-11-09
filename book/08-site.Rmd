@@ -126,7 +126,7 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-## Websites
+## Websites {#sec:websites}
 
 The `_litedown.yml` file should contain a top-level field named `site`, and you
 are likely to customize the `meta` variables `css`, `include_before`, and
@@ -234,7 +234,7 @@ site:
 
 A name that matches nothing, or a name in both `nav` and `nav_hide`, is an
 error. For full control of the menu, provide `include_before` instead
-(see the Websites section), which disables the automatic menu.
+(@sec:websites), which disables the automatic menu.
 
 ### Comments {#sec:site-giscus}
 
