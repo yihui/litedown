@@ -575,7 +575,10 @@ pkg_manual = function(
   } else {
     # the page title is the Rd title (set by write_manual()), so drop the h2 and
     # raise the sections (description, usage, etc.) to h2
-    res = sub('(?s)<h2.*?</h2>\\s*', '', res, perl = TRUE)
+    r = '(?s)<h2[^>]*>(.*?)</h2>\\s*'
+    title = sub(r, '\\1', regmatches(res, regexpr(r, res, perl = TRUE)), perl = TRUE)
+    title = str_trim(gsub('\\s+', ' ', title))
+    res = sub(r, '', res, perl = TRUE)
     res = gsub('<h3>', '<h2 class="unnumbered">', res, fixed = TRUE)
     res = gsub('</h3>', '</h2>', res, fixed = TRUE)
   }
@@ -602,7 +605,10 @@ pkg_manual = function(
     res, fixed = TRUE
   )
   # the callout assets are not in the default site assets
-  new_asis(c(toc, res, vest(if (!paged) 'callout', css = '@manual')))
+  res = new_asis(c(toc, res, vest(if (!paged) 'callout', css = '@manual')))
+  # the title (in HTML) of a single page
+  if (!is.null(topic)) attr(res, 'title') = title
+  res
 }
 
 # Rd pages of a package, their aliases, and groups (with filenames, instead of
@@ -652,15 +658,13 @@ write_manual = function(name, examples = list(), groups = site_groups('manual'))
   dir_create('manual')
   db = manual_db(name, groups)$db
   in_dir('manual', uapply(names(db), function(i) {
-    title = gsub('(["\\\\])', '\\\\\\1', Rd_title(db[[i]]))
     f = paste0(manual_file(i), '.md')
     x = pkg_manual(
       name, number_sections = FALSE, examples = examples, groups = groups,
       full = FALSE, topic = i
     )
-    write_utf8(c(
-      '---', sprintf('title: "%s"', title), '---', '', x
-    ), f)
+    title = gsub('(["\\\\])', '\\\\\\1', attr(x, 'title'))
+    write_utf8(c('---', sprintf('title: "%s"', title), '---', '', x), f)
     file.path('manual', f)
   }))
 }
@@ -1113,12 +1117,6 @@ detect_pkg = local({
 detect_news = function(name) {
   if (isTRUE(file_exists(path <- file.path(attr(name, 'path'), 'NEWS.md'))))
     path else system.file('NEWS.md', package = name)
-}
-
-# get \title{} in an Rd object as plain text
-Rd_title = function(x) {
-  i = Find(function(x) attr(x, 'Rd_tag') == '\\title', x)
-  str_trim(gsub('\\s+', ' ', paste(unlist(i), collapse = '')))
 }
 
 # get \alias{} names in an Rd object

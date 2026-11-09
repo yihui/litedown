@@ -272,6 +272,9 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   # the Rd title becomes the page title, and h3 sections are raised to h2
   (!has_match(pg, 'sec:man-mark'))
   (has_match(pg, '<h2 class="unnumbered">Description</h2>'))
+  # HTML in the Rd title is kept (as is) in the page title
+  gc = pkg_manual(pkg, examples = FALSE, full = FALSE, topic = 'get_context')
+  (has_match(attr(gc, 'title'), '<code>fuse[(][)]</code>'))
   (!has_match(pg, '<h3'))
   (!has_match(pg, 'All help pages'))
   (!has_match(idx, 'callout-tip'))
