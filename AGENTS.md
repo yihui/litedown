@@ -6,6 +6,11 @@
 Rscript tests/test-all.R
 ```
 
+To run only the relevant tests, pass `--filter` with a regex matched against the
+test file names, e.g., `Rscript tests/test-all.R --filter=package` runs only
+`test-package.R` (and `test-package.md`, if any). Always filter when you run tests
+during development; run the full suite only before committing.
+
 Tests live in `tests/test-cran/test-*.R` (run on CRAN) and `tests/test-ci/test-*.R`
 (CI only). The top-level runner is `tests/test-all.R`:
 
@@ -69,7 +74,7 @@ whenever `lite.js` changes. This is intentional: never revert or "clean up" them
    belong in the docs). Refer to docs and examples by links on text that names
    the target (e.g., `[site groups](https://pkg.yihui.org/litedown/book/#sec:pkg-site-groups)`),
    not generic text like "details", and not bare URLs or source file names.
-4. **Run tests**: `Rscript tests/test-all.R`
+4. **Run tests**: `Rscript tests/test-all.R` (full suite; during development use `--filter`, see above)
 5. **Clean up artifacts**: `rm -rf *.tar.gz *.Rcheck/`
 6. **Site groups**: the manual and examples pages of the site are grouped in
    `site/_litedown.yml` (fields `manual` and `examples` under `site`). When you
