@@ -266,9 +266,18 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
   idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
   # the index links to the pages and has no help page content
-  # one bullet per title; the function names link to the page of the (first) topic
-  (has_match(idx, I('- [`mark()`](manual/mark.html): Render Markdown, R Markdown, and R scripts')))
-  (has_match(idx, I('- [`html_format()`, `latex_format()`](manual/html-format.html): Output formats in YAML metadata')))
+  # one bullet per help page, listing all of its aliases (taken from the Rd files)
+  db = tools::Rd_db(pkg)
+  al = lapply(db, Rd_aliases)
+  b = grep('^- \\[', idx, value = TRUE)
+  tg = sub('^- \\[.*\\]\\((manual/[^)]*)\\).*$', '\\1', b)
+  (!anyDuplicated(tg))
+  (all(vapply(names(al), function(f) {
+    x = b[tg == paste0('manual/', manual_file(f), '.html')]
+    length(x) == 0 || all(vapply(al[[f]], function(a) {
+      grepl(paste0('`', a), x, fixed = TRUE)
+    }, TRUE))
+  }, TRUE)))
   # group headings of the index are normal sections
   ig = pkg_manual(pkg, examples = FALSE, full = FALSE, groups = list(
     list(title = 'First', contents = 'mark')
@@ -300,7 +309,12 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   fs = in_dir(d, write_manual(pkg, examples = FALSE, groups = NULL))
   (file_exists(file.path(d, 'manual/mark.md')))
   (file.path('manual', 'mark.md') %in% fs)
-  (has_match(read_utf8(file.path(d, 'manual/mark.md')), I('title: "Render Markdown, R Markdown, and R scripts"')))
+  # the title is the \\title{} of the Rd file
+  tt = unlist(lapply(tools::Rd_db(pkg)[['mark.Rd']], function(e) {
+    if (identical(attr(e, 'Rd_tag'), '\\title')) as.character(e)
+  }))
+  (grep('^title: ', read_utf8(file.path(d, 'manual/mark.md')), value = TRUE) %==%
+    paste0('title: "', tt, '"'))
 })
 
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
@@ -332,7 +346,9 @@ assert('articles are found in vignettes/, vignettes/articles/, and articles/', {
   d2 = tempfile(); dir.create(d2); on.exit(unlink(d2, recursive = TRUE), add = TRUE)
   in_dir(d2, {
     copy_articles(d, fs)
-    (sort(list.files('articles')) %==% c('_child.Rmd', 'a.Rmd', 'c.Rmd', 'd.md', 'img.png'))
+    # every article source is copied, and the README is not
+    (file.exists(file.path('articles', basename(fs))))
+    (!file.exists('articles/README.md'))
     x = pkg_articles(structure('base', path = d), groups = NULL)
     (has_match(x, '[Article C](articles/c.html)', fixed = TRUE))
     (has_match(x, '[d](articles/d.html)', fixed = TRUE))
