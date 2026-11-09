@@ -263,6 +263,26 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
   (any(grepl('<h2 id="sec:man-', m)))
 })
 
+if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
+  idx = pkg_manual(pkg, examples = FALSE, pages = TRUE)
+  # the index links to the pages and has no help page content
+  (has_match(idx, '<a href="manual/mark[.]html"><code>mark[(][)]</code></a>'))
+  (!any(grepl('<h2', idx)))
+  pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
+  (has_match(pg, '<h2 id="sec:man-mark"'))
+  (has_match(pg, '<a href="../manual.html">'))
+  # links to other pages are in the same dir
+  (has_match(one_string(pg), 'href="markdown-options[.]html"'))
+  (has_error(pkg_manual(pkg, examples = FALSE, topic = 'nonexistent'), 'nonexistent'))
+  # one md file per page, in manual/
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  fs = in_dir(d, manual_pages(pkg, examples = FALSE, groups = NULL))
+  (file_exists(file.path(d, 'manual/mark.md')))
+  (file.path('manual', 'mark.md') %in% fs)
+  (has_match(read_utf8(file.path(d, 'manual/mark.md')), 'title: "mark"'))
+})
+
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
 if (!is.null(vp) && nrow(tools::getVignetteInfo(vp)))
   assert('pkg_articles() lists vignettes, optionally in groups', {

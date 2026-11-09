@@ -459,49 +459,51 @@ tweak_citation = function(x) {
 #'
 #'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
 #'   `pkg_articles()` and `pkg_examples()` list all items in a single list.
+#' @param pages Whether to build each help page as a separate page (under
+#'   `manual/`) instead of putting all of them on a single page. If `TRUE`,
+#'   `pkg_manual()` only returns the index, which links to the pages. The pages
+#'   are written by [pkg_site()] before it renders the site, so this is enabled
+#'   by the field `manual_pages: true` under `site` in `_litedown.yml` (the
+#'   default), not by the argument alone.
+#' @param topic The name of a help page (an Rd filename, with or without
+#'   `.Rd`). If provided, only the body of this page is returned, with links to
+#'   other pages for use in a separate page (see `pages`).
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
-  examples = list(), groups = site_groups('manual')
+  examples = list(), groups = site_groups('manual'),
+  pages = site_flag('manual_pages'), topic = NULL
 ) {
+  m = manual_db(name, groups, overview)
+  db = m$db; al = m$al; groups = m$groups; intro = m$intro
+  if (!is.null(topic)) {
+    if (is.na(i <- match(manual_file(topic), manual_file(names(db))))) stop(
+      "No help page '", topic, "' in the package (or excluded by the groups)."
+    )
+    db = db[i]
+  }
+  # `pages`: this call only builds the index, which links to the pages of
+  # topics (one file per topic under manual/, written by pkg_site() before the
+  # site is rendered); `topic`: this call builds the body of one such page
+  index_only = isTRUE(pages) && is.null(topic)
+  paged = index_only || !is.null(topic)
   links = tools::findHTMLlinks('')
-  # resolve internal links (will assign IDs of the form sec:man-ID to all h2)
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
   i = grep(r, links)
-  links[i] = paste0('#sec:man-', alnum_id(sub(r, '\\2', links[i])))
+  f = alnum_id(sub(r, '\\2', links[i]))
+  # internal links: IDs of the form sec:man-ID (assigned to all h2) in a single
+  # page, or pages in the same directory
+  links[i] = if (paged) paste0(f, '.html') else paste0('#sec:man-', f)
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
   links = sub(r, 'https://rdrr.io/r/\\1/', links)
 
-  db = tools::Rd_db(name)  # all Rd pages
-  intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
-  entries = setdiff(names(db), intro)
-  internal = vapply(entries, function(i) {
-    kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
-    'internal' %in% kwd
-  }, logical(1))
-  # internal pages are only kept if a group names them explicitly (like
-  # pkgdown, e.g., for re-exported functions)
-  if (!length(groups)) entries = entries[!internal]
-  db = db[c(if (overview && intro %in% names(db)) intro, entries)]
-  al = lapply(db, Rd_aliases)
-  if (length(groups)) {
-    keys = .mapply(c, sans_ext(entries), al[entries])
-    groups = lapply(group_items(keys, groups, internal), function(g) {
-      g$i = entries[g$i]  # use filenames instead of indices
-      g
-    })
-    # list pages by group, with the overview page (if any) first
-    db = db[c(intersect(intro, names(db)), unlist(lapply(groups, `[[`, 'i')))]
-    al = al[names(db)]
-  }
-
   cl = header_class(toc, number_sections, FALSE)
   r1 = '<code class="reqn">\\s*([^<]+?)\\s*</code>'  # inline math
   r2 = sprintf('<p[^>]*>\\s*%s\\s*</p>', r1)  # display math
-  res = uapply(names(db), function(i) {
+  res = if (index_only) character() else uapply(names(db), function(i) {
     txt = ''
     con = textConnection('txt', 'w', local = TRUE, encoding = 'UTF-8')
     tryCatch(
@@ -521,7 +523,7 @@ pkg_manual = function(
       default = list(print = function(x, ...) {
         if (inherits(x, 'xfun_raw_string')) record_print(x) else
           xfun:::record_print.default(x)
-      }, dev.path = 'manual/', dev.args = list(width = 9, height = 7))
+      }, dev.path = if (is.null(topic)) 'manual/' else '', dev.args = list(width = 9, height = 7))
       txt = run_examples(txt, merge_list(default, examples), sans_ext(i))
     }
     # remove existing ID and class
@@ -531,34 +533,38 @@ pkg_manual = function(
   })
 
   # extract all aliases and put them in the beginning (like a TOC)
-  env = asNamespace(name)
-  toc = lapply(al, function(topics) {
-    uapply(topics, function(x) {
-      if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
+  toc = if (is.null(topic)) {
+    env = asNamespace(name)
+    toc = lapply(al, function(topics) {
+      uapply(topics, function(x) {
+        if (is.function(env[[x]])) paste0(x, '()') else x  # add () after function names
+      })
     })
-  })
-  toc_links = function(toc) {
-    unlist(.mapply(function(fn, target) {
-      sprintf('<a href="#sec:man-%s"><code>%s</code></a>', target, fn)
-    }, toc, sans_ext(names(toc))))
-  }
-  toc = if (length(groups)) {
-    ov = intersect(intro, names(db))
-    unlist(use.names = FALSE, lapply(c(
-      if (length(ov)) list(list(title = 'Overview', i = ov)), groups
-    ), function(g) toc_block(toc_links(toc[g$i]), g$title, g$desc)))
-  } else {
-    # group by first character of aliases
-    g = toupper(substr(unlist(al), 1, 1))
-    g[!g %in% LETTERS] = 'misc'
-    g = factor(g, intersect(c(LETTERS, 'misc'), g))
-    l = split(toc_links(toc), g)
-    unlist(lapply(names(l), function(i) {
-      toc_block(c(sprintf('<b>-- <kbd>%s</kbd> --</b>', i), l[[i]]))
-    }), use.names = FALSE)
-  }
-  # put the index in a callout (blank lines make it a fenced Div, not HTML)
-  toc = c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::', '')
+    toc_links = function(toc) {
+      unlist(.mapply(function(fn, target) {
+        sprintf('<a href="%s"><code>%s</code></a>', target, fn)
+      }, toc, if (paged) paste0('manual/', manual_file(names(toc)), '.html') else
+        paste0('#sec:man-', sans_ext(names(toc)))))
+    }
+    toc = if (length(groups)) {
+      ov = intersect(intro, names(db))
+      unlist(use.names = FALSE, lapply(c(
+        if (length(ov)) list(list(title = 'Overview', i = ov)), groups
+      ), function(g) toc_block(toc_links(toc[g$i]), g$title, g$desc)))
+    } else {
+      # group by first character of aliases
+      g = toupper(substr(unlist(al), 1, 1))
+      g[!g %in% LETTERS] = 'misc'
+      g = factor(g, intersect(c(LETTERS, 'misc'), g))
+      l = split(toc_links(toc), g)
+      unlist(lapply(names(l), function(i) {
+        toc_block(c(sprintf('<b>-- <kbd>%s</kbd> --</b>', i), l[[i]]))
+      }), use.names = FALSE)
+    }
+    # put the index in a callout (blank lines make it a fenced Div, not HTML)
+    c('::: {.callout-tip data-legend="Index"}', '', toc, '', ':::')
+  } else '<p><a href="../manual.html">&larr; All help pages</a></p>'
+  toc = c(toc, '')
 
   r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
@@ -582,9 +588,66 @@ pkg_manual = function(
   res = gsub('<div class="sourceCode ([^"]+)"><pre>(.+?)</pre></div>', '<pre><code class="language-\\1">\\2</code></pre>', res)
   res = gsub('<code class="language-R"', '<code class="language-r"', res, fixed = TRUE)
   res = gsub('&#8288;', '', res, fixed = TRUE)
-  res = gsub('<img src="../help/figures/', '<img src="man/figures/', res, fixed = TRUE)
+  res = gsub(
+    '<img src="../help/figures/', paste0('<img src="', if (paged) '../', 'man/figures/'),
+    res, fixed = TRUE
+  )
   # the callout assets are not in the default site assets
-  new_asis(c(toc, res, vest('callout', css = '@manual')))
+  new_asis(c(toc, res, vest(if (is.null(topic)) 'callout', css = '@manual')))
+}
+
+# Rd pages of a package, their aliases, and groups (with filenames, instead of
+# indices, as items) for pkg_manual(); `db` has the overview page (if any) first
+manual_db = function(name, groups = NULL, overview = TRUE) {
+  db = tools::Rd_db(name)  # all Rd pages
+  intro = paste0(name, '-package.Rd')  # the name-package entry (package overview)
+  entries = setdiff(names(db), intro)
+  internal = vapply(entries, function(i) {
+    kwd = uapply(db[[i]], function(x) if (attr(x, 'Rd_tag') == '\\keyword') x)
+    'internal' %in% kwd
+  }, logical(1))
+  # internal pages are only kept if a group names them explicitly (like
+  # pkgdown, e.g., for re-exported functions)
+  if (!length(groups)) entries = entries[!internal]
+  db = db[c(if (overview && intro %in% names(db)) intro, entries)]
+  al = lapply(db, Rd_aliases)
+  if (length(groups)) {
+    keys = .mapply(c, sans_ext(entries), al[entries])
+    groups = lapply(group_items(keys, groups, internal), function(g) {
+      g$i = entries[g$i]
+      g
+    })
+    # list pages by group, with the overview page (if any) first
+    db = db[c(intersect(intro, names(db)), unlist(lapply(groups, `[[`, 'i')))]
+    al = al[names(db)]
+  }
+  list(db = db, al = al, groups = groups, intro = intro)
+}
+
+# base name of the page of a help topic (an Rd filename, with or without .Rd)
+manual_file = function(x) alnum_id(sans_ext(x))
+
+# a boolean field under `site` in _litedown.yml in the current directory
+site_flag = function(key) isTRUE(yml_config('.')[['site']][[key]])
+
+# Write one Markdown file per help page under `manual/` in the current (site)
+# directory, which fuse_site() renders as normal pages (so they must exist
+# before it starts; manual.Rmd only builds the index that links to them).
+# Returns the file paths.
+manual_pages = function(name, examples = list(), groups = site_groups('manual')) {
+  dir_create('manual')
+  db = manual_db(name, groups)$db
+  in_dir('manual', uapply(names(db), function(i) {
+    f = paste0(manual_file(i), '.md')
+    x = pkg_manual(
+      name, number_sections = FALSE, examples = examples, groups = groups,
+      pages = TRUE, topic = i
+    )
+    write_utf8(c(
+      '---', sprintf('title: "%s"', sans_ext(i)), '---', '', unclass(x)
+    ), f)
+    file.path('manual', f)
+  }))
 }
 
 #' @return `pkg_articles()` returns a list of links to the articles of the
@@ -855,7 +918,10 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     if (book <- file_exists(cfg)) {
       dir_create('book'); file.create('book/index.html')
     }
+    # per-topic help pages must exist before fuse_site() collects the inputs
+    pages = if (site_flag('manual_pages')) manual_pages(name)
     out = fuse_site('.')
+    unlink(pages)
     if (book) {
       # run from the package root so that `$input$` is relative to it; use a new
       # R session so that book code cannot clobber our variables

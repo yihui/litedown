@@ -420,6 +420,24 @@ default, and listed only if a group names them. You can also pass the groups to
 the `groups` argument of `pkg_manual()`, `pkg_articles()`, and `pkg_examples()`
 as a list of lists with the fields `title`, `desc`, and `contents`.
 
+#### One page per help topic {#sec:pkg-site-manual-pages}
+
+By default, `manual.html` contains all help pages of the package. To give each
+help page its own page, add `manual_pages: true` under `site` in `_litedown.yml`
+in the site directory:
+
+``` yaml
+site:
+  manual_pages: true
+```
+
+Then `manual.html` only shows the index (grouped if `manual` groups are
+provided, see @sec:pkg-site-groups), and each topic is built as
+`manual/{topic}.html` (e.g., `manual/mark.html`), with a link back to the index.
+Links between help pages point to these pages. The pages are written by
+`pkg_site()` before the site is rendered, so this option does not work if you
+call `pkg_manual()` in your own document without `pkg_site()`.
+
 ### A pkgdown-like look {#sec:pkg-site-pkgdown}
 
 If your users are familiar with **pkgdown** sites (Bootstrap themes), you can

@@ -1,4 +1,5 @@
 site:
+  manual_pages: true
   giscus:
     repo: "yihui/yihui.org"
     repo_id: "MDEwOlJlcG9zaXRvcnk4MDc3NDg0NA=="
