@@ -266,20 +266,20 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
   idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
   # the index links to the pages and has no help page content
-  (has_match(idx, '<a href="manual/mark[.]html"><code>mark[(][)]</code></a>'))
+  (has_match(idx, I('<a href="manual/mark.html"><code>mark()</code></a>')))
   (!any(grepl('<h2', idx)))
   pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
   # the Rd title becomes the page title, and h3 sections are raised to h2
-  (!has_match(pg, 'sec:man-mark'))
-  (has_match(pg, '<h2 class="unnumbered">Description</h2>'))
+  (!has_match(pg, I('sec:man-mark')))
+  (has_match(pg, I('<h2 class="unnumbered">Description</h2>')))
   # HTML in the Rd title is kept (as is) in the page title
   gc = pkg_manual(pkg, examples = FALSE, full = FALSE, topic = 'get_context')
-  (has_match(attr(gc, 'title'), '<code>fuse[(][)]</code>'))
-  (!has_match(pg, '<h3'))
-  (!has_match(pg, 'All help pages'))
-  (!has_match(idx, 'callout-tip'))
+  (has_match(attr(gc, 'title'), I('<code>fuse()</code>')))
+  (!has_match(pg, I('<h3')))
+  (!has_match(pg, I('All help pages')))
+  (!has_match(idx, I('callout-tip')))
   # links to other pages are in the same dir
-  (has_match(one_string(pg), 'href="markdown-options[.]html"'))
+  (has_match(pg, I('href="markdown-options.html"')))
   (has_error(pkg_manual(pkg, examples = FALSE, topic = 'nonexistent'), 'nonexistent'))
   # a single page by default outside pkg_site(); inside, a site can opt out
   (manual_full())
@@ -292,7 +292,7 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   fs = in_dir(d, write_manual(pkg, examples = FALSE, groups = NULL))
   (file_exists(file.path(d, 'manual/mark.md')))
   (file.path('manual', 'mark.md') %in% fs)
-  (has_match(read_utf8(file.path(d, 'manual/mark.md')), 'title: "Render Markdown, R Markdown, and R scripts"', fixed = TRUE, perl = FALSE))
+  (has_match(read_utf8(file.path(d, 'manual/mark.md')), I('title: "Render Markdown, R Markdown, and R scripts"')))
 })
 
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
