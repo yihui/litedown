@@ -126,7 +126,7 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-## Websites
+## Websites {#sec:websites}
 
 The `_litedown.yml` file should contain a top-level field named `site`, and you
 are likely to customize the `meta` variables `css`, `include_before`, and
@@ -179,7 +179,8 @@ layout elements so that pages look reasonable without any configuration:
     generated from the top-level input files under the site root (plus any
     one-level subdirectories that contain an `index.html`, such as
     `playground/index.html`). The menu titles are derived from the filenames
-    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home").
+    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home"). You can
+    customize the order and text of the menu items (@sec:site-nav).
 
 -   If `include_after` is not provided, a copyright footer (`© <year>`) is
     automatically added.
@@ -202,6 +203,38 @@ to the `css` and `js` variables: `css: ["/style.css"]` refers to
 `style.css` under the site root, and becomes `../style.css` on a page in a
 subdirectory such as `foo/bar.md`. A path without the leading `/` is used as is,
 i.e., it is relative to each page, so it breaks for pages in other directories.
+
+### Navigation menu {#sec:site-nav}
+
+By default, the items of the automatic navigation menu are sorted by filenames,
+with `index` first. To change the order or the text of the items, add the field
+`nav` under `site` in `_litedown.yml`. It is a map from item names to item text,
+and the menu shows the items in the order that you specify. An item name is a
+filename without the extension (e.g., `get-started` for `get-started.Rmd`, and
+`index` for the home page) or the name of a subdirectory. If the text is empty,
+the default text is used. Items not listed in `nav` follow the listed ones in
+the default order.
+
+``` yaml
+site:
+  nav:
+    index: Home
+    get-started: Get Started
+    reference:
+    changelog: News
+```
+
+To remove items from the menu (the pages are still built), list their names
+under `nav_hide`. The names can contain the wildcards `*` and `?`:
+
+``` yaml
+site:
+  nav_hide: [privacy, "draft-*"]
+```
+
+A name that matches nothing, or a name in both `nav` and `nav_hide`, is an
+error. For full control of the menu, provide `include_before` instead
+(@sec:websites), which disables the automatic menu.
 
 ### Comments {#sec:site-giscus}
 
