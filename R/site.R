@@ -210,7 +210,7 @@ nav_menu = function(info) {
     links[i] = sprintf(brand, paste0('/', urls[i]))
   }
   links = nav_arrange(links, key, nav_link, site[['nav']], site[['nav_hide']])
-  c(links, nav_github(root))
+  c(links, nav_icons(root))
 }
 
 # reorder menu items by the names in `nav` (unlisted items follow in their
@@ -248,8 +248,13 @@ nav_brand = function(root = '.') {
   sprintf('[%s](%%s){.brand} <small class="version">v%s</small>', pkg, v)
 }
 
-# a GitHub icon pushed to the right end of the menu (see site.css), if the
-# package that the site `root` belongs to has a GitHub repo
+# icons at the right end of the menu (see site.css): the place where pages.js puts
+# its print button, and a GitHub icon if the package that the site `root` belongs to
+# has a GitHub repo
+nav_icons = function(root = '.') {
+  c('<span class="pagesjs-toggle"></span>', nav_github(root))
+}
+
 nav_github = function(root = '.') {
   if (is.null(pkg <- in_dir(root, detect_pkg(error = FALSE)))) return()
   if (!length(repo <- github_link(attr(pkg, 'path')))) return()

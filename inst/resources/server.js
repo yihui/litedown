@@ -1,6 +1,8 @@
 (d => {
   const $ = (q, el = d) => el.querySelector(q),
     $$ = (q, el = d) => [...el.querySelectorAll(q)];
+  // roam() has its own print button, so pages.js needs no toggle button
+  d.body.dataset.pagesToggle = 'false';
   // the root URL of the server, e.g., http://127.0.0.1:4321/custom/litedown/
   const root = location.href.replace(/(\/custom\/litedown\/).*/, '$1');
   function store(k, v) {
