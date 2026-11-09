@@ -44,7 +44,7 @@ pkg_manual(
   overview = TRUE,
   examples = list(),
   groups = site_groups("manual"),
-  individual = site_flag("individual_manual"),
+  full = manual_full(),
   topic = NULL
 )
 
@@ -123,16 +123,16 @@ If no groups are provided, \code{pkg_manual()} lists topics alphabetically, and
 \item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
 examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
 
-\item{individual}{Whether to build each help page as a separate page (under
-\verb{manual/}) instead of putting all of them on a single page. If \code{TRUE},
-\code{pkg_manual()} only returns the index, which links to the pages. The pages
-are written by \code{\link[=pkg_site]{pkg_site()}} before it renders the site, so this is enabled
-by the field \code{individual_manual: true} under \code{site} in \verb{_litedown.yml} (the
-default), not by the argument alone.}
+\item{full}{Whether to put all help pages on a single page. If \code{FALSE},
+\code{pkg_manual()} only returns the index, which links to the pages of
+individual help topics under \verb{manual/}. \code{\link[=pkg_site]{pkg_site()}} writes these pages
+before it renders the site, so the default is \code{FALSE} only when a site is
+being built by it (unless \code{full_manual: true} is set under \code{site} in
+\verb{_litedown.yml}), and \code{TRUE} otherwise.}
 
 \item{topic}{The name of a help page (an Rd filename, with or without
 \code{.Rd}). If provided, only the body of this page is returned, with links to
-other pages for use in a separate page (see \code{individual}).}
+other pages for use in a separate page (see \code{full}).}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is

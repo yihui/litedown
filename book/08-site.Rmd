@@ -422,21 +422,21 @@ as a list of lists with the fields `title`, `desc`, and `contents`.
 
 #### One page per help topic {#sec:pkg-site-individual-manual}
 
-By default, `manual.html` contains all help pages of the package. To give each
-help page its own page, add `individual_manual: true` under `site` in
-`_litedown.yml` in the site directory:
+In a site built by `pkg_site()`, each help page has its own page
+`manual/{topic}.html` (e.g., `manual/mark.html`), and `manual.html` only shows
+the index (grouped if `manual` groups are provided, see
+@sec:pkg-site-groups). Links between help pages point to these pages. To put
+all help pages on a single page `manual.html` instead, add `full_manual: true`
+under `site` in `_litedown.yml` in the site directory:
 
 ``` yaml
 site:
-  individual_manual: true
+  full_manual: true
 ```
 
-Then `manual.html` only shows the index (grouped if `manual` groups are
-provided, see @sec:pkg-site-groups), and each topic is built as
-`manual/{topic}.html` (e.g., `manual/mark.html`). Links between help pages point
-to these pages. The pages are written by
-`pkg_site()` before the site is rendered, so this option does not work if you
-call `pkg_manual()` in your own document without `pkg_site()`.
+The pages are written by `pkg_site()` before the site is rendered. Outside
+`pkg_site()` (e.g., in a book), `pkg_manual()` returns all help pages in full by
+default; `pkg_manual(full = FALSE)` is only useful with those pages.
 
 ### A pkgdown-like look {#sec:pkg-site-pkgdown}
 

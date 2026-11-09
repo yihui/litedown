@@ -264,7 +264,7 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
 })
 
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
-  idx = pkg_manual(pkg, examples = FALSE, individual = TRUE)
+  idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
   # the index links to the pages and has no help page content
   (has_match(idx, '<a href="manual/mark[.]html"><code>mark[(][)]</code></a>'))
   (!any(grepl('<h2', idx)))
@@ -275,6 +275,11 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   # links to other pages are in the same dir
   (has_match(one_string(pg), 'href="markdown-options[.]html"'))
   (has_error(pkg_manual(pkg, examples = FALSE, topic = 'nonexistent'), 'nonexistent'))
+  # a single page by default outside pkg_site(); inside, a site can opt out
+  (manual_full())
+  v = set_envvar(c(R_LITEDOWN_PKG = tempdir()))
+  on.exit(set_envvar(v), add = TRUE)
+  (!manual_full())
   # one md file per page, in manual/
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)

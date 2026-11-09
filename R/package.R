@@ -459,22 +459,22 @@ tweak_citation = function(x) {
 #'
 #'   If no groups are provided, `pkg_manual()` lists topics alphabetically, and
 #'   `pkg_articles()` and `pkg_examples()` list all items in a single list.
-#' @param individual Whether to build each help page as a separate page (under
-#'   `manual/`) instead of putting all of them on a single page. If `TRUE`,
-#'   `pkg_manual()` only returns the index, which links to the pages. The pages
-#'   are written by [pkg_site()] before it renders the site, so this is enabled
-#'   by the field `individual_manual: true` under `site` in `_litedown.yml` (the
-#'   default), not by the argument alone.
+#' @param full Whether to put all help pages on a single page. If `FALSE`,
+#'   `pkg_manual()` only returns the index, which links to the pages of
+#'   individual help topics under `manual/`. [pkg_site()] writes these pages
+#'   before it renders the site, so the default is `FALSE` only when a site is
+#'   being built by it (unless `full_manual: true` is set under `site` in
+#'   `_litedown.yml`), and `TRUE` otherwise.
 #' @param topic The name of a help page (an Rd filename, with or without
 #'   `.Rd`). If provided, only the body of this page is returned, with links to
-#'   other pages for use in a separate page (see `individual`).
+#'   other pages for use in a separate page (see `full`).
 #' @return `pkg_manual()` returns all manual pages of the package in HTML.
 #' @rdname pkg_desc
 #' @export
 pkg_manual = function(
   name = detect_pkg(), toc = TRUE, number_sections = TRUE, overview = TRUE,
   examples = list(), groups = site_groups('manual'),
-  individual = site_flag('individual_manual'), topic = NULL
+  full = manual_full(), topic = NULL
 ) {
   m = manual_db(name, groups, overview)
   db = m$db; al = m$al; groups = m$groups; intro = m$intro
@@ -484,10 +484,10 @@ pkg_manual = function(
     )
     db = db[i]
   }
-  # `individual`: this call only builds the index, which links to the pages of
+  # `full = FALSE`: this call only builds the index, which links to the pages of
   # topics (one file per topic under manual/, written by pkg_site() before the
   # site is rendered); `topic`: this call builds the body of one such page
-  index_only = isTRUE(individual) && is.null(topic)
+  index_only = !isTRUE(full) && is.null(topic)
   paged = index_only || !is.null(topic)
   links = tools::findHTMLlinks('')
   r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
@@ -631,6 +631,11 @@ manual_file = function(x) alnum_id(sans_ext(x))
 # a boolean field under `site` in _litedown.yml in the current directory
 site_flag = function(key) isTRUE(yml_config('.')[['site']][[key]])
 
+# individual help pages are the default only inside pkg_site() (which sets
+# R_LITEDOWN_PKG), since only it can write them before rendering; a site can opt
+# out via `full_manual: true`
+manual_full = function() is.na(Sys.getenv('R_LITEDOWN_PKG', NA)) || site_flag('full_manual')
+
 # Write one Markdown file per help page under `manual/` in the current (site)
 # directory, which fuse_site() renders as normal pages (so they must exist
 # before it starts; manual.Rmd only builds the index that links to them).
@@ -642,7 +647,7 @@ write_manual = function(name, examples = list(), groups = site_groups('manual'))
     f = paste0(manual_file(i), '.md')
     x = pkg_manual(
       name, number_sections = FALSE, examples = examples, groups = groups,
-      individual = TRUE, topic = i
+      full = FALSE, topic = i
     )
     write_utf8(c(
       '---', sprintf('title: "%s"', sans_ext(i)), '---', '', x
@@ -920,7 +925,7 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
       dir_create('book'); file.create('book/index.html')
     }
     # per-topic help pages must exist before fuse_site() collects the inputs
-    pages = if (site_flag('individual_manual')) write_manual(name)
+    pages = if (!manual_full()) write_manual(name)
     out = fuse_site('.')
     unlink(pages)
     if (book) {

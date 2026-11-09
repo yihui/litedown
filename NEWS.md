@@ -14,7 +14,7 @@
 
 - `pkg_site()` shows the package logo (e.g., a hex sticker at `man/figures/logo.png`) at the top right of the home page.
 
-- `pkg_site()` can build [each help page as a separate page](https://pkg.yihui.org/litedown/book/#sec:pkg-site-individual-manual) under `manual/` (with `manual.html` as the index) when `individual_manual: true` is set under `site` in `_litedown.yml`. By default, all help pages are still on a single page.
+- `pkg_site()` now builds [each help page as a separate page](https://pkg.yihui.org/litedown/book/#sec:pkg-site-individual-manual) under `manual/`, with `manual.html` as the index. To keep all help pages on a single page, set `full_manual: true` under `site` in `_litedown.yml`. `pkg_manual()` gains an argument `full` for this (it defaults to `TRUE` outside `pkg_site()`).
 
 # CHANGES IN litedown VERSION 1.0
 
