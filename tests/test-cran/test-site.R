@@ -1,5 +1,8 @@
 library(testit)
 
+# page links in a nav menu (excludes icons such as the pages.js toggle and GitHub)
+pages = function(m) grep('](/', m, fixed = TRUE, value = TRUE)
+
 assert('menu_name() turns a filename stem into a title', {
   (menu_name('about-us') %==% 'About Us')
   (menu_name('my_page') %==% 'My Page')
@@ -101,7 +104,7 @@ assert('nav_menu() lists all pages even if only one file is being rendered', {
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
   proj_skeleton(d, 'site')
   m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
-  (length(m) %==% 2L)
+  (length(pages(m)) %==% 2L)
   (grepl('Home', m[1], fixed = TRUE))
   (grepl('/about.html', m[2], fixed = TRUE))
 })
@@ -149,7 +152,7 @@ assert('nav_menu() drops items matching `nav_hide`', {
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
   proj_skeleton(d, 'site')
   m = nav_with(d, '  nav_hide: ["ab*"]')
-  (length(m) %==% 1L)
+  (length(pages(m)) %==% 1L)
   (has_match(m, I('[Home](/index.html)')))
   m = nav_with(d, '  nav_hide: [about]')
   (!any(grepl('/about.html', m, fixed = TRUE)))
