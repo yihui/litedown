@@ -200,7 +200,6 @@ assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
   x = nav_github(p)
   (has_match(x, '](https://github.com/a/foo/)', fixed = TRUE, perl = FALSE))
   (has_match(x, 'mark-github-24.svg){.no-invert}', fixed = TRUE, perl = FALSE))
-  (has_match(x, '{.right}', fixed = TRUE, perl = FALSE))
   writeLines(c('Package: foo'), desc)
   (is.null(nav_github(p)))
 })

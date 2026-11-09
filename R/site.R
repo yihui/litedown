@@ -248,8 +248,8 @@ nav_brand = function(root = '.') {
   sprintf('[%s](%%s){.brand} <small class="version">v%s</small>', pkg, v)
 }
 
-# icons at the right end of the menu (see site.css): the place where pages.js puts
-# its print button, and a GitHub icon if the package that the site `root` belongs to
+# icons at the right end of the menu (see site.css, where the empty span pushes them
+# to the right): the place where pages.js puts its print button, and a GitHub icon if the package that the site `root` belongs to
 # has a GitHub repo
 nav_icons = function(root = '.') {
   c('<span class="pagesjs-toggle"></span>', nav_github(root))
@@ -260,7 +260,7 @@ nav_github = function(root = '.') {
   if (!length(repo <- github_link(attr(pkg, 'path')))) return()
   sprintf(paste0(
     '[![GitHub](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/',
-    'mark-github-24.svg){.no-invert}](%s){.right}'
+    'mark-github-24.svg){.no-invert}](%s)'
   ), repo)
 }
 
