@@ -570,7 +570,15 @@ pkg_manual = function(
   r = '(<a href=")[.][.]/[.][.]/([^/]+)/help/'
   res = gsub(r, '\\1https://rdrr.io/cran/\\2/man/', res)
   res = gsub(" (id|class)='([^']+)'", ' \\1="\\2"', res)  # ' -> "
-  res = gsub('<h3>', '<h3 class="unnumbered">', res, fixed = TRUE)
+  if (is.null(topic)) {
+    res = gsub('<h3>', '<h3 class="unnumbered">', res, fixed = TRUE)
+  } else {
+    # the page title is the Rd title (set by write_manual()), so drop the h2 and
+    # raise the sections (description, usage, etc.) to h2
+    res = sub('(?s)<h2.*?</h2>\\s*', '', res, perl = TRUE)
+    res = gsub('<h3>', '<h2 class="unnumbered">', res, fixed = TRUE)
+    res = gsub('</h3>', '</h2>', res, fixed = TRUE)
+  }
   # add the class to tables (which may already have a class)
   res = match_replace(res, '<table\\b[^>]*>', function(x) {
     ifelse(
@@ -644,13 +652,14 @@ write_manual = function(name, examples = list(), groups = site_groups('manual'))
   dir_create('manual')
   db = manual_db(name, groups)$db
   in_dir('manual', uapply(names(db), function(i) {
+    title = gsub('(["\\\\])', '\\\\\\1', Rd_title(db[[i]]))
     f = paste0(manual_file(i), '.md')
     x = pkg_manual(
       name, number_sections = FALSE, examples = examples, groups = groups,
       full = FALSE, topic = i
     )
     write_utf8(c(
-      '---', sprintf('title: "%s"', sans_ext(i)), '---', '', x
+      '---', sprintf('title: "%s"', title), '---', '', x
     ), f)
     file.path('manual', f)
   }))
@@ -1104,6 +1113,12 @@ detect_pkg = local({
 detect_news = function(name) {
   if (isTRUE(file_exists(path <- file.path(attr(name, 'path'), 'NEWS.md'))))
     path else system.file('NEWS.md', package = name)
+}
+
+# get \title{} in an Rd object as plain text
+Rd_title = function(x) {
+  i = Find(function(x) attr(x, 'Rd_tag') == '\\title', x)
+  str_trim(gsub('\\s+', ' ', paste(unlist(i), collapse = '')))
 }
 
 # get \alias{} names in an Rd object

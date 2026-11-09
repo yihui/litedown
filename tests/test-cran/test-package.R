@@ -269,7 +269,10 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   (has_match(idx, '<a href="manual/mark[.]html"><code>mark[(][)]</code></a>'))
   (!any(grepl('<h2', idx)))
   pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
-  (has_match(pg, '<h2 id="sec:man-mark"'))
+  # the Rd title becomes the page title, and h3 sections are raised to h2
+  (!has_match(pg, 'sec:man-mark'))
+  (has_match(pg, '<h2 class="unnumbered">Description</h2>'))
+  (!has_match(pg, '<h3'))
   (!has_match(pg, 'All help pages'))
   (!has_match(idx, 'callout-tip'))
   # links to other pages are in the same dir
@@ -286,7 +289,7 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   fs = in_dir(d, write_manual(pkg, examples = FALSE, groups = NULL))
   (file_exists(file.path(d, 'manual/mark.md')))
   (file.path('manual', 'mark.md') %in% fs)
-  (has_match(read_utf8(file.path(d, 'manual/mark.md')), 'title: "mark"'))
+  (has_match(read_utf8(file.path(d, 'manual/mark.md')), 'title: "Render Markdown, R Markdown, and R scripts"', fixed = TRUE, perl = FALSE))
 })
 
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
