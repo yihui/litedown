@@ -27,20 +27,20 @@ assert('mark() writes to a file when given a file path and returns it invisibly'
 
 assert('mark() treats I() input as text, not a file path', {
   out = mark(I('foo.md'), output = NA)
-  (grepl('foo', out))
+  (has_match(out, 'foo'))
 })
 
 assert('mark() supports LaTeX and plain text output formats', {
   tex = mark('Hello _world_!', '.tex')
-  (grepl('\\\\emph', tex))
+  (has_match(tex, '\\\\emph'))
   txt = mark('Hello _world_!', 'text')
-  (grepl('Hello world', txt))
+  (has_match(txt, 'Hello world'))
 })
 
 assert('mark() processes YAML metadata and applies title to output', {
   src = c('---', 'title: My Doc', '---', '', '# Hello')
   out = mark(I(src))
-  (grepl('<title>My Doc</title>', out, fixed = TRUE))
+  (has_match(out, I('<title>My Doc</title>')))
 })
 
 assert('mark() renders inline and display LaTeX math via the C extension', {
@@ -57,7 +57,7 @@ assert('mark() does not treat currency or spaced dollars as math', {
   (mark2('price $5 and $6', 'html') %==% '<p>price $5 and $6</p>')
   (mark2('bad $ x $ here', 'html') %==% '<p>bad $ x $ here</p>')
   # math inside inline code is left untouched
-  (grepl('<code>$x$</code>', mark('code `$x$` stays', 'html'), fixed = TRUE))
+  (has_match(mark('code `$x$` stays', 'html'), I('<code>$x$</code>')))
 })
 
 assert('mark() protects math bodies from Markdown interpretation (yihui/litedown#33)', {
@@ -70,13 +70,13 @@ assert('mark() renders LaTeX environments verbatim via the C extension', {
   env = c('\\begin{align}', 'a_1 & = b\\\\', 'c & = d', '\\end{align}')
   # HTML: wrapped in <p>, backslashes preserved (incl. \\), only &<> escaped
   h = mark(env, 'html')
-  (grepl('<p>\\begin{align}', h, fixed = TRUE))
-  (grepl('a_1 &amp; = b\\\\', h, fixed = TRUE))
-  (grepl('\\end{align}</p>', h, fixed = TRUE))
+  (has_match(h, I('<p>\\begin{align}')))
+  (has_match(h, I('a_1 &amp; = b\\\\')))
+  (has_match(h, I('\\end{align}</p>')))
   # LaTeX: emitted verbatim, no escaping of backslashes or &
   l = mark(env, 'latex')
-  (grepl('\\begin{align}', l, fixed = TRUE))
-  (grepl('a_1 & = b\\\\', l, fixed = TRUE))
+  (has_match(l, I('\\begin{align}')))
+  (has_match(l, I('a_1 & = b\\\\')))
 })
 
 assert('mark() disables math when the latex_math option is off', {
@@ -88,7 +88,7 @@ assert('mark() loads a math library only when math is actually rendered', {
   # loaded; it should be loaded iff real math ends up in the output
   has_katex = function(x, options = NULL) {
     out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
-    any(grepl('katex', out, ignore.case = TRUE))
+    has_match(out, 'katex', ignore.case = TRUE)
   }
   # real math -> load
   (has_katex('a $x$ b'))
@@ -116,7 +116,7 @@ assert('mark() renders superscript, subscript, and strikethrough via the C exten
 
 assert('mark() keeps [^x] as a footnote reference, not a superscript', {
   out = mark2(c('text[^1]', '', '[^1]: note.'), 'html')
-  (grepl('<sup class="footnote-ref">', out, fixed = TRUE))
+  (has_match(out, I('<sup class="footnote-ref">')))
 })
 
 assert('mark() renders LaTeX footnotes inline via the C extension', {
@@ -132,8 +132,8 @@ assert('mark() renders LaTeX footnotes inline via the C extension', {
   (mark2(c('A[^a] again[^a].', '', '[^a]: shared.'), 'latex') %==%
      'A\\footnote{shared.} again\\footnotemark[1].')
   # footnotes disabled: no \footnote is emitted (the reference stays literal)
-  (!grepl('\\footnote', mark2(c('A[^a].', '', '[^a]: x.'), 'latex', options = '-footnotes'),
-          fixed = TRUE))
+  x = mark2(c('A[^a].', '', '[^a]: x.'), 'latex', options = '-footnotes')
+  (has_match(x, !I('\\footnote')))
 })
 
 assert('mark() toggles superscript/subscript/strikethrough independently', {
@@ -212,7 +212,7 @@ assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   # block is rendered as math regardless of that option
   has_katex = function(x, options = NULL) {
     out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
-    any(grepl('katex', out, ignore.case = TRUE))
+    has_match(out, 'katex', ignore.case = TRUE)
   }
   (has_katex(env))
   (has_katex(env, options = '-latex_math'))

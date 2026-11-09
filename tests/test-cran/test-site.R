@@ -105,8 +105,8 @@ assert('nav_menu() lists all pages even if only one file is being rendered', {
   proj_skeleton(d, 'site')
   m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
   (length(pages(m)) %==% 2L)
-  (grepl('Home', m[1], fixed = TRUE))
-  (grepl('/about.html', m[2], fixed = TRUE))
+  (has_match(m[1], I('Home')))
+  (has_match(m[2], I('/about.html')))
 })
 
 assert('nav_menu() labels the home link with the package name and version', {
@@ -115,9 +115,9 @@ assert('nav_menu() labels the home link with the package name and version', {
   proj_skeleton(d, 'site')
   writeLines(c('Package: foo', 'Version: 1.2.3'), file.path(d, 'DESCRIPTION'))
   m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
-  (grepl('[foo](/index.html){.brand}', m[1], fixed = TRUE))
-  (grepl('1.2.3', m[1], fixed = TRUE))
-  (!grepl('Home', m[1], fixed = TRUE))
+  (has_match(m[1], I('[foo](/index.html){.brand}')))
+  (has_match(m[1], I('1.2.3')))
+  (has_match(m[1], !I('Home')))
 })
 
 # write a site config with the given lines under `site`, return the nav menu
@@ -155,7 +155,7 @@ assert('nav_menu() drops items matching `nav_hide`', {
   (length(pages(m)) %==% 1L)
   (has_match(m, I('[Home](/index.html)')))
   m = nav_with(d, '  nav_hide: [about]')
-  (!any(grepl('/about.html', m, fixed = TRUE)))
+  (has_match(m, !I('/about.html')))
 })
 
 assert('nav_menu() errors on unknown or conflicting `nav`/`nav_hide` items', {
@@ -176,8 +176,8 @@ assert('nav_menu() ignores doc/index.html (vignette index)', {
     writeLines('x', file.path(d, i, 'index.html'))
   }
   m = nav_menu(proj_info(file.path(d, 'about.Rmd')))
-  (any(grepl('(/sub/)', m, fixed = TRUE)))
-  (!any(grepl('/doc/', m, fixed = TRUE)))
+  (has_match(m, I('(/sub/)')))
+  (has_match(m, !I('/doc/')))
 })
 
 assert('fuse_book() renders a book skeleton into a single HTML file', {
@@ -189,7 +189,7 @@ assert('fuse_book() renders a book skeleton into a single HTML file', {
   (basename(out) %==% 'index.html')
   h = readLines(out)
   # chapters are wrapped in <article class="chapter">
-  (any(grepl('<article class="chapter"', h, fixed = TRUE)))
+  (has_match(h, I('<article class="chapter"')))
 })
 
 assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {

@@ -88,7 +88,7 @@ assert('crack() strips fence padding for multi-backtick inline code on indented 
   x = res[[1]]$source
   txt = unlist(x[!vapply(x, is.list, TRUE)])
   # no leftover backticks in the surrounding text fragments
-  (!any(grepl('`', txt)))
+  (has_match(txt, !'`'))
   # the code fragments are extracted verbatim
   code = vapply(Filter(is.list, x), `[[`, '', 'source')
   (code %==% c('1 + 1', '2 + 2'))
@@ -224,7 +224,7 @@ assert("sieve() extracts text blocks from lines starting with #'", {
   ('code_chunk' %in% types)
   # the text block source contains the doc text
   tb = res[[which(types == 'text_block')]]
-  (grepl('doc', tb$source))
+  (has_match(tb$source, 'doc'))
 })
 
 assert('sieve() splits code by #| comments into separate chunks', {

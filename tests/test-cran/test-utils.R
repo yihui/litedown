@@ -59,7 +59,7 @@ assert('locale_lang() returns a BCP 47 language tag string', {
   lang = locale_lang()
   (is.character(lang))
   # either empty or a valid BCP 47 tag (letters, possibly with a hyphen and region)
-  (nchar(lang) == 0L || grepl('^[a-z]{2,3}(-[A-Z]{2,3})?$', lang))
+  (nchar(lang) == 0L || has_match(lang, '^[a-z]{2,3}(-[A-Z]{2,3})?$'))
 })
 
 assert('sans_p() strips a wrapping <p> tag and trailing newline', {
@@ -201,36 +201,38 @@ assert('auto_identifier() adds ids to headings and keeps existing ones', {
 
 assert('build_toc() builds a nested TOC from HTML headings', {
   toc = build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'))
-  (grepl('<nav id="TOC">', toc, fixed = TRUE))
-  (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
-  (grepl('<a href="#b">B</a>', toc, fixed = TRUE))
+  (has_match(toc, I('<nav id="TOC">')))
+  (has_match(toc, I('<a href="#a">A</a>')))
+  (has_match(toc, I('<a href="#b">B</a>')))
   # links in headings are removed to avoid nested <a>
   toc = build_toc(c('<h1 id="a"><a href="#x">A</a></h1>', '<h2 id="b"><a>B</a> <a id="c" class="k">C</a></h2>'))
-  (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
-  (grepl('<a href="#b">B C</a>', toc, fixed = TRUE))
-  (!grepl('<a[^>]*><a', toc))
+  (has_match(toc, I('<a href="#a">A</a>')))
+  (has_match(toc, I('<a href="#b">B C</a>')))
+  (has_match(toc, !'<a[^>]*><a'))
   # headings marked class="unlisted" are excluded, dropping the TOC below 2 items
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b" class="unlisted">B</h2>'))))
   # n <= 0 disables the TOC
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'), 0)))
   # TOC class
   h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
-  (grepl('<nav id="TOC" class="side side-right">', build_toc(h, 3, c('side', 'side-right')), fixed = TRUE))
+  x = build_toc(h, 3, c('side', 'side-right'))
+  (has_match(x, I('<nav id="TOC" class="side side-right">')))
 })
 
 assert('add_toc() uses side classes only when sidenotes.js is used', {
   h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
-  (grepl('<nav id="TOC">', add_toc(h, list(toc = TRUE)), fixed = TRUE))
+  (has_match(add_toc(h, list(toc = TRUE)), I('<nav id="TOC">')))
   (has_match(add_toc(h, list(toc = TRUE), '@sidenotes'), '<nav id="TOC" class="side side-left">'))
   (has_match(add_toc(h, list(toc = list(class = 'side side-right')), '@sidenotes'), 'class="side side-right"'))
-  (grepl('<nav id="TOC" class="x">', add_toc(h, list(toc = list(class = 'x'))), fixed = TRUE))
+  x = add_toc(h, list(toc = list(class = 'x')))
+  (has_match(x, I('<nav id="TOC" class="x">')))
 })
 
 assert('number_sections() prefixes hierarchical numbers to HTML headings', {
   x = number_sections(c('<h1>A</h1>', '<h2>B</h2>', '<h1>C</h1>'))
-  (grepl('main-number">1</span> A', x, fixed = TRUE))
-  (grepl('section-number">1.1</span> B', x, fixed = TRUE))
-  (grepl('main-number">2</span> C', x, fixed = TRUE))
+  (has_match(x, I('main-number">1</span> A')))
+  (has_match(x, I('section-number">1.1</span> B')))
+  (has_match(x, I('main-number">2</span> C')))
   # input with no headings is returned unchanged
   (number_sections('<p>no heading</p>') %==% '<p>no heading</p>')
 })

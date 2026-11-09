@@ -25,7 +25,7 @@ assert('header_class() builds the {.unlisted .unnumbered} attribute string', {
 
 assert('github_link() extracts the repo URL from DESCRIPTION BugReports', {
   u = github_link(system.file(package = pkg))
-  (grepl('^https://github.com/[^/]+/[^/]+/$', u))
+  (has_match(u, '^https://github.com/[^/]+/[^/]+/$'))
   # a directory with no DESCRIPTION errors (read.dcf fails)
   (has_error(suppressWarnings(github_link(tempdir()))))
 })
@@ -101,15 +101,15 @@ assert('pkg_authors() formats Authors@R with roles, URLs, and ORCID links', {
     'comment = c(ORCID = "%s", URL = "https://example.org"))'
   ), orcid))
   a = pkg_authors(desc)
-  (grepl('Jane Doe', a))
-  (grepl('https://example.org', a))       # name linked to URL
-  (grepl(paste0('orcid.org/', orcid), a))  # ORCID badge
-  (grepl('\\[aut, cre\\]', a))             # roles shown
+  (has_match(a, 'Jane Doe'))
+  (has_match(a, 'https://example.org'))       # name linked to URL
+  (has_match(a, paste0('orcid.org/', orcid)))  # ORCID badge
+  (has_match(a, '\\[aut, cre\\]'))             # roles shown
   # role filtering: request only 'cre' keeps the person; 'ctb' drops them
   (length(pkg_authors(desc, role = 'cre')) == 1L)
   (length(pkg_authors(desc, role = 'ctb')) == 0L)
   # extra = FALSE drops roles/ORCID
-  (!grepl('orcid', pkg_authors(desc, extra = FALSE)))
+  (has_match(pkg_authors(desc, extra = FALSE), !'orcid'))
 })
 
 assert('tweak_citation() fills in a missing year', {
@@ -134,12 +134,12 @@ if (has_rd) assert('Rd_aliases() extracts \\alias entries from an Rd object', {
 
 assert('pkg_desc() renders package metadata as an HTML table or definition list', {
   tab = pkg_desc(pkg, 'table')
-  (any(grepl('<table class="desc-table"', tab, fixed = TRUE)))
-  (any(grepl('Version', tab)))
+  (has_match(tab, I('<table class="desc-table"')))
+  (has_match(tab, 'Version'))
   # single quotes in Title/Description are stripped (sans_sq)
   dl = pkg_desc(pkg, 'dl')
-  (any(grepl('<dl', dl)))
-  (any(grepl('<dt>Version</dt>', dl, fixed = TRUE)))
+  (has_match(dl, '<dl'))
+  (has_match(dl, I('<dt>Version</dt>')))
 })
 
 assert('pkg_desc(type = "dl") hides non-author contributors in <details>', {
@@ -158,10 +158,10 @@ assert('pkg_desc(type = "dl") hides non-author contributors in <details>', {
 
 assert('pkg_desc(type = "dl") generates a compact sidebar', {
   dl = pkg_desc(pkg, 'dl')
-  (!any(grepl('<dt>Description</dt>', dl, fixed = TRUE)))
-  (!any(grepl('<dt>(URL|BugReports|Suggests)</dt>', dl)))
-  (any(grepl('<dt>Links</dt>', dl, fixed = TRUE)))
-  (any(grepl('>Report a bug</a>', dl, fixed = TRUE)))
+  (has_match(dl, !I('<dt>Description</dt>')))
+  (has_match(dl, !'<dt>(URL|BugReports|Suggests)</dt>'))
+  (has_match(dl, I('<dt>Links</dt>')))
+  (has_match(dl, I('>Report a bug</a>')))
   # wrapped in a sidebar Div
   (dl[1] %==% '::: {.side .side-right}')
   (':::' %in% dl)
@@ -185,15 +185,15 @@ assert('pkg_citation() returns text and BibTeX citations', {
   ci = suppressWarnings(pkg_citation(pkg))
   (length(ci) > 0L)
   # a fenced ``` latex block holds the BibTeX entry
-  (any(grepl('``` latex', ci, fixed = TRUE)))
-  (any(grepl('@Manual|@Misc|@Article', ci)))
+  (has_match(ci, I('``` latex')))
+  (has_match(ci, '@Manual|@Misc|@Article'))
 })
 
 if (has_news) assert('pkg_news() returns news entries with lowered heading levels', {
   n = suppressWarnings(pkg_news(pkg, recent = 1))
   (length(n) > 0L)
   # NEWS.md top-level '# ' headings are lowered to '## '
-  (any(grepl('^## ', n)))
+  (has_match(n, '(?m)^## '))
 })
 
 assert('pkg_news() links issues and users right after a parenthesis', {
@@ -217,11 +217,11 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   m = pkg_manual(pkg, toc = TRUE, number_sections = FALSE, examples = FALSE)
   (length(m) > 0L)
   # each man page heading carries an id of the form sec:man-<topic>
-  (any(grepl('id="sec:man-', m)))
+  (has_match(m, 'id="sec:man-'))
   # the alias TOC links back to those sections
-  (any(grepl('href="#sec:man-', m)))
+  (has_match(m, 'href="#sec:man-'))
   # the default index is also in a callout
-  (any(grepl('{.callout-tip data-legend="Index"}', m, fixed = TRUE)))
+  (has_match(m, I('{.callout-tip data-legend="Index"}')))
   # all tables get the class desc-table (once)
   (has_match(one_string(m), '<table[^>]* class="desc-table[ "]'))
   (!has_match(one_string(m), '<table(?![^>]*desc-table)', perl = TRUE))
@@ -255,12 +255,12 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
   )
   (has_match(m, '<h3 class="unnumbered unlisted">First</h3>'))
   (has_match(m, '<h3 class="unnumbered unlisted">Other</h3>'))
-  (!any(grepl('<kbd>', m)))
+  (has_match(m, !'<kbd>'))
   (has_match(m, '<p>My desc</p>'))
   (has_match(m, '::: {.callout-tip data-legend="Index"}', fixed = TRUE, perl = FALSE))
   (has_match(m, 'callout[.](min[.])?css'))
   # the help pages must still follow the index
-  (any(grepl('<h2 id="sec:man-', m)))
+  (has_match(m, '<h2 id="sec:man-'))
 })
 
 if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
@@ -275,7 +275,7 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   (all(vapply(names(al), function(f) {
     x = b[tg == paste0('manual/', manual_file(f), '.html')]
     length(x) == 0 || all(vapply(al[[f]], function(a) {
-      grepl(paste0('`', a), x, fixed = TRUE)
+      has_match(x, I(paste0('`', a)))
     }, TRUE))
   }, TRUE)))
   # group headings of the index are normal sections
@@ -284,7 +284,7 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
   ))
   (has_match(ig, I('<h2>First</h2>')))
   (has_match(ig, !I('unlisted')))
-  (!any(grepl('<h2', idx)))
+  (has_match(idx, !'<h2'))
   pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
   # the Rd title becomes the page title, and h3 sections are raised to h2
   (has_match(pg, !I('sec:man-mark')))
@@ -323,11 +323,11 @@ if (!is.null(vp) && nrow(tools::getVignetteInfo(vp)))
     d = tempfile(); dir.create(d)
     on.exit(unlink(d, recursive = TRUE), add = TRUE)
     x = in_dir(d, pkg_articles(vp))
-    (any(grepl('^- \\[', x)))
+    (has_match(x, '(?m)^- \\['))
     x = in_dir(d, pkg_articles(vp, groups = list(list(title = 'G', desc = 'dd', contents = '*'))))
     (x[1] %==% '## G\n')
     (x[2] %==% 'dd')
-    (!any(grepl('## Other', x)))
+    (has_match(x, !'## Other'))
   })
 
 assert('articles are found in vignettes/, vignettes/articles/, and articles/', {
@@ -377,15 +377,15 @@ assert('site_groups() reads groups from the site field of _litedown.yml', {
 assert('side_links() drops the URL of the package site', {
   u = 'https://a.github.io/pkg/, https://github.com/a/pkg'
   x = side_links(u, 'https://github.com/a/pkg/issues', 'pkg')
-  (!grepl('github.io', x))
-  (grepl('Browse source code', x))
+  (has_match(x, !'github.io'))
+  (has_match(x, 'Browse source code'))
   # the site URL can be set in _litedown.yml
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
   writeLines(c('site:', '  url: https://pkg.example.org/'), file.path(d, '_litedown.yml'))
   x = in_dir(d, side_links('https://pkg.example.org, https://github.com/a/pkg', NA, 'pkg'))
-  (!grepl('example.org', x))
-  (grepl('Browse source code', x))
+  (has_match(x, !'example.org'))
+  (has_match(x, 'Browse source code'))
 })
 
 assert('site_cleanup() removes the template sources but not assets or your files', {
@@ -432,13 +432,13 @@ assert('pkg_examples() lists examples from the package root, not the working dir
   write_utf8(c('---', 'title: Hello', '---'), file.path(d, '001-hi.Rmd'))
   x = in_dir(tempdir(), pkg_examples(p))
   (length(x) > 0L)
-  (any(grepl('001\\. [Hello](', x, fixed = TRUE)))
-  (any(grepl('.box', x, fixed = TRUE)))
-  (any(grepl('001-hi.html)', x, fixed = TRUE)))
+  (has_match(x, I('001\\. [Hello](')))
+  (has_match(x, I('.box')))
+  (has_match(x, I('001-hi.html)')))
   # the boxes are in a container
-  (any(grepl('{.boxes}', x, fixed = TRUE)))
+  (has_match(x, I('{.boxes}')))
   x = pkg_examples(p, 'nope')
-  (grepl("'nope/'", x, fixed = TRUE))
+  (has_match(x, I("'nope/'")))
 })
 
 assert('pkg_examples() puts examples in groups', {
