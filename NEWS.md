@@ -14,6 +14,8 @@
 
 - `pkg_site()` shows the package logo (e.g., a hex sticker at `man/figures/logo.png`) at the top right of the home page.
 
+- `pkg_site()` now builds [each help page as a separate page](https://pkg.yihui.org/litedown/book/#sec:pkg-site-individual-manual) under `manual/`, with `manual.html` as the index. To keep all help pages on a single page, set `full_manual: true` under `site` in `_litedown.yml`. `pkg_manual()` gains an argument `full` for this (it defaults to `TRUE` outside `pkg_site()`).
+
 # CHANGES IN litedown VERSION 1.0
 
 - The Markdown backend has been changed from the **commonmark** package to a copy of 'cmark-gfm' bundled with **litedown**, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (#33, #135, #139). The **commonmark** package is no longer a dependency (#141, #142, #143). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to "hug" their content (e.g., `a^b^` works, but `a ^ b ^` no longer produces a superscript), consistent with how `*emphasis*` works.

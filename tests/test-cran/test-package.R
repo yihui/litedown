@@ -263,6 +263,60 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
   (any(grepl('<h2 id="sec:man-', m)))
 })
 
+if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', {
+  idx = pkg_manual(pkg, examples = FALSE, full = FALSE)
+  # the index links to the pages and has no help page content
+  # one bullet per help page, listing all of its aliases (taken from the Rd files)
+  db = tools::Rd_db(pkg)
+  al = lapply(db, Rd_aliases)
+  b = grep('^- \\[', idx, value = TRUE)
+  tg = sub('^- \\[.*\\]\\((manual/[^)]*)\\).*$', '\\1', b)
+  (!anyDuplicated(tg))
+  (all(vapply(names(al), function(f) {
+    x = b[tg == paste0('manual/', manual_file(f), '.html')]
+    length(x) == 0 || all(vapply(al[[f]], function(a) {
+      grepl(paste0('`', a), x, fixed = TRUE)
+    }, TRUE))
+  }, TRUE)))
+  # group headings of the index are normal sections
+  ig = pkg_manual(pkg, examples = FALSE, full = FALSE, groups = list(
+    list(title = 'First', contents = 'mark')
+  ))
+  (has_match(ig, I('<h2>First</h2>')))
+  (has_match(ig, !I('unlisted')))
+  (!any(grepl('<h2', idx)))
+  pg = pkg_manual(pkg, examples = FALSE, topic = 'mark')
+  # the Rd title becomes the page title, and h3 sections are raised to h2
+  (has_match(pg, !I('sec:man-mark')))
+  (has_match(pg, I('<h2 class="unnumbered">Description</h2>')))
+  # HTML in the Rd title is kept (as is) in the page title
+  gc = pkg_manual(pkg, examples = FALSE, full = FALSE, topic = 'get_context')
+  (has_match(attr(gc, 'title'), I('<code>fuse()</code>')))
+  (has_match(pg, !I('<h3')))
+  (has_match(pg, !I('All help pages')))
+  (has_match(idx, !I('callout-tip')))
+  # links to other pages are in the same dir
+  (has_match(pg, I('href="markdown-options.html"')))
+  (has_error(pkg_manual(pkg, examples = FALSE, topic = 'nonexistent'), 'nonexistent'))
+  # a single page by default outside pkg_site(); inside, a site can opt out
+  (manual_full())
+  v = set_envvar(c(R_LITEDOWN_PKG = tempdir()))
+  on.exit(set_envvar(v), add = TRUE)
+  (!manual_full())
+  # one md file per page, in manual/
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  fs = in_dir(d, write_manual(pkg, examples = FALSE, groups = NULL))
+  (file_exists(file.path(d, 'manual/mark.md')))
+  (file.path('manual', 'mark.md') %in% fs)
+  # the title is the \\title{} of the Rd file
+  tt = unlist(lapply(tools::Rd_db(pkg)[['mark.Rd']], function(e) {
+    if (identical(attr(e, 'Rd_tag'), '\\title')) as.character(e)
+  }))
+  (grep('^title: ', read_utf8(file.path(d, 'manual/mark.md')), value = TRUE) %==%
+    paste0('title: "', tt, '"'))
+})
+
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
 if (!is.null(vp) && nrow(tools::getVignetteInfo(vp)))
   assert('pkg_articles() lists vignettes, optionally in groups', {
@@ -292,7 +346,9 @@ assert('articles are found in vignettes/, vignettes/articles/, and articles/', {
   d2 = tempfile(); dir.create(d2); on.exit(unlink(d2, recursive = TRUE), add = TRUE)
   in_dir(d2, {
     copy_articles(d, fs)
-    (sort(list.files('articles')) %==% c('_child.Rmd', 'a.Rmd', 'c.Rmd', 'd.md', 'img.png'))
+    # every article source is copied, and the README is not
+    (file.exists(file.path('articles', basename(fs))))
+    (!file.exists('articles/README.md'))
     x = pkg_articles(structure('base', path = d), groups = NULL)
     (has_match(x, '[Article C](articles/c.html)', fixed = TRUE))
     (has_match(x, '[d](articles/d.html)', fixed = TRUE))

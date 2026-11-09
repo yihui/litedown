@@ -420,6 +420,26 @@ default, and listed only if a group names them. You can also pass the groups to
 the `groups` argument of `pkg_manual()`, `pkg_articles()`, and `pkg_examples()`
 as a list of lists with the fields `title`, `desc`, and `contents`.
 
+#### One page per help topic {#sec:pkg-site-individual-manual}
+
+In a site built by `pkg_site()`, each help page has its own page
+`manual/{topic}.html` (e.g., `manual/mark.html`), and `manual.html` only shows
+an index: a bullet list with one bullet per help page, showing its function
+names and title, grouped if `manual` groups are provided (see
+@sec:pkg-site-groups). Functions documented on the same help page share a
+bullet. Links between help pages point to these pages. To put all help pages
+on a single page `manual.html` instead, add `full_manual: true` under `site` in
+`_litedown.yml` in the site directory:
+
+``` yaml
+site:
+  full_manual: true
+```
+
+The pages are written by `pkg_site()` before the site is rendered. Outside
+`pkg_site()` (e.g., in a book), `pkg_manual()` returns all help pages in full by
+default; `pkg_manual(full = FALSE)` is only useful with those pages.
+
 ### A pkgdown-like look {#sec:pkg-site-pkgdown}
 
 If your users are familiar with **pkgdown** sites (Bootstrap themes), you can
