@@ -240,8 +240,8 @@ assert('listing pages only have Run buttons, while file pages have edit and rend
   p = paste(as.character(dir_page(d)), collapse = '\n')
   # one Run button for each of the two documents, none for the text file
   (lengths(gregexpr(ico('.run'), p, fixed = TRUE)) %==% 2L)
-  (!has_match(p, ico('.open')))
-  (!has_match(p, ico('.save')))
+  (has_match(p, !ico('.open')))
+  (has_match(p, !ico('.save')))
   nav = file_page(file.path(d, 'a.Rmd'), '1')$payload
   (has_match(nav, ico('.open')))
   (has_match(nav, ico('.save')))

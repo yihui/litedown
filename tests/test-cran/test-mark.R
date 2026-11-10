@@ -88,7 +88,7 @@ assert('mark() loads a math library only when math is actually rendered', {
   # loaded; it should be loaded iff real math ends up in the output
   has_katex = function(x, options = NULL) {
     out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
-    has_match(out, 'katex', ignore.case = TRUE)
+    has_match(out, '(?i)katex')
   }
   # real math -> load
   (has_katex('a $x$ b'))
@@ -212,7 +212,7 @@ assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   # block is rendered as math regardless of that option
   has_katex = function(x, options = NULL) {
     out = mark(I(c('---', 'title: t', '---', '', x)), NA, options = options)
-    has_match(out, 'katex', ignore.case = TRUE)
+    has_match(out, '(?i)katex')
   }
   (has_katex(env))
   (has_katex(env, options = '-latex_math'))
@@ -240,7 +240,7 @@ assert('embed_resources() drops ?query/#hash only if the bare path exists', {
   # raw HTML tag without the self-closing slash
   (b64('<embed src="a.pdf" type="application/pdf" height="400">'))
   (has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), '#page=2"'))
-  (!has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), 'v=1'))
+  (has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), !'v=1'))
   (has_warning(embed_resources('<embed src="b.pdf#page=2" />', o)))
 })
 
@@ -261,6 +261,6 @@ assert('citations in headings do not leave <a> nested in the TOC', {
   )), '.html', options = 'toc')
   toc = gsub('(?s).*<nav id="TOC">(.*?)</nav>.*', '\\1', x, perl = TRUE)
   (has_match(toc, '<a href="#sec:foo-bar">foo B'))
-  (!has_match(toc, '<a[^>]*><a'))
-  (!has_match(toc, '</a>[^<]*</a>'))
+  (has_match(toc, !'<a[^>]*><a'))
+  (has_match(toc, !'</a>[^<]*</a>'))
 })

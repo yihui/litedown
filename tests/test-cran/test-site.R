@@ -198,8 +198,8 @@ assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
   desc = file.path(p, 'DESCRIPTION')
   writeLines(c('Package: foo', 'BugReports: https://github.com/a/foo/issues'), desc)
   x = nav_github(p)
-  (has_match(x, '](https://github.com/a/foo/ "GitHub repository")', fixed = TRUE, perl = FALSE))
-  (has_match(x, 'mark-github-24.svg){.no-invert}', fixed = TRUE, perl = FALSE))
+  (has_match(x, I('](https://github.com/a/foo/ "GitHub repository")')))
+  (has_match(x, I('mark-github-24.svg){.no-invert}')))
   writeLines(c('Package: foo'), desc)
   (is.null(nav_github(p)))
 })
@@ -273,7 +273,7 @@ assert('pkg_readme() and pkg_logo() prepare the home page of a package site', {
   file.create(file.path(d2, 'logo.png'))
   (in_dir(d2, pkg_logo(p)) %==% '![foo logo](logo.png){.logo}')
   # the logo only in the dropped lines is still added
-  (has_match(pkg_logo(p), 'logo.svg', fixed = TRUE))
+  (has_match(pkg_logo(p), I('logo.svg')))
   # but not when the README shows it
   writeLines(c('# foo', 'text', '![](man/figures/logo.svg)'), file.path(d, 'README.md'))
   (is.null(pkg_logo(p)))

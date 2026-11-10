@@ -224,7 +224,7 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   (has_match(m, I('{.callout-tip data-legend="Index"}')))
   # all tables get the class desc-table (once)
   (has_match(one_string(m), '<table[^>]* class="desc-table[ "]'))
-  (!has_match(one_string(m), '<table(?![^>]*desc-table)', perl = TRUE))
+  (has_match(one_string(m), !'<table(?![^>]*desc-table)'))
 })
 
 assert('group_items() assigns items to groups with wildcards and an Other group', {
@@ -257,7 +257,7 @@ if (has_rd) assert('pkg_manual() groups help pages when groups are given', {
   (has_match(m, '<h3 class="unnumbered unlisted">Other</h3>'))
   (has_match(m, !'<kbd>'))
   (has_match(m, '<p>My desc</p>'))
-  (has_match(m, '::: {.callout-tip data-legend="Index"}', fixed = TRUE, perl = FALSE))
+  (has_match(m, I('::: {.callout-tip data-legend="Index"}')))
   (has_match(m, 'callout[.](min[.])?css'))
   # the help pages must still follow the index
   (has_match(m, '<h2 id="sec:man-'))
@@ -350,8 +350,8 @@ assert('articles are found in vignettes/, vignettes/articles/, and articles/', {
     (file.exists(file.path('articles', basename(fs))))
     (!file.exists('articles/README.md'))
     x = pkg_articles(structure('base', path = d), groups = NULL)
-    (has_match(x, '[Article C](articles/c.html)', fixed = TRUE))
-    (has_match(x, '[d](articles/d.html)', fixed = TRUE))
+    (has_match(x, I('[Article C](articles/c.html)')))
+    (has_match(x, I('[d](articles/d.html)')))
     unlink('articles', recursive = TRUE)
   })
 })
