@@ -1,10 +1,12 @@
-.nav-path {
+/* the nav bar is injected as a direct child of <body> (see add_nav()); scope
+   rules to it so they never touch the rendered page */
+body > .nav-path {
   font-size: .8em;
   width: 100%;
   order: -1;
 }
 @media screen {
-  body:not(.pagesjs) .nav-path, body:not(.pagesjs) .title {
+  body:not(.pagesjs) > .nav-path {
     position: sticky;
     top: 0;
     z-index: 10;
@@ -13,7 +15,7 @@
     padding: .3em 0;
   }
 }
-.buttons {
+:is(.nav-path, [data-source]) > .buttons {
   float: right;
   a, button {
     margin-left: .5em;
@@ -163,7 +165,7 @@ body.waiting {
     padding: .3em .6em;
   }
 }
-.no-match {
+.listing-tools + .no-match {
   margin: 1em;
   opacity: .7;
 }
@@ -171,12 +173,12 @@ body.waiting {
   .litedown-dialog { color: initial; }
 }
 @media screen {
-  .pagesjs .nav-path {
+  .pagesjs > .nav-path {
     display: block;
   }
 }
 @media print {
-  .nav-path, .auto-numbers span[data-line-number] {
+  body > .nav-path, .auto-numbers span[data-line-number] {
     display: none;
   }
 }

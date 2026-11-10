@@ -223,7 +223,7 @@
       a2 = i === 0 ? '' : `<a href="${u2}${u}?preview=2" class="btn-lite run" title="Preview this chapter only (${u})" aria-label="Preview ${u}">►</a>`;
     el.insertAdjacentHTML('afterbegin', `<span class="buttons">${a2}<a href="?path=${u}" class="btn-lite open pencil" title="Open ${u} in editor" aria-label="Open ${u} in editor">✎</a></span>`);
   });
-  const nav = $('.nav-path, .title h1');
+  const nav = $('.nav-path');
   if (nav) {
     const btn = $('.buttons', nav) || d.createElement('span');
     btn.className = 'buttons';

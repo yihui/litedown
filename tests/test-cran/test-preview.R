@@ -102,6 +102,14 @@ assert('file_page() injects navigation links at the top of a rendered page', {
   (has_match(r$payload, 'nav-path'))
 })
 
+assert('directory pages use .nav-path (not an article .title) as the nav bar', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  p = lite_handler(d, list(), NULL, NULL)$payload
+  (has_match(p, '<body>\n<p class="nav-path">'))
+  (has_match(p, !'class="title"'))
+})
+
 assert('lite_handler() dispatches directories and files', {
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
