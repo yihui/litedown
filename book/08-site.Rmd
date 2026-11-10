@@ -481,10 +481,12 @@ On every page of the site (including the book, if there is one), a function
 call in inline code or in an R code block (e.g., `` `mark()` ``,
 `` `litedown::mark()` ``, or `mark(x)`) becomes a link to the help page of the
 function, or to its section in `manual.html` if `full_manual: true`. The name
-must be followed by `(`, so a plain word like `mark` is not linked. Existing
+must be followed by `(`, so a plain word like `mark` is not linked, and a
+prefix `pkg::` must be the name of the package itself. The links open in a new
+tab. Existing
 links and links to the page itself are left alone, and syntax highlighting is
 preserved. `pkg_site()` writes the map from function names to URLs to
-`function-index.json` in the site directory, and a small script
+`function-index.json` (along with the package name) in the site directory, and a small script
 (`link-functions.js`) fetches it in the browser.
 
 ### A pkgdown-like look {#sec:pkg-site-pkgdown}

@@ -692,8 +692,8 @@ write_manual = function(name, examples = list(), groups = site_groups('manual'))
   }))
 }
 
-# Write the map from function names to the URLs of their help pages (relative
-# to the site root) to `function_index` in the current (site) directory, for
+# Write the package name and the map from function names to the URLs of their
+# help pages (relative to the site root) to `function_index` in the current (site) directory, for
 # link-functions.js to link <code>fn</code> on every page.
 write_function_index = function(name, groups = site_groups('manual')) {
   m = manual_db(name, groups)
@@ -705,7 +705,7 @@ write_function_index = function(name, groups = site_groups('manual')) {
       sprintf('manual.html#sec:man-%s', sans_ext(i))
     for (a in m$al[[i]]) if (is.null(urls[[a]]) && is.function(env[[a]])) urls[[a]] = url
   }
-  write_utf8(xfun::tojson(urls), function_index)
+  write_utf8(xfun::tojson(list(package = name, functions = urls)), function_index)
 }
 
 function_index = 'function-index.json'
