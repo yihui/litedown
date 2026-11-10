@@ -477,13 +477,14 @@ default; `pkg_manual(full = FALSE)` is only useful with those pages.
 
 #### Links from function names to help pages {#sec:pkg-site-man-links}
 
-On every page of the site, a function call in code, whether inline or in a code
-block (e.g., `` `mark()` `` or `mark(x)`), becomes a link to the help page of
-the function, or to its section in `manual.html` if `full_manual: true`. The
-name must be followed by `(`, so a plain word like `mark` is not linked, and
-existing links are left alone, as are links to the page itself. Syntax
-highlighting is preserved. `pkg_site()` writes the map from function names to
-URLs to `function-index.json` in the site directory, and a small script
+On every page of the site (including the book, if there is one), a function
+call in inline code or in an R code block (e.g., `` `mark()` ``,
+`` `litedown::mark()` ``, or `mark(x)`) becomes a link to the help page of the
+function, or to its section in `manual.html` if `full_manual: true`. The name
+must be followed by `(`, so a plain word like `mark` is not linked. Existing
+links and links to the page itself are left alone, and syntax highlighting is
+preserved. `pkg_site()` writes the map from function names to URLs to
+`function-index.json` in the site directory, and a small script
 (`link-functions.js`) fetches it in the browser.
 
 ### A pkgdown-like look {#sec:pkg-site-pkgdown}

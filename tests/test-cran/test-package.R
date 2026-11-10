@@ -322,7 +322,7 @@ if (has_rd) assert('write_function_index() maps function names to help page URLs
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
   idx = function() in_dir(d, write_function_index(pkg, groups = NULL))
   idx()
-  (has_match(read_utf8(file.path(d, function_index)), I('"mark": "manual.html#sec:man-mark.Rd"')))
+  (has_match(read_utf8(file.path(d, function_index)), I('"mark": "manual.html#sec:man-mark"')))
   v = set_envvar(c(R_LITEDOWN_PKG = tempdir()))
   on.exit(set_envvar(v), add = TRUE)
   idx()
