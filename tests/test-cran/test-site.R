@@ -198,7 +198,7 @@ assert('nav_github() links to the GitHub repo from BugReports in DESCRIPTION', {
   desc = file.path(p, 'DESCRIPTION')
   writeLines(c('Package: foo', 'BugReports: https://github.com/a/foo/issues'), desc)
   x = nav_github(p)
-  (has_match(x, '](https://github.com/a/foo/)', fixed = TRUE, perl = FALSE))
+  (has_match(x, '](https://github.com/a/foo/ "GitHub repository")', fixed = TRUE, perl = FALSE))
   (has_match(x, 'mark-github-24.svg){.no-invert}', fixed = TRUE, perl = FALSE))
   writeLines(c('Package: foo'), desc)
   (is.null(nav_github(p)))
@@ -277,4 +277,24 @@ assert('pkg_readme() and pkg_logo() prepare the home page of a package site', {
   # but not when the README shows it
   writeLines(c('# foo', 'text', '![](man/figures/logo.svg)'), file.path(d, 'README.md'))
   (is.null(pkg_logo(p)))
+})
+
+assert('the edit link is in the site nav only if the page has a source file', {
+  p = tempfile(); d = file.path(p, 'site')
+  dir.create(file.path(p, 'examples'), recursive = TRUE); dir.create(d)
+  on.exit(unlink(p, recursive = TRUE), add = TRUE)
+  writeLines(c('Package: foo', 'BugReports: https://github.com/u/foo/issues'),
+    file.path(p, 'DESCRIPTION'))
+  write_utf8('x', file.path(p, 'examples', 'a.Rmd'))
+  vars = set_envvar(c(R_LITEDOWN_PKG = p)); on.exit(set_envvar(vars), add = TRUE)
+  nav = paste(nav_icons(d), collapse = ' ')
+  set_nav = function(input) set_site_options(
+    list(meta = list(include_before = nav, include_after = 'y')), input, d
+  )
+  set_nav(file.path(d, 'examples/a.Rmd'))
+  (has_match(getOption('litedown.html.meta')$include_before, 'class="edit-page"'))
+  set_nav(file.path(d, 'index.Rmd'))
+  (has_match(getOption('litedown.html.meta')$include_before, !'edit-page'))
+  (has_match(getOption('litedown.html.meta')$include_before, 'pagesjs-toggle'))
+  (has_match(nav, I('($edit$ "Edit this page")')))
 })

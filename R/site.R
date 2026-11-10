@@ -123,9 +123,10 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
     # the class lets CSS tell the site menu from other <nav>s such as the TOC
     x = sprintf('<%s%s>%s</%s>', tag, if (nav) ' class="site-nav"' else '', x, tag)
     m[[i]] = sub_vars(x, list(input = I(input), edit = I(edit)))
-    # drop the link if the page has no source file on GitHub
-    if (!nav && edit == '') m[[i]] = gsub(
-      '<p><a [^>]*class="edit-page"[^>]*>.*?</a></p>\n?', '', m[[i]]
+    # drop the edit link if the page has no source file on GitHub
+    if (edit == '') m[[i]] = gsub(
+      '(<p>)?<a [^>]*class="edit-page"[^>]*>.*?</a>(?(1)</p>\n?)', '', m[[i]],
+      perl = TRUE
     )
     # comments go before the footer, not inside it
     if (!nav) m[[i]] = paste0(giscus_html(giscus), m[[i]])
@@ -248,11 +249,15 @@ nav_brand = function(root = '.') {
   sprintf('[%s](%%s){.brand} <small class="version">v%s</small>', pkg, v)
 }
 
-# icons at the right end of the menu (see site.css, where the empty span pushes them
-# to the right): the place where pages.js puts its print button, and a GitHub icon if the package that the site `root` belongs to
-# has a GitHub repo
+# icons at the right end of the menu (see site.css, where the empty span pushes
+# them to the right): the print button of pages.js, an edit link (`$edit$` is set
+# per page), and a GitHub icon if the site `root` belongs to a package with a repo
 nav_icons = function(root = '.') {
-  c('<span class="pagesjs-toggle"></span>', nav_github(root))
+  c(
+    '<span class="pagesjs-toggle"></span>',
+    '[![Edit this page](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/pencil-24.svg){.no-invert}]($edit$ "Edit this page"){.edit-page}',
+    nav_github(root)
+  )
 }
 
 nav_github = function(root = '.') {
@@ -260,7 +265,7 @@ nav_github = function(root = '.') {
   if (!length(repo <- github_link(attr(pkg, 'path')))) return()
   sprintf(paste0(
     '[![GitHub](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/',
-    'mark-github-24.svg){.no-invert}](%s)'
+    'mark-github-24.svg){.no-invert}](%s "GitHub repository")'
   ), repo)
 }
 

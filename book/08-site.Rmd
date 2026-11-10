@@ -352,7 +352,7 @@ list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
 | `news` | news | `pkg_news()` |
-| `_footer` | page footer | the package authors, a link to edit the page on GitHub, and the **litedown** version |
+| `_footer` | page footer | the package authors and the **litedown** version |
 ::::
 
 In `_footer.md`, `$authors$` (authors with the role `aut`), `$version$` (the
@@ -402,7 +402,9 @@ start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
 (`https://USER.github.io/PKG/` is detected automatically, or you can set it via
 `url` under `site` in `_litedown.yml`). If the `BugReports` field of
 `DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
-icon on the right.
+icon on the right. Next to it, a pencil icon links to the source of the current
+page on GitHub for editing (if the page has a source file in the package), and
+a printer icon paginates the page for printing.
 
 If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png` (or
 `.svg`, `.jpg`, etc.), it is floated to the right on the home page, unless
