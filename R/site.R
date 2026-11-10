@@ -138,6 +138,16 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
     for (i in c('css', 'js', 'css2', 'js2')) if (is.character(m[[i]])) {
       m[[i]] = sub('^/(?!/)', up, m[[i]], perl = TRUE)
     }
+    # link-functions.js links function names to help pages via the map in the meta
+    if (file_exists(file.path(root, function_index))) {
+      m[['header_includes']] = c(
+        m[['header_includes']],
+        sprintf('<meta name="function-index" content="%s%s">', up, function_index)
+      )
+      # a copy of the script in the site dir takes precedence over the CDN one
+      m[['js2']] = c(m[['js2']], if (file_exists(file.path(root, 'link-functions.js')))
+        paste0(up, 'link-functions.js') else '@link-functions')
+    }
   }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))

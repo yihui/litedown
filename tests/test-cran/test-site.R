@@ -214,6 +214,22 @@ assert('set_site_options() marks the site menu with class site-nav', {
   (has_match(getOption('litedown.html.meta')$include_after, '^<footer>'))
 })
 
+assert('set_site_options() points to the manual index when the site has one', {
+  o = options(); on.exit(options(o))
+  d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)
+  f = file.path(d, 'foo', 'bar.md'); writeLines('hi', f)
+  set_site_options(list(meta = list()), f, d)
+  (is.null(getOption('litedown.html.meta')$header_includes))
+  writeLines('{}', file.path(d, function_index))
+  set_site_options(list(meta = list()), f, d)
+  m = getOption('litedown.html.meta')
+  (has_match(m$header_includes, I('<meta name="function-index" content="../function-index.json">')))
+  (m$js2 %==% '@link-functions')
+  writeLines('', file.path(d, 'link-functions.js'))
+  set_site_options(list(meta = list()), f, d)
+  (getOption('litedown.html.meta')$js2 %==% '../link-functions.js')
+})
+
 assert('root-relative css/js resolve to the page dir, other paths are kept', {
   o = options(); on.exit(options(o))
   d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)

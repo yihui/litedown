@@ -692,6 +692,24 @@ write_manual = function(name, examples = list(), groups = site_groups('manual'))
   }))
 }
 
+# Write the map from function names to the URLs of their help pages (relative
+# to the site root) to `function_index` in the current (site) directory, for
+# link-functions.js to link <code>fn</code> on every page.
+write_function_index = function(name, groups = site_groups('manual')) {
+  m = manual_db(name, groups)
+  env = asNamespace(name)
+  paged = !manual_full()
+  urls = list()
+  for (i in names(m$db)) {
+    url = if (paged) sprintf('manual/%s.html', manual_file(i)) else
+      sprintf('manual.html#sec:man-%s', sans_ext(i))
+    for (a in m$al[[i]]) if (is.null(urls[[a]]) && is.function(env[[a]])) urls[[a]] = url
+  }
+  write_utf8(xfun::tojson(urls), function_index)
+}
+
+function_index = 'function-index.json'
+
 #' @return `pkg_articles()` returns a list of links to the articles of the
 #'   package (and their source files) in Markdown. Articles are the built
 #'   vignettes (the `doc` directory of the installed package is copied to the
@@ -966,6 +984,7 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     }
     # per-topic help pages must exist before fuse_site() collects the inputs
     pages = if (!manual_full()) write_manual(name)
+    write_function_index(name)
     out = fuse_site('.')
     unlink(pages)
     if (book) {
