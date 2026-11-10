@@ -167,8 +167,7 @@ giscus_html = function(cfg) {
 edit_page_url = function(input, root) {
   if (is.na(root) || is.null(pkg <- in_dir(root, detect_pkg(error = FALSE))))
     return()
-  # normalize both paths so that symlinked/short temp dirs compare equal
-  f = relative_path(normalize_path(input), normalize_path(root))
+  f = relative_path(input, root)
   # articles/ in the site may come from vignettes/, vignettes/articles/, etc.
   if (dirname(f) == 'articles') f = Find(
     function(a) basename(a) == basename(f), article_sources(attr(pkg, 'path')),
