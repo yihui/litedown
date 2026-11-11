@@ -343,10 +343,13 @@ build_output = function(format, options, template, meta, ...) {
       'plain-title' = I(str_trim(markdown_text(meta[['title']])))
     )
     for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
-    # special handling for css/js "files" that have no extensions
+    # special handling for css/js "files" that have no extensions; js_last
+    # (normalized to js-last) comes after the js for syntax highlighting (acc_var)
     for (i in c('css', 'js')) {
       i2 = paste0(i, '2')  # treat css2/js2 as global base (e.g. for sites)
-      meta[[i]] = resolve_files(c(meta[[i2]], meta[[i]], acc_var(i)), i)
+      meta[[i]] = resolve_files(c(
+        meta[[i2]], meta[[i]], acc_var(i), if (i == 'js') meta[['js-last']]
+      ), i)
     }
   }
   sub_vars(tpl, meta, ...)

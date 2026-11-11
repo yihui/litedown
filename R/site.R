@@ -140,7 +140,9 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
     }
     if (!is.null(fl <- function_links(root, up))) {
       m[['header_includes']] = c(m[['header_includes']], fl$meta)
-      m[['js2']] = c(m[['js2']], fl$js)
+      # after the highlighter (its js is added last by the template), which can
+      # only be done for the page itself
+      m[['js_last']] = c(m[['js_last']], fl$js)
     }
   }
   opts[['meta']] = m

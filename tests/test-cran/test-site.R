@@ -224,10 +224,21 @@ assert('set_site_options() points to the manual index when the site has one', {
   set_site_options(list(meta = list()), f, d)
   m = getOption('litedown.html.meta')
   (has_match(m$header_includes, I('<meta name="function-index" content="../function-index.json">')))
-  (m$js2 %==% '@link-functions')
+  (m$js_last %==% '@link-functions')
   writeLines('', file.path(d, 'link-functions.js'))
   set_site_options(list(meta = list()), f, d)
-  (getOption('litedown.html.meta')$js2 %==% '../link-functions.js')
+  (getOption('litedown.html.meta')$js_last %==% '../link-functions.js')
+})
+
+assert('js_last comes after the js for syntax highlighting', {
+  x = mark(
+    c('---', 'title: T', '---', '', '```r', 'mark(x)', '```'),
+    meta = list(js_last = 'https://x.test/last.js')
+  )
+  i = grep('<script src=', xfun::split_lines(x), value = TRUE)
+  (length(i) >= 2)
+  (has_match(i[length(i)], I('https://x.test/last.js')))
+  (has_match(i[1], I('prism')))
 })
 
 assert('root-relative css/js resolve to the page dir, other paths are kept', {
