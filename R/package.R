@@ -497,7 +497,7 @@ pkg_manual = function(
   # identically named aliases from other installed packages
   f = sans_ext(names(al))
   target = if (paged) paste0(alnum_id(f), '.html') else paste0('#sec:man-', f)
-  links[unlist(al, use.names = FALSE)] = rep(target, lengths(al))
+  links[unlist(al)] = rep(target, lengths(al))
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
   links = sub(r, 'https://rdrr.io/r/\\1/', links)
