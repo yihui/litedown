@@ -222,6 +222,11 @@ if (has_rd) assert('pkg_manual() renders all man pages with section ids and a TO
   (has_match(m, 'href="#sec:man-'))
   # the default index is also in a callout
   (has_match(m, I('{.callout-tip data-legend="Index"}')))
+  # Links within the manual retain underscores, matching the section IDs.
+  (has_match(m, I('id="sec:man-markdown_options"')))
+  pg = grep('^<h2 id="sec:man-mark"', m, value = TRUE)
+  (has_match(pg, I('href="#sec:man-markdown_options"')))
+  (has_match(m, !I('href="#sec:man-markdown-options"')))
   # all tables get the class desc-table (once)
   (has_match(one_string(m), '<table[^>]* class="desc-table[ "]'))
   (has_match(one_string(m), !'<table(?![^>]*desc-table)'))
@@ -468,6 +473,32 @@ assert('pkg_examples() puts examples in groups', {
 assert('pkg_site() requires the package to be installed', {
   (has_error(pkg_site('an-uninstalled-package')))
 })
+
+if (has_rd && system.file('site', package = pkg) != '')
+  assert('pkg_site() embeds the full manual in its book', {
+    d = tempfile()
+    on.exit(unlink(d, recursive = TRUE), add = TRUE)
+    dir_create(file.path(d, 'book'))
+    dir_create(s <- file.path(d, 'site'))
+    file.copy(system.file('DESCRIPTION', package = pkg), d)
+    write_utf8(c(
+      'site:', '  full_manual: true',
+      '  exclude: [manual.Rmd, code.Rmd, news.Rmd, articles.Rmd, examples.Rmd]'
+    ), file.path(s, '_litedown.yml'))
+    write_utf8('# Site', file.path(s, 'index.Rmd'))
+    write_utf8(c(
+      'output:', '  html:', '    options:', '      embed_resources: false'
+    ), file.path(d, 'book/_litedown.yml'))
+    write_utf8(c(
+      '# Book', '', '```{r, echo=FALSE}',
+      'litedown::pkg_manual("litedown", examples = FALSE, groups = list(',
+      '  list(title = "Context", contents = "get_context")))', '```'
+    ), file.path(d, 'book/index.Rmd'))
+    pkg_site(structure(pkg, path = d), output = s)
+    h = read_utf8(file.path(s, 'book/index.html'))
+    (has_match(h, I('id="sec:man-get_context"')))
+    (has_match(h, !I('href="manual/get-context.html"')))
+  })
 
 # the site template is under inst/, which may not be installed for tests
 if (system.file('site', package = pkg) != '')
