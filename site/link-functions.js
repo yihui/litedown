@@ -40,10 +40,12 @@
     });
   };
 
-  fetch(base).then(r => r.json()).then(idx => {
-    d.querySelectorAll('code').forEach(code => link(code, idx));
-    // prism.js (loaded before this script) may rewrite a block later, e.g., after
-    // the autoloader fetches its language, which drops the links, so link it again
-    window.Prism?.hooks.add('after-highlight', env => link(env.element, idx));
-  }).catch(() => {});
+  const idx = fetch(base).then(r => r.json()).catch(() => {});
+  const run = els => idx.then(x => x && els.forEach(code => link(code, x)));
+  // prism.js (loaded before this script) highlights blocks later, e.g., after its
+  // autoloader fetches a language, which drops links; so link a block after it is
+  // highlighted, and link the rest (not to be highlighted) now
+  const P = window.Prism;
+  P?.hooks.add('after-highlight', env => run([env.element]));
+  run([...d.querySelectorAll(P ? 'code:not([class*=language-])' : 'code')]);
 })(document);

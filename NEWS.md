@@ -1,7 +1,5 @@
 # CHANGES IN litedown VERSION 1.1
 
-- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other, and a value like `-@copy-button` removes a default one. This replaces the undocumented `css2`/`js2` variables. The order of `css`/`js` files can be set by [numeric priorities](https://pkg.yihui.org/litedown/book/#sec:site-defaults), e.g., to load a script after the syntax highlighter.
-
 - [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 
 - `pkg_site()` and `fuse_site()` can add a [comment section](https://pkg.yihui.org/litedown/book/#sec:site-giscus) powered by [giscus](https://giscus.app) to every page.
@@ -21,6 +19,8 @@
 - `pkg_site()` now turns function calls like `mark()` in code on every page into [links to their help pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-man-links).
 
 - The fields `nav` and `nav_hide` under `site` in `_litedown.yml` set the order and text of items in the automatic [navigation menu](https://pkg.yihui.org/litedown/book/#sec:site-nav) of a site, and hide items from it (thanks, @erikcs, #113).
+
+- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other, and a value like `-@copy-button` removes a default one. This replaces the undocumented `css2`/`js2` variables. The order of `css`/`js` files can be set by [numeric priorities](https://pkg.yihui.org/litedown/book/#sec:site-defaults), e.g., to load a script after the syntax highlighter.
 
 # CHANGES IN litedown VERSION 1.0
 
