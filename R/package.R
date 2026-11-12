@@ -990,10 +990,16 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     if (book) {
       # run from the package root so that `$input$` is relative to it; use a new
       # R session so that book code cannot clobber our variables
-      in_dir(path, Rscript_call(fuse_book, list('book')))
+      # the book pages end up in site/book/, one level below the site root
+      fl = function_links('.', '../')
+      in_dir(path, Rscript_call(function(fl, book) {
+        if (!is.null(fl)) options(litedown.html.meta = list(
+          header_includes = fl$meta, js = set_names(fl$js, lib_priority + 10)
+        ))
+        litedown::fuse_book(book)
+      }, list(fl, 'book')))
       copy_dir(dirname(cfg), 'book')
       unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
-      link_functions(list.files('book', '[.]html$', recursive = TRUE, full.names = TRUE))
     }
     dir_create('playground')
     copy_dir(file.path(path, 'playground'), 'playground')
@@ -1004,16 +1010,6 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     out
   })
   invisible(res)
-}
-
-# add the <meta> and script of function_links() to built HTML pages (of the book)
-link_functions = function(files) for (f in files) {
-  fl = function_links('.', relative_path('.', dirname(f)))
-  if (is.null(fl)) next
-  x = one_string(read_utf8(f))
-  x = sub('</head>', paste0(fl$meta, '\n</head>'), x, fixed = TRUE)
-  x = sub('</body>', paste0(resolve_files(fl$js, 'js'), '\n</body>'), x, fixed = TRUE)
-  write_utf8(x, f)
 }
 
 # README.md of a package prepared for the home page of its site (NULL if none):

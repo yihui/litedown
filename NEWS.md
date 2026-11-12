@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 1.1
 
+- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other, and a value like `-@copy-button` removes a default one. This replaces the undocumented `css2`/`js2` variables. The order of `css`/`js` files can be set by [numeric priorities](https://pkg.yihui.org/litedown/book/#sec:site-defaults), e.g., to load a script after the syntax highlighter.
+
 - [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 
 - `pkg_site()` and `fuse_site()` can add a [comment section](https://pkg.yihui.org/litedown/book/#sec:site-giscus) powered by [giscus](https://giscus.app) to every page.

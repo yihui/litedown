@@ -99,6 +99,77 @@ merge_list = function(...) {
   res
 }
 
+# Like merge_list(), except that the fields in `append_meta` accumulate across
+# the lists instead of being overridden, so that a layer (e.g., site options,
+# YAML, argument) can add to what the previous ones set. A value of the form
+# '-x' in a later layer removes the entry 'x' accumulated so far (and '-*'
+# removes all), similar to the '-option' syntax of markdown options.
+merge_meta = function(...) {
+  res = list()
+  for (x in list(...)) {
+    if (!is.list(x)) next
+    if (length(x)) names(x) = gsub('-', '_', names(x))  # unify with normalize_meta()
+    for (n in names(x)) {
+      v = x[[n]]
+      if (n %in% append_meta && (is.character(v) || (n %in% priority_meta && is.list(v)))) {
+        v = accumulate(res[[n]], v, n)
+      }
+      res[n] = list(v)
+    }
+  }
+  res
+}
+
+# include_before/after are not here on purpose: they are defaults (the site nav
+# and footer) that a user-provided value replaces, and Markdown text may start
+# with '-'
+append_meta = c('css', 'js', 'header_includes')
+
+# The order of css/js in the output is decided by the priority of each entry
+# (a number: the name of the element, or the name of the field in a map such as
+# `js: {10: ["@foo"]}`; 0 if unnamed); smaller numbers come first, and entries
+# of the same priority keep their order. The libraries added by litedown (e.g.,
+# the syntax highlighter) have the priority `lib_priority`.
+priority_meta = c('css', 'js')
+lib_priority = 10
+
+# turn a character vector or a map of priority -> vector into a vector named by priorities
+as_priority = function(x, priority = 0) {
+  if (is.list(x)) {
+    v = unlist(x, use.names = FALSE)
+    nm = rep(names(x) %||% rep('', length(x)), lengths(x))
+  } else {
+    v = x; nm = names(x) %||% rep('', length(x))
+  }
+  p = suppressWarnings(as.numeric(nm))
+  if (length(bad <- nm[is.na(p) & nm != ''])) stop(
+    "The priority of css/js must be a number, but got: ",
+    paste(bad, collapse = ', '), call. = FALSE
+  )
+  nm[nm == ''] = priority
+  set_names(as.character(v), nm)
+}
+
+# css/js sorted by priorities (stable), followed by libraries added by litedown
+sort_priority = function(x, lib = NULL) {
+  x = c(as_priority(x), as_priority(lib, lib_priority))
+  unname(x[order(as.numeric(names(x)))])
+}
+
+# add `new` to `old`, with '-x' in `new` removing `x` from `old`
+accumulate = function(old, new, name) {
+  if (name %in% priority_meta) new = as_priority(new)
+  i = startsWith(new, '-')
+  drop = substring(new[i], 2)
+  if ('*' %in% drop) old = NULL
+  miss = setdiff(drop, c(old, '*'))
+  if (length(miss)) warning(
+    "Nothing to remove from '", name, "': ", paste(miss, collapse = ', '),
+    call. = FALSE
+  )
+  c(old[!old %in% drop], new[!i])
+}
+
 # match_full() and match_all() split `x` into lines before matching:
 # gregexpr()/regmatches() map each match's byte offset to a character offset by
 # walking the string from the start, which is O(n^2) on a long multibyte string
