@@ -42,19 +42,8 @@
 
   fetch(base).then(r => r.json()).then(idx => {
     d.querySelectorAll('code').forEach(code => link(code, idx));
-    // syntax highlighters may rewrite a code block after this point (and drop the
-    // links), so link again when its content changes; this is idempotent, i.e., it
-    // stops once all names are linked
-    const todo = new Set();
-    new MutationObserver(ms => {
-      ms.forEach(m => {
-        const el = m.target.nodeType === 1 ? m.target : m.target.parentElement;
-        const code = el?.closest('code');
-        if (code) todo.add(code);
-      });
-      if (!todo.size) return;
-      // wait until the highlighter is done with the block
-      setTimeout(() => { const s = [...todo]; todo.clear(); s.forEach(c => link(c, idx)); }, 100);
-    }).observe(d.body, {childList: true, subtree: true});
+    // prism.js (loaded before this script) may rewrite a block later, e.g., after
+    // the autoloader fetches its language, which drops the links, so link it again
+    window.Prism?.hooks.add('after-highlight', env => link(env.element, idx));
   }).catch(() => {});
 })(document);
