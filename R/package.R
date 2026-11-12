@@ -492,12 +492,12 @@ pkg_manual = function(
   index_only = !isTRUE(full) && is.null(topic)
   paged = index_only || !is.null(topic)
   links = tools::findHTMLlinks('')
-  r = sprintf('^[.][.]/[.][.]/(%s)/html/(.+)[.]html$', name)
-  i = grep(r, links)
-  f = alnum_id(sub(r, '\\2', links[i]))
   # internal links: IDs of the form sec:man-ID (assigned to all h2) in a single
-  # page, or pages in the same directory
-  links[i] = if (paged) paste0(f, '.html') else paste0('#sec:man-', f)
+  # page, or pages in the same directory; prefer this package's aliases over
+  # identically named aliases from other installed packages
+  f = sans_ext(names(al))
+  target = if (paged) paste0(alnum_id(f), '.html') else paste0('#sec:man-', f)
+  links[unlist(al)] = rep(target, lengths(al))
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
   links = sub(r, 'https://rdrr.io/r/\\1/', links)
@@ -663,7 +663,7 @@ manual_db = function(name, groups = NULL, overview = TRUE) {
 }
 
 # base name of the page of a help topic (an Rd filename, with or without .Rd)
-manual_file = function(x) alnum_id(sans_ext(x))
+manual_file = function(x) alnum_id(sub('[.]Rd$', '', x))
 
 # a boolean field under `site` in _litedown.yml in the current directory
 site_flag = function(key) isTRUE(yml_config('.')[['site']][[key]])
@@ -971,7 +971,10 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     if (book) {
       # run from the package root so that `$input$` is relative to it; use a new
       # R session so that book code cannot clobber our variables
-      in_dir(path, Rscript_call(fuse_book, list('book')))
+      in_dir(path, Rscript_call(function() {
+        Sys.unsetenv('R_LITEDOWN_PKG')
+        litedown::fuse_book('book')
+      }))
       copy_dir(dirname(cfg), 'book')
       unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
     }
