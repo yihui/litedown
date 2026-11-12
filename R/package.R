@@ -496,7 +496,7 @@ pkg_manual = function(
   # page, or pages in the same directory; prefer this package's aliases over
   # identically named aliases from other installed packages
   f = sans_ext(names(al))
-  target = if (paged) paste0(manual_file(f), '.html') else paste0('#sec:man-', f)
+  target = if (paged) paste0(alnum_id(f), '.html') else paste0('#sec:man-', f)
   links[unlist(al, use.names = FALSE)] = rep(target, lengths(al))
   # resolve external links to specific man pages on https://rdrr.io
   r = sprintf('^[.][.]/[.][.]/(%s)/html/', paste(xfun::base_pkgs(), collapse = '|'))
@@ -663,7 +663,7 @@ manual_db = function(name, groups = NULL, overview = TRUE) {
 }
 
 # base name of the page of a help topic (an Rd filename, with or without .Rd)
-manual_file = function(x) alnum_id(sans_ext(x))
+manual_file = function(x) alnum_id(sub('[.]Rd$', '', x))
 
 # a boolean field under `site` in _litedown.yml in the current directory
 site_flag = function(key) isTRUE(yml_config('.')[['site']][[key]])

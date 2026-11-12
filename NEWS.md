@@ -1,6 +1,6 @@
 # CHANGES IN litedown VERSION 1.1
 
-- `pkg_manual()` now keeps internal links consistent with section IDs for topic names containing underscores. Books built by `pkg_site()` once again include full manual pages instead of an index with broken links to the site's individual help pages.
+- `pkg_manual()` now keeps internal links consistent with section IDs for topic names containing underscores, and correctly handles dotted topic names. Books built by `pkg_site()` once again include full manual pages instead of an index with broken links to the site's individual help pages.
 
 - [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 

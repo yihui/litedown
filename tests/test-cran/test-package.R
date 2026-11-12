@@ -322,6 +322,12 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
     paste0('title: "', tt, '"'))
 })
 
+if (has_rd) assert('pkg_manual() retains dots in help topics until URL normalization', {
+  pg = pkg_manual('utils', examples = FALSE, topic = 'read.table')
+  (has_match(pg, I('href="write-table.html"')))
+  (has_match(pg, !I('href="write.html"')))
+})
+
 vp = Find(function(p) nzchar(system.file(package = p)), c('knitr', 'rmarkdown'))
 if (!is.null(vp) && nrow(tools::getVignetteInfo(vp)))
   assert('pkg_articles() lists vignettes, optionally in groups', {
