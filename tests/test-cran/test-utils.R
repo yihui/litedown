@@ -250,3 +250,26 @@ assert('read_jsd_cache() discards the cache saved by a different litedown versio
   # a stale cache is still acceptable as a fallback
   (read_jsd_cache(f, any = TRUE) %==% info)
 })
+
+assert('merge_meta() appends css/js/header_includes and supports removal', {
+  m = merge_meta(
+    list(css = c('@default', '@site'), title = 'a'),
+    list(css = 'x.css', title = 'b', js = '@a'),
+    list(css = c('-@site', 'y.css'), js = list(`20` = 'z.js'))
+  )
+  (unname(m$css) %==% c('@default', 'x.css', 'y.css'))
+  (m$title %==% 'b')
+  (m$js %==% c('0' = '@a', '20' = 'z.js'))
+  (unname(merge_meta(list(css = 'a'), list(css = '-*', 'b'))$css) %==% character(0))
+  (merge_meta(list(css = 'a'), list(css = NULL))$css %==% NULL)
+  (has_warning(merge_meta(list(css = 'a'), list(css = '-b'))))
+  (merge_meta(list(js = 'a'), list('header-includes' = 'h'))$header_includes %==% 'h')
+})
+
+assert('sort_priority() orders css/js by priority and keeps order within a priority', {
+  x = c('20' = 'l', 'a', '-5' = 'e', 'b')
+  (sort_priority(x) %==% c('e', 'a', 'b', 'l'))
+  (sort_priority(x, c('p', 'q')) %==% c('e', 'a', 'b', 'p', 'q', 'l'))
+  (sort_priority(list(`1.5` = 'x', `2` = c('y', 'z'), 'a')) %==% c('a', 'x', 'y', 'z'))
+  (has_error(sort_priority(c(late = 'x'))))
+})

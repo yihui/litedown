@@ -132,7 +132,7 @@ top_meta = c('title', 'subtitle', 'author', 'date', 'abstract')
 # `output -> <format> -> <field>`; the nested values take precedence
 top_fields = list(
   meta = c(
-    top_meta, 'css', 'js', 'css2', 'js2', 'lang', 'include_before',
+    top_meta, 'css', 'js', 'lang', 'include_before',
     'include_after', 'header_includes', 'documentclass', 'classoption',
     'body_class', 'body_tag'
   ),

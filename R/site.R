@@ -61,8 +61,8 @@ fuse_site = function(input = '.') {
     if (b == 'newfile') !file_exists(output) else TRUE
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
-  opts[['meta']] = merge_list(list(
-    css2 = c(site_css, '@site'), js2 = c(site_js, '@nav-highlight'),
+  opts[['meta']] = merge_meta(list(
+    css = c(site_css, '@site'), js = c(site_js, '@nav-highlight'),
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
@@ -135,12 +135,27 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
   if (!is.na(root)) {
     up = relative_path(root, dirname(input))
     if (up == '.') up = ''
-    for (i in c('css', 'js', 'css2', 'js2')) if (is.character(m[[i]])) {
-      m[[i]] = sub('^/(?!/)', up, m[[i]], perl = TRUE)
+    for (i in c('css', 'js')) if (length(m[[i]])) {
+      m[[i]] = sub('^/(?!/)', up, as_priority(m[[i]]), perl = TRUE)
     }
+    # the script goes after the js of the highlighter (lib_priority)
+    if (!is.null(fl <- function_links(root, up))) m = merge_meta(
+      m, list(header_includes = fl$meta, js = set_names(fl$js, lib_priority + 10))
+    )
   }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
+}
+
+# The <meta> (where the function-to-page map is, relative to a page that is
+# `up` away from the site root) and the script that links function calls in code
+# to their help pages; NULL if the site has no such map.
+function_links = function(root, up) {
+  if (!file_exists(file.path(root, function_index))) return()
+  list(
+    meta = sprintf('<meta name="function-index" content="%s%s">', up, function_index),
+    js = '@link-functions'
+  )
 }
 
 # giscus settings that differ from giscus's own defaults (documented in the book)
@@ -415,7 +430,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_tag = 'div', css2 = c(site_css, '@book'), js2 = site_js
+    body_tag = 'div', css = c(site_css, '@book'), js = site_js
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }
@@ -468,7 +483,7 @@ is_index = function(x) sans_ext(basename(x)) == 'index'
 tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) {
   nms = paste0('litedown.', format, c('.meta', '.options'))
   defaults = list(
-    merge_list(
+    merge_meta(
       .Options[[nms[1]]], meta, yaml_field(yaml, format, 'meta')
     ),
     merge_list(

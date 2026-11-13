@@ -82,7 +82,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
   output = auto_output(input, output, format)
   out_dir = dirname(output_path(input, output) %||% '.')
 
-  meta = merge_list(
+  meta = merge_meta(
     get_option('meta', format),
     yaml_field(yaml, format),
     list(generator = I(paste('litedown', packageVersion('litedown')))),
@@ -249,7 +249,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   # build TOC last, so citations/cross-references in headings are resolved
   if (format == 'html')
-    ret = add_toc(ret, options, c(meta[['js2']], meta[['js']], acc_var('js')))
+    ret = add_toc(ret, options, c(meta[['js']], acc_var('js')))
 
   # convert some meta variables in case they use Markdown syntax
   if (is.character(template)) for (i in top_meta) if (meta_len <- length(meta[[i]])) {
@@ -343,10 +343,10 @@ build_output = function(format, options, template, meta, ...) {
       'plain-title' = I(str_trim(markdown_text(meta[['title']])))
     )
     for (i in setdiff(names(defaults), names(meta))) meta[[i]] = defaults[[i]]
-    # special handling for css/js "files" that have no extensions
+    # special handling for css/js "files" that have no extensions; the js/css
+    # added for math/highlighting etc. (acc_var) have the priority lib_priority
     for (i in c('css', 'js')) {
-      i2 = paste0(i, '2')  # treat css2/js2 as global base (e.g. for sites)
-      meta[[i]] = resolve_files(c(meta[[i2]], meta[[i]], acc_var(i)), i)
+      meta[[i]] = resolve_files(sort_priority(meta[[i]], acc_var(i)), i)
     }
   }
   sub_vars(tpl, meta, ...)

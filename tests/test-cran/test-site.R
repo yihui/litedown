@@ -214,18 +214,41 @@ assert('set_site_options() marks the site menu with class site-nav', {
   (has_match(getOption('litedown.html.meta')$include_after, '^<footer>'))
 })
 
+assert('set_site_options() points to the manual index when the site has one', {
+  o = options(); on.exit(options(o))
+  d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)
+  f = file.path(d, 'foo', 'bar.md'); writeLines('hi', f)
+  set_site_options(list(meta = list()), f, d)
+  (is.null(getOption('litedown.html.meta')$header_includes))
+  writeLines('{}', file.path(d, function_index))
+  set_site_options(list(meta = list()), f, d)
+  m = getOption('litedown.html.meta')
+  (has_match(m$header_includes, I('<meta name="function-index" content="../function-index.json">')))
+  (m$js %==% c('20' = '@link-functions'))
+})
+
+assert('js with a priority above libraries comes after the js for syntax highlighting', {
+  x = mark(
+    c('---', 'title: T', '---', '', '```r', 'mark(x)', '```'),
+    meta = list(js = list(`20` = 'https://x.test/last.js'))
+  )
+  i = grep('<script src=', xfun::split_lines(x), value = TRUE)
+  (length(i) >= 2)
+  (has_match(i[length(i)], I('https://x.test/last.js')))
+  (has_match(i[1], I('prism')))
+})
+
 assert('root-relative css/js resolve to the page dir, other paths are kept', {
   o = options(); on.exit(options(o))
   d = tempfile(); dir.create(file.path(d, 'foo'), recursive = TRUE)
   f = file.path(d, 'foo', 'bar.md'); writeLines('hi', f)
   set_site_options(list(meta = list(
     css = '/style.css', js = c('/a.js', '//cdn.test/b.js', 'c.js'),
-    css2 = '/extra.css'
+    header_includes = 'x'
   )), f, d)
   m = getOption('litedown.html.meta')
-  (m$css %==% '../style.css')
-  (m$css2 %==% '../extra.css')
-  (m$js %==% c('../a.js', '//cdn.test/b.js', 'c.js'))
+  (unname(m$css) %==% '../style.css')
+  (unname(m$js) %==% c('../a.js', '//cdn.test/b.js', 'c.js'))
 })
 
 assert('fuse_site() links root-relative css from pages in subdirs', {

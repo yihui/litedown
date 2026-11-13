@@ -16,7 +16,11 @@
 
 - `pkg_site()` now builds [each help page as a separate page](https://pkg.yihui.org/litedown/book/#sec:pkg-site-individual-manual) under `manual/`, with `manual.html` as the index. To keep all help pages on a single page, set `full_manual: true` under `site` in `_litedown.yml`. `pkg_manual()` gains an argument `full` for this (it defaults to `TRUE` outside `pkg_site()`).
 
+- `pkg_site()` now turns function calls like `mark()` in code on every page into [links to their help pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-man-links).
+
 - The fields `nav` and `nav_hide` under `site` in `_litedown.yml` set the order and text of items in the automatic [navigation menu](https://pkg.yihui.org/litedown/book/#sec:site-nav) of a site, and hide items from it (thanks, @erikcs, #113).
+
+- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other. A value like `-@copy-button` removes a default one, and numeric priorities set the order of files, e.g., to load a script after the syntax highlighter. This replaces the undocumented `css2`/`js2` variables.
 
 # CHANGES IN litedown VERSION 1.0
 

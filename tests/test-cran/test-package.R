@@ -322,6 +322,19 @@ if (has_rd) assert('pkg_manual() builds the index or a single page of a topic', 
     paste0('title: "', tt, '"'))
 })
 
+if (has_rd) assert('write_function_index() maps function names to help page URLs', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  idx = function() in_dir(d, write_function_index(pkg, groups = NULL))
+  idx()
+  (has_match(read_utf8(file.path(d, function_index)), I(sprintf('"package": "%s"', pkg))))
+  (has_match(read_utf8(file.path(d, function_index)), I('"mark": "manual.html#sec:man-mark"')))
+  v = set_envvar(c(R_LITEDOWN_PKG = tempdir()))
+  on.exit(set_envvar(v), add = TRUE)
+  idx()
+  (has_match(read_utf8(file.path(d, function_index)), I('"mark": "manual/mark.html"')))
+})
+
 if (has_rd) assert('pkg_manual() retains dots in help topics until URL normalization', {
   pg = pkg_manual('utils', examples = FALSE, topic = 'read.table')
   (has_match(pg, I('href="write-table.html"')))
