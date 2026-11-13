@@ -245,7 +245,7 @@ assert('number_sections() numbers parts in Roman numerals, separate from chapter
   (has_match(x, I('section-number">I</span> A')))
   (has_match(x, I('main-number">1</span> B')))
   (has_match(x, I('section-number">II</span> C')))
-  (!has_match(x, 'section-number">[^<]*</span> D'))
+  (has_match(x, !'section-number">[^<]*</span> D'))
   (has_match(x, I('main-number">2</span> E')))
 })
 
