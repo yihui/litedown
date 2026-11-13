@@ -240,6 +240,19 @@ assert('number_sections() prefixes hierarchical numbers to HTML headings', {
   (number_sections('<p>no heading</p>') %==% '<p>no heading</p>')
 })
 
+assert('number_sections() numbers parts in Roman numerals, separate from chapters', {
+  x = number_sections(c('<h1 class="part">A</h1>', '<h1>B</h1>', '<h1 class="part">C</h1>', '<h1 class="part unnumbered">D</h1>', '<h1>E</h1>'))
+  (has_match(x, I('section-number">I</span> A')))
+  (has_match(x, I('main-number">1</span> B')))
+  (has_match(x, I('section-number">II</span> C')))
+  (!has_match(x, 'section-number">[^<]*</span> D'))
+  (has_match(x, I('main-number">2</span> E')))
+})
+
+assert('auto_identifier() uses prt: for parts', {
+  (auto_identifier('<h1 class="part">Intro</h1>') %==% '<h1 id="prt:intro" class="part">Intro</h1>')
+})
+
 assert('read_jsd_cache() discards the cache saved by a different litedown version', {
   f = tempfile()
   on.exit(unlink(f), add = TRUE)
@@ -284,3 +297,32 @@ assert('js_highlight enables prism-lite unless it is FALSE', {
   (has_match(x(), I('prism-lite')))
   (has_match(x(js_highlight = FALSE), !'prism'))
 })
+
+assert('number_sections() errors when .part or .appendix is not on the top-level heading', {
+  (has_error(number_sections('<h1>A</h1><h2 class="part">B</h2>')))
+  (has_error(number_sections('<h1>A</h1><h2 class="appendix">B</h2>')))
+})
+
+assert('resolve_dups() drops foo when @foo is present', {
+  (resolve_dups(c('foo', '@foo', 'bar', 'bar')) %==% c('@foo', 'bar'))
+  (resolve_dups(character()) %==% character())
+})
+
+# don't resolve versions of jsdelivr assets via the network
+op = options(litedown.jsd_resolve = FALSE)
+assert('resolve_files() maps shorthand names to jsdelivr URLs', {
+  # don't resolve versions via the network
+  op = options(litedown.jsd_resolve = FALSE)
+  on.exit(options(op), add = TRUE)
+  (has_match(resolve_files('@tabsets'), I('href="https://cdn.jsdelivr.net/npm/@xiee/utils/css/tabsets.min.css"')))
+  # a version after @
+  (has_match(resolve_files('@tabsets@1.2'), I('href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.2/css/tabsets.min.css"')))
+  # a path
+  (has_match(resolve_files('@npm/foo@3/a.css'), I('href="https://cdn.jsdelivr.net/npm/foo@3/a.css"')))
+  # several files are combined, and a bare name uses the directory of the previous one
+  (has_match(resolve_files('@npm/foo@3/a.css,b.css'), I('href="https://cdn.jsdelivr.net/combine/npm/foo@3/a.css,npm/foo@3/b.css"')))
+  (has_match(resolve_files('@tabsets,callout'), I('/combine/npm/@xiee/utils/css/tabsets.min.css,npm/@xiee/utils/css/callout.min.css"')))
+  # full URLs are kept
+  (has_match(resolve_files('https://x.com/a.css'), I('href="https://x.com/a.css"')))
+})
+options(op)

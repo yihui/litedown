@@ -444,6 +444,9 @@ Most attributes in `{}` are ignored for LaTeX output except for:
 -   The `.unnumbered` attribute, which will make a heading unnumbered, e.g.,
     `# Hello {.unnumbered}` will be converted to `\section*{Hello}`.
 
+-   The `.part` attribute on a level-one heading, which groups the chapters that
+    follow it, e.g., `# Foundations {.part}` will be converted to `\part{Foundations}`.
+
 -   The `.appendix` attribute on a heading, which will start the appendix, e.g.,
     `# Appendix {.appendix}` will be converted to `\appendix`.
 
@@ -457,6 +460,33 @@ When a top-level heading has the attribute `.appendix`, the rest of the document
 will be treated as the appendix. If section numbering is enabled
 (@sec:number-sections), the appendix section headings will be numbered
 differently.
+
+### Parts {#sec:parts}
+
+A level-one heading with the attribute `.part` starts a part, which groups the
+chapters that follow it until the next part, e.g.,
+
+``` md
+# Foundations {.part}
+
+Optional intro to the part.
+
+# Basics
+
+# Concepts
+
+# Advanced {.part}
+
+# Techniques
+
+# Case studies
+```
+
+Parts are numbered with Roman numerals (I, II, ...) separately from chapters, so
+chapter numbers continue across parts. Add `.unnumbered` to leave a part
+unnumbered, e.g., `# Preface {.part .unnumbered}`. In LaTeX output, a part is
+converted to `\part{}` (or `\part*{}`). A part can be referred to via its ID
+(`@prt:foundations`) like other sections (@sec:cross-references).
 
 ### Fenced `Div`s {#sec:fenced-divs}
 

@@ -79,6 +79,11 @@ assert('mark() renders LaTeX environments verbatim via the C extension', {
   (has_match(l, I('a_1 & = b\\\\')))
 })
 
+assert('.part headings become \\part in LaTeX, with * if unnumbered', {
+  (mark2('# Foundations {.part}\n\n# Basics', 'latex') %==% '\\part{Foundations}\n\n\\section{Basics}')
+  (mark2('# Preface {.part .unnumbered}', 'latex') %==% '\\part*{Preface}')
+})
+
 assert('mark() disables math when the latex_math option is off', {
   (mark2('a $x$ b', 'html', options = '-latex_math') %==% '<p>a $x$ b</p>')
 })

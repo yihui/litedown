@@ -1,5 +1,7 @@
 # CHANGES IN litedown VERSION 1.1
 
+- Level-one headings with the `.part` attribute (e.g., `# Foundations {.part}`) now start a [part](https://pkg.yihui.org/litedown/book/#sec:parts) that groups the chapters after it, with Roman-numeral numbering in HTML and `\part{}` in LaTeX output.
+
 - [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 
 - `pkg_site()` and `fuse_site()` can add a [comment section](https://pkg.yihui.org/litedown/book/#sec:site-giscus) powered by [giscus](https://giscus.app) to every page.

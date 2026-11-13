@@ -89,13 +89,8 @@ pants = c(fracs, c('(c)' = '&copy;', '(r)' = '&reg;', '(tm)' = '&trade;'))
 # merge a later list in arguments into a former one by name
 merge_list = function(...) {
   dots = list(...)
-  res  = dots[[1]]
-  for (i in seq_along(dots) - 1L) {
-    if (i == 0) next
-    x = dots[[i + 1]]
-    if (!is.list(x)) next
-    res[names(x)] = x
-  }
+  res = dots[[1]]
+  for (x in dots[-1]) if (is.list(x)) res[names(x)] = x
   res
 }
 
@@ -666,6 +661,9 @@ move_attrs = function(x, format = 'html') {
     r = sprintf('(\\\\(%s)\\{.+?) \\\\\\{([^}]+)\\\\\\}(\\})', paste(sec_levels, collapse = '|'))
     x = convert_attrs(x, r, '\\3', function(r, z, z3) {
       z = gsub(r, '\\1\\4', z)
+      # .part turns the heading into \part{}, regardless of its level
+      k = has_class(z3, 'part')
+      z[k] = sub('^\\\\[a-z]+', '\\\\part', z[k])
       k = has_class(z3, 'unnumbered')
       z[k] = sub('{', '*{', z[k], fixed = TRUE)
       k = has_class(z3, 'appendix')
@@ -751,7 +749,8 @@ auto_identifier = function(x) {
     z2 = sub(r, '\\2', z)  # attrs
     z3 = sub(r, '\\3', z)  # content
     i = !grepl(' id="[^"]*"', z2)  # skip headings that already have IDs
-    p = ifelse(z1 == 'h1', 'chp:', 'sec:')  # h1 is chapter; h2+ are sections
+    # h1 is chapter (or part); h2+ are sections
+    p = ifelse(z1 == 'h1', ifelse(has_class(z2, 'part'), 'prt:', 'chp:'), 'sec:')
     id = unique_id(paste0(p[i], alnum_id(z3[i])), 'section')
     z[i] = sprintf('<%s id="%s"%s>%s</%s>', z1[i], id, z2[i], z3[i], z1[i])
     z
@@ -774,6 +773,13 @@ has_class = function(x, class) {
   grepl(sprintf('(^| )class="([^"]+ )?%s( [^"]+)?"', class), x)
 }
 
+# a heading with the attribute `.cls` must be at the top level `h`
+check_top = function(k, h, cls) {
+  if (k != h) stop(
+    "The '", cls, "' attribute must be on the top-level heading (", strrep('#', h), ').'
+  )
+}
+
 # number sections in HTML output
 number_sections = function(x) {
   h = sub('</h([1-6])>', '\\1', match_full(x, '</h[1-6]>'))
@@ -788,6 +794,7 @@ number_sections = function(x) {
       if (!(is_appendix <- grepl('^[A-Z]$', n_start))) n[1] = as.integer(n_start) - 1
   }
   k0 = 6  # level of last unnumbered heading
+  n_part = 0  # parts have their own counter (in Roman numerals)
   match_replace(x, r, function(z) {
     z1 = as.integer(sub(r, '\\1', z, perl = TRUE))  # heading levels
     z2 = sub(r, '\\2', z, perl = TRUE)  # heading attributes
@@ -795,6 +802,17 @@ number_sections = function(x) {
     for (i in seq_along(z)) {
       k = z1[i]
       if (k < 6) n[(k + 1):6] <<- 0
+      # parts group chapters, so they don't affect chapter numbers
+      if (has_class(z2[i], 'part')) {
+        check_top(k, h, 'part')
+        if (!has_class(z2[i], 'unnumbered')) {
+          n_part <<- n_part + 1
+          z[i] = paste0(z[i], sprintf(
+            '<span class="section-number">%s</span> ', as.roman(n_part)
+          ))
+        }
+        next
+      }
       # skip unnumbered sections
       if (has_class(z2[i], 'unnumbered')) {
         k0 <<- k; next
@@ -803,10 +821,7 @@ number_sections = function(x) {
         if (k > k0) next else k0 <<- 6
       }
       if (has_class(z2[i], 'appendix')) {
-        if (k != h) stop(
-          "The 'appendix' attribute must be on the top-level heading (",
-          strrep('#', h), ').'
-        )
+        check_top(k, h, 'appendix')
         num_sections = local({
           a = n[k]  # an offset (highest top-level heading number before appendix)
           # number headings with A-Z or roman numerals
@@ -1158,10 +1173,7 @@ jsd_resolve = function(x) {
 # if both @foo and foo are present, remove foo
 resolve_dups = function(x) {
   x = unique(x)
-  for (i in grep('^@', x, value = TRUE)) {
-    x = x[x != sub('^@', '', i)]
-  }
-  x
+  x[!x %in% sub('^@', '', grep('^@', x, value = TRUE))]
 }
 
 # add filename extensions to paths without extensions: the path should contain
@@ -1193,11 +1205,7 @@ resolve_files = function(x, ext = 'css') {
   i = i0 & !grepl('[/,]', x)
   x[i] = jsdelivr(paste0(ext, '/', x[i]))
 
-  # @foo/bar -> jsdelivr.net/foo/bar
-  i = i0 & !grepl(',', x)
-  x[i] = jsdelivr(x[i], '')
-
-  # @foo/bar,baz -> jsdelivr.net/combine/foo/bar,foo/baz
+  # @foo/bar,baz -> combine/foo/bar,foo/baz
   i = i0 & grepl(',', x)
   if (any(i)) x[i] = sapply(strsplit(x[i], ',\\s*'), function(z) {
     d = dirname(z[1])
@@ -1212,7 +1220,8 @@ resolve_files = function(x, ext = 'css') {
     z = add_ext(z, min_ext)
     paste0('combine/', paste(z, collapse = ','))
   })
-  x[i] = jsdelivr(x[i], '')
+  # @foo/bar -> jsdelivr.net/foo/bar (also for the combined paths above)
+  x[i0] = jsdelivr(x[i0], '')
   x[i0] = jsd_resolve(x[i0])
 
   i = dirname(x) == '.' & file_ext(x) == '' & !file_exists(x)
