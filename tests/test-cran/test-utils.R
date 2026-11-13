@@ -59,7 +59,7 @@ assert('locale_lang() returns a BCP 47 language tag string', {
   lang = locale_lang()
   (is.character(lang))
   # either empty or a valid BCP 47 tag (letters, possibly with a hyphen and region)
-  (nchar(lang) == 0L || grepl('^[a-z]{2,3}(-[A-Z]{2,3})?$', lang))
+  (nchar(lang) == 0L || has_match(lang, '^[a-z]{2,3}(-[A-Z]{2,3})?$'))
 })
 
 assert('sans_p() strips a wrapping <p> tag and trailing newline', {
@@ -81,11 +81,6 @@ assert('str_trim() and trim_blank() trim whitespace', {
   (str_trim('\tx\n') %==% 'x')
   # trim_blank removes blank lines from both ends but keeps inner content
   (trim_blank('\n\n  x\n  \n') %==% '  x')
-})
-
-assert('comma_list() quotes and comma-joins its input', {
-  (comma_list(c('a', 'b', 'c')) %==% '"a", "b", "c"')
-  (comma_list('a') %==% '"a"')
 })
 
 assert('one_string() collapses a vector with a separator', {
@@ -201,31 +196,38 @@ assert('auto_identifier() adds ids to headings and keeps existing ones', {
 
 assert('build_toc() builds a nested TOC from HTML headings', {
   toc = build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'))
-  (grepl('<nav id="TOC">', toc, fixed = TRUE))
-  (grepl('<a href="#a">A</a>', toc, fixed = TRUE))
-  (grepl('<a href="#b">B</a>', toc, fixed = TRUE))
+  (has_match(toc, I('<nav id="TOC">')))
+  (has_match(toc, I('<a href="#a">A</a>')))
+  (has_match(toc, I('<a href="#b">B</a>')))
+  # links in headings are removed to avoid nested <a>
+  toc = build_toc(c('<h1 id="a"><a href="#x">A</a></h1>', '<h2 id="b"><a>B</a> <a id="c" class="k">C</a></h2>'))
+  (has_match(toc, I('<a href="#a">A</a>')))
+  (has_match(toc, I('<a href="#b">B C</a>')))
+  (has_match(toc, !'<a[^>]*><a'))
   # headings marked class="unlisted" are excluded, dropping the TOC below 2 items
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b" class="unlisted">B</h2>'))))
   # n <= 0 disables the TOC
   (is.null(build_toc(c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>'), 0)))
   # TOC class
   h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
-  (grepl('<nav id="TOC" class="side side-right">', build_toc(h, 3, c('side', 'side-right')), fixed = TRUE))
+  x = build_toc(h, 3, c('side', 'side-right'))
+  (has_match(x, I('<nav id="TOC" class="side side-right">')))
 })
 
 assert('add_toc() uses side classes only when sidenotes.js is used', {
   h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
-  (grepl('<nav id="TOC">', add_toc(h, list(toc = TRUE)), fixed = TRUE))
+  (has_match(add_toc(h, list(toc = TRUE)), I('<nav id="TOC">')))
   (has_match(add_toc(h, list(toc = TRUE), '@sidenotes'), '<nav id="TOC" class="side side-left">'))
   (has_match(add_toc(h, list(toc = list(class = 'side side-right')), '@sidenotes'), 'class="side side-right"'))
-  (grepl('<nav id="TOC" class="x">', add_toc(h, list(toc = list(class = 'x'))), fixed = TRUE))
+  x = add_toc(h, list(toc = list(class = 'x')))
+  (has_match(x, I('<nav id="TOC" class="x">')))
 })
 
 assert('number_sections() prefixes hierarchical numbers to HTML headings', {
   x = number_sections(c('<h1>A</h1>', '<h2>B</h2>', '<h1>C</h1>'))
-  (grepl('main-number">1</span> A', x, fixed = TRUE))
-  (grepl('section-number">1.1</span> B', x, fixed = TRUE))
-  (grepl('main-number">2</span> C', x, fixed = TRUE))
+  (has_match(x, I('main-number">1</span> A')))
+  (has_match(x, I('section-number">1.1</span> B')))
+  (has_match(x, I('main-number">2</span> C')))
   # input with no headings is returned unchanged
   (number_sections('<p>no heading</p>') %==% '<p>no heading</p>')
 })
@@ -242,4 +244,35 @@ assert('read_jsd_cache() discards the cache saved by a different litedown versio
   (is.null(read_jsd_cache(f)))
   # a stale cache is still acceptable as a fallback
   (read_jsd_cache(f, any = TRUE) %==% info)
+})
+
+assert('merge_meta() appends css/js/header_includes and supports removal', {
+  m = merge_meta(
+    list(css = c('@default', '@site'), title = 'a'),
+    list(css = 'x.css', title = 'b', js = '@a'),
+    list(css = c('-@site', 'y.css'), js = list(`20` = 'z.js'))
+  )
+  (unname(m$css) %==% c('@default', 'x.css', 'y.css'))
+  (m$title %==% 'b')
+  (m$js %==% c('0' = '@a', '20' = 'z.js'))
+  (unname(merge_meta(list(css = 'a'), list(css = '-*', 'b'))$css) %==% character(0))
+  (merge_meta(list(css = 'a'), list(css = NULL))$css %==% NULL)
+  (has_warning(merge_meta(list(css = 'a'), list(css = '-b'))))
+  (merge_meta(list(js = 'a'), list('header-includes' = 'h'))$header_includes %==% 'h')
+})
+
+assert('sort_priority() orders css/js by priority and keeps order within a priority', {
+  x = c('20' = 'l', 'a', '-5' = 'e', 'b')
+  (sort_priority(x) %==% c('e', 'a', 'b', 'l'))
+  (sort_priority(x, c('p', 'q')) %==% c('e', 'a', 'b', 'p', 'q', 'l'))
+  (sort_priority(list(`1.5` = 'x', `2` = c('y', 'z'), 'a')) %==% c('a', 'x', 'y', 'z'))
+  (has_error(sort_priority(c(late = 'x'))))
+})
+
+assert('js_highlight enables prism-lite unless it is FALSE', {
+  x = function(...) mark(
+    c('---', 'title: T', '---', '', '```r', '1', '```'), options = list(...)
+  )
+  (has_match(x(), I('prism-lite')))
+  (has_match(x(js_highlight = FALSE), !'prism'))
 })

@@ -38,17 +38,17 @@ assert('file_raw() returns a raw file response with a content type', {
 assert('file_size() and file_time() format file metadata', {
   f = tempfile(); writeLines('hello', f)
   on.exit(unlink(f), add = TRUE)
-  (grepl('bytes|KB|B', file_size(f)))
+  (has_match(file_size(f), 'bytes|KB|B'))
   (is.character(file_time(f)))
 })
 
 assert('btn() builds a Markdown link with a .btn-lite class', {
   # a plain label
-  (grepl('[Hi](<u>){.btn-lite}', btn('Hi', 'u'), fixed = TRUE))
+  (has_match(btn('Hi', 'u'), I('[Hi](<u>){.btn-lite}')))
   # a dotted name maps to an icon and adds the name as a class
   b = btn('.save')
-  (grepl('.btn-lite .save', b, fixed = TRUE))
-  (grepl(.icons[['.save']], b, fixed = TRUE))
+  (has_match(b, I('.btn-lite .save')))
+  (has_match(b, I(.icons[['.save']])))
 })
 
 assert('proj_info() classifies a directory as default, book, or site', {
@@ -73,8 +73,8 @@ assert('dir_page() renders a directory listing to HTML', {
   writeLines('# Hello', file.path(d, 'index.md'))
   writeLines('x', file.path(d, 'notes.txt'))
   p = as.character(dir_page(d))
-  (any(grepl('<', p)))          # HTML output
-  (any(grepl('index.md', p)))   # lists the files
+  (has_match(p, '<'))          # HTML output
+  (has_match(p, 'index.md'))   # lists the files
   # plain files are in a .listing block, which scopes listing.css
   (has_match(p, '<div class="listing">\n<ul>'))
 })
@@ -88,10 +88,10 @@ assert('file_resp() sends raw, verbatim, or rendered responses by preview level'
   # preview 1: verbatim (source shown in a code block), rendered to HTML
   p1 = file_resp(f, '1')$payload
   (!is.null(p1))
-  (any(grepl('<pre', p1)))
+  (has_match(p1, '<pre'))
   # preview 2: fully rendered markdown (heading becomes <h1>)
   p2 = file_resp(f, '2')$payload
-  (any(grepl('<h1', p2)))
+  (has_match(p2, '<h1'))
 })
 
 assert('file_page() injects navigation links at the top of a rendered page', {
@@ -99,7 +99,15 @@ assert('file_page() injects navigation links at the top of a rendered page', {
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
   f = file.path(d, 'a.md'); writeLines('# Hi', f)
   r = file_page(f, '1')
-  (any(grepl('nav-path', r$payload)))
+  (has_match(r$payload, 'nav-path'))
+})
+
+assert('directory pages use .nav-path (not an article .title) as the nav bar', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  p = lite_handler(d, list(), NULL, NULL)$payload
+  (has_match(p, '<body>\n<p class="nav-path">'))
+  (has_match(p, !'class="title"'))
 })
 
 assert('lite_handler() dispatches directories and files', {
@@ -148,7 +156,7 @@ assert('catch_page() returns an error page with a traceback and source links', {
   # errors without source references still have a traceback, but no links
   r2 = catch_page(stop('no srcref'), 'a.css')
   (has_match(r2$payload, 'no srcref'))
-  (!any(grepl('?path=', r2$payload, fixed = TRUE)))
+  (has_match(r2$payload, !I('?path=')))
 })
 
 assert('btn() adds default tooltips to icon buttons', {
@@ -168,7 +176,7 @@ assert('new_yaml() and feature_list() build YAML for selected features', {
   y = new_yaml('tabsets')
   (y[1] %==% '---' && y[length(y)] %==% '---')
   (has_match(y, '@tabsets'))
-  (!any(grepl('output', new_yaml())))
+  (has_match(new_yaml(), !'output'))
   # all presets only use known features
   (all(unlist(feature_presets) %in% rownames(assets)))
 })
@@ -240,8 +248,8 @@ assert('listing pages only have Run buttons, while file pages have edit and rend
   p = paste(as.character(dir_page(d)), collapse = '\n')
   # one Run button for each of the two documents, none for the text file
   (lengths(gregexpr(ico('.run'), p, fixed = TRUE)) %==% 2L)
-  (!has_match(p, ico('.open')))
-  (!has_match(p, ico('.save')))
+  (has_match(p, !ico('.open')))
+  (has_match(p, !ico('.save')))
   nav = file_page(file.path(d, 'a.Rmd'), '1')$payload
   (has_match(nav, ico('.open')))
   (has_match(nav, ico('.save')))

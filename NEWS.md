@@ -1,12 +1,28 @@
 # CHANGES IN litedown VERSION 1.1
 
-- Common YAML settings can now be written as top-level fields instead of deeply nested under `output -> html -> meta/options`, e.g., `css`, `js`, `lang`, `toc`, `number_sections`, `embed_resources`, `js_math`, `js_highlight`, `include_before`, `include_after`, `template`, and `keep_md`. The nested form still works and takes precedence ([details](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata)).
+- [YAML settings](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `css`, `toc`, and `number_sections` can now be written as top-level fields, not only nested under `output`. The nested form still works and takes precedence.
 
-- `pkg_site()` and `fuse_site()` can add a [giscus](https://giscus.app) comment section to the footer of every page, configured via `site: giscus` in `_litedown.yml` ([details](https://pkg.yihui.org/litedown/book/#sec:site-giscus)).
+- `pkg_site()` and `fuse_site()` can add a [comment section](https://pkg.yihui.org/litedown/book/#sec:site-giscus) powered by [giscus](https://giscus.app) to every page.
 
-- In the navigation bar of a package site, the Home link is now the package name followed by its version.
+- The Home link in the navigation bar of a package site now shows the package name and version.
 
-- The `toc` option gains a sub-option `class` to set the TOC's class names (e.g., `side side-right` to float the TOC on the right); it defaults to `side side-left` when `@sidenotes` is used ([details](https://pkg.yihui.org/litedown/book/#sec:mark-options)).
+- The [`toc` option](https://pkg.yihui.org/litedown/book/#sec:toc) gains a `class` sub-option to set the TOC's class names, e.g., to float it on the right.
+
+- `pkg_articles()` now also lists articles under `vignettes/articles/` and `articles/`, and `pkg_site()` renders them, along with vignettes that use the `litedown::vignette` engine, as [site pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun) with the menu and footer.
+
+- In `pkg_site()` and `fuse_site()`, a root-relative [`css` or `js` path](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `/style.css` now refers to the site root, so pages in subdirectories find it.
+
+- `pkg_site()` shows the package logo (e.g., a hex sticker at `man/figures/logo.png`) at the top right of the home page.
+
+- `pkg_site()` now builds [each help page as a separate page](https://pkg.yihui.org/litedown/book/#sec:pkg-site-individual-manual) under `manual/`, with `manual.html` as the index. To keep all help pages on a single page, set `full_manual: true` under `site` in `_litedown.yml`. `pkg_manual()` gains an argument `full` for this (it defaults to `TRUE` outside `pkg_site()`).
+
+- `pkg_site()` now turns function calls like `mark()` in code on every page into [links to their help pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-man-links).
+
+- The fields `nav` and `nav_hide` under `site` in `_litedown.yml` set the order and text of items in the automatic [navigation menu](https://pkg.yihui.org/litedown/book/#sec:site-nav) of a site, and hide items from it (thanks, @erikcs, #113).
+
+- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other. A value like `-@copy-button` removes a default one, and numeric priorities set the order of files, e.g., to load a script after the syntax highlighter. This replaces the undocumented `css2`/`js2` variables.
+
+- Code blocks are now syntax highlighted by the lightweight `prism-lite.js`, which needs no language files. Support for Prism.js and highlight.js has been removed from the `js_highlight` option, which now only turns highlighting on or off. To use either library, set `js_highlight: false` and load it via the `css` and `js` variables, as shown in [Using Prism.js or highlight.js](https://pkg.yihui.org/litedown/book/#sec:other-highlighters).
 
 # CHANGES IN litedown VERSION 1.0
 

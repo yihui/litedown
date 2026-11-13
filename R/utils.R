@@ -99,6 +99,77 @@ merge_list = function(...) {
   res
 }
 
+# Like merge_list(), except that the fields in `append_meta` accumulate across
+# the lists instead of being overridden, so that a layer (e.g., site options,
+# YAML, argument) can add to what the previous ones set. A value of the form
+# '-x' in a later layer removes the entry 'x' accumulated so far (and '-*'
+# removes all), similar to the '-option' syntax of markdown options.
+merge_meta = function(...) {
+  res = list()
+  for (x in list(...)) {
+    if (!is.list(x)) next
+    if (length(x)) names(x) = gsub('-', '_', names(x))  # unify with normalize_meta()
+    for (n in names(x)) {
+      v = x[[n]]
+      if (n %in% append_meta && (is.character(v) || (n %in% priority_meta && is.list(v)))) {
+        v = accumulate(res[[n]], v, n)
+      }
+      res[n] = list(v)
+    }
+  }
+  res
+}
+
+# include_before/after are not here on purpose: they are defaults (the site nav
+# and footer) that a user-provided value replaces, and Markdown text may start
+# with '-'
+append_meta = c('css', 'js', 'header_includes')
+
+# The order of css/js in the output is decided by the priority of each entry
+# (a number: the name of the element, or the name of the field in a map such as
+# `js: {10: ["@foo"]}`; 0 if unnamed); smaller numbers come first, and entries
+# of the same priority keep their order. The libraries added by litedown (e.g.,
+# the syntax highlighter) have the priority `lib_priority`.
+priority_meta = c('css', 'js')
+lib_priority = 10
+
+# turn a character vector or a map of priority -> vector into a vector named by priorities
+as_priority = function(x, priority = 0) {
+  if (is.list(x)) {
+    v = unlist(x, use.names = FALSE)
+    nm = rep(names(x) %||% rep('', length(x)), lengths(x))
+  } else {
+    v = x; nm = names(x) %||% rep('', length(x))
+  }
+  p = suppressWarnings(as.numeric(nm))
+  if (length(bad <- nm[is.na(p) & nm != ''])) stop(
+    "The priority of css/js must be a number, but got: ",
+    paste(bad, collapse = ', '), call. = FALSE
+  )
+  nm[nm == ''] = priority
+  set_names(as.character(v), nm)
+}
+
+# css/js sorted by priorities (stable), followed by libraries added by litedown
+sort_priority = function(x, lib = NULL) {
+  x = c(as_priority(x), as_priority(lib, lib_priority))
+  unname(x[order(as.numeric(names(x)))])
+}
+
+# add `new` to `old`, with '-x' in `new` removing `x` from `old`
+accumulate = function(old, new, name) {
+  if (name %in% priority_meta) new = as_priority(new)
+  i = startsWith(new, '-')
+  drop = substring(new[i], 2)
+  if ('*' %in% drop) old = NULL
+  miss = setdiff(drop, c(old, '*'))
+  if (length(miss)) warning(
+    "Nothing to remove from '", name, "': ", paste(miss, collapse = ', '),
+    call. = FALSE
+  )
+  c(old[!old %in% drop], new[!i])
+}
+
 # match_full() and match_all() split `x` into lines before matching:
 # gregexpr()/regmatches() map each match's byte offset to a character offset by
 # walking the string from the start, which is O(n^2) on a long multibyte string
@@ -383,160 +454,28 @@ js_default = function(x, default) {
 }
 
 js_libs = list(
-  highlight = list(
-    version = '11.7.0', style = 'xcode', js = 'build/highlight.min.js'
-  ),
   katex = list(version = '', css = 'dist/katex.min.css', js = 'dist/katex.min.js'),
-  mathjax = list(version = '3', js = 'es5/tex-mml-chtml.js'),
-  prism = list(
-    version = '1.29.0', js = 'components/prism-core.min.js'
-  )
+  mathjax = list(version = '3', js = 'es5/tex-mml-chtml.js')
 )
 
-# set js/css variables according to the js_highlight option
+# add js/css for syntax highlighting unless js_highlight is FALSE
 set_highlight = function(options, html) {
   # if the class .line-numbers is present, add js/css for line numbers
   if (any(grepl('<code class="[^"]*line-numbers', html)))
     acc_var(js = '@code-line-numbers', css = '@code-line-numbers')
 
-  r = '(?<=<code class="language-)([^"]+)(?=")'
-  if (!any(grepl(r, html, perl = TRUE))) return()
-  if (!length(o <- js_options(options[['js_highlight']], 'prism'))) return()
-
-  p = o$package
-  # return jsdelivr subpaths
-  get_path = function(path) {
-    t = switch(
-      p, highlight = 'gh/highlightjs/cdn-release%s/%s', prism = 'npm/prismjs%s/%s'
-    )
-    sprintf(t, o$version, path)
-  }
-  # add the `prism-` prefix if necessary
-  normalize_prism = function(x) {
-    if (length(x) == 1 && x == 'prism') x else sub('^(prism-)?', 'prism-', x)
-  }
-
-  # if resources need to be embedded, we need to work harder to figure out which
-  # js files to embed (this is quite tricky and may not be robust)
-  embed = ('https' %in% options[['embed_resources']]) || is.character(options[['offline']])
-
-  # style -> css
-  css = c(if (is.null(s <- o$style)) {
-    if (p == 'prism') '@prism-xcode'  # use prism-xcode.css in the lite.js repo
-  } else if (is.character(s)) js_combine(get_path(switch(
-    p,
-    highlight = sprintf('build/styles/%s.min.css', s),
-    prism = sprintf('themes/%s.min.css', normalize_prism(s))
-  ))))
-
-  # languages -> js
-  get_lang = function(x) switch(
-    p,
-    highlight = sprintf('build/languages/%s.min.js', x),
-    prism = sprintf('components/%s.min.js', normalize_prism(x))
+  o = options[['js_highlight']]
+  if (isFALSE(o)) return()
+  if (is.list(o)) o = o$package
+  if (is.character(o) && any(o %in% c('prism', 'highlight'))) warning(
+    "The 'js_highlight' option no longer supports '", o[1], "'; prism-lite.js ",
+    "is used instead. To use ", o[1], ".js, set 'js_highlight' to false and ",
+    "load it via the 'css' and 'js' variables. See ",
+    "https://pkg.yihui.org/litedown/book/#sec:other-highlighters for details."
   )
-  autoloader = 'plugins/autoloader/prism-autoloader.min.js'
-  o$js = c(o$js, if (!is.null(l <- o$languages)) get_lang(l) else {
-    # detect <code> languages in html and load necessary language components
-    lang = match_full(html, r)
-    lang = gsub(' .*', '', lang)  # only use the first class name
-    lang = setdiff(lang, 'plain')  # exclude known non-existent names
-    f = switch(p, highlight = js_libs[[c(p, 'js')]], prism = autoloader)
-    if (!embed && p == 'prism') f else {
-      get_lang(lang_files(p, get_path(f), lang))
-    }
-  })
-  js = get_path(o$js)
-  if (p == 'highlight') js = c(js, 'npm/@xiee/utils/js/load-highlight.js')
-  # do not combine js when they are automatically detected (this will make
-  # embedding faster because each js is a separate URL that has been downloaded)
-  js = if (is.null(l)) paste0('@', js) else js_combine(js)
-
-  acc_var(js = js, css = css)
+  if (any(grepl('<code class="language-', html)))
+    acc_var(js = '@prism-lite', css = '@prism-xcode')
 }
-
-# figure out which language support files are needed for highlight.js/prism.js
-lang_files = function(package, path, langs) {
-  u = jsdelivr(path, '')
-  x = download_cache$get(u, 'text')
-  x = one_string(x)
-
-  warn = function(l1, l2, url) warning(
-    "Unable to recognize code blocks with language(s): ", comma_list(l2),
-    ". They will not be syntax highlighted by ", package, ".js. If you can find ",
-    "the right language files at ", url, ", you may manually specify their names ",
-    "in the 'languages' field of the 'js_highlight' option.",
-    if (length(l1)) c(" Also remember to add ", comma_list(l1))
-  )
-
-  if (package == 'highlight') {
-    # first figure out all languages bundles in highlight.js (starting with grmr_)
-    x = unlist(strsplit(x, ',\n?grmr_'))
-    r = '^([[:alnum:]_-]+):.+'
-    x = grep(r, x, value = TRUE)
-    l = gsub(r, '\\1', x)
-    # then find their aliases
-    a = unlist(strsplit(match_full(x, '(?<=aliases:\\[)[^]]+(?=\\])'), '[",]'))
-    l = c(l, a[!is_blank(a)])  # all possible languages that can be highlighted
-    l = setdiff(langs, l)  # languages not supported by default
-    if (length(l) == 0) return()
-    # check if language files exist on CDN
-    d = paste0(dirname(u), '/languages/')
-    l1 = uapply(l, function(z) {
-      if (downloadable(sprintf('%s%s.min.js', d, z))) z
-    })
-    l2 = setdiff(l, l1)
-    if (length(l2)) warn(l1, l2, d)
-    l1
-  } else {
-    # dependencies and aliases (the arrays should be more than 1000 characters)
-    x = match_full(x, '(?<=\\{)([[:alnum:]_-]+:\\[?"[^}]{1000,})(?=\\})')
-    if (length(x) < 2) {
-      warning(
-        "Unable to process Prism's autoloader plugin (", u, ") to figure out ",
-        "language components automatically. Please report this message to ",
-        packageDescription('litedown')$BugReports, "."
-      )
-      return()
-    }
-    x = lapply(x[1:2], function(s) {
-      z = gsub('[]["]', '', match_full(s, '([[:alnum:]_-]+):(\\["[^]]+\\]|"[^"]+")'))
-      uapply(strsplit(z, '[:,]'), function(y) {
-        set_names(list(y[-1]), y[1])
-      }, recursive = FALSE)
-    })
-    # x1 is dependencies; x2 is aliases
-    x1 = x[[1]]; x2 = unlist(x[[2]])
-    # normalize aliases to canonical names
-    i = langs %in% names(x2)
-    langs[i] = x2[langs[i]]
-    # resolve dependencies via recursion
-    resolve_deps = function(lang) {
-      deps = x1[[lang]]
-      c(lapply(deps, resolve_deps), lang)
-    }
-    # all languages required for this page
-    l1 = unique(uapply(langs, resolve_deps))
-    # languages that are officially supported
-    l2 = c(names(x1), unlist(x1), x2)
-    # for unknown languages, check if they exist on CDN
-    d = sub('/plugins/.+', '/components/', u)
-    l3 = uapply(setdiff(l1, l2), function(z) {
-      if (!downloadable(sprintf('%sprism-%s.min.js', d, z))) z
-    })
-    l4 = setdiff(l1, l3)
-    if (length(l3)) warn(l4, l3, d)
-    l4
-  }
-}
-
-# test if a URL can be downloaded
-downloadable = function(u, type = 'text') {
-  !try_error(download_cache$get(u, type))
-}
-
-# quote a vector and combine by commas
-comma_list = function(x) paste0('"', x, '"', collapse = ', ')
 
 # get an option specific to an output format
 get_option = function(name, format, ...) {
@@ -663,7 +602,7 @@ build_toc = function(html, n = 3, class = NULL) {
   items = items[!has_class(items, 'unlisted')]
   if (length(items) <= 1) return()  # require at least 2 items in TOC
   x = gsub(r, '<toc\\2>\\3</toc>', items)  # use a tag <toc> to protect heading text
-  x = gsub('<a[^>]+>|</a>', '', x)  # clean up <a>
+  x = gsub('<a(\\s[^>]*)?>|</a>', '', x)  # clean up <a>, avoid <abbr> etc.
   h = as.integer(gsub('^h', '', gsub(r, '\\1', items)))  # heading level
   s = strrep('  ', seq_len(n) - 1)  # indent
   x = paste0(s[h], '- ', x)  # create an unordered list

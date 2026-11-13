@@ -39,6 +39,10 @@ under \code{site} in \verb{_litedown.yml} under \code{output}, e.g.,
 \verb{exclude: [code.Rmd, news.Rmd]}. They will not be copied. By default, only
 \code{code.Rmd} is excluded, and \code{exclude: NA} means to exclude nothing.
 
+If the package has a logo (e.g., a hex sticker) at \code{man/figures/logo.png}
+(or \code{.svg}, \code{.jpg}, etc.), it will be shown at the top right of the home page.
+A file \code{logo.png} (or other formats) under \code{output} takes precedence.
+
 If the package contains a book project (i.e., \verb{book/_litedown.yml} exists),
 the book will be built via \code{\link[=fuse_book]{fuse_book()}} and placed under the \verb{book/}
 subdirectory of the site.

@@ -61,8 +61,8 @@ fuse_site = function(input = '.') {
     if (b == 'newfile') !file_exists(output) else TRUE
   }
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
-  opts[['meta']] = merge_list(list(
-    css2 = c(site_css, '@site'), js2 = c(site_js, '@nav-highlight'),
+  opts[['meta']] = merge_meta(list(
+    css = c(site_css, '@site'), js = c(site_js, '@nav-highlight'),
     include_before = nav_menu(info), include_after = format(Sys.Date(), '&copy; %Y')
   ), opts[['meta']])
   opts[['options']] = merge_list(
@@ -123,15 +123,39 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
     # the class lets CSS tell the site menu from other <nav>s such as the TOC
     x = sprintf('<%s%s>%s</%s>', tag, if (nav) ' class="site-nav"' else '', x, tag)
     m[[i]] = sub_vars(x, list(input = I(input), edit = I(edit)))
-    # drop the link if the page has no source file on GitHub
-    if (!nav && edit == '') m[[i]] = gsub(
-      '<p><a [^>]*class="edit-page"[^>]*>.*?</a></p>\n?', '', m[[i]]
+    # drop the edit link if the page has no source file on GitHub
+    if (edit == '') m[[i]] = gsub(
+      '(<p>)?<a [^>]*class="edit-page"[^>]*>.*?</a>(?(1)</p>\n?)', '', m[[i]],
+      perl = TRUE
     )
     # comments go before the footer, not inside it
     if (!nav) m[[i]] = paste0(giscus_html(giscus), m[[i]])
   }
+  # root-relative css/js (e.g., /style.css) become relative to the page
+  if (!is.na(root)) {
+    up = relative_path(root, dirname(input))
+    if (up == '.') up = ''
+    for (i in c('css', 'js')) if (length(m[[i]])) {
+      m[[i]] = sub('^/(?!/)', up, as_priority(m[[i]]), perl = TRUE)
+    }
+    # the script goes after the js of the highlighter (lib_priority)
+    if (!is.null(fl <- function_links(root, up))) m = merge_meta(
+      m, list(header_includes = fl$meta, js = set_names(fl$js, lib_priority + 10))
+    )
+  }
   opts[['meta']] = m
   options(c(set_names(opts, paste0('litedown.html.', names(opts))), extra))
+}
+
+# The <meta> (where the function-to-page map is, relative to a page that is
+# `up` away from the site root) and the script that links function calls in code
+# to their help pages; NULL if the site has no such map.
+function_links = function(root, up) {
+  if (!file_exists(file.path(root, function_index))) return()
+  list(
+    meta = sprintf('<meta name="function-index" content="%s%s">', up, function_index),
+    js = '@link-functions'
+  )
 }
 
 # giscus settings that differ from giscus's own defaults (documented in the book)
@@ -158,8 +182,12 @@ giscus_html = function(cfg) {
 edit_page_url = function(input, root) {
   if (is.na(root) || is.null(pkg <- in_dir(root, detect_pkg(error = FALSE))))
     return()
-  # normalize both paths so that symlinked/short temp dirs compare equal
-  f = relative_path(normalize_path(input), normalize_path(root))
+  f = relative_path(input, root)
+  # articles/ in the site may come from vignettes/, vignettes/articles/, etc.
+  if (dirname(f) == 'articles') f = Find(
+    function(a) basename(a) == basename(f), article_sources(attr(pkg, 'path')),
+    nomatch = f
+  )
   github_file_url(attr(pkg, 'path'), f, TRUE)
 }
 
@@ -170,28 +198,62 @@ filter_outdated = function(x, x2, n, deps = NULL) {
   is.na(m2) | m1 - m2 > n
 }
 
-# build a nav menu from filenames under root directory
+# build a nav menu from filenames under root directory; the fields `nav` and
+# `nav_hide` under `site` customize the order, text, and visibility of items
 nav_menu = function(info) {
   if (is.na(info$root)) return('[Home](/index.html)')
   root = sub('/+$', '', info$root)  # strip any trailing slash for reliable dirname() comparison
+  site = info$yaml[['site']]
   # list all pages, since `inputs` may be a single file when previewing
-  b = basename(find_input(root, FALSE, info$yaml[['site']][['pattern']]))
-  urls = if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html')
-  links = sprintf(
-    '[%s](/%s)', menu_name(sans_ext(ifelse(is_index(b), 'home', b))), urls
-  )
-  # the package name and version replace the Home link of a package site
-  if (!is.null(brand <- nav_brand(root))) {
-    i = is_index(b)
-    links[i] = sprintf(brand, paste0('/', urls[i]))
-  }
+  b = basename(find_input(root, FALSE, site[['pattern']]))
   # add subdirs that already have an index.html (same exclusion as find_input),
   # except `doc/` whose index.html is the vignette index of an R package
   sub_dirs = list.dirs(root, recursive = FALSE)
   sub_dirs = sub_dirs[file.exists(file.path(sub_dirs, 'index.html'))]
-  sub_dirs = sub_dirs[basename(sub_dirs) != 'doc']
-  dnames = basename(sub_dirs)
-  c(links, sprintf('[%s](/%s/)', menu_name(dnames), dnames), nav_github(root))
+  dnames = setdiff(basename(sub_dirs), 'doc')
+  key = c(sans_ext(b), dnames)
+  urls = c(
+    if (is_roaming()) paste0(b, '?preview=2') else with_ext(b, '.html'),
+    paste0(dnames, '/')
+  )
+  nav_link = function(text, i) sprintf('[%s](/%s)', text, urls[i])
+  text = menu_name(c(ifelse(is_index(b), 'home', sans_ext(b)), dnames))
+  links = nav_link(text, seq_along(key))
+  # the package name and version replace the Home link of a package site
+  if (!is.null(brand <- nav_brand(root))) {
+    i = which(key == 'index')
+    links[i] = sprintf(brand, paste0('/', urls[i]))
+  }
+  links = nav_arrange(links, key, nav_link, site[['nav']], site[['nav_hide']])
+  c(links, nav_icons(root))
+}
+
+# reorder menu items by the names in `nav` (unlisted items follow in their
+# default order), replace the text of an item if `nav` gives one, and drop items
+# matching the patterns in `hide`
+nav_arrange = function(links, key, link, nav, hide) {
+  if (!length(nav) && !length(hide)) return(links)
+  # a plain list of names only sets the order
+  nms = if (is.null(names(nav))) as.character(unlist(nav)) else names(nav)
+  text = if (is.null(names(nav))) rep('', length(nms)) else
+    vapply(nav, function(x) paste(x, collapse = ''), '')
+  pats = as.character(unlist(hide))
+  hit = lapply(pats, function(p) grepl(glob2rx(p), key))
+  bad = c(setdiff(nms, key), pats[lengths(lapply(hit, which)) == 0])
+  if (length(bad)) stop(
+    'No match for the following items in the nav menu: ',
+    paste0('"', bad, '"', collapse = ', '), call. = FALSE
+  )
+  hidden = Reduce(`|`, hit, rep(FALSE, length(key)))
+  if (any(i <- nms %in% key[hidden])) stop(
+    'Items cannot be both in `nav` and `nav_hide`: ',
+    paste0('"', nms[i], '"', collapse = ', '), call. = FALSE
+  )
+  i = match(nms, key)
+  j = text != ''
+  links[i[j]] = link(text[j], i[j])
+  i = c(i, setdiff(seq_along(key), i))
+  links[i[!hidden[i]]]
 }
 
 # link of the package name and version (`%s` is the URL), NULL if not a package
@@ -201,14 +263,23 @@ nav_brand = function(root = '.') {
   sprintf('[%s](%%s){.brand} <small class="version">v%s</small>', pkg, v)
 }
 
-# a GitHub icon pushed to the right end of the menu (see site.css), if the
-# package that the site `root` belongs to has a GitHub repo
+# icons at the right end of the menu (see site.css, where the empty span pushes
+# them to the right): the print button of pages.js, an edit link (`$edit$` is set
+# per page), and a GitHub icon if the site `root` belongs to a package with a repo
+nav_icons = function(root = '.') {
+  c(
+    '<span class="pagesjs-toggle"></span>',
+    '[![Edit this page](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/pencil-24.svg){.no-invert}]($edit$ "Edit this page"){.edit-page}',
+    nav_github(root)
+  )
+}
+
 nav_github = function(root = '.') {
   if (is.null(pkg <- in_dir(root, detect_pkg(error = FALSE)))) return()
   if (!length(repo <- github_link(attr(pkg, 'path')))) return()
   sprintf(paste0(
     '[![GitHub](https://cdn.jsdelivr.net/npm/@primer/octicons@19/build/svg/',
-    'mark-github-24.svg){.no-invert}](%s){.right}'
+    'mark-github-24.svg){.no-invert}](%s "GitHub repository")'
   ), repo)
 }
 
@@ -359,7 +430,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     )
   })
   tweak_options(format, yaml, list(
-    body_tag = 'div', css2 = c(site_css, '@book'), js2 = site_js
+    body_tag = 'div', css = c(site_css, '@book'), js = site_js
   ), toc = length(preview) == 0)
   fuse_output(input[1], output, unlist(res), full)
 }
@@ -412,7 +483,7 @@ is_index = function(x) sans_ext(basename(x)) == 'index'
 tweak_options = function(format, yaml, meta = NULL, toc = TRUE, options = NULL) {
   nms = paste0('litedown.', format, c('.meta', '.options'))
   defaults = list(
-    merge_list(
+    merge_meta(
       .Options[[nms[1]]], meta, yaml_field(yaml, format, 'meta')
     ),
     merge_list(

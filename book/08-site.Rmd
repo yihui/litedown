@@ -25,8 +25,10 @@ book:
   new_session: true
 ```
 
-If you want to customize the output formats for books or websites, you should do
-it in `_litedown.yml`, e.g.,
+If you want to customize the output formats for books or websites, put the
+fields in `_litedown.yml`. Top-level fields apply to every page, nested fields
+under `output` apply to one format and take precedence, and a page's own YAML
+overrides both. For example,
 
 ``` yaml
 output:
@@ -124,7 +126,7 @@ chapter while presenting the whole book. However, please note that certain JS
 libraries may not work well in this preview mode. When in doubt, refresh the
 page.
 
-## Websites
+## Websites {#sec:websites}
 
 The `_litedown.yml` file should contain a top-level field named `site`, and you
 are likely to customize the `meta` variables `css`, `include_before`, and
@@ -177,7 +179,8 @@ layout elements so that pages look reasonable without any configuration:
     generated from the top-level input files under the site root (plus any
     one-level subdirectories that contain an `index.html`, such as
     `playground/index.html`). The menu titles are derived from the filenames
-    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home").
+    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home"). You can
+    customize the order and text of the menu items (@sec:site-nav).
 
 -   If `include_after` is not provided, a copyright footer (`© <year>`) is
     automatically added.
@@ -185,22 +188,72 @@ layout elements so that pages look reasonable without any configuration:
 -   The options `embed_resources` (@sec:embed-resources) and `toc` (@sec:toc)
     default to `false` and `true`, respectively.
 
-If you want to customize the assets, you should provide the `css` and `js` meta
-variables as usual, which will *override* the defaults. If you want to *add* to
-the default assets instead of replacing them, use the `css2` and `js2` variables
-(which are appended to the built-in defaults), e.g.,
+To add your own assets, provide the `css` and `js` meta variables as usual,
+which are added after the default assets, e.g.,
 
 ``` yaml
-output:
-  html:
-    meta:
-      css2: ["custom.css"]
-      js2: ["custom.js"]
+css: ["custom.css"]
+js: ["custom.js"]
 ```
 
-Absolute paths in links (i.e., paths starting with `/`) are automatically
+To remove a default asset instead, prefix its name with `-`, e.g.,
+`css: ["-@copy-button"]` drops the copy button style, and `"-*"` drops all the
+defaults. A name that matches nothing triggers a warning. The `header_includes`
+variable accumulates in the same way.
+
+The order of the files is decided by numeric priorities (smaller numbers
+first). The files listed as above have the priority 0, and the libraries that
+**litedown** adds for math, syntax highlighting, etc. have 10. To use a
+different priority, write a map from priorities to files instead of a vector,
+e.g., load a script after the syntax highlighter:
+
+``` yaml
+js:
+  0: ["custom.js"]
+  20: ["after-highlight.js"]
+```
+
+Files of the same priority keep the order in which they are listed.
+
+Absolute paths (i.e., paths starting with `/`) in links are automatically
 rewritten to relative paths, so a link like `[Home](/index.html)` will work
-correctly no matter which subdirectory the current page is in.
+correctly no matter which subdirectory the current page is in. The same applies
+to the `css` and `js` variables: `css: ["/style.css"]` refers to
+`style.css` under the site root, and becomes `../style.css` on a page in a
+subdirectory such as `foo/bar.md`. A path without the leading `/` is used as is,
+i.e., it is relative to each page, so it breaks for pages in other directories.
+
+### Navigation menu {#sec:site-nav}
+
+By default, the items of the automatic navigation menu are sorted by filenames,
+with `index` first. To change the order or the text of the items, add the field
+`nav` under `site` in `_litedown.yml`. It is a map from item names to item text,
+and the menu shows the items in the order that you specify. An item name is a
+filename without the extension (e.g., `get-started` for `get-started.Rmd`, and
+`index` for the home page) or the name of a subdirectory. If the text is empty,
+the default text is used. Items not listed in `nav` follow the listed ones in
+the default order.
+
+``` yaml
+site:
+  nav:
+    index: Home
+    get-started: Get Started
+    reference:
+    changelog: News
+```
+
+To remove items from the menu (the pages are still built), list their names
+under `nav_hide`. The names can contain the wildcards `*` and `?`:
+
+``` yaml
+site:
+  nav_hide: [privacy, "draft-*"]
+```
+
+A name that matches nothing, or a name in both `nav` and `nav_hide`, is an
+error. For full control of the menu, provide `include_before` instead
+(@sec:websites), which disables the automatic menu.
 
 ### Comments {#sec:site-giscus}
 
@@ -305,7 +358,7 @@ the following files (explained in @tab:pkg-site):
 list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 ```
 
-:::: table
+:::: {.table #tab:pkg-site}
 ::: caption
 [ ](#@tab:pkg-site) Explanations of site source files.
 :::
@@ -313,12 +366,12 @@ list.files(system.file('site', package = 'litedown'), '[.]R?md$')
 | Source | Description | Content |
 |----|----|----|
 | `index` | home page | `pkg_desc()`, `pkg_citation()`, and `README.md` |
-| `articles` | package vignettes | `pkg_articles()` (the `doc/` folder of the installed package) |
+| `articles` | package vignettes and articles | `pkg_articles()` (the `doc/` folder of the installed package, plus `vignettes/articles/` and `articles/`) |
 | `code` | source code (R, C, C++, etc.) | `pkg_code()` |
 | `examples` | examples | the `examples/` folder in the package root directory |
 | `manual` | help pages | `pkg_manual()` |
 | `news` | news | `pkg_news()` |
-| `_footer` | page footer | the package authors, a link to edit the page on GitHub, and the **litedown** version |
+| `_footer` | page footer | the package authors and the **litedown** version |
 ::::
 
 In `_footer.md`, `$authors$` (authors with the role `aut`), `$version$` (the
@@ -335,14 +388,24 @@ You can exclude certain template pages from the site via the field `exclude`
 under `site` in `_litedown.yml` in the site directory (the pages will not be
 copied). By default, `code.Rmd` is excluded, and
 
--   `articles.Rmd` is excluded if the package does not have the `vignettes/`
-    directory;
+-   `articles.Rmd` is excluded if the package has neither the `vignettes/` nor
+    the `articles/` directory;
 
 -   `examples.Rmd` is excluded if the package does not have the `examples/`
     directory;
 
 -   `news.Rmd` is excluded if neither `NEWS.md` nor `inst/NEWS.Rd` is found in
     the package.
+
+Articles are collected from three places: the built vignettes in `vignettes/`,
+and the `.Rmd`/`.md` files under `vignettes/articles/` and
+`articles/` in the package root, which are not installed with the package.
+Vignettes using the `litedown::vignette` engine and all files in the latter two
+directories are copied to `articles/` in the site directory and rendered as
+normal site pages (with the menu and footer), while other vignettes are copied
+from the `doc/` folder as built. Files starting with `_` in these directories
+(e.g., child documents) and other non-source files such as images are copied
+along.
 
 For example, if you do not want to include the news (or the source code,
 either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
@@ -358,7 +421,15 @@ start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the
 (`https://USER.github.io/PKG/` is detected automatically, or you can set it via
 `url` under `site` in `_litedown.yml`). If the `BugReports` field of
 `DESCRIPTION` points to a GitHub repository, the navigation menu gets a GitHub
-icon on the right.
+icon on the right. Next to it, a pencil icon links to the source of the current
+page on GitHub for editing (if the page has a source file in the package), and
+a printer icon paginates the page for printing.
+
+If the package has a logo (e.g., a hex sticker) at `man/figures/logo.png` (or
+`.svg`, `.jpg`, etc.), it is floated to the right on the home page, unless
+`README.md` already shows it. A `logo.png` in the site directory takes
+precedence. The image has the class `logo`, which you can restyle in your own
+CSS.
 
 If you publish the site to GitHub Pages yourself instead of using the GitHub
 action (@sec:pkg-site-gha), remember to create an empty `.nojekyll` file in the
@@ -402,6 +473,60 @@ keyword `internal` (e.g., the page of re-exported functions) are hidden by
 default, and listed only if a group names them. You can also pass the groups to
 the `groups` argument of `pkg_manual()`, `pkg_articles()`, and `pkg_examples()`
 as a list of lists with the fields `title`, `desc`, and `contents`.
+
+#### One page per help topic {#sec:pkg-site-individual-manual}
+
+In a site built by `pkg_site()`, each help page has its own page
+`manual/{topic}.html` (e.g., `manual/mark.html`), and `manual.html` only shows
+an index: a bullet list with one bullet per help page, showing its function
+names and title, grouped if `manual` groups are provided (see
+@sec:pkg-site-groups). Functions documented on the same help page share a
+bullet. Links between help pages point to these pages. To put all help pages
+on a single page `manual.html` instead, add `full_manual: true` under `site` in
+`_litedown.yml` in the site directory:
+
+``` yaml
+site:
+  full_manual: true
+```
+
+The pages are written by `pkg_site()` before the site is rendered. Outside
+`pkg_site()` (e.g., in a book), `pkg_manual()` returns all help pages in full by
+default; `pkg_manual(full = FALSE)` is only useful with those pages.
+
+#### Links from function names to help pages {#sec:pkg-site-man-links}
+
+On every page of the site (including the book, if there is one), a function
+call in inline code or in an R code block (e.g., `` `mark()` ``,
+`` `litedown::mark()` ``, or `mark(x)`) becomes a link to the help page of the
+function, or to its section in `manual.html` if `full_manual: true`. The name
+must be followed by `(`, so a plain word like `mark` is not linked, and a
+prefix `pkg::` must be the name of the package itself. The links open in a new
+tab. Existing
+links and links to the page itself are left alone, and syntax highlighting is
+preserved.
+
+### A pkgdown-like look {#sec:pkg-site-pkgdown}
+
+If your users are familiar with **pkgdown** sites (Bootstrap themes), you can
+give your package site a similar look by adding the CSS asset `@pkgdown-like` in
+the `_litedown.yml` in the site directory, and moving the table of contents to
+the right with the `class` option of `toc` (@sec:toc):
+
+``` yaml
+output:
+  html:
+    meta:
+      css: "@pkgdown-like"
+    options:
+      toc:
+        class: side side-right
+```
+
+The default CSS assets of the site (@sec:site-defaults) are kept, and
+`@pkgdown-like` is added after them. The navigation menu starts with the package name and version, and the theme is
+darkened by inverting colors in the dark color scheme, which can be turned off
+by setting the CSS variable `--invert-filter` to `none`.
 
 ### Package playground
 
@@ -457,7 +582,7 @@ You can copy it to the `.github/workflows/` directory of the R package's Git
 repository and commit/push it via Git. Within a few minutes, the package site
 should be ready at `https://user.github.io/pkg/`, where `user` is your GitHub
 username, and `pkg` is the repository name, e.g.,
-<https://yihui.github.io/litedown/>.
+`https://yihui.github.io/litedown/`.
 
 The workflow also deploys a preview of the site for each pull request to
 [surge.sh](https://surge.sh) at `https://USER-REPO-pr-N.surge.sh` (`N` is the

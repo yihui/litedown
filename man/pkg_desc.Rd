@@ -43,7 +43,9 @@ pkg_manual(
   number_sections = TRUE,
   overview = TRUE,
   examples = list(),
-  groups = site_groups("manual")
+  groups = site_groups("manual"),
+  full = manual_full(),
+  topic = NULL
 )
 
 pkg_articles(name = detect_pkg(), groups = site_groups("articles"))
@@ -120,6 +122,19 @@ If no groups are provided, \code{pkg_manual()} lists topics alphabetically, and
 
 \item{examples}{A list of arguments to be passed to \code{\link[xfun:record]{xfun::record()}} to run
 examples each help page, e.g., \code{list(dev = 'svg', dev.args = list(height = 6))}. If not a list (e.g., \code{FALSE}), examples will not be run.}
+
+\item{full}{Whether to put all help pages on a single page. If \code{FALSE},
+\code{pkg_manual()} only returns the index, a list with one bullet per help
+page of the form \verb{fn1(), fn2(): title} (the list is divided by \code{groups}
+if provided), in which the function names link to the page under
+\verb{manual/}. \code{\link[=pkg_site]{pkg_site()}} writes these pages
+before it renders the site, so the default is \code{FALSE} only when a site is
+being built by it (unless \code{full_manual: true} is set under \code{site} in
+\verb{_litedown.yml}), and \code{TRUE} otherwise.}
+
+\item{topic}{The name of a help page (an Rd filename, with or without
+\code{.Rd}). If provided, only the body of this page is returned, with links to
+other pages for use in a separate page (see \code{full}).}
 }
 \value{
 A character vector (HTML or Markdown) that will be printed as is
@@ -141,9 +156,13 @@ and BibTeX formats.
 
 \code{pkg_manual()} returns all manual pages of the package in HTML.
 
-\code{pkg_articles()} returns a list of links to the built vignettes of
-the package (and their source files) in Markdown. It also copies the
-\code{doc} directory of the installed package to the current directory.
+\code{pkg_articles()} returns a list of links to the articles of the
+package (and their source files) in Markdown. Articles are the built
+vignettes (the \code{doc} directory of the installed package is copied to the
+current directory), plus the \code{.Rmd}/\code{.md} files under \verb{vignettes/articles/}
+and \verb{articles/} in the package source directory. Vignettes
+that use the \code{litedown::vignette} engine and these extra articles are
+rendered again as normal site pages under \verb{articles/} by \code{\link[=pkg_site]{pkg_site()}}.
 }
 \description{
 Helper functions to retrieve various types of package information that can be

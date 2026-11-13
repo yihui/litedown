@@ -1,4 +1,4 @@
-# Authoring
+# Authoring {#chp:authoring}
 
 ::: epigraph
 > I don’t hide from you that I don’t detest the countryside—having been brought
@@ -14,10 +14,10 @@
 
 Unless it has become your muscle memory to click on the `Knit` button in
 RStudio, you may try to switch to `litedown::roam()` to preview your HTML output
-by clicking on the `run` buttons in the user interface. Note that the preview
+by clicking on the `Run` buttons in the user interface. Note that the preview
 takes place *in memory only*. Although you see an HTML page rendered from a file
 in the preview, the page is not rendered to disk, unless you click on the
-`render` button (@sec:the-buttons), or call `litedown::fuse()` (@chp:fuse) or
+`Render` button (@sec:the-buttons), or call `litedown::fuse()` (@chp:fuse) or
 `mark()` (@chp:mark) on the file.
 
 ### Live reload
@@ -78,33 +78,33 @@ the top when you scroll). Each button has a tooltip and an accessible label. The
 messages from the buttons (e.g., the path of the file rendered to disk, with a
 link to open it) appear as toasts at the bottom right of the page.
 
--   The `render` button (with the lightning or voltage icon, [↯](){.larger}):
+-   The `Render` button (with the lightning or voltage icon, [↯](){.larger}):
     Render a document or project in a new R session and save the output file(s)
     to disk, which is similar to what the `Knit` button does in RStudio.
 
     You can also use the keyboard shortcut `Ctrl + K` (or `Command + K` on
     macOS).
 
--   The `edit` buttons (with a pencil icon, [✎](){.larger}): Open the source
+-   The `Edit` buttons (with a pencil icon, [✎](){.larger}): Open the source
     file of the current page in your default editor if possible.
 
--   The `back`/`forward` buttons (with arrow icons, [←](){.larger} and
+-   The `Back`/`Forward` buttons (with arrow icons, [←](){.larger} and
     [→](){.larger}): Go back/forward through the browsing history, similar to
     the back/forward buttons on web browser toolbars.
 
     You can also use the keyboard shortcuts `Alt + Left` / `Alt + Right`.
 
--   The `add` button (with the plus icon, [+](){.larger}): Create a new `.Rmd` /
+-   The `Add` button (with the plus icon, [+](){.larger}): Create a new `.Rmd` /
     `.md` / `.R` file with selected HTML features (@sec:new-file).
 
--   The `refresh` button (with the refresh icon, [⟳](){.larger}): Refresh the
+-   The `Refresh` button (with the refresh icon, [⟳](){.larger}): Refresh the
     page. If you are previewing an `.Rmd` file, refreshing the page will rebuild
     it.
 
     You can also use the keyboard shortcut `Ctrl + R` (or `Command + R` on
     macOS).
 
--   The `printer` button (with a printer icon, [⎙](){.larger}): Bring up the
+-   The `Printer` button (with a printer icon, [⎙](){.larger}): Bring up the
     printer dialog, e.g., to print the page to PDF.
 
 Code blocks in the preview mode will have line numbers automatically added to
@@ -118,7 +118,7 @@ automatically, and you will have to explicitly click on it.
 
 ### Creating new files {#sec:new-file}
 
-The `add` button ([+](){.larger}) opens a dialog to create a new file. You type
+The `Add` button ([+](){.larger}) opens a dialog to create a new file. You type
 a filename in the input box (a dropdown list of existing files is provided). The
 dialog tells you whether the file will be created, or the name is invalid or
 already exists, so that you do not accidentally overwrite files. If you do not
@@ -138,7 +138,7 @@ date, so you can start writing immediately.
 ### Rendering a whole project
 
 When you preview the index file of a book or website project (@chp:sites), the
-`render` button ([↯](){.larger}) will render the whole project (via
+`Render` button ([↯](){.larger}) will render the whole project (via
 `fuse_book()` or `fuse_site()`) in a new R session and write the output to disk.
 
 ### Cleaning up

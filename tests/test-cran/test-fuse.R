@@ -17,7 +17,7 @@ assert('code blocks after asis HTML output are rendered correctly (regression)',
   # blocks to be treated as HTML content (the resulting HTML should have no
   # triple backticks)
   out = fuse(text = '#| results="asis"\ncat("<p>hi</p>\\n")\n#| foo\n1:2')
-  (!grepl('```', out))
+  (has_match(out, !'```'))
   (as.character(gsub('.*<pre><code class="language-r">1:2.*', '', out)) %==% '')
 })
 
@@ -30,8 +30,8 @@ assert('fill_label() leaves an unmatched `<...>` alone (regression)', {
     '```{js}', 'const a = `<lab>`, b = `<${s}>`;', '```'
   ), collapse = '\n')
   out = as.character(fuse(text = src, output = 'markdown'))
-  (any(grepl('secret_val', out)))          # real label expanded
-  (any(grepl('${s}', out, fixed = TRUE)))  # unmatched marker preserved
+  (has_match(out, 'secret_val'))          # real label expanded
+  (has_match(out, I('${s}')))  # unmatched marker preserved
 })
 
 assert('fuse() fig.path option controls plot file location', {
@@ -42,14 +42,14 @@ assert('fuse() fig.path option controls plot file location', {
   old = reactor(fig.path = 'foo')
   out = fuse(text = src, output = 'markdown')
   reactor(old)
-  (any(grepl('foochunk-1-1.png', out, fixed = TRUE)))
+  (has_match(out, I('foochunk-1-1.png')))
   (file_exists('foochunk-1-1.png'))
   unlink('foochunk-1-1.png')
 
   old = reactor(fig.path = 'foo/bar')
   out = fuse(text = src, output = 'markdown')
   reactor(old)
-  (any(grepl('foo/barchunk-1-1.png', out, fixed = TRUE)))
+  (has_match(out, I('foo/barchunk-1-1.png')))
   (file_exists(file.path('foo', 'barchunk-1-1.png')))
   unlink('foo', recursive = TRUE)
 })
@@ -67,8 +67,8 @@ assert('fuse() does not let nested fuse() override outer plot files (#127)', {
   out = fuse(a, output = 'markdown')
   a_files = paste0(tools::file_path_sans_ext(a), '__files')
   b_files = paste0(tools::file_path_sans_ext(b), '__files')
-  (any(grepl(basename(a_files), out, fixed = TRUE)))
-  (any(grepl(basename(b_files), out, fixed = TRUE)))
+  (has_match(out, I(basename(a_files))))
+  (has_match(out, I(basename(b_files))))
   # outer and inner plots must be in separate directories
   (dir.exists(a_files))
   (dir.exists(b_files))
@@ -105,8 +105,8 @@ assert('engines() registers a custom engine and restores the old value', {
 assert('raw_text() wraps content in a raw block for a given format', {
   x = one_string(as.character(raw_text('<b>hi</b>', 'html')))
   (inherits(raw_text('<b>hi</b>', 'html'), 'record_asis'))
-  (grepl('{=html}', x, fixed = TRUE))
-  (grepl('<b>hi</b>', x, fixed = TRUE))
+  (has_match(x, I('{=html}')))
+  (has_match(x, I('<b>hi</b>')))
   # no format leaves the content unfenced
   (as.character(raw_text('plain')) %==% 'plain')
 })

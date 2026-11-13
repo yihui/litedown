@@ -520,7 +520,7 @@ customize the cache system:
 
 -   `cache.hash`: Names of R variables to be used to determine if cache should
     be loaded or invalidated. By default, it is the names of global variables
-    automatically detected by `xfun::find_locals()` from the code chunk. You can
+    automatically detected by `xfun::find_globals()` from the code chunk. You can
     provide a vector of names to override the automatic detection if you want
     some specific global variables to affect caching, or if the automatic
     detection is not reliable.
@@ -533,7 +533,7 @@ customize the cache system:
 -   `cache.extra`: Additional information to validate the cache. For example, if
     the code reads an external file `foo.csv`, and you want the cache to be
     invalidated after the file is modified, you may use
-    `extra = file.mtime("foo.csv")` (i.e., use the file modification time for
+    `cache.extra = file.mtime("foo.csv")` (i.e., use the file modification time for
     validation).
 
 -   `cache.keep`: By default, only one copy of the cache is kept, and all other
@@ -553,11 +553,11 @@ customize the cache system:
     of the form
     `list(name = 'xxx', load = function(file) {}, save = function(x, file) {})`.
     This argument can also take a character string to use some built-in
-    read/write methods. currently including:
+    read/write methods, currently including:
 
     -   `rds`: The default, using `readRDS()` and `saveRDS()`.
 
-    -   `raw`: Using `serialize()` and `unserialize()`). Note that the `rds`
+    -   `raw`: Using `serialize()` and `unserialize()`. Note that the `rds`
         method generates smaller files because it uses compression, but is often
         slower than the `raw` method, which does not use compression.
 
@@ -1338,7 +1338,7 @@ Options to control the formatting include:
 To make it easier to read the numbers in the Markdown table above, we render the
 table to @tab:inline-numbers:
 
-:::: table
+:::: {.table #tab:inline-numbers}
 ::: caption
 [ ](#@tab:inline-numbers) Inline numbers formatted with different `signif` and
 `power` options.

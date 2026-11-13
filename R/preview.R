@@ -246,7 +246,7 @@ error_page = function(css, e, steps = list()) {
 
 # a handler returns list(payload, file, `content-type`, header, `status code`)
 lite_handler = function(path, query, post, headers) {
-  if (dir.exists(path)) list(payload = dir_page(path)) else {
+  if (dir.exists(path)) add_nav(list(payload = dir_page(path)), path) else {
     file_page(path, query[['preview']] %||% '0')
   }
 }
@@ -305,7 +305,11 @@ dir_page = function(dir = '.') {
   # the file list is styled by listing.css (`.listing`)
   if (length(items)) res = c(res, '', fenced_div(unlist(items), '.listing'))
   tools = if (length(list.files(dir)) > 4) list_tools()
-  mark_full(c(tools, unlist(res)), meta = list(title = dir_title(dir)))
+  # no `title` (else it is rendered as an article title); the nav bar is added
+  # by add_nav()
+  mark_full(c('', tools, unlist(res)), meta = list(
+    'plain-title' = I(basename(normalize_path(dir)))
+  ))
 }
 
 # a filter box and a sorting menu for the file listing
@@ -318,7 +322,10 @@ list_tools = function() c(
 
 # add directory navigation to the top of the page
 file_page = function(x, preview) {
-  res = file_resp(x, preview)
+  add_nav(file_resp(x, preview), x, preview)
+}
+
+add_nav = function(res, x, preview = '1') {
   if (is.null(p <- res$payload)) return(res)
   # inject navigation links to the top of the page
   nav = dir_title(x, preview)

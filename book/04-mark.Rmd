@@ -9,31 +9,275 @@
 > ---M. Scott Peck, *The Road Less Traveled*
 :::
 
-The main function to convert Markdown to other formats is `litedown::mark()`.
+Markdown is converted to HTML, LaTeX, and other formats by the function
+`litedown::mark()`. You rarely need to call it yourself: `fuse()` calls it for
+`.Rmd` files, and the `Run` and `Render` buttons (@chp:authoring) call these
+functions for you. What you control is *how* the conversion is done, and for
+that, the YAML metadata at the top of the document is usually all you need. This
+chapter shows how to write it. If you do want to call `mark()` in R code, see
+@sec:mark-r and `?litedown::mark`.
 
-Most settings can be written as top-level fields in YAML metadata
-(@sec:yaml-metadata), e.g.,
+## A first document {#sec:first-document}
+
+If a Markdown document has no YAML metadata at the beginning, `mark()`
+generates a *fragment*, i.e., only the converted body, such as
+`<p>Hello <strong>world</strong>!</p>`. As soon as the document has YAML
+metadata, however, it generates a *full document*, e.g., a complete HTML page:
+
+``` md
+---
+title: Hello
+---
+
+Hello **world**!
+```
+
+The default output format is HTML. To choose a different format, use the
+`output` field, e.g., `output: latex` (or render to a `.pdf` file directly via
+`mark("foo.md", ".pdf")`). The possible formats are
+`` {r} xfun::join_words(names(litedown:::md_formats), before = '`', and = 'or') ``.
+
+A full document is created from a *template* (@sec:templates). The default
+templates have places for the title, the author, the date, CSS and JS files,
+etc., which you fill in via YAML.
+
+## YAML metadata {#sec:yaml-metadata}
+
+Everything you can configure about the output is a field in the YAML metadata.
+We use three terms below:
+
+-   A *variable* fills a placeholder in the template, such as `title` or `css`
+    (@sec:meta-vars).
+
+-   An *option* controls how Markdown is converted, such as `toc` or
+    `number_sections` (@sec:markdown-options).
+
+-   A *format field* configures the output format itself, such as `template` or
+    `latex_engine` (@sec:format-fields).
+
+You do not have to remember which is which: all of them can be written as
+top-level fields, e.g.,
 
 ``` yaml
 ---
+title: "My Title"
+author: "Frida Gomam"
+css: ["@default", "@article"]
+toc: true
 number_sections: true
-embed_resources: ["local", "https"]
-css: "custom.css"
-js_math:
-  package: "katex"
-  version: "0.16.4"
 ---
 ```
 
-## Markdown options
+The commonly used fields are:
 
-The `options` argument of `mark()` can be used to enable/disable/set options to
-control Markdown rendering. This argument can take either a list, e.g.,
-`list(toc = TRUE, smart = FALSE)`, or a character vector, e.g.,
-`c("+toc", "-smart")`, or equivalently, `+toc-smart`, where `+` means to enable
-an option, and `-` means to disable an option. The options can also be set in
-YAML metadata in @sec:yaml-metadata (recommended). Available options are listed
-below.
+:::: {.table #tab:yaml-fields}
+::: caption
+[ ](#@tab:yaml-fields) Fields that can be written at the top level of YAML.
+:::
+
+| Field | Meaning | Details |
+|----|----|----|
+| `title`, `subtitle`, `author`, `date`, `abstract` | The title block | @sec:title-block |
+| `css`, `js` | CSS and JS files (HTML) | @sec:meta-css |
+| `lang` | The document language (HTML) | @sec:html-settings |
+| `include_before`, `include_after`, `header_includes` | Extra HTML/LaTeX code | @sec:html-settings |
+| `toc`, `number_sections` | Table of contents and section numbers | @sec:markdown-options |
+| `embed_resources`, `offline` | Make the HTML self-contained or usable offline | @sec:markdown-options |
+| `js_math`, `js_highlight` | JS libraries for math and code highlighting | @sec:markdown-options |
+| `documentclass`, `classoption` | The LaTeX document class (LaTeX) | @sec:latex-settings |
+| `template`, `keep_md`, `keep_tex`, `latex_engine`, `citation_package` | Format fields | @sec:format-fields |
+::::
+
+A field that the output format does not use (e.g., `css` for LaTeX) is ignored.
+
+### The title block {#sec:title-block}
+
+These fields describe the document:
+
+-   `abstract`: The abstract.
+
+-   `author`: The document author(s).
+
+-   `date`: The date.
+
+-   `subtitle`: The document subtitle.
+
+-   `title`: The document title.
+
+For example:
+
+``` yaml
+---
+title: "My Title"
+author: "[Frida Gomam](https://example.com)"
+date: "2023-01-09"
+---
+```
+
+The values are treated as Markdown text, and will be converted to the target
+output format before being passed to the template. For the above example, the
+variable `$author$` will be `<a href="https://example.com">Frida Gomam</a>` in
+the HTML template.
+
+For top-level variables, `mark()` will also create the "underscore" versions for
+templates, which contain HTML and LaTeX markups. For example, for the `$title$`
+variable, `$title_$` will also be available to the template. The following table
+shows the values of the underscore variables, assuming the original value of a
+variable is `TEXT` (@tab:underscore-vars):
+
+:::: {.table #tab:underscore-vars}
+::: caption
+[ ](#@tab:underscore-vars) Values of the underscore variables.
+:::
+
+| Variables | HTML | LaTeX |
+|----|----|----|
+| `$title_$` | `<div class="title"> <h1>TEXT</h1> </div>` | `\title{TEXT}` |
+| `$subtitle_$` | `<div class="subtitle"> <h2>TEXT</h2> </div>` | `\subtitle{TEXT}` |
+| `$author_$` | `<div class="author"> <h2>TEXT</h2> </div>` | `\author{TEXT}` |
+| `$date_$` | `<div class="date"> <h3>TEXT</h3> </div>` | `\date{TEXT}` |
+| `$abstract_$` | `<div class="abstract"> <p>TEXT</p> </div>` | `\begin{abstract} TEXT \end{abstract}` |
+
+::::
+
+If an original variable is empty or missing, its underscore version will also be
+empty. For the `$author_$` variable, if the `$author$` variable contains
+multiple author names as an array, each name will be in a separate `<h2>` in
+HTML output, and all names will be concatenated by `\and` in LaTeX output, e.g.,
+for
+
+``` yaml
+author: ["Jane X", "John Y"]
+```
+
+in YAML, the HTML output will be:
+
+``` html
+<div class="author">
+  <h2>Jane X</h2>
+  <h2>John Y</h2>
+</div>
+```
+
+and the LaTeX output will be:
+
+``` tex
+\author{Jane X \and John Y}
+```
+
+If you design your own template, you are free to use either the original or the
+underscore versions of these variables. For example, you could put the title in
+an `<h1>` without the `<div>` wrapper via `<h1 class="title">$title$</h1>`
+instead of using `$title_$`.
+
+When these top-level variables are also provided as `meta` variables for an
+output format, the latter will override the former, e.g.,
+
+``` yaml
+title: "Global Title"
+output:
+  html:
+    meta:
+      title: "Title for HTML output"
+  latex:
+    meta:
+      title: "Title for LaTeX output"
+```
+
+### Variables {#sec:meta-vars}
+
+Besides the title block, the default templates support other variables, which
+can also be top-level fields. The variables for HTML are described in
+@sec:html-settings, and the ones for LaTeX in @sec:latex-settings. If you use a
+custom template, you can define your own variables (@sec:templates).
+
+### Settings for a specific format {#sec:yaml-nested}
+
+A top-level field applies to all output formats. When a field should differ
+between formats, nest it under `output -> * -> meta`, `output -> * -> options`,
+or `output -> *`, where `*` is a format name such as `html` or `latex`. Nested
+values take precedence over top-level ones. For example, a table of contents
+only for HTML, a different CSS file for HTML, and a different document class
+for LaTeX:
+
+``` yaml
+---
+toc: false
+css: "style.css"
+output:
+  html:
+    meta:
+      css: "html-only.css"
+    options:
+      toc: true
+  latex:
+    meta:
+      documentclass: "book"
+---
+```
+
+Fields that are not in @tab:yaml-fields (e.g., the option `hardbreaks`) can only
+be written in the nested form, under `options`. Variables of a custom template
+(@sec:templates) go under `meta`.
+
+### Format fields {#sec:format-fields}
+
+Besides variables and options, a few other fields configure the output format.
+They correspond to the arguments of the functions `litedown::html_format()` and
+`litedown::latex_format()`, and can be top-level fields or nested under the
+format name.
+
+The fields supported by both formats are:
+
+-   `template`: The path to a custom template file (@sec:templates). It can also
+    be a logical value: `true` means to use the default template, and `false`
+    means to generate only a fragment document without any template.
+
+-   `keep_md`: Whether to keep the intermediate `.md` file generated from the
+    `.Rmd` input (`false` by default).
+
+The LaTeX format supports these additional fields:
+
+-   `keep_tex`: Whether to keep the intermediate `.tex` file when the output is
+    a `.pdf` file (`false` by default).
+
+-   `latex_engine`: The LaTeX engine to compile the `.tex` file to PDF. The
+    default is `xelatex`. Other common choices include `pdflatex` and
+    `lualatex`.
+
+-   `citation_package`: The LaTeX package for processing citations
+    (@sec:citations). Possible values are `natbib` (the default), `biblatex`,
+    and `none`.
+
+For example:
+
+``` yaml
+latex_engine: xelatex
+keep_tex: true
+citation_package: biblatex
+```
+
+A top-level `template` applies to all formats, which is rarely what you want
+because HTML and LaTeX templates are different. Use the nested form to specify
+one template per format (the same applies to the other fields above when their
+values should differ between formats):
+
+``` yaml
+output:
+  html:
+    template: custom-template.html
+  latex:
+    template: custom-template.tex
+```
+
+## Markdown options {#sec:markdown-options}
+
+Options control how Markdown is converted. Set them as fields in YAML
+(@sec:yaml-metadata), e.g., `toc: true`. Options that take logical values can
+be switched on or off, and some take sub-fields (e.g., `toc: {depth: 2}`). The
+most commonly used options are `toc`, `number_sections`, `embed_resources`,
+`js_math`, and `js_highlight`. All options are listed below in alphabetical
+order.
 
 ### `auto_identifiers`
 
@@ -89,7 +333,7 @@ can disable it to slightly speed up the rendering.
 Whether to clean up plot files after they have been embedded in HTML output (see
 @sec:embed-resources). This option is `true` by default.
 
-### `embed_resources`
+### `embed_resources` {#sec:embed-resources}
 
 Embed resources (images, CSS, and JS) in the HTML output using their
 base64-encoded data (all images except for SVG) or raw content (SVG/CSS/JS).
@@ -132,42 +376,14 @@ When embedding `https` resources, only these elements are considered:
 If an external CSS file contains `url()` resources, these resources will also be
 downloaded and embedded.
 
-### `js_highlight`
+### `js_highlight` {#sec:js-highlight}
 
-Specify the JavaScript library to syntax highlight code blocks. Possible values
-are `highlight` ([highlight.js](https://highlightjs.org)) and `prism`
-([Prism.js](https://prismjs.com)). The default is `prism`. This option can also
-take a list of the form `list(package, version, style, languages)`, which
-specifies the package name (`highlight` or `prism`), version, CSS style/theme
-name, and names of languages to be highlighted.
+Syntax highlight code blocks in HTML output with `prism-lite.js`, a minimal
+highlighter that has built-in rules for common languages (e.g., R, JavaScript,
+and HTML) and applies generic highlighting to other languages. It is enabled by
+default; set this option to `false` to disable it.
 
--   You can find information about Prism.js from its CDN at
-    <https://cdn.jsdelivr.net/npm/prismjs/>. Available styles are under the
-    `themes/` directory (e.g., `prism-dark`), and languages are under the
-    `components/` directory (e.g., `prism-c`). You can omit the prefix `prism-`,
-    e.g.,
-
-    ``` yaml
-    js_highlight:
-      package: prism
-      style: dark
-      languages: [r, latex, yaml]
-    ```
-
--   The CDN of highlight.js is at
-    <https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/>. Themes are
-    under the `styles/` directory (e.g., `github`), and you can find demos of
-    themes at <https://highlightjs.org/static/demo/>. Supported language are
-    under the `languages/` directory (e.g., `latex`).
-
-By default, languages are automatically detected and the required JS files are
-automatically loaded. Normally you need to specify the `languages` array only if
-the automatic detection fails.
-
-Technically this option is a shorthand for setting the metadata variables `css`
-and `js` in @sec:yaml-metadata. If you want full control, you may disable this
-option (set it to `false` or `null`) and use metadata variables directly, which
-requires more familiarity with the JS libraries and the jsdelivr CDN.
+To use Prism.js or highlight.js instead, see @sec:other-highlighters.
 
 ### `js_math`
 
@@ -256,7 +472,7 @@ to it. For example:
 ## About the author {-}
 ```
 
-### `offline`
+### `offline` {#sec:offline}
 
 Whether to download web resources (e.g., images and CSS/JS files) used in the
 HTML output so that the HTML file can be viewed offline later. This option is
@@ -359,201 +575,18 @@ unlist(opts)
 litedown:::list_extensions()
 ```
 
-## Templates
+## HTML settings {#sec:html-settings}
 
-By default, `mark()` generates a document fragment (i.e., the body) if the input
-does not contain YAML metadata at the beginning. To generate a full document,
-you need to specify YAML metadata. A full document is generated with a template.
-Below is a simple HTML template example:
+These variables are used by the default HTML template. Like all variables, they
+can be written as top-level fields in YAML.
 
-``` html
-<html>
-  <head>
-    <title>$title$</title>
-  </head>
+### The `header-includes`, `include-before`, `include-after` variables
 
-  <body>
-  $body$
-  </body>
-</html>
-```
+Either a vector of code or a code file to be included in the header, before the
+body, or after the body of the output. They are also supported by the LaTeX
+template.
 
-It contains two variables, `$title$` and `$body$`. All variables will be
-substituted by metadata values, except for `$body$`, which is from the body of
-the input document (after conversion to a target output format).
-
-The **litedown** has provided default templates for
-[HTML](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.html)
-and
-[LaTeX](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.latex)
-output. To pass metadata to templates, use the `meta` argument, e.g.,
-
-``` r
-litedown::mark(..., meta = list(title = "My Title"))
-```
-
-If you want to use a custom template file, you can set the path in the global
-option `litedown.FORMAT.template` (where `FORMAT` is the output format name
-(`html` or `latex`), e.g., in `.Rprofile`:
-
-``` r
-options(litedown.html.template = 'path/to/my/template.html')
-```
-
-The global option will be applied to all documents to be converted by `mark()`.
-Alternatively, you can pass a template path to the `template` argument of the
-output format `html` or `latex` in an individual document, e.g.,
-
-``` yaml
----
-template: "path/to/my/template.html"
----
-```
-
-The template path can also take a logical value: `TRUE` means to use the default
-template, and `FALSE` means to generate only a fragment document without using
-any template.
-
-## YAML metadata {#sec:yaml-metadata}
-
-Alternatively, the `meta` argument can read YAML metadata in the Markdown
-document.
-
-### Top-level variables
-
-The following variables can be set in the top-level fields in YAML:
-
--   `abstract`: The abstract.
-
--   `author`: The document author(s).
-
--   `date`: The date.
-
--   `subtitle`: The document subtitle.
-
--   `title`: The document title.
-
-For example:
-
-``` yaml
----
-title: "My Title"
-author: "[Frida Gomam](https://example.com)"
-date: "2023-01-09"
----
-```
-
-The values are treated as Markdown text, and will be converted to the target
-output format before being passed to the template. For the above example, the
-variable `$author$` will be `<a href="https://example.com">Frida Gomam</a>` in
-the HTML template.
-
-For top-level variables, `mark()` will also create the "underscore" versions for
-templates, which contain HTML and LaTeX markups. For example, for the `$title$`
-variable, `$title_$` will also be available to the template. The following table
-shows the values of the underscore variables, assuming the original value of a
-variable is `TEXT`:
-
-| Variables | HTML | LaTeX |
-|----|----|----|
-| `$title_$` | `<div class="title"> <h1>TEXT</h1> </div>` | `\title{TEXT}` |
-| `$subtitle_$` | `<div class="subtitle"> <h2>TEXT</h2> </div>` | `\subtitle{TEXT}` |
-| `$author_$` | `<div class="author"> <h2>TEXT</h2> </div>` | `\author{TEXT}` |
-| `$date_$` | `<div class="date"> <h3>TEXT</h3> </div>` | `\date{TEXT}` |
-| `$abstract_$` | `<div class="abstract"> <p>TEXT</p> </div>` | `\begin{abstract} TEXT \end{abstract}` |
-
-If an original variable is empty or missing, its underscore version will also be
-empty. For the `$author_$` variable, if the `$author$` variable contains
-multiple author names as an array, each name will be in a separate `<h2>` in
-HTML output, and all names will be concatenated by `\and` in LaTeX output, e.g.,
-for
-
-``` yaml
-author: ["Jane X", "John Y"]
-```
-
-in YAML, the HTML output will be:
-
-``` html
-<div class="author">
-  <h2>Jane X</h2>
-  <h2>John Y</h2>
-</div>
-```
-
-and the LaTeX output will be:
-
-``` tex
-\author{Jane X \and John Y}
-```
-
-If you design your own template, you are free to use either the original or the
-underscore versions of these variables. For example, you could put the title in
-an `<h1>` without the `<div>` wrapper via `<h1 class="title">$title$</h1>`
-instead of using `$title_$`.
-
-When these top-level variables are also provided as `meta` variables for an
-output format, the latter will override the former, e.g.,
-
-``` yaml
-title: "Global Title"
-output:
-  html:
-    meta:
-      title: "Title for HTML output"
-  latex:
-    meta:
-      title: "Title for LaTeX output"
-```
-
-### Other variables
-
-Other variables can also be written as top-level fields, e.g.,
-
-``` yaml
----
-title: "My Title"
-css: "style.css"
-js: "script.js"
-documentclass: "book"
-header_includes: "\usepackage{microtype}"
----
-```
-
-The supported top-level variables are the ones above (`title`, `author`, etc.),
-plus `css`, `js`, `css2`, `js2`, `lang`, `body-class`, `body-tag`,
-`header-includes`, `include-before`, `include-after`, `documentclass`, and
-`classoption`. A variable that the output format does not use (e.g., `css` for
-LaTeX) is ignored.
-
-To set a variable for one output format only, or to override a top-level value,
-put it under `output -> * -> meta`, where `*` can be `html` or `latex`, e.g.,
-
-``` yaml
----
-css: "style.css"
-output:
-  html:
-    meta:
-      css: "html-only.css"
-  latex:
-    meta:
-      documentclass: "book"
----
-```
-
-The following metadata variables are supported for both HTML and LaTeX
-templates:
-
--   `header-includes`, `include-before`, `include-after`: Either a vector of
-    (HTML/LaTeX) code or a code file to be included in the header, before the
-    body, or after the body of the output.
-
---------------------------------------------------------------------------------
-
-The following variables are for HTML templates:
-
-#### The `css` variable {#sec:meta-css}
+### The `css` variable {#sec:meta-css}
 
 A vector of CSS files to be included in the output. If the variable is not
 provided, the
@@ -595,7 +628,7 @@ URLs. The shorthand syntax is as follows (`*` stands for
     values contain slashes) will be converted to
     `*/combine/path-1/to/file-1,path-2/to/file-2`.
 
-:::: table
+:::: {.table #tab:at-syntax}
 ::: caption
 [ ](#@tab:at-syntax) The `@` syntax for using jsdelivr resources in the `css`
 variable.
@@ -616,14 +649,14 @@ web instead of embedding inside HTML, at the cost of requiring Internet
 connection when viewing the HTML file. If you need the external web resources to
 work after you go offline, please see @sec:embed-resources.
 
-#### The `js` variable
+### The `js` variable
 
 A vector of JavaScript files to be included in the output. The syntax is the
 same as the `css` variable, e.g., `snap` means `snap.js` in this package,
 `@snap` means a "jsdelivr" resource, and you can use arbitrary paths or URLs to
 other JS files.
 
-#### The `body-tag` and `body-class` variables
+### The `body-tag` and `body-class` variables
 
 The main body of the document is wrapped in `<main>`, and then in an element
 whose tag name is `body-tag` (the default value is `article`) and class name is
@@ -632,7 +665,7 @@ whose tag name is `body-tag` (the default value is `article`) and class name is
 `body-class: foo` and then style the body with the CSS selector `.foo`, or set
 `body-tag: div` if the content is not an article.
 
-#### The `lang` variable
+### The `lang` variable
 
 The language of the HTML document, used to set the `lang` attribute of the
 `<html>` tag. It should be a [BCP 47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt)
@@ -645,30 +678,81 @@ in YAML, e.g.,
 lang: "zh-CN"
 ```
 
-#### The `plain-title` variable
+### The `plain-title` variable
 
 The plain-text version of the title, used in the `<title>` tag of the HTML
 output (which appears on the browser tab). It is automatically generated from
 the `title` variable by stripping the Markdown markups, but you can override it
 if you want a different browser-tab title from the document title.
 
-#### The `generator` variable
+### The `generator` variable
 
 The value of the `<meta name="generator">` tag in the HTML head, which
 indicates the software used to generate the document. By default, it is
 `litedown` and the package version.
 
---------------------------------------------------------------------------------
+## LaTeX settings {#sec:latex-settings}
 
-The following variables are for LaTeX templates:
+These variables are used by the default LaTeX template. See also the format
+fields `latex_engine`, `keep_tex`, and `citation_package` (@sec:format-fields).
 
-#### The `classoption` variable
+### The `classoption` variable
 
 A string containing options for the document class.
 
-#### The `documentclass` variable
+### The `documentclass` variable
 
 The document class (by default, `article`).
+
+## Templates
+
+A full document (@sec:first-document) is generated with a template. Below is a
+simple HTML template example:
+
+``` html
+<html>
+  <head>
+    <title>$title$</title>
+  </head>
+
+  <body>
+  $body$
+  </body>
+</html>
+```
+
+It contains two variables, `$title$` and `$body$`. All variables will be
+substituted by metadata values, except for `$body$`, which is from the body of
+the input document (after conversion to a target output format).
+
+**litedown** provides default templates for
+[HTML](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.html)
+and
+[LaTeX](https://github.com/yihui/litedown/blob/main/inst/resources/litedown.latex)
+output, whose variables are filled in by the fields in YAML
+(@sec:yaml-metadata).
+
+To use a custom template file, set its path in the `template` field of an
+individual document (the nested form, @sec:yaml-nested, lets HTML and LaTeX use
+different templates), e.g.,
+
+``` yaml
+---
+template: "path/to/my/template.html"
+---
+```
+
+The template path can also take a logical value: `true` means to use the
+default template, and `false` means to generate only a fragment without using
+any template.
+
+To apply a template to all documents, set the global option
+`litedown.FORMAT.template` (where `FORMAT` is `html` or `latex`), e.g., in
+`.Rprofile`:
+
+``` r
+options(litedown.html.template = 'path/to/my/template.html')
+```
 
 ### Naming convention of variables
 
@@ -685,82 +769,3 @@ The above are variables supported in the default templates. If you use a custom
 template, you can use arbitrary variable names following the naming convention
 (except for `body`, which is a reserved name and cannot be used in metadata),
 and the values of variables in the metadata will be passed to your template.
-
-### Setting options in YAML
-
-Besides metadata variables, the aforementioned Markdown options
-(@sec:markdown-options) can also be set in YAML. The common ones (`toc`,
-`number_sections`, `embed_resources`, `js_math`, `js_highlight`, `offline`, and
-`cleveref`) can be top-level fields, e.g.,
-
-``` yaml
-toc: true
-js_highlight:
-  package: highlight
-  theme: github
-  languages: [diff, latex]
-```
-
-Options not in this list (e.g., `hardbreaks`) must be nested under
-`output -> * -> options`. You also need the nested form when an option should
-differ between formats, because a top-level value applies to all formats and
-the nested value takes precedence, e.g., a TOC for HTML only:
-
-``` yaml
-toc: false
-output:
-  html:
-    options:
-      toc: true
-      hardbreaks: true
-```
-
-### Other fields in YAML
-
-In addition to `meta` and `options`, a few other fields can be specified under
-the format name, or at the top level (they then apply to all formats). These
-fields correspond to the arguments of the output format
-functions `litedown::html_format()` and `litedown::latex_format()`.
-
-The fields supported by both formats are:
-
--   `template`: The path to a custom template file (@sec:templates). It can also
-    be a logical value: `true` means to use the default template, and `false`
-    means to generate only a fragment document without any template.
-
--   `keep_md`: Whether to keep the intermediate `.md` file generated from the
-    `.Rmd` input (`false` by default).
-
-The LaTeX format supports these additional fields:
-
--   `keep_tex`: Whether to keep the intermediate `.tex` file when the output is
-    a `.pdf` file (`false` by default).
-
--   `latex_engine`: The LaTeX engine to compile the `.tex` file to PDF. The
-    default is `xelatex`. Other common choices include `pdflatex` and
-    `lualatex`.
-
--   `citation_package`: The LaTeX package for processing citations
-    (@sec:citations). Possible values are `natbib` (the default), `biblatex`,
-    and `none`.
-
-For example:
-
-``` yaml
-latex_engine: xelatex
-keep_tex: true
-citation_package: biblatex
-```
-
-A top-level `template` applies to all formats, which is rarely what you want
-because HTML and LaTeX templates are different. Use the nested form to specify
-one template per format (the same applies to the other fields above when their
-values should differ between formats):
-
-``` yaml
-output:
-  html:
-    template: custom-template.html
-  latex:
-    template: custom-template.tex
-```

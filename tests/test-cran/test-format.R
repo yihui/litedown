@@ -123,3 +123,8 @@ assert('map_args() maps rmarkdown includes to litedown meta fields', {
   (a$meta$include_before %==% 'b')
   (a$meta$include_after %==% 'a')
 })
+
+assert('top-level YAML whitelist avoids project and document keys', {
+  reserved = c('book', 'site', 'type', 'output', 'format', 'knit', 'bibliography')
+  (length(intersect(unlist(top_fields), reserved)) %==% 0L)
+})
