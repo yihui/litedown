@@ -225,9 +225,6 @@ assert('set_site_options() points to the manual index when the site has one', {
   m = getOption('litedown.html.meta')
   (has_match(m$header_includes, I('<meta name="function-index" content="../function-index.json">')))
   (m$js %==% c('20' = '@link-functions'))
-  writeLines('', file.path(d, 'link-functions.js'))
-  set_site_options(list(meta = list()), f, d)
-  (getOption('litedown.html.meta')$js %==% c('20' = '../link-functions.js'))
 })
 
 assert('js with a priority above libraries comes after the js for syntax highlighting', {

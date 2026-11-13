@@ -148,15 +148,13 @@ set_site_options = function(opts, input, root, extra = NULL, giscus = NULL) {
 }
 
 # The <meta> (where the function-to-page map is, relative to a page that is
-# `up` away from the site root) and the script (link-functions.js, with a copy
-# in the site dir taking precedence over the CDN one) that link function calls
-# in code to their help pages; NULL if the site has no such map.
+# `up` away from the site root) and the script that links function calls in code
+# to their help pages; NULL if the site has no such map.
 function_links = function(root, up) {
   if (!file_exists(file.path(root, function_index))) return()
   list(
     meta = sprintf('<meta name="function-index" content="%s%s">', up, function_index),
-    js = if (file_exists(file.path(root, 'link-functions.js')))
-      paste0(up, 'link-functions.js') else '@link-functions'
+    js = '@link-functions'
   )
 }
 
