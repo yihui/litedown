@@ -20,7 +20,7 @@
 
 - The fields `nav` and `nav_hide` under `site` in `_litedown.yml` set the order and text of items in the automatic [navigation menu](https://pkg.yihui.org/litedown/book/#sec:site-nav) of a site, and hide items from it (thanks, @erikcs, #113).
 
-- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other, and a value like `-@copy-button` removes a default one. This replaces the undocumented `css2`/`js2` variables. The order of `css`/`js` files can be set by [numeric priorities](https://pkg.yihui.org/litedown/book/#sec:site-defaults), e.g., to load a script after the syntax highlighter.
+- The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other. A value like `-@copy-button` removes a default one, and numeric priorities set the order of files, e.g., to load a script after the syntax highlighter. This replaces the undocumented `css2`/`js2` variables.
 
 # CHANGES IN litedown VERSION 1.0
 
