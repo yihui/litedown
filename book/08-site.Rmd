@@ -510,17 +510,14 @@ preserved.
 
 If your users are familiar with **pkgdown** sites (Bootstrap themes), you can
 give your package site a similar look by adding the CSS asset `@pkgdown-like` in
-the `_litedown.yml` in the site directory, and moving the table of contents to
-the right with the `class` option of `toc` (@sec:toc):
+the `_litedown.yml` in the site directory, which also moves the table of
+contents to the right (@sec:toc):
 
 ``` yaml
 output:
   html:
     meta:
       css: "@pkgdown-like"
-    options:
-      toc:
-        class: side side-right
 ```
 
 The default CSS assets of the site (@sec:site-defaults) are kept, and

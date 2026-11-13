@@ -249,7 +249,7 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
 
   # build TOC last, so citations/cross-references in headings are resolved
   if (format == 'html')
-    ret = add_toc(ret, options, c(meta[['js']], acc_var('js')))
+    ret = add_toc(ret, options, meta)
 
   # convert some meta variables in case they use Markdown syntax
   if (is.character(template)) for (i in top_meta) if (meta_len <- length(meta[[i]])) {

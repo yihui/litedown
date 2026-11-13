@@ -6,7 +6,7 @@
 
 - The Home link in the navigation bar of a package site now shows the package name and version.
 
-- The [`toc` option](https://pkg.yihui.org/litedown/book/#sec:toc) gains a `class` sub-option to set the TOC's class names, e.g., to float it on the right.
+- The [`toc` option](https://pkg.yihui.org/litedown/book/#sec:toc) gains a `class` sub-option to set the TOC's class names. The TOC floats on the right with the [`@pkgdown-like` CSS asset](https://pkg.yihui.org/litedown/book/#sec:pkg-site-pkgdown) without setting it.
 
 - `pkg_articles()` now also lists articles under `vignettes/articles/` and `articles/`, and `pkg_site()` renders them, along with vignettes that use the `litedown::vignette` engine, as [site pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun) with the menu and footer.
 

@@ -618,13 +618,17 @@ build_toc = function(html, n = 3, class = NULL) {
 }
 
 # add TOC to the html body
-add_toc = function(html, options, js = NULL) {
+add_toc = function(html, options, meta = list()) {
   o = options[['toc']]
   if (is.null(o) || isFALSE(o)) return(html)
   if (isTRUE(o)) o = list()
   if (!is.numeric(o$depth)) o$depth = 3
-  # float the TOC on the left when sidenotes.js is used (set `class` to change)
-  if (is.null(o$class)) o$class = if (any(grepl('sidenotes', js))) 'side side-left'
+  # float the TOC beside the body when sidenotes.js or @pkgdown-like is used
+  # (set `class` to change)
+  has = function(x, i) x %in% c(meta[[i]], acc_var(i))
+  if (is.null(o$class)) o$class = if (has('@pkgdown-like', 'css')) {
+    'side side-right'
+  } else if (has('@sidenotes', 'js')) 'side side-left'
   one_string(c(build_toc(html, o$depth, o$class), html))
 }
 
