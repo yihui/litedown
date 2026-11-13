@@ -376,42 +376,14 @@ When embedding `https` resources, only these elements are considered:
 If an external CSS file contains `url()` resources, these resources will also be
 downloaded and embedded.
 
-### `js_highlight`
+### `js_highlight` {#sec:js-highlight}
 
-Specify the JavaScript library to syntax highlight code blocks. Possible values
-are `highlight` ([highlight.js](https://highlightjs.org)) and `prism`
-([Prism.js](https://prismjs.com)). The default is `prism`. This option can also
-take a list of the form `list(package, version, style, languages)`, which
-specifies the package name (`highlight` or `prism`), version, CSS style/theme
-name, and names of languages to be highlighted.
+Syntax highlight code blocks in HTML output with `prism-lite.js`, a minimal
+highlighter that has built-in rules for common languages (e.g., R, JavaScript,
+and HTML) and applies generic highlighting to other languages. It is enabled by
+default; set this option to `false` to disable it.
 
--   You can find information about Prism.js from its CDN at
-    <https://cdn.jsdelivr.net/npm/prismjs/>. Available styles are under the
-    `themes/` directory (e.g., `prism-dark`), and languages are under the
-    `components/` directory (e.g., `prism-c`). You can omit the prefix `prism-`,
-    e.g.,
-
-    ``` yaml
-    js_highlight:
-      package: prism
-      style: dark
-      languages: [r, latex, yaml]
-    ```
-
--   The CDN of highlight.js is at
-    <https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/>. Themes are
-    under the `styles/` directory (e.g., `github`), and you can find demos of
-    themes at <https://highlightjs.org/static/demo/>. Supported language are
-    under the `languages/` directory (e.g., `latex`).
-
-By default, languages are automatically detected and the required JS files are
-automatically loaded. Normally you need to specify the `languages` array only if
-the automatic detection fails.
-
-This option is a shorthand for setting the metadata variables `css`
-and `js` in @sec:yaml-metadata. If you want full control, you may disable this
-option (set it to `false` or `null`) and use metadata variables directly, which
-requires more familiarity with the JS libraries and the jsdelivr CDN.
+To use Prism.js or highlight.js instead, see @sec:other-highlighters.
 
 ### `js_math`
 

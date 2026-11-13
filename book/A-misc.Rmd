@@ -178,3 +178,55 @@ The vignette file can be either `.Rmd` or `.md`. The former is processed by
 `litedown::fuse()`, and the latter is converted by `litedown::mark()`. Please
 avoid using the same base filename for two `.Rmd` and `.md` files, otherwise
 their output files will overwrite each other.
+
+## Using Prism.js or highlight.js {#sec:other-highlighters}
+
+By default, code blocks are highlighted by `prism-lite.js` (@sec:js-highlight).
+To use [Prism.js](https://prismjs.com) or [highlight.js](https://highlightjs.org)
+instead, disable the `js_highlight` option and load the library and a theme
+through the metadata variables `css` and `js` (@sec:yaml-metadata). The values
+below use the compact syntax for jsdelivr URLs (@sec:meta-css).
+
+For Prism.js, the autoloader plugin detects the languages on a page and loads
+their files from the CDN when the page is opened:
+
+``` yaml
+js_highlight: false
+css: ["@npm/prismjs/themes/prism.min.css"]
+js: ["@npm/prismjs/components/prism-core.min.js", "@npm/prismjs/plugins/autoloader/prism-autoloader.min.js"]
+```
+
+For highlight.js, the script `@load-highlight` calls `hljs.highlightAll()` after
+the library is loaded, so it must come after the library. The default bundle
+only includes common languages; add other languages (e.g., LaTeX) by their
+files under `build/languages/`:
+
+``` yaml
+js_highlight: false
+css: ["@gh/highlightjs/cdn-release@11.7.0/build/styles/xcode.min.css"]
+js: ["@gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js", "@gh/highlightjs/cdn-release@11.7.0/build/languages/latex.min.js", "@load-highlight"]
+```
+
+You can browse the themes and languages at
+<https://cdn.jsdelivr.net/npm/prismjs/> and
+<https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/>.
+
+Caveats:
+
+-   If you embed resources (`embed_resources: https`, see
+    @sec:embed-resources), **litedown** can only embed the files you list. The
+    language files that Prism's autoloader fetches at page load time are not
+    embedded, so highlighting breaks offline, and **litedown** no longer figures
+    out the language files for you. You have to list every language file
+    explicitly (e.g., `components/prism-r.min.js`, plus the languages they
+    depend on) and not use the autoloader. highlight.js is not affected, since
+    all of its files are listed in `js`.
+
+-   The default theme `prism-xcode.css` is not added, so you need to provide a
+    theme in `css`.
+
+Older versions of **litedown** supported `js_highlight: prism` and
+`js_highlight: highlight` (as well as the list form with `package`, `version`,
+`style`, and `languages`), and automatically downloaded the required theme and
+language files from the jsdelivr CDN. This support has been removed. These
+values now trigger a warning, and `prism-lite.js` is used instead.

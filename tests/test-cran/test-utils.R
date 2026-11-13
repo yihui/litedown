@@ -83,11 +83,6 @@ assert('str_trim() and trim_blank() trim whitespace', {
   (trim_blank('\n\n  x\n  \n') %==% '  x')
 })
 
-assert('comma_list() quotes and comma-joins its input', {
-  (comma_list(c('a', 'b', 'c')) %==% '"a", "b", "c"')
-  (comma_list('a') %==% '"a"')
-})
-
 assert('one_string() collapses a vector with a separator', {
   (one_string(c('a', 'b')) %==% 'a\nb')          # default newline
   (one_string(c('a', 'b'), ' ') %==% 'a b')
@@ -272,4 +267,12 @@ assert('sort_priority() orders css/js by priority and keeps order within a prior
   (sort_priority(x, c('p', 'q')) %==% c('e', 'a', 'b', 'p', 'q', 'l'))
   (sort_priority(list(`1.5` = 'x', `2` = c('y', 'z'), 'a')) %==% c('a', 'x', 'y', 'z'))
   (has_error(sort_priority(c(late = 'x'))))
+})
+
+assert('js_highlight enables prism-lite unless it is FALSE', {
+  x = function(...) mark(
+    c('---', 'title: T', '---', '', '```r', '1', '```'), options = list(...)
+  )
+  (has_match(x(), I('prism-lite')))
+  (has_match(x(js_highlight = FALSE), !'prism'))
 })
