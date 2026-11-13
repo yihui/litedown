@@ -1,0 +1,32 @@
+{
+  "package": "litedown",
+  "functions": {
+    "html_format": "manual/html-format.html",
+    "latex_format": "manual/html-format.html",
+    "fuse": "manual/mark.html",
+    "fiss": "manual/mark.html",
+    "mark": "manual/mark.html",
+    "markdown_options": "manual/markdown-options.html",
+    "roam": "manual/roam.html",
+    "vest": "manual/vest.html",
+    "crack": "manual/crack.html",
+    "sieve": "manual/crack.html",
+    "engines": "manual/engines.html",
+    "fuse_env": "manual/fuse-env.html",
+    "fuse_exit": "manual/fuse-exit.html",
+    "get_context": "manual/get-context.html",
+    "raw_text": "manual/raw-text.html",
+    "reactor": "manual/reactor.html",
+    "timing_data": "manual/timing-data.html",
+    "fuse_book": "manual/fuse-book.html",
+    "fuse_site": "manual/fuse-site.html",
+    "pkg_desc": "manual/pkg-desc.html",
+    "pkg_news": "manual/pkg-desc.html",
+    "pkg_code": "manual/pkg-desc.html",
+    "pkg_examples": "manual/pkg-desc.html",
+    "pkg_citation": "manual/pkg-desc.html",
+    "pkg_manual": "manual/pkg-desc.html",
+    "pkg_articles": "manual/pkg-desc.html",
+    "pkg_site": "manual/pkg-site.html"
+  }
+}
