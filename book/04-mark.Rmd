@@ -298,7 +298,8 @@ to
 ```
 
 The prefix `chp:` (chapter) will be added to the automatic IDs of level-one
-headings, and `sec:` (section) will be added for other levels of headings.
+headings, `prt:` (part) for those with the `.part` attribute, and `sec:`
+(section) for other levels of headings.
 
 You can override the automatic ID by providing an ID manually via the ID
 attribute, e.g.,
