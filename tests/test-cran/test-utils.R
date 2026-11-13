@@ -217,10 +217,18 @@ assert('build_toc() builds a nested TOC from HTML headings', {
 assert('add_toc() uses side classes only when sidenotes.js is used', {
   h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
   (has_match(add_toc(h, list(toc = TRUE)), I('<nav id="TOC">')))
-  (has_match(add_toc(h, list(toc = TRUE), '@sidenotes'), '<nav id="TOC" class="side side-left">'))
-  (has_match(add_toc(h, list(toc = list(class = 'side side-right')), '@sidenotes'), 'class="side side-right"'))
+  (has_match(add_toc(h, list(toc = TRUE), list(js = '@sidenotes')), '<nav id="TOC" class="side side-left">'))
+  (has_match(add_toc(h, list(toc = list(class = 'side side-right')), list(js = '@sidenotes')), 'class="side side-right"'))
   x = add_toc(h, list(toc = list(class = 'x')))
   (has_match(x, I('<nav id="TOC" class="x">')))
+})
+
+assert('add_toc() floats the TOC on the right with @pkgdown-like', {
+  h = c('<h1 id="a">A</h1>', '<h2 id="b">B</h2>')
+  (has_match(add_toc(h, list(toc = TRUE), list(css = '@pkgdown-like')), I('<nav id="TOC" class="side side-right">')))
+  (has_match(add_toc(h, list(toc = TRUE), list(js = '@sidenotes', css = '@pkgdown-like')), I('class="side side-right"')))
+  (has_match(add_toc(h, list(toc = TRUE), list(css = '@default')), I('<nav id="TOC">')))
+  (has_match(add_toc(h, list(toc = list(class = 'x')), list(css = '@pkgdown-like')), I('<nav id="TOC" class="x">')))
 })
 
 assert('number_sections() prefixes hierarchical numbers to HTML headings', {

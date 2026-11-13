@@ -539,8 +539,10 @@ a link to this heading. You can also set a sub-option:
 
 -   `class`: The class name(s) of the TOC. By default, it is `side side-left`
     (a floating TOC on the left) if the `@sidenotes` JS asset is used, and
-    empty otherwise. For example, `class: side side-right` moves the TOC to the
-    right.
+    `side side-right` (on the right) if the `@pkgdown-like` CSS asset
+    (@sec:pkg-site-pkgdown) is used. In the latter case, **litedown** simply sets
+    this class for you, so you can also set `class: side side-right` to move
+    the TOC to the right without the asset. The default is empty otherwise.
 
 To exclude a certain heading from the TOC, assign a class name `unlisted` to it.
 For example:

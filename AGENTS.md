@@ -51,6 +51,12 @@ assert('message', {
 8. **US spelling**: "color" not "colour", etc.
 9. **DRY**: factor shared logic into helpers; never duplicate code blocks
 
+## Writing Style
+
+In docs, NEWS, and other prose, write R package names in bold, e.g.,
+**litedown**, not `litedown` or plain litedown (code font is for functions,
+arguments, and files).
+
 ## Hard links
 
 `inst/resources/{default.css,snap.css,snap.js}` are hard links to files in the
