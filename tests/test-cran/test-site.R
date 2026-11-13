@@ -235,7 +235,7 @@ assert('js with a priority above libraries comes after the js for syntax highlig
   i = grep('<script src=', xfun::split_lines(x), value = TRUE)
   (length(i) >= 2)
   (has_match(i[length(i)], I('https://x.test/last.js')))
-  (has_match(i[1], I('prism')))
+  (has_match(i[1], I('prism-lite')))
 })
 
 assert('root-relative css/js resolve to the page dir, other paths are kept', {
