@@ -309,7 +309,6 @@ assert('resolve_dups() drops foo when @foo is present', {
 })
 
 # don't resolve versions of jsdelivr assets via the network
-op = options(litedown.jsd_resolve = FALSE)
 assert('resolve_files() maps shorthand names to jsdelivr URLs', {
   # don't resolve versions via the network
   op = options(litedown.jsd_resolve = FALSE)
@@ -325,4 +324,3 @@ assert('resolve_files() maps shorthand names to jsdelivr URLs', {
   # full URLs are kept
   (has_match(resolve_files('https://x.com/a.css'), I('href="https://x.com/a.css"')))
 })
-options(op)
