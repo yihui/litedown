@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.18">
+<meta name="generator" content="litedown 1.0.19">
 <title>litedown: R Markdown Reimagined</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/book.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/book-litedown.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/key-buttons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/callout.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/tabsets.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/book.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/book-litedown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/key-buttons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/callout.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/tabsets.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/prism-xcode.min.css">
 <meta name="function-index" content="../function-index.json">
 </head>
 <body>
@@ -158,16 +158,17 @@
 <li><a href="#sec:footnotes"><span class="section-number">3.3.4</span> Footnotes</a></li>
 <li><a href="#sec:attributes"><span class="section-number">3.3.5</span> Attributes</a></li>
 <li><a href="#sec:appendices"><span class="section-number">3.3.6</span> Appendices</a></li>
-<li><a href="#sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</a></li>
-<li><a href="#sec:cross-references"><span class="section-number">3.3.8</span> Cross-references</a>
+<li><a href="#sec:parts"><span class="section-number">3.3.7</span> Parts</a></li>
+<li><a href="#sec:fenced-divs"><span class="section-number">3.3.8</span> Fenced <code>Div</code>s</a></li>
+<li><a href="#sec:cross-references"><span class="section-number">3.3.9</span> Cross-references</a>
 <ul>
-<li><a href="#sec:sections-figures-and-tables"><span class="section-number">3.3.8.1</span> Sections, figures, and tables</a></li>
-<li><a href="#sec:latex-equations"><span class="section-number">3.3.8.2</span> LaTeX equations</a></li>
-<li><a href="#sec:arbitrary-elements"><span class="section-number">3.3.8.3</span> Arbitrary elements</a></li>
+<li><a href="#sec:sections-figures-and-tables"><span class="section-number">3.3.9.1</span> Sections, figures, and tables</a></li>
+<li><a href="#sec:latex-equations"><span class="section-number">3.3.9.2</span> LaTeX equations</a></li>
+<li><a href="#sec:arbitrary-elements"><span class="section-number">3.3.9.3</span> Arbitrary elements</a></li>
 </ul>
 </li>
-<li><a href="#sec:citations"><span class="section-number">3.3.9</span> Citations</a></li>
-<li><a href="#sec:smart-html-entities"><span class="section-number">3.3.10</span> Smart HTML entities</a></li>
+<li><a href="#sec:citations"><span class="section-number">3.3.10</span> Citations</a></li>
+<li><a href="#sec:smart-html-entities"><span class="section-number">3.3.11</span> Smart HTML entities</a></li>
 </ul>
 </li>
 <li><a href="#sec:comparison-to-pandoc"><span class="section-number">3.4</span> Comparison to Pandoc</a></li>
@@ -711,7 +712,7 @@ quotes, fenced Divs, LaTeX math, footnotes, and citations, etc.</p>
 </li>
 <li>
 <p>Automatically number and cross-reference arbitrary elements
-(<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>), including but not limited to headings, figures,
+(<a class="cross-ref-sec" href="#sec:cross-references">3.3.9</a>), including but not limited to headings, figures,
 tables, and equations.</p>
 </li>
 <li>
@@ -1357,7 +1358,7 @@ which can be useful for telling readers the full source of a chunk, e.g.,</p>
 <p>The <code>attr.*</code> options can be used to customize different types of output
 elements, such as source code blocks, messages, and plots, etc. To understand
 these options, you need to learn the Markdown syntax in <a class="cross-ref-sec" href="#sec:attributes">3.3.5</a> and
-<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>.</p>
+<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.8</a>.</p>
 <p><a class="cross-ref-fig" href="#fig:attr-structure">6</a> illustrates the structure of Markdown output from a code
 chunk (the class names in the figure such as <code>.chunk</code> are not names used in the
 actual output but for illustration only).</p>
@@ -1422,7 +1423,7 @@ chunk.</p>
 </div>
 <p>The source code, text output, and messages (including warnings and errors) are
 formatted as fenced code blocks. Plots are written in <code>![]()</code>. The whole chunk
-can be wrapped in a fenced <code>Div</code> (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>). The <code>attr.*</code> options will
+can be wrapped in a fenced <code>Div</code> (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.8</a>). The <code>attr.*</code> options will
 add attributes to these fenced code blocks, plots, and fenced <code>Div</code>s.</p>
 <ul>
 <li>
@@ -2687,7 +2688,7 @@ rectangular data objects are printed to Markdown tables through
 <code>xfun::record_print()</code>, and tables are generated by a simple function
 <code>xfun::md_table()</code>, which is even much simpler than <code>knitr::kable()</code>.</p>
 <p>The chunk option <code>tab.cap</code> can be used to provide the table caption. The option
-<code>tab.env</code> can be used to customize the attributes (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>) of the
+<code>tab.env</code> can be used to customize the attributes (<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.8</a>) of the
 table environment, and it defaults to <code>.table</code>, i.e., a class name <code>table</code>.
 Below is a quick example showing where <code>tab.cap</code> and <code>tab.env</code> are used in the
 Markdown output:</p>
@@ -3857,6 +3858,10 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 <code># Hello {.unnumbered}</code> will be converted to <code>\section*{Hello}</code>.</p>
 </li>
 <li>
+<p>The <code>.part</code> attribute on a level-one heading, which groups the chapters that
+follow it, e.g., <code># Foundations {.part}</code> will be converted to <code>\part{Foundations}</code>.</p>
+</li>
+<li>
 <p>The <code>.appendix</code> attribute on a heading, which will start the appendix, e.g.,
 <code># Appendix {.appendix}</code> will be converted to <code>\appendix</code>.</p>
 </li>
@@ -3871,7 +3876,29 @@ converted to <code>\includegraphics[width=.5\linewidth]{path}</code>.</p>
 will be treated as the appendix. If section numbering is enabled
 (<a class="cross-ref-sec" href="#sec:number-sections">4.3.10</a>), the appendix section headings will be numbered
 differently.</p>
-<h3 id="sec:fenced-divs"><span class="section-number">3.3.7</span> Fenced <code>Div</code>s</h3>
+<h3 id="sec:parts"><span class="section-number">3.3.7</span> Parts</h3>
+<p>A level-one heading with the attribute <code>.part</code> starts a part, which groups the
+chapters that follow it until the next part, e.g.,</p>
+<pre><code class="language-md"># Foundations {.part}
+
+Optional intro to the part.
+
+# Basics
+
+# Concepts
+
+# Advanced {.part}
+
+# Techniques
+
+# Case studies
+</code></pre>
+<p>Parts are numbered with Roman numerals (I, II, …) separately from chapters, so
+chapter numbers continue across parts. Add <code>.unnumbered</code> to leave a part
+unnumbered, e.g., <code># Preface {.part .unnumbered}</code>. In LaTeX output, a part is
+converted to <code>\part{}</code> (or <code>\part*{}</code>). A part can be referred to via its ID
+(<code>@prt:foundations</code>) like other sections (<a class="cross-ref-sec" href="#sec:cross-references">3.3.9</a>).</p>
+<h3 id="sec:fenced-divs"><span class="section-number">3.3.8</span> Fenced <code>Div</code>s</h3>
 <p>A fenced <code>Div</code> can be written in <code>:::</code> fences. Note that the opening fence must
 have at least one attribute, such as the class name. For example:</p>
 <pre><code class="language-markdown">::: foo
@@ -3937,10 +3964,10 @@ surrounding environment.</p>
 <p>If a fenced <code>Div</code> has multiple class names (e.g., <code>{.a .b .c}</code>), only the first
 class name will be used as the LaTeX environment name. However, all class names
 will be used if the output format is HTML (e.g., <code>&lt;div class=&quot;a b c&quot;&gt;</code>).</p>
-<h3 id="sec:cross-references"><span class="section-number">3.3.8</span> Cross-references</h3>
+<h3 id="sec:cross-references"><span class="section-number">3.3.9</span> Cross-references</h3>
 <p>To cross-reference an element, it must be numbered first. Then we can refer to
 it by its ID.</p>
-<h4 id="sec:sections-figures-and-tables"><span class="section-number">3.3.8.1</span> Sections, figures, and tables</h4>
+<h4 id="sec:sections-figures-and-tables"><span class="section-number">3.3.9.1</span> Sections, figures, and tables</h4>
 <p>Section heading IDs can be either manually assigned or automatically generated
 (<a class="cross-ref-sec" href="#sec:auto-identifiers">4.3.1</a>). Section numbers are automatically generated if the
 <code>number_sections</code> option is true (<a class="cross-ref-sec" href="#sec:number-sections">4.3.10</a>).</p>
@@ -3959,7 +3986,7 @@ of the element to be referenced, which typically consists of a prefix (e.g.,
 </code></pre>
 <p>Hyphens (<code>-</code>) are also allowed in place of colons in the ID prefix, e.g.,
 <code>@fig-nice-plot</code>.</p>
-<h4 id="sec:latex-equations"><span class="section-number">3.3.8.2</span> LaTeX equations</h4>
+<h4 id="sec:latex-equations"><span class="section-number">3.3.9.2</span> LaTeX equations</h4>
 <p>LaTeX math environments such as <code>align</code> and <code>equation</code> are numbered by default.
 To refer to an expression (e.g., an equation) in a math environment, a label
 needs to be assigned to the expression first via <code>\label{}</code>, and it must start
@@ -3995,7 +4022,7 @@ a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 a^2 + b^2 = c^2 \label{eq:pyth-theorem} \tag{PT}
 \end{equation}</p>
 </div>
-<h4 id="sec:arbitrary-elements"><span class="section-number">3.3.8.3</span> Arbitrary elements</h4>
+<h4 id="sec:arbitrary-elements"><span class="section-number">3.3.9.3</span> Arbitrary elements</h4>
 <p>You can cross-reference any other type of elements by adding empty anchors of
 the form <code>[](#@ID)</code> into them, e.g.,</p>
 <pre><code class="language-md">:::: {#lst:example .box}
@@ -4062,7 +4089,7 @@ the number and reference of the block above:</p>
   content: ". "
 }
 </style>
-<h3 id="sec:citations"><span class="section-number">3.3.9</span> Citations</h3>
+<h3 id="sec:citations"><span class="section-number">3.3.10</span> Citations</h3>
 <p>This feature requires the R package <strong>rbibutils</strong> <a href="#ref-R-rbibutils" class="citation ref-paren-open ref-paren-close">Boshnakov<span class="ref-and"></span>Putman 2026</a>. Please make
 sure it is installed before using citations.</p>
 <pre><code class="language-r">xfun::pkg_load2(&quot;rbibutils&quot;)
@@ -4138,7 +4165,7 @@ according to the citation package. For example, it will insert
 LaTeX/PDF output, the bibliography is processed by external tools (e.g., BibTeX
 or Biber) via <code>\bibliography{}</code> or <code>\addbibresource{}</code>, which only accept <code>.bib</code>
 files.</p>
-<h3 id="sec:smart-html-entities"><span class="section-number">3.3.10</span> Smart HTML entities</h3>
+<h3 id="sec:smart-html-entities"><span class="section-number">3.3.11</span> Smart HTML entities</h3>
 <p>“Smart” HTML entities can be represented by ASCII characters, e.g., you can
 write fractions in the form <code>n/m</code>. Below are some example entities:</p>
 <table>
@@ -4478,7 +4505,7 @@ default is <code>xelatex</code>. Other common choices include <code>pdflatex</co
 </li>
 <li>
 <p><code>citation_package</code>: The LaTeX package for processing citations
-(<a class="cross-ref-sec" href="#sec:citations">3.3.9</a>). Possible values are <code>natbib</code> (the default), <code>biblatex</code>,
+(<a class="cross-ref-sec" href="#sec:citations">3.3.10</a>). Possible values are <code>natbib</code> (the default), <code>biblatex</code>,
 and <code>none</code>.</p>
 </li>
 </ul>
@@ -4516,7 +4543,8 @@ order.</p>
 &lt;h2 id=&quot;sec:introduction&quot;&gt;Introduction&lt;/h2&gt;
 </code></pre>
 <p>The prefix <code>chp:</code> (chapter) will be added to the automatic IDs of level-one
-headings, and <code>sec:</code> (section) will be added for other levels of headings.</p>
+headings, <code>prt:</code> (part) for those with the <code>.part</code> attribute, and <code>sec:</code>
+(section) for other levels of headings.</p>
 <p>You can override the automatic ID by providing an ID manually via the ID
 attribute, e.g.,</p>
 <pre><code class="language-markdown"># Hello world! {#hello}
@@ -4527,14 +4555,14 @@ any ID is duplicated, a numeric suffix will be added to the ID, e.g.,
 <code>example_1</code> and <code>example_2</code>.</p>
 <h3 id="sec:cleveref"><span class="section-number">4.3.2</span> <code>cleveref</code></h3>
 <p>Whether to use the LaTeX package <a href="https://ctan.org/pkg/cleveref"><strong>cleveref</strong></a>
-for “clever” cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>). This option is for LaTeX
+for “clever” cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.9</a>). This option is for LaTeX
 output only and <code>false</code> by default. If enabled, <strong>cleveref</strong> will be loaded and
 references will use the command <code>\cref{}</code> instead of <code>\ref{}</code>, which will
 automatically add the type of reference before the reference number, e.g.,
 <code>\cref{sec:intro}</code> may generate <code>Section 1</code>, so you do not have to write
 <code>Section \ref{sec:intro}</code>.</p>
 <h3 id="sec:cross-refs"><span class="section-number">4.3.3</span> <code>cross_refs</code></h3>
-<p>Whether to resolve cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.8</a>). This option is
+<p>Whether to resolve cross-references (<a class="cross-ref-sec" href="#sec:cross-references">3.3.9</a>). This option is
 <code>true</code> by default. If you do not use any cross-references in the document, you
 can disable it to slightly speed up the rendering.</p>
 <h3 id="sec:embed-cleanup"><span class="section-number">4.3.4</span> <code>embed_cleanup</code></h3>
@@ -5532,7 +5560,7 @@ xfun::tabset(cfg, dput)
 </li>
 </ul>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/tabsets.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/tabsets.min.js" defer></script>
 <p>I have never loved YAML, but this time, I feel that YAML is adorable.</p>
 <h3 id="sec:from-sections"><span class="section-number">5.5.2</span> From sections</h3>
 <p>The second way to create a tabset is through section headings. If you add a
@@ -6140,7 +6168,7 @@ that contains a <code>&lt;figcaption&gt;</code> or <code>.caption</code>) and an
 <pre><code class="language-html">&lt;div class=&quot;pagesjs-float&quot;&gt;...&lt;/div&gt;
 </code></pre>
 <p>In Markdown, anything can be made a float with a fenced <code>Div</code>
-(<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.7</a>), e.g.,</p>
+(<a class="cross-ref-sec" href="#sec:fenced-divs">3.3.8</a>), e.g.,</p>
 <pre><code class="language-md">::: pagesjs-float
 Any content, such as a long list or a code block.
 :::
@@ -8300,7 +8328,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.18, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.19, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -8309,21 +8337,21 @@ R package version 0.62.20, <a href="https://github.com/yihui/xfun">https://githu
 </div>
 </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/chapter-toc.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/external-link.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/right-quote.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/key-buttons.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/callout.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/chapter-toc.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/external-link.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/right-quote.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/key-buttons.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/render-katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/prism-lite.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/render-katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/prism-lite.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pele@1.13.0/dist/pele.global.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/render-pele.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.0/js/link-functions.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/render-pele.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/link-functions.min.js" defer></script>
 </body>
 </html>
