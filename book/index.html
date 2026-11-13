@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.16">
+<meta name="generator" content="litedown 1.0.17">
 <title>litedown: R Markdown Reimagined</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/css/article.min.css">
@@ -371,6 +371,7 @@
 <li><a href="#sec:mark-r"><span class="section-number">A.2</span> Calling <code>mark()</code> in R</a></li>
 <li><a href="#sec:file-text"><span class="section-number">A.3</span> File or text output</a></li>
 <li><a href="#sec:vignettes"><span class="section-number">A.4</span> Package vignettes</a></li>
+<li><a href="#sec:other-highlighters"><span class="section-number">A.5</span> Using Prism.js or highlight.js</a></li>
 </ul>
 </li>
 </ul>
@@ -4580,40 +4581,11 @@ styled.</p>
 <p>If an external CSS file contains <code>url()</code> resources, these resources will also be
 downloaded and embedded.</p>
 <h3 id="sec:js-highlight"><span class="section-number">4.3.6</span> <code>js_highlight</code></h3>
-<p>Specify the JavaScript library to syntax highlight code blocks. Possible values
-are <code>highlight</code> (<a href="https://highlightjs.org">highlight.js</a>) and <code>prism</code>
-(<a href="https://prismjs.com">Prism.js</a>). The default is <code>prism</code>. This option can also
-take a list of the form <code>list(package, version, style, languages)</code>, which
-specifies the package name (<code>highlight</code> or <code>prism</code>), version, CSS style/theme
-name, and names of languages to be highlighted.</p>
-<ul>
-<li>
-<p>You can find information about Prism.js from its CDN at
-<a href="https://cdn.jsdelivr.net/npm/prismjs/">https://cdn.jsdelivr.net/npm/prismjs/</a>. Available styles are under the
-<code>themes/</code> directory (e.g., <code>prism-dark</code>), and languages are under the
-<code>components/</code> directory (e.g., <code>prism-c</code>). You can omit the prefix <code>prism-</code>,
-e.g.,</p>
-<pre><code class="language-yaml">js_highlight:
-  package: prism
-  style: dark
-  languages: [r, latex, yaml]
-</code></pre>
-</li>
-<li>
-<p>The CDN of highlight.js is at
-<a href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/">https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/</a>. Themes are
-under the <code>styles/</code> directory (e.g., <code>github</code>), and you can find demos of
-themes at <a href="https://highlightjs.org/static/demo/">https://highlightjs.org/static/demo/</a>. Supported language are
-under the <code>languages/</code> directory (e.g., <code>latex</code>).</p>
-</li>
-</ul>
-<p>By default, languages are automatically detected and the required JS files are
-automatically loaded. Normally you need to specify the <code>languages</code> array only if
-the automatic detection fails.</p>
-<p>This option is a shorthand for setting the metadata variables <code>css</code>
-and <code>js</code> in <a class="cross-ref-sec" href="#sec:yaml-metadata">4.2</a>. If you want full control, you may disable this
-option (set it to <code>false</code> or <code>null</code>) and use metadata variables directly, which
-requires more familiarity with the JS libraries and the jsdelivr CDN.</p>
+<p>Syntax highlight code blocks in HTML output with <code>prism-lite.js</code>, a minimal
+highlighter that has built-in rules for common languages (e.g., R, JavaScript,
+and HTML) and applies generic highlighting to other languages. It is enabled by
+default; set this option to <code>false</code> to disable it.</p>
+<p>To use Prism.js or highlight.js instead, see <a class="cross-ref-sec" href="#sec:other-highlighters">A.5</a>.</p>
 <h3 id="sec:js-math"><span class="section-number">4.3.7</span> <code>js_math</code></h3>
 <p>Specify the JavaScript library for rendering math expressions in HTML output.
 Possible values are <code>&quot;mathjax&quot;</code> and <code>&quot;katex&quot;</code> (the default). Like the
@@ -8190,6 +8162,42 @@ If no output format is specified, the default is HTML.</p>
 <code>litedown::fuse()</code>, and the latter is converted by <code>litedown::mark()</code>. Please
 avoid using the same base filename for two <code>.Rmd</code> and <code>.md</code> files, otherwise
 their output files will overwrite each other.</p>
+<h2 id="sec:other-highlighters"><span class="section-number">A.5</span> Using Prism.js or highlight.js</h2>
+<p>By default, code blocks are highlighted by <code>prism-lite.js</code> (<a class="cross-ref-sec" href="#sec:js-highlight">4.3.6</a>).
+To use <a href="https://prismjs.com">Prism.js</a> or <a href="https://highlightjs.org">highlight.js</a>
+instead, disable the <code>js_highlight</code> option and load the library and a theme
+through the metadata variables <code>css</code> and <code>js</code> (<a class="cross-ref-sec" href="#sec:yaml-metadata">4.2</a>). The values
+below use the compact syntax for jsdelivr URLs (<a class="cross-ref-sec" href="#sec:meta-css">4.4.2</a>).</p>
+<p>For Prism.js, the autoloader plugin detects the languages on a page and loads
+their files from the CDN when the page is opened:</p>
+<pre><code class="language-yaml">js_highlight: false
+css: [&quot;@npm/prismjs/themes/prism.min.css&quot;]
+js: [&quot;@npm/prismjs/components/prism-core.min.js&quot;, &quot;@npm/prismjs/plugins/autoloader/prism-autoloader.min.js&quot;]
+</code></pre>
+<p>For highlight.js, the script <code>@load-highlight</code> calls <code>hljs.highlightAll()</code> after
+the library is loaded, so it must come after the library. The default bundle
+only includes common languages; add other languages (e.g., LaTeX) by their
+files under <code>build/languages/</code>:</p>
+<pre><code class="language-yaml">js_highlight: false
+css: [&quot;@gh/highlightjs/cdn-release@11.7.0/build/styles/xcode.min.css&quot;]
+js: [&quot;@gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js&quot;, &quot;@gh/highlightjs/cdn-release@11.7.0/build/languages/latex.min.js&quot;, &quot;@load-highlight&quot;]
+</code></pre>
+<p>You can browse the themes and languages at
+<a href="https://cdn.jsdelivr.net/npm/prismjs/">https://cdn.jsdelivr.net/npm/prismjs/</a> and
+<a href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/">https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/</a>.</p>
+<p>Caveat: if you embed resources (<code>embed_resources: https</code>, see
+<a class="cross-ref-sec" href="#sec:embed-resources">4.3.5</a>), <strong>litedown</strong> can only embed the files you list. The
+language files that Prism’s autoloader fetches at page load time are not
+embedded, so highlighting breaks offline, and <strong>litedown</strong> no longer figures out
+the language files for you. You have to list every language file explicitly
+(e.g., <code>components/prism-r.min.js</code>, plus the languages they depend on) and not
+use the autoloader. highlight.js is not affected, since all of its files are
+listed in <code>js</code>.</p>
+<p>Older versions of <strong>litedown</strong> supported <code>js_highlight: prism</code> and
+<code>js_highlight: highlight</code> (as well as the list form with <code>package</code>, <code>version</code>,
+<code>style</code>, and <code>languages</code>), and automatically downloaded the required theme and
+language files from the jsdelivr CDN. This support has been removed. These
+values now trigger a warning, and <code>prism-lite.js</code> is used instead.</p>
 <div class="chapter-after side side-right">
 </div>
 </article>
@@ -8293,7 +8301,7 @@ R package version 2.4.1, <a href="https://geobosh.github.io/rbibutils/">https://
 </p>
 <p id="ref-R-litedown">Xie Y (2026).
 <em>litedown: A Lightweight Version of R Markdown</em>.
-R package version 1.0.16, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
+R package version 1.0.17, <a href="https://github.com/yihui/litedown">https://github.com/yihui/litedown</a>. 
 </p>
 <p id="ref-R-xfun">Xie Y (2026).
 <em>xfun: Supporting Functions for Packages Maintained by Yihui Xie</em>.
@@ -8314,8 +8322,7 @@ R package version 0.62.20, <a href="https://github.com/yihui/xfun">https://githu
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/js/callout.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/katex@0.19.1/dist/katex.min.js,npm/katex@0.19.1/dist/contrib/auto-render.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/js/render-katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/js/prism-lite.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pele@1.13.0/dist/pele.global.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/js/render-pele.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.15.0/js/link-functions.min.js" defer></script>
