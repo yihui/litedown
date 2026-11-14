@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.19">
+<meta name="generator" content="litedown 1.0.20">
 <title>News</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/site.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/css/prism-xcode.min.css">
 <meta name="function-index" content="function-index.json">
 </head>
 <body>
-<nav class="site-nav"><p><a href="index.html" class="brand">litedown</a> <small class="version">v1.0.19</small>
+<nav class="site-nav"><p><a href="index.html" class="brand">litedown</a> <small class="version">v1.0.20</small>
 <a href="examples.html">Examples</a>
 <a href="manual.html">Manual</a>
 <a href="news.html">News</a>
@@ -85,6 +85,9 @@
 </li>
 <li>
 <p>The meta variables <code>css</code>, <code>js</code>, and <code>header_includes</code> now accumulate across <a href="https://pkg.yihui.org/litedown/book/#sec:site-defaults">site and page settings</a> instead of overriding each other. A value like <code>-@copy-button</code> removes a default one, and numeric priorities set the order of files, e.g., to load a script after the syntax highlighter. This replaces the undocumented <code>css2</code>/<code>js2</code> variables.</p>
+</li>
+<li>
+<p>HTML output now uses <code>&lt;iframe&gt;</code> instead of <code>&lt;embed&gt;</code> for PDF files included via <code>![](foo.pdf)</code>, which has a <code>title</code> (the alt text), no border (by the default stylesheet), and is lazy loaded (<code>pages.js</code> loads lazy images and iframes before paginating or printing).</p>
 </li>
 <li>
 <p>Code blocks are now syntax highlighted by the lightweight <code>prism-lite.js</code>, which needs no language files. Support for Prism.js and highlight.js has been removed from the <code>js_highlight</code> option, which now only turns highlighting on or off. To use either library, set <code>js_highlight: false</code> and load it via the <code>css</code> and <code>js</code> variables, as shown in <a href="https://pkg.yihui.org/litedown/book/#sec:other-highlighters">Using Prism.js or highlight.js</a>.</p>
@@ -492,15 +495,15 @@ graph TD;
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.19</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.20</p>
 </div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/nav-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/prism-lite.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.1/js/link-functions.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/nav-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/prism-lite.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.2/js/link-functions.min.js" defer></script>
 </body>
 </html>
