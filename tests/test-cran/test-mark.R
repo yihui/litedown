@@ -226,11 +226,11 @@ assert('mark() renders a raw LaTeX math environment as math in HTML too', {
   (!has_katex(c('```{=latex}', '\\textbf{x}', '```')))
 })
 
-assert('mark() uses <embed> instead of <img> for PDF files in HTML output', {
+assert('mark() uses <iframe> instead of <img> for PDF files in HTML output', {
   (mark2('![](a.pdf)') %==%
-     '<p><embed src="a.pdf" type="application/pdf" aria-label="" /></p>')
+     '<p><iframe src="a.pdf" title="" loading="lazy"></iframe></p>')
   (mark2('![cap](b.PDF#page=2){.c}') %==%
-     '<p><embed src="b.PDF#page=2" type="application/pdf" aria-label="cap" class="c" /></p>')
+     '<p><iframe src="b.PDF#page=2" title="cap" class="c" loading="lazy"></iframe></p>')
   (mark2('![x](a.pdfx)') %==% '<p><img src="a.pdfx" alt="x" /></p>')
 })
 
@@ -240,13 +240,14 @@ assert('embed_resources() drops ?query/#hash only if the bare path exists', {
   grDevices::pdf('a.pdf'); plot.new(); invisible(dev.off())
   o = list(embed_resources = 'local', embed_cleanup = FALSE)
   b64 = function(x) has_match(embed_resources(x, o), 'data:application/pdf;base64,')
-  (b64('<embed src="a.pdf#page=2" />'))
-  (b64('<embed src="a.pdf?v=1" />'))
-  # raw HTML tag without the self-closing slash
-  (b64('<embed src="a.pdf" type="application/pdf" height="400">'))
-  (has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), '#page=2"'))
-  (has_match(embed_resources('<embed src="a.pdf?v=1#page=2" />', o), !'v=1'))
-  (has_warning(embed_resources('<embed src="b.pdf#page=2" />', o)))
+  (b64('<iframe src="a.pdf#page=2"></iframe>'))
+  (b64('<iframe src="a.pdf?v=1"></iframe>'))
+  # raw HTML tag with extra attributes
+  (b64('<iframe src="a.pdf" title="x" height="400"></iframe>'))
+  x = embed_resources('<iframe src="a.pdf?v=1#page=2"></iframe>', o)
+  (has_match(x, '#page=2"'))
+  (has_match(x, !'v=1'))
+  (has_warning(embed_resources('<iframe src="b.pdf#page=2"></iframe>', o)))
 })
 
 assert('the HTML template uses semantic elements for frontmatter, body, and TOC', {

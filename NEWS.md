@@ -24,6 +24,8 @@
 
 - The meta variables `css`, `js`, and `header_includes` now accumulate across [site and page settings](https://pkg.yihui.org/litedown/book/#sec:site-defaults) instead of overriding each other. A value like `-@copy-button` removes a default one, and numeric priorities set the order of files, e.g., to load a script after the syntax highlighter. This replaces the undocumented `css2`/`js2` variables.
 
+- HTML output now uses `<iframe>` instead of `<embed>` for PDF files included via `![](foo.pdf)`, which has a `title` (the alt text), no border (by the default stylesheet), and is lazy loaded (`pages.js` loads lazy images and iframes before paginating or printing).
+
 - Code blocks are now syntax highlighted by the lightweight `prism-lite.js`, which needs no language files. Support for Prism.js and highlight.js has been removed from the `js_highlight` option, which now only turns highlighting on or off. To use either library, set `js_highlight: false` and load it via the `css` and `js` variables, as shown in [Using Prism.js or highlight.js](https://pkg.yihui.org/litedown/book/#sec:other-highlighters).
 
 # CHANGES IN litedown VERSION 1.0

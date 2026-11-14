@@ -946,9 +946,9 @@ embed_resources = function(x, options) {
   if (!any(embed, is.character(offline))) return(x)
   clean = options[['embed_cleanup']]
 
-  # find images in <img>/<embed> and (for slides only) comments
+  # find images in <img>/<iframe> and (for slides only) comments
   rs = c(
-    '(<(?:img|embed) src=")([^"]+)("[^>]*?/?>)',
+    '(<(?:img|iframe) src=")([^"]+)("[^>]*?/?>)',
     '(<!--#[^>]*? style="background-image: url\\("?)([^"]+?)("?\\);)'
   )
   for (r in rs) x = match_replace(x, r, function(z) {
@@ -1377,11 +1377,11 @@ download_url = function(url, dir = '.', file = NULL, handler = NULL) {
   URLencode(p)
 }
 
-# use <embed> instead of <img> for PDF files (browsers can't render them in <img>)
+# use <iframe> instead of <img> for PDF files (browsers can't render them in <img>)
 pdf_embed = function(x) {
   gsub(
-    '<img src="([^"]+?[.](?i:pdf)(?:[?#][^"]*)?)" alt="([^"]*)"',
-    '<embed src="\\1" type="application/pdf" aria-label="\\2"', x, perl = TRUE
+    '<img src="([^"]+?[.](?i:pdf)(?:[?#][^"]*)?)" alt="([^"]*)"([^>]*?)\\s*/>',
+    '<iframe src="\\1" title="\\2"\\3 loading="lazy"></iframe>', x, perl = TRUE
   )
 }
 
