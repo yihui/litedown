@@ -558,3 +558,28 @@ assert('github_link() uses the env var set by pkg_site() for the site package', 
   on.exit(xfun::set_envvar(vars), add = TRUE)
   (github_link(d) %==% 'https://github.com/a/b/')  # no DESCRIPTION needed
 })
+
+assert('run_examples() renders output of external record_print() methods', {
+  # a class like lt::lt(), whose print() only has side effects (e.g., a viewer)
+  genv = globalenv()
+  # methods must live outside litedown (testit evaluates code in its namespace)
+  def = function(name, f) assign(name, `environment<-`(f, genv), genv)
+  def('record_print.ext_tbl', function(x, ...)
+    xfun::new_record('<b>hi</b>', 'asis'))
+  def('print.ext_tbl', function(x, ...) invisible(x))
+  on.exit(rm(
+    list = c('record_print.ext_tbl', 'print.ext_tbl'), envir = genv
+  ), add = TRUE)
+  html = paste0(
+    '<h3>Examples</h3><pre><code>x = structure(1, class = "ext_tbl")\n',
+    'print(x)\nprint(1:2)\nx</code></pre>'
+  )
+  res = run_examples(html, list(print = example_print, dev.path = 'tmp/'), 'a')
+  # explicit print() and auto-print both give HTML, unescaped
+  (length(gregexpr('<b>hi</b>', res, fixed = TRUE)[[1]]) %==% 2L)
+  # other values are still printed as text
+  (has_match(res, I('#> [1] 1 2')))
+  # only methods from packages other than xfun and litedown count
+  (has_ext_print(structure(1, class = 'ext_tbl')))
+  (!has_ext_print(data.frame()))
+})

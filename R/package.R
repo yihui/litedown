@@ -513,10 +513,11 @@ pkg_manual = function(
     # run examples
     if (is.list(examples)) {
       xfun::pkg_attach(name)
-      default = list(print = function(x, ...) {
-        if (inherits(x, 'xfun_raw_string')) record_print(x) else
-          xfun:::record_print.default(x)
-      }, dev.path = if (is.null(topic)) 'manual/' else '', dev.args = list(width = 9, height = 7))
+      default = list(
+        print = example_print,
+        dev.path = if (is.null(topic)) 'manual/' else '',
+        dev.args = list(width = 9, height = 7)
+      )
       txt = run_examples(txt, merge_list(default, examples), sans_ext(i))
     }
     # remove existing ID and class
@@ -864,9 +865,41 @@ group_items = function(keys, groups, skip = FALSE) {
   res[lengths(lapply(res, `[[`, 'i')) > 0]
 }
 
+# TRUE if `x` has a record_print() method from a package other than xfun and
+# litedown, e.g., lt::record_print.lt_tbl() (which emits HTML instead of text)
+has_ext_print = function(x) {
+  for (k in class(x)) {
+    m = utils::getS3method('record_print', k, optional = TRUE)
+    if (!is.null(m) && !environmentName(topenv(environment(m))) %in%
+        c('xfun', 'litedown'))
+      return(TRUE)
+  }
+  FALSE
+}
+
+# print an example value: raw strings and objects with an external
+# record_print() method are dispatched; the rest print as text. HTML output of
+# external methods is kept (marked by 'record_html') instead of shown as text.
+example_print = function(x, ...) {
+  if (inherits(x, 'xfun_raw_string')) return(record_print(x))
+  if (!has_ext_print(x)) return(xfun:::record_print.default(x))
+  res = record_print(x, ...)
+  mark = function(r) {
+    if (inherits(r, 'record_asis')) class(r) = c(class(r), 'record_html')
+    r
+  }
+  if (is.list(res)) lapply(res, mark) else mark(res)
+}
+
 run_examples = function(html, config, path) {
   config$dev.path = path = paste0(config$dev.path, path)
   on.exit(del_empty_dir(dirname(path)), add = TRUE)
+  # explicit print(x) of such objects would only have side effects (e.g., open a
+  # viewer, which does nothing in non-interactive R), so return x visibly to let
+  # record() print it via example_print()
+  env = new.env(parent = globalenv())
+  env$print = function(x, ...) if (has_ext_print(x)) x else base::print(x, ...)
+  config$envir = env
   r = '(?s).*?<pre><code[^>]*>(?s)(.+?)</code></pre>'
   match_replace(html, paste0('(?<=<h3>Examples</h3>)', r), function(x) {
     code = gsub(r, '\\1', x, perl = TRUE)
@@ -875,12 +908,13 @@ run_examples = function(html, config, path) {
     nr2 = '}  ## Not run'
     code = gsub('\n?## Not run:\\s*?\n', paste0('\n', nr1, '\n'), code)
     code = gsub('\n+## End[(]Not run[)]\n*', paste0('\n', nr2, '\n'), code)
-    res = do.call(xfun::record, merge_list(config, list(code = code, envir = globalenv())))
+    res = do.call(xfun::record, merge_list(config, list(code = code)))
     idx = seq_along(res); cls = class(res)
     for (i in idx) {
       ri = res[[i]]; ci = class(ri)
       # disable asis output since it may contain raw HTML
-      if ('record_asis' %in% ci) class(res[[i]]) = 'record_output'
+      if ('record_asis' %in% ci && !'record_html' %in% ci)
+        class(res[[i]]) = 'record_output'
       # split the dontrun block
       if ('record_source' %in% ci && !any(is.na(nr <- match(c(nr1, nr2), ri)))) {
         i1 = nr[1]; i2 = nr[2]

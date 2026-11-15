@@ -10,6 +10,8 @@
 
 - The [`toc` option](https://pkg.yihui.org/litedown/book/#sec:toc) gains a `class` sub-option to set the TOC's class names. The TOC floats on the right with the [`@pkgdown-like` CSS asset](https://pkg.yihui.org/litedown/book/#sec:pkg-site-pkgdown) without setting it.
 
+- `pkg_site()` now shows the examples output of packages whose objects have a `record_print()` method that emits HTML (e.g., **lt** tables), even if they are printed explicitly via `print()`.
+
 - `pkg_articles()` now also lists articles under `vignettes/articles/` and `articles/`, and `pkg_site()` renders them, along with vignettes that use the `litedown::vignette` engine, as [site pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun) with the menu and footer.
 
 - In `pkg_site()` and `fuse_site()`, a root-relative [`css` or `js` path](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `/style.css` now refers to the site root, so pages in subdirectories find it.
