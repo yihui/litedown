@@ -1010,7 +1010,7 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   copied = site_skeleton(output, path)
   on.exit(site_cleanup(output, copied), add = TRUE)
   site_footer(footer, path)
-  res = in_dir(output, {
+  in_dir(output, {
     # a book in the package root is copied to the site dir, where fuse_site()
     # builds it as a project; its sources are removed afterwards
     cfg = file.path(path, 'book/_litedown.yml')
@@ -1021,7 +1021,11 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
     # per-topic help pages must exist before fuse_site() collects the inputs
     pages = if (!manual_full()) write_manual(name)
     write_function_index(name)
-    out = fuse_site('.')
+  })
+  # not in the site dir, so that `$input$` is relative to the working directory
+  # (the package root, normally) instead of the site dir (e.g., site/book/*.Rmd)
+  res = fuse_site(output)
+  in_dir(output, {
     unlink(pages)
     if (book) unlink(c(
       'book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)
@@ -1032,7 +1036,6 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
       grep('^[^_].+[.](Rmd|R)$', list.files('examples'), value = TRUE),
       'playground/examples.txt'
     )
-    out
   })
   invisible(res)
 }

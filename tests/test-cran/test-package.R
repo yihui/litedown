@@ -520,6 +520,34 @@ if (has_rd && system.file('site', package = pkg) != '')
     (has_match(h, !I('href="manual/get-context.html"')))
   })
 
+if (has_rd && system.file('site', package = pkg) != '')
+  assert('pkg_site() run from the package root builds a book under site/', {
+    d = tempfile()
+    on.exit(unlink(d, recursive = TRUE), add = TRUE)
+    dir_create(s <- file.path(d, 'site', 'book'))
+    s = dirname(s)
+    file.copy(system.file('DESCRIPTION', package = pkg), d)
+    write_utf8(c(
+      'site:', '  exclude: [manual.Rmd, code.Rmd, news.Rmd, articles.Rmd, examples.Rmd]'
+    ), file.path(s, '_litedown.yml'))
+    # a page whose code runs in the dir of the page
+    write_utf8(c('# Site', '', '```{r}', 'file.exists("index.Rmd")', '```'), file.path(s, 'index.Rmd'))
+    write_utf8(c(
+      'book:', '  chapter_after: "Source: `$input$`"'
+    ), file.path(s, 'book/_litedown.yml'))
+    # YAML makes the book a full HTML page
+    write_utf8(c('---', 'title: Book', '---', '', '# Book'), file.path(s, 'book/index.Rmd'))
+    res = in_dir(d, pkg_site(structure(pkg, path = d), output = 'site'))
+    (has_match(read_utf8(file.path(s, 'index.html')), I('[1] TRUE')))
+    (has_match(read_utf8(file.path(s, 'book/index.html')), I('<code>site/book/index.Rmd</code>')))
+    (file_exists(file.path(d, res)))
+    # the book links function calls via the index of the parent site
+    (file_exists(file.path(s, 'function-index.json')))
+    (has_match(read_utf8(file.path(s, 'book/index.html')), I(
+      '<meta name="function-index" content="../function-index.json">'
+    )))
+  })
+
 # the site template is under inst/, which may not be installed for tests
 if (system.file('site', package = pkg) != '')
   assert('site_skeleton() copies the site template and deletes pages that do not apply', {
