@@ -122,14 +122,15 @@ fuse_site = function(input = '.') {
 build_proj = function(x, root) {
   type = proj_info('', x)$type
   fl = if (!is.na(root)) function_links(root, sub('^[.]/?$', '', relative_path(root, x)))
-  Rscript_call(function(x, type, fl) {
+  Rscript_call(function(x, type, fl, p) {
     Sys.unsetenv('R_LITEDOWN_PKG')
     # link function calls in code to help pages if the parent site has them
     if (!is.null(fl)) options(litedown.html.meta = list(
-      header_includes = fl$meta, js = set_names(fl$js, litedown:::lib_priority + 10)
+      header_includes = fl$meta, js = set_names(fl$js, p)
     ))
     get(paste0('fuse_', type), asNamespace('litedown'))(x)
-  }, list(x, type, fl), fail = paste0('Failed to run litedown::fuse_', type, '() on ', x))
+  }, list(x, type, fl, lib_priority + 10),
+  fail = paste0('Failed to run litedown::fuse_', type, '() on ', x))
 }
 
 # common css/js for sites/books

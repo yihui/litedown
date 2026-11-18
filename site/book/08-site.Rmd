@@ -584,7 +584,7 @@ workflow](https://github.com/yihui/litedown/blob/main/.github/workflows/litedown
 for building and publishing **litedown**'s site to GitHub Pages:
 
 ```{embed, attr.output = '.yaml data-file="litedown-site.yml" data-source="1"'}
-"../.github/workflows/litedown-site.yml"
+"../../.github/workflows/litedown-site.yml"
 ```
 
 You can copy it to the `.github/workflows/` directory of the R package's Git
@@ -610,9 +610,9 @@ under the `with` field. In the above example workflow, we used the option
 `site-dir`. Below are the options currently supported:
 
 ```{r, echo = FALSE, results = 'asis'}
-if (!dir.exists('../../actions'))
-  system('git clone --depth 1 https://github.com/yihui/actions.git ../../actions')
-inputs = xfun::yaml_load(readLines('../../actions/litedown-site/action.yml'), use_yaml = FALSE)$inputs
+if (!dir.exists(d <- '../../../actions'))
+  system(paste('git clone --depth 1 https://github.com/yihui/actions.git', d))
+inputs = xfun::taml_file(file.path(d, 'litedown-site/action.yml'))$inputs
 cat(sprintf(
   '- `%s`: %s (default: `%s`).', names(inputs),
   unlist(lapply(inputs, `[[`, 'description')),

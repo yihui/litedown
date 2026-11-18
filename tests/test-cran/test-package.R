@@ -506,6 +506,7 @@ if (has_rd && system.file('site', package = pkg) != '')
     ), file.path(s, '_litedown.yml'))
     write_utf8('# Site', file.path(s, 'index.Rmd'))
     write_utf8(c(
+      'book:', '  chapter_after: ""',  # the `book` field marks a project
       'output:', '  html:', '    options:', '      embed_resources: false'
     ), file.path(d, 'book/_litedown.yml'))
     write_utf8(c(
