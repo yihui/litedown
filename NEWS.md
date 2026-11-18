@@ -14,6 +14,8 @@
 
 - `pkg_articles()` now also lists articles under `vignettes/articles/` and `articles/`, and `pkg_site()` renders them, along with vignettes that use the `litedown::vignette` engine, as [site pages](https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun) with the menu and footer.
 
+- `fuse_site()` now builds subdirectories that are books or sites (i.e., contain `_litedown.yml` with a `book` or `site` field) as projects on their own, so a book can live under a site directory, e.g., `site/book/`.
+
 - In `pkg_site()` and `fuse_site()`, a root-relative [`css` or `js` path](https://pkg.yihui.org/litedown/book/#sec:yaml-metadata) like `/style.css` now refers to the site root, so pages in subdirectories find it.
 
 - `pkg_site()` shows the package logo (e.g., a hex sticker at `man/figures/logo.png`) at the top right of the home page.

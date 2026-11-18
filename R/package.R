@@ -1011,31 +1011,21 @@ pkg_site = function(name = detect_pkg(), output = 'site') {
   on.exit(site_cleanup(output, copied), add = TRUE)
   site_footer(footer, path)
   res = in_dir(output, {
-    # create a placeholder so that the book is included in the nav menu
+    # a book in the package root is copied to the site dir, where fuse_site()
+    # builds it as a project; its sources are removed afterwards
     cfg = file.path(path, 'book/_litedown.yml')
-    if (book <- file_exists(cfg)) {
-      dir_create('book'); file.create('book/index.html')
+    book = file_exists(cfg) && !file_exists('book/_litedown.yml')
+    if (book) {
+      dir_create('book'); copy_dir(dirname(cfg), 'book')
     }
     # per-topic help pages must exist before fuse_site() collects the inputs
     pages = if (!manual_full()) write_manual(name)
     write_function_index(name)
     out = fuse_site('.')
     unlink(pages)
-    if (book) {
-      # run from the package root so that `$input$` is relative to it; use a new
-      # R session so that book code cannot clobber our variables
-      # the book pages end up in site/book/, one level below the site root
-      fl = function_links('.', '../')
-      in_dir(path, Rscript_call(function(fl, book) {
-        Sys.unsetenv('R_LITEDOWN_PKG')
-        if (!is.null(fl)) options(litedown.html.meta = list(
-          header_includes = fl$meta, js = set_names(fl$js, lib_priority + 10)
-        ))
-        litedown::fuse_book(book)
-      }, list(fl, 'book')))
-      copy_dir(dirname(cfg), 'book')
-      unlink(c('book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)))
-    }
+    if (book) unlink(c(
+      'book/_litedown.yml', list.files('book', '[.]Rmd$', full.names = TRUE)
+    ))
     dir_create('playground')
     copy_dir(file.path(path, 'playground'), 'playground')
     if (dir.exists('examples')) write_utf8(

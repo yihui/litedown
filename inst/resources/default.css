@@ -44,7 +44,7 @@ div > .caption { padding: 1px 1em; }
 table {
   &:only-child:not(.table > *) { margin: auto; }
   th, td { padding: 5px; font-variant-numeric: tabular-nums; }
-  &:not([class]) {
+  &:is(:not([class]), .pagesjs-plain) {
     thead, tfoot, tr:nth-child(even) { background: var(--muted-bg); }
     thead th { border-bottom: 1px solid #ddd; }
     border-top: 1px solid var(--rule-color);

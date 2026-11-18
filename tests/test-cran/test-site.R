@@ -326,3 +326,39 @@ assert('the edit link is in the site nav only if the page has a source file', {
   (has_match(getOption('litedown.html.meta')$include_before, 'pagesjs-toggle'))
   (has_match(nav, I('($edit$ "Edit this page")')))
 })
+
+assert('find_input() returns nested book/site dirs, not their files', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  for (s in c('book', 'sub', 'proj/deep')) dir.create(file.path(d, s), recursive = TRUE)
+  for (s in c('index.Rmd', 'book/index.Rmd', 'book/ch1.Rmd', 'sub/a.Rmd', 'proj/deep/b.Rmd'))
+    writeLines('x', file.path(d, s))
+  writeLines('site:\n  rebuild: newfile', file.path(d, '_litedown.yml'))
+  writeLines('book:\n  input: x', file.path(d, 'book/_litedown.yml'))
+  writeLines('output:\n  html: {}', file.path(d, 'sub/_litedown.yml'))  # not a project
+  writeLines('type: site', file.path(d, 'proj/_litedown.yml'))
+  x = substring(find_input(d, TRUE), nchar(d) + 2)
+  (sort(x) %==% c('book', 'index.Rmd', 'proj'))
+})
+
+assert('fuse_site() builds nested books and skips them when up to date', {
+  d = tempfile(); dir.create(file.path(d, 'book'), recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines('site:\n  rebuild: outdated', file.path(d, '_litedown.yml'))
+  writeLines('book:\n  rebuild: x', file.path(d, 'book/_litedown.yml'))
+  writeLines('# Home', file.path(d, 'index.md'))
+  writeLines(c('# Chapter', '', 'Hello book'), file.path(d, 'book/index.Rmd'))
+  fuse_site(d)
+  f = file.path(d, 'book/index.html')
+  (has_match(read_utf8(f), I('Hello book')))
+  # the menu of the parent site links to the book built in the same run
+  (has_match(read_utf8(file.path(d, 'index.html')), I('href="book/"')))
+  # up-to-date book is not rebuilt
+  t = file.mtime(f)
+  Sys.sleep(1.1); fuse_site(d)
+  (file.mtime(f) == t)
+  # a newer chapter triggers a rebuild
+  Sys.sleep(1.1); writeLines(c('# Chapter', '', 'Hello again'), file.path(d, 'book/index.Rmd'))
+  fuse_site(d)
+  (has_match(read_utf8(f), I('Hello again')))
+})

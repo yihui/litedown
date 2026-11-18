@@ -29,6 +29,12 @@
 #'
 #' - `outdated`: Rebuild an input file if the modification time of its `.html`
 #' output file is older than the input or the config file `_litedown.yml`.
+#'
+#' A subdirectory that has its own `_litedown.yml` with a `site` or `book` field
+#' is a project on its own: it is built in a new R session via [fuse_site()] or
+#' [fuse_book()] (following the same `rebuild` rule, based on the newest input
+#' file of the project), instead of its files being built as pages of the
+#' parent site.
 #' @param input The root directory of the site, or a vector of input file paths.
 #' @return Output file paths (invisibly).
 #' @examples
@@ -51,7 +57,7 @@ fuse_site = function(input = '.') {
     input
   }
   root = info$root
-  output = with_ext(inputs, '.html')
+  output = input_output(inputs)
   cfg = merge_list(list(rebuild = 'outdated'), info$yaml[['site']])
   b = cfg[['rebuild']]
   if (b == 'outdated') b = 0
@@ -60,6 +66,10 @@ fuse_site = function(input = '.') {
   i = if (is.numeric(b)) filter_outdated(inputs, output, b, deps) else {
     if (b == 'newfile') !file_exists(output) else TRUE
   }
+  # build projects first so that their index.html can be in the nav menu
+  d = dir.exists(inputs)
+  for (x in inputs[i & d]) build_proj(x, root)
+  i = i & !d
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_meta(list(
     css = c(site_css, '@site'), js = c(site_js, '@nav-highlight'),
@@ -105,6 +115,21 @@ fuse_site = function(input = '.') {
   if (preview) {
     if (i) out[[1]] else xfun::file_string(output)
   } else invisible(output)
+}
+
+# build a project (book or site) in a subdir in a new R session, which should
+# behave as a standalone project (e.g., not as part of a package site)
+build_proj = function(x, root) {
+  type = proj_info('', x)$type
+  fl = if (!is.na(root)) function_links(root, sub('^[.]/?$', '', relative_path(root, x)))
+  Rscript_call(function(x, type, fl) {
+    Sys.unsetenv('R_LITEDOWN_PKG')
+    # link function calls in code to help pages if the parent site has them
+    if (!is.null(fl)) options(litedown.html.meta = list(
+      header_includes = fl$meta, js = set_names(fl$js, litedown:::lib_priority + 10)
+    ))
+    get(paste0('fuse_', type), asNamespace('litedown'))(x)
+  }, list(x, type, fl), fail = paste0('Failed to run litedown::fuse_', type, '() on ', x))
 }
 
 # common css/js for sites/books
@@ -193,7 +218,7 @@ edit_page_url = function(input, root) {
 
 # `deps` are extra files that make all outputs outdated when they are modified
 filter_outdated = function(x, x2, n, deps = NULL) {
-  m1 = file.mtime(x); m2 = file.mtime(x2)
+  m1 = input_mtime(x); m2 = file.mtime(x2)
   if (length(deps)) m1 = pmax(m1, max(file.mtime(deps)), na.rm = TRUE)
   is.na(m2) | m1 - m2 > n
 }
@@ -370,6 +395,7 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
       yaml[['book']]
     }
   }
+  input = input[!dir.exists(input)]  # nested projects are not chapters
   if (length(input) == 0) stop('No input was provided or found.')
   input = sub('^[.]/+', '', input)  # clean up the leading ./ in paths
 
@@ -459,7 +485,15 @@ find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
   # exclude .* and _* files/dirs (test paths relative to d, so ancestor dirs
   # like GHA's `_temp` don't accidentally match)
   rel = if (deep) substr(x, nchar(d) + 2, nchar(x)) else basename(x)
-  x = x[!grepl('(^|/)[_.]', rel)]
+  i = !grepl('(^|/)[_.]', rel)
+  # files under a subdir that has its own _litedown.yml belong to that project,
+  # which is returned as a dir instead (if it is a book or site)
+  ps = if (deep) nested_projs(d)
+  for (p in ps) i = i & !startsWith(rel, paste0(p, '/'))
+  x = c(x[i], file.path(d, ps[vapply(ps, function(p) {
+    !grepl('(^|/)[_.]', p) &&
+      proj_info('', file.path(d, p))$type %in% c('book', 'site')
+  }, logical(1))]))
   # exclude readme
   x = x[tolower(basename(sans_ext(x))) != 'readme']
   # for .md files, don't include them if they have .Rmd/.qmd files
@@ -468,6 +502,42 @@ find_input = function(d, deep = grepl('/$', d), pattern = NULL) {
   x = reorder_input(x)
   x = sub('^[.]/+', '', x)
   x
+}
+
+# the outermost subdirs of d that contain _litedown.yml (relative paths)
+nested_projs = function(d) {
+  ds = dirname(list.files(d, '^_litedown[.]yml$', recursive = TRUE))
+  ds = ds[ds != '.']
+  ds[!vapply(ds, function(p) any(startsWith(p, paste0(setdiff(ds, p), '/'))), logical(1))]
+}
+
+# input files of a project dir (a book or site)
+proj_files = function(d) {
+  info = proj_info('', d)
+  cfg = info$yaml[[info$type]]
+  if (info$type == 'book') {
+    file.path(d, cfg[['input']]) %|%
+      find_input(d, cfg[['subdir']] %||% FALSE, cfg[['pattern']])
+  } else find_input(d, TRUE, cfg[['pattern']])
+}
+
+# output files of inputs, which can be files or project dirs (whose output is
+# that of the first input file)
+input_output = function(x) {
+  o = with_ext(x, '.html')
+  for (j in which(dir.exists(x)))
+    o[j] = with_ext(c(proj_files(x[j]), file.path(x[j], 'index'))[1], '.html')
+  o
+}
+
+# modification time of input files; for a project dir, the newest one among its
+# input files and config
+input_mtime = function(x) {
+  m = file.mtime(x)
+  for (j in which(dir.exists(x))) m[j] = max(
+    file.mtime(c(proj_files(x[j]), file.path(x[j], '_litedown.yml'))), na.rm = TRUE
+  )
+  m
 }
 
 # move index.[Rq]md to the first

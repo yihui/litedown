@@ -165,6 +165,14 @@ plain `fuse()` call without site-level CSS, JS, navigation, or footer being
 injected. This is useful for standalone pages such as slides that need their own
 self-contained styles and should not inherit the site layout.
 
+A subdirectory that has its own `_litedown.yml` with a `site` or `book` field,
+such as `book/`, is a project on its own. Its files are not built as pages of
+the parent site; instead, the project is built in a new R session via
+`fuse_site()` or `fuse_book()`, and it follows the same `rebuild` rule as pages,
+e.g., a book is skipped if `book/index.html` is newer than all of its input
+files and `book/_litedown.yml`. Subdirectories with other `_litedown.yml` files
+are ignored.
+
 ### Default assets and layout {#sec:site-defaults}
 
 When building a website, **litedown** applies a set of default CSS/JS assets and
@@ -178,9 +186,10 @@ layout elements so that pages look reasonable without any configuration:
 -   If `include_before` is not provided, a navigation menu is automatically
     generated from the top-level input files under the site root (plus any
     one-level subdirectories that contain an `index.html`, such as
-    `playground/index.html`). The menu titles are derived from the filenames
-    (e.g., `about.Rmd` becomes "About", and `index.Rmd` becomes "Home"). You can
-    customize the order and text of the menu items (@sec:site-nav).
+    `playground/index.html` or the output of a `book/` project). The menu
+    titles are derived from the filenames (e.g., `about.Rmd` becomes "About",
+    and `index.Rmd` becomes "Home"). You can customize the order and text of the
+    menu items (@sec:site-nav).
 
 -   If `include_after` is not provided, a copyright footer (`© <year>`) is
     automatically added.
@@ -411,9 +420,12 @@ For example, if you do not want to include the news (or the source code,
 either), you can use `exclude: [code.Rmd, news.Rmd]`. To exclude nothing, use
 `exclude: NA`.
 
-If the package contains a book project (i.e., `book/_litedown.yml` exists), the
-book will be built with `fuse_book()` and published under the `book/` subpage of
-the site.
+If the package root or the site directory contains a book project (i.e.,
+`book/_litedown.yml` exists), the book will be built with `fuse_book()` and
+published under the `book/` subpage of the site. A book in the package root is
+copied to the site directory first, so it is built like a book under the site
+directory (see @sec:websites). If both exist, the one in the site directory is
+used.
 
 On the home page, badges in `README.md` (between the comments `<!-- badges:
 start -->` and `<!-- badges: end -->`) are put in the right sidebar, and the

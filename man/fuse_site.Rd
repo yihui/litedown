@@ -42,6 +42,12 @@ values are:
 \item \code{outdated}: Rebuild an input file if the modification time of its \code{.html}
 output file is older than the input or the config file \verb{_litedown.yml}.
 }
+
+A subdirectory that has its own \verb{_litedown.yml} with a \code{site} or \code{book} field
+is a project on its own: it is built in a new R session via \code{\link[=fuse_site]{fuse_site()}} or
+\code{\link[=fuse_book]{fuse_book()}} (following the same \code{rebuild} rule, based on the newest input
+file of the project), instead of its files being built as pages of the
+parent site.
 }
 \examples{
 # create a minimal book example in the temp dir
