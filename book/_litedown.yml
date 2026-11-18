@@ -1,0 +1,12 @@
+book:
+  chapter_before: "[Edit this chapter](https://github.com/yihui/litedown/edit/main/$input$) on GitHub"
+  chapter_after: ""
+
+output:
+  html:
+    options:
+      toc:
+        depth: 4
+    meta:
+      css: ["@book-litedown", "@key-buttons", "@callout", "@tabsets"]
+      js: ["@chapter-toc", "@external-link", "@right-quote", "@key-buttons", "@callout", "@tabsets"]

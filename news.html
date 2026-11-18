@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.21">
+<meta name="generator" content="litedown 1.0.22">
 <title>News</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/default.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/article.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/copy-button.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/heading-anchor.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/pages.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/site.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/css/prism-xcode.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/article.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/copy-button.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/heading-anchor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/pages.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/site.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/css/prism-xcode.min.css">
 <meta name="function-index" content="function-index.json">
 </head>
 <body>
-<nav class="site-nav"><p><a href="index.html" class="brand">litedown</a> <small class="version">v1.0.21</small>
+<nav class="site-nav"><p><a href="index.html" class="brand">litedown</a> <small class="version">v1.0.22</small>
 <a href="examples.html">Examples</a>
 <a href="manual.html">Manual</a>
 <a href="news.html">News</a>
@@ -70,6 +70,9 @@
 </li>
 <li>
 <p><code>pkg_articles()</code> now also lists articles under <code>vignettes/articles/</code> and <code>articles/</code>, and <code>pkg_site()</code> renders them, along with vignettes that use the <code>litedown::vignette</code> engine, as <a href="https://pkg.yihui.org/litedown/book/#sec:pkg-site-fun">site pages</a> with the menu and footer.</p>
+</li>
+<li>
+<p><code>fuse_site()</code> now builds subdirectories that are books or sites (i.e., contain <code>_litedown.yml</code> with a <code>book</code> or <code>site</code> field) as projects on their own, so a book can live under a site directory, e.g., <code>site/book/</code>.</p>
 </li>
 <li>
 <p>In <code>pkg_site()</code> and <code>fuse_site()</code>, a root-relative <a href="https://pkg.yihui.org/litedown/book/#sec:yaml-metadata"><code>css</code> or <code>js</code> path</a> like <code>/style.css</code> now refers to the site root, so pages in subdirectories find it.</p>
@@ -498,15 +501,15 @@ graph TD;
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.21</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.22</p>
 </div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/sidenotes.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/toc-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/copy-button.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/heading-anchor.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/pages.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/nav-highlight.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/prism-lite.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.5/js/link-functions.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/sidenotes.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/toc-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/copy-button.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/heading-anchor.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/pages.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/nav-highlight.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/prism-lite.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.8/js/link-functions.min.js" defer></script>
 </body>
 </html>
