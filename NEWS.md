@@ -32,6 +32,8 @@
 
 - Code blocks are now syntax highlighted by the lightweight `prism-lite.js`, which needs no language files. Support for Prism.js and highlight.js has been removed from the `js_highlight` option, which now only turns highlighting on or off. To use either library, set `js_highlight: false` and load it via the `css` and `js` variables, as shown in [Using Prism.js or highlight.js](https://pkg.yihui.org/litedown/book/#sec:other-highlighters).
 
+- In the `litedown::roam()` preview of a [book](https://pkg.yihui.org/litedown/book/#sec:live-preview), the Run button of `index.Rmd` in the file listing now previews `index.Rmd` alone, and a new "run to end" button next to it (as well as the Run button in the top toolbar) previews the whole book.
+
 # CHANGES IN litedown VERSION 1.0
 
 - The Markdown backend has been changed from the **commonmark** package to a copy of 'cmark-gfm' bundled with **litedown**, with our own patches and extensions. Features that used to be emulated with fragile text processing in R (LaTeX math, superscript/subscript/strikethrough, raw content blocks, and inline attributes on links and images) are now handled directly by the Markdown parser, which is faster and more reliable, especially for large documents and documents with multibyte (e.g., CJK) characters. This also fixes several long-standing rendering bugs (#33, #135, #139). The **commonmark** package is no longer a dependency (#141, #142, #143). Rendering output is essentially unchanged, with one minor exception: superscript, subscript, and strikethrough now require the delimiters to "hug" their content (e.g., `a^b^` works, but `a ^ b ^` no longer produces a superscript), consistent with how `*emphasis*` works.

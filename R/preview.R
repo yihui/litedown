@@ -280,11 +280,14 @@ dir_page = function(dir = '.') {
   # order first by folder, then by .Rmd/.R, and other files go to the end
   boxes = lapply(files[i1][order(grepl('^[_.]', basename(files[i1])))], function(f) {
     b = basename(f)
+    book_idx = is_book_index(f)
     txt = readLines(f, n = 10, encoding = 'UTF-8', warn = FALSE)
     fenced_div(c(
       fenced_div(c(
         p_link(b, a = NULL), info(f, b),
-        p_link(b, '.run', 2, 'title="Run in memory"')
+        p_link(b, '.run', 2, 'title="Run in memory"'),
+        # the book index can also be run as the whole book
+        if (book_idx) p_link(b, '.run1', 3)
       ), '.caption .name'),
       fenced_block(txt)
     ), c('.box', muted(f)))
@@ -341,9 +344,11 @@ is_lite_ext = function(ext = file_ext(file), file) tolower(ext) %in% lite_exts
 
 # render the path to HTML if possible
 file_resp = function(x, preview) {
-  raw = preview == '0'  # 0: send raw response; 1: render verbatim; 2: fuse()/mark()
+  # 0: send raw response; 1: render verbatim; 2: fuse()/mark(); 3: same as 2
+  # but render the whole book if the file is the index of a book
+  raw = preview == '0'
   ext = if (raw) '' else tolower(file_ext(x))
-  if (preview == '2' && is_lite_ext(ext)) {
+  if (preview %in% c('2', '3') && is_lite_ext(ext)) {
     # to clean up the __files/ dir if requested (via options()) and the dir
     # didn't exist before
     if (getOption('litedown.roam.cleanup', FALSE)) {
@@ -358,7 +363,10 @@ file_resp = function(x, preview) {
       info$type,
       book = {
         store_book(info$root, x, info$index)
-        fuse_book(if (info$index) info$root else x, full_output, globalenv())
+        fuse_book(
+          if (info$index && preview == '3') info$root else x, full_output,
+          globalenv()
+        )
       },
       site = fuse_site(x),
       if (ext == 'md') mark_full(x) else fuse(x, full_output, envir = globalenv())
@@ -375,6 +383,9 @@ file_resp = function(x, preview) {
     }
   }
 }
+
+# is the file the index of a book?
+is_book_index = function(x) is_index(x) && with(proj_info(x), type == 'book' && index)
 
 # store book dir for books to resolve number_refs() because the book may be
 # partially rendered (in which case we can't resolve refs to other chapters)
@@ -438,8 +449,8 @@ dir_title = function(f, preview = '1') {
     c(
       sprintf('[%s/](%s)', c('.', d), c(rev(strrep('../', seq_along(d))), './')),
       if (file_exists(f)) b, if (is_lite_ext(file = f)) c(
-        btn('.save'), if (preview != '2')
-          btn('.run', sprintf('%s?preview=2', b), 'title="Run"')
+        btn('.save'), if (preview != (n <- if (is_book_index(f)) '3' else '2'))
+          btn('.run', sprintf('%s?preview=%s', b, n), 'title="Run"')
       ) else if (is_html_file(f))
         btn('.run', b, 'title="View the HTML page"'),
       if (file_exists(f) && is_text_file(file = f)) btn('.open')
@@ -465,9 +476,12 @@ btn = function(t, u = '#', a = character()) {
   sprintf(' [%s](<%s>)%s ', t, u, a)
 }
 
-.icons = c(.open = '&#9998;', .run = '&#9658;', .save = '&#8623;')
+.icons = c(
+  .open = '&#9998;', .run = '&#9658;', .run1 = '&#9197;&#65038;', .save = '&#8623;'
+)
 .titles = c(
   .open = 'Open in editor', .run = 'Run in memory and preview',
+  .run1 = 'Run the whole book in memory and preview',
   .save = 'Render to disk in a fresh R session'
 )
 

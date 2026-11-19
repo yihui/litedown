@@ -172,6 +172,9 @@ body.waiting {
 @media (prefers-color-scheme: dark) {
   .litedown-dialog { color: initial; }
 }
+.pagesjs [data-source] > .buttons {
+  display: none;
+}
 @media screen {
   .pagesjs > .nav-path {
     display: block;

@@ -22,7 +22,7 @@ body:has(.boxes, .listing) {
   em:not(:hover), pre code:not(:hover) {
     opacity: .7;
   }
-  .run {
+  .run, .run1 {
     float: right;
   }
   pre {

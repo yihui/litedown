@@ -94,6 +94,31 @@ assert('file_resp() sends raw, verbatim, or rendered responses by preview level'
   (has_match(p2, '<h1'))
 })
 
+assert('file_resp() previews a book index alone (2) or as the whole book (3)', {
+  d = tempfile(); dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  writeLines(c('book:', '  new_session: false'), file.path(d, '_litedown.yml'))
+  writeLines('# Index', i <- file.path(d, 'index.md'))
+  writeLines('# Other', file.path(d, 'a.md'))
+  in_dir(d, {
+    p2 = file_resp('index.md', '2')$payload
+    p3 = file_resp('index.md', '3')$payload
+  })
+  (has_match(p2, 'Index'))
+  (has_match(p2, !'Other'))
+  (has_match(p3, 'Other'))
+  # the listing offers both buttons for the book index, one for other files
+  l = in_dir(d, dir_page('.'))
+  (has_match(l, 'index.md\\?preview=3'))
+  (has_match(l, 'index.md\\?preview=2'))
+  (has_match(l, I('Run the whole book')))
+  (has_match(l, !'a.md\\?preview=3'))
+  # the toolbar Run button runs the whole book for the index, a file otherwise
+  t = in_dir(d, c(dir_title('index.md', '2'), dir_title('a.md', '1')))
+  (has_match(t, 'index.md\\?preview=3'))
+  (has_match(t, 'a.md\\?preview=2'))
+})
+
 assert('file_page() injects navigation links at the top of a rendered page', {
   d = tempfile(); dir.create(d)
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
