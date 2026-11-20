@@ -64,6 +64,7 @@ jobs:
           extra-packages: . ${{ env.USE_R_CODECOV == 'true' && ' covr pkgbuild' || '' }}
           # install dependencies for cairo_pdf device
           brew-packages: xquartz
+          r-universe: yihui cran
 
       - uses: yihui/actions/check-r-package@HEAD
 
