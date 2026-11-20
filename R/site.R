@@ -128,7 +128,8 @@ build_proj = function(x, root) {
     if (!is.null(fl)) options(litedown.html.meta = list(
       header_includes = fl$meta, js = set_names(fl$js, p)
     ))
-    get(paste0('fuse_', type), asNamespace('litedown'))(x)
+    f = asNamespace('litedown')[[paste0('fuse_', type)]]
+    f(x, envir = globalenv())
   }, list(x, type, fl, lib_priority + 10),
   fail = paste0('Failed to run litedown::fuse_', type, '() on ', x))
 }
