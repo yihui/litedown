@@ -36,6 +36,7 @@
 #' file of the project), instead of its files being built as pages of the
 #' parent site.
 #' @param input The root directory of the site, or a vector of input file paths.
+#' @param quiet Whether to show the progress bar or skipped input files.
 #' @return Output file paths (invisibly).
 #' @examples
 #' # create a minimal book example in the temp dir
@@ -46,7 +47,7 @@
 #' # clean up
 #' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
-fuse_site = function(input = '.') {
+fuse_site = function(input = '.', quiet = FALSE) {
   info = NULL; preview = FALSE
   inputs = if (length(input) == 1 && dir.exists(input)) {
     info = proj_info('', input)
@@ -68,7 +69,20 @@ fuse_site = function(input = '.') {
   }
   # build projects first so that their index.html can be in the nav menu
   d = dir.exists(inputs)
-  for (x in inputs[i & d]) build_proj(x, root)
+  if (!quiet) {
+    p = progress_bar(inputs)
+    on.exit(p$clear(), add = TRUE)
+  }
+  skipped = which(!i)
+  projects = which(i & d)
+  files = which(i & !d)
+  if (!quiet) for (j in skipped) p$skip(inputs[j])
+  for (j in seq_along(projects)) {
+    x = inputs[projects[j]]
+    if (!quiet) p$update(length(skipped) + j, length(inputs), x)
+    build_proj(x, root)
+    if (!quiet) p$clear()
+  }
   i = i & !d
   opts = yaml_field(info$yaml, 'html', c('meta', 'options'))
   opts[['meta']] = merge_meta(list(
@@ -79,14 +93,19 @@ fuse_site = function(input = '.') {
     list(embed_resources = FALSE, toc = TRUE), opts[['options']]
   )
   standalone = cfg[['standalone']]
-  out = lapply(inputs[i], function(x) {
+  out = lapply(seq_along(files), function(j) {
+    x = inputs[files[j]]
+    if (!quiet) {
+      p$update(length(skipped) + length(projects) + j, length(inputs), x)
+      on.exit(p$clear(), add = TRUE)
+    }
     alone = length(standalone) && any(vapply(
       standalone, function(p) grepl(glob2rx(p), basename(x)), logical(1)
     ))
     res = if (grepl('[.]md$', x)) {
       if (!alone) {
         opts = set_site_options(opts, x, root, giscus = cfg[['giscus']])
-        on.exit(options(opts))
+        on.exit(options(opts), add = TRUE)
       }
       mark(x, full_output)
     } else {
@@ -355,6 +374,7 @@ menu_name = function(x) {
 #' file, respectively, which accepts some variables (e.g., `$input$` is the
 #' current input file path).
 #' @inheritParams fuse
+#' @param quiet Whether to show file-level progress.
 #' @param input A directory or a vector of file paths. By default, all
 #'   `.Rmd`/`.md` files under the current working directory are used as the
 #'   input, except for filenames that start with `.` or `_` (e.g., `_foo.Rmd`),
@@ -376,7 +396,9 @@ menu_name = function(x) {
 #' # clean up
 #' if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 #' @export
-fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
+fuse_book = function(
+  input = '.', output = NULL, envir = parent.frame(), quiet = FALSE
+) {
   # when input is c(dir, file1, file2, ...), we find book files under dir, but
   # only preview file1, file2, ...
   if (dir.exists(input[1])) {
@@ -425,7 +447,17 @@ fuse_book = function(input = '.', output = NULL, envir = parent.frame()) {
     } else dir_create(dirname(p))
   }
 
-  res = lapply(preview %|% input, function(x) {
+  files = preview %|% input
+  if (!quiet) {
+    p = progress_bar(files)
+    on.exit(p$clear(), add = TRUE)
+  }
+  res = lapply(seq_along(files), function(i) {
+    x = files[i]
+    if (!quiet) {
+      p$update(i, length(files), x)
+      on.exit(p$clear(), add = TRUE)
+    }
     out = if (grepl('[.]md$', x)) read_utf8(x) else {
       fmt = paste0('markdown:', format)  # generate intermediate markdown output
       if (cfg$new_session) {

@@ -4,7 +4,7 @@
 \alias{fuse_book}
 \title{Fuse multiple R Markdown documents to a single output file}
 \usage{
-fuse_book(input = ".", output = NULL, envir = parent.frame())
+fuse_book(input = ".", output = NULL, envir = parent.frame(), quiet = FALSE)
 }
 \arguments{
 \item{input}{A directory or a vector of file paths. By default, all
@@ -34,6 +34,8 @@ format is detected or provided, the default is HTML.}
 
 \item{envir}{An environment in which the code is to be evaluated. It can be
 accessed via \code{\link[=fuse_env]{fuse_env()}} inside \code{\link[=fuse]{fuse()}}.}
+
+\item{quiet}{Whether to show file-level progress.}
 }
 \value{
 An output file path or the output content, depending on the \code{output}

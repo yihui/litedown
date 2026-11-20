@@ -573,31 +573,56 @@ fiss = function(input, output = '.R', text = NULL) {
   if (is_output_file(output)) write_utf8(res, output) else raw_string(res)
 }
 
+progress_bar = function(input, extra = 0) {
+  out = getOption('litedown.progress.output', stderr())
+  delay = getOption('litedown.progress.delay', 2)
+  start = Sys.time(); shown = FALSE; active = FALSE
+  # Progress has the form "xxx% | input": allow 4 spaces for the percentage
+  # and 3 for the separator, in addition to the input and any extra text.
+  width = 4 + 3 + max(c(0, nchar(input))) + extra
+  clear = paste0('\r', strrep(' ', width), '\r')
+  write = function(x, force = FALSE) {
+    if (force || shown || as.numeric(Sys.time() - start, units = 'secs') > delay) {
+      cat(x, sep = '', file = out)
+      if (!force) shown <<- TRUE
+    }
+  }
+  erase = function() {
+    if (active) write(clear)
+    active <<- FALSE
+  }
+  list(
+    update = function(i, n, x) {
+      write(c(as.character(round((i - 1) / n * 100)), '%', ' | ', x))
+      active <<- shown
+    },
+    clear = erase,
+    skip = function(x) {
+      erase()
+      write(c('Skipping ', x, '\n'), force = TRUE)
+    }
+  )
+}
+
 .fuse = function(blocks, input, quiet) {
   n = length(blocks)
   nms = vapply(blocks, function(x) x$options[['label']] %||% '', character(1))
   names(blocks) = nms
 
-  # a simple progress indicator: we need to know how many spaces we need to wipe
-  # out previous progress text of the form:
-  # xxx% | input_file#line1-line2 [label]
-  # ...4..3          1     1     .2     1
-  p_len = 4 + 3 + sum(nchar(input)) + 1 +
-    (sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1) + 2 + max(nchar(nms)) + 1
-  p_clr = paste0('\r', strrep(' ', p_len), '\r')  # a string to clear the progress
-  p_out = getOption('litedown.progress.output', stderr())
-  p_yes = FALSE; t0 = Sys.time(); td = getOption('litedown.progress.delay', 2)
-  p_bar = function(x) {
-    if (!quiet && (p_yes || Sys.time() - t0 > td)) {
-      cat(x, sep = '', file = p_out)
-      p_yes <<- TRUE
-    }
+  if (!quiet) {
+    # a simple progress indicator: we need to know how many spaces we need to wipe
+    # out previous progress text of the form:
+    # xxx% | input_file#line1-line2 [label]
+    # ...4..3          1     1     .2     1
+    extra = 1 + (sum(nchar(sprintf('%d', blocks[[n]]$lines))) + 1) +
+      2 + max(nchar(nms)) + 1
+    p = progress_bar(input, extra)
   }
   # if error occurs, print error location with a clickable file link
   k = 0  # when exiting, k should be n + 1
   on_error = function() {
     if (k > n) return()  # blocks have been successfully fused
-    p_bar(p_clr)
+    if (!quiet) p$clear()
     ansi_link(input)
     message('Quitting from ', get_loc(nms[k]))
   }
@@ -611,7 +636,7 @@ fiss = function(input, output = '.R', text = NULL) {
   res = character(n)
   for (i in seq_len(n)) {
     k = o[i]; b = blocks[[k]]; save_pos(b$lines)
-    p_bar(c(as.character(round((i - 1)/n * 100)), '%', ' | ', get_loc(nms[k])))
+    if (!quiet) p$update(i, n, get_loc(nms[k]))
     # record timing if requested
     if (!isFALSE(time <- timing_path())) t1 = Sys.time()
     res[k] = if (b$type == 'code_chunk') {
@@ -620,7 +645,7 @@ fiss = function(input, output = '.R', text = NULL) {
       one_string(fuse_text(b), '')
     }
     if (!isFALSE(time)) record_time(Sys.time() - t1, b$lines, nms[k])
-    p_bar(p_clr)
+    if (!quiet) p$clear()
     if (!is.null(.env$exit)) {
       res = c(res[seq_len(k)], .env$exit)
       .env$exit = NULL

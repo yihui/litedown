@@ -4,10 +4,12 @@
 \alias{fuse_site}
 \title{Fuse R Markdown documents individually under a directory}
 \usage{
-fuse_site(input = ".")
+fuse_site(input = ".", quiet = FALSE)
 }
 \arguments{
 \item{input}{The root directory of the site, or a vector of input file paths.}
+
+\item{quiet}{Whether to show the progress bar or skipped input files.}
 }
 \value{
 Output file paths (invisibly).
