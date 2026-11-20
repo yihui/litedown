@@ -99,6 +99,16 @@ assert('mark() loads a math library only when math is actually rendered', {
   (has_katex('a $x$ b'))
   (has_katex(c('d:', '', '$$x + y$$')))
   (has_katex(c('\\begin{align}', 'a &= b', '\\end{align}')))
+  # A literal <pre> in raw HTML must not hide math before a code block.
+  (has_katex(c(
+    '```{=html}', "<script>const tag = '<pre>';</script>", '```', '',
+    '$$x + y$$', '', '```', 'code', '```'
+  )))
+  (has_katex(c(
+    '```{=html}',
+    "<script>const tag = '<code>$$not math$$</code>';</script>",
+    '```', '', '$$x + y$$'
+  )))
   # false positives that must NOT load a math library
   (!has_katex('inline code `$x$` here'))       # $ inside inline code
   (!has_katex('it costs $5 and $6 total'))      # currency

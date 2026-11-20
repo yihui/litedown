@@ -210,10 +210,16 @@ mark = function(input, output = NULL, text = NULL, options = NULL, meta = list()
     # is literal text, not math, and looks identical to real math. pkg_manual()
     # emits the same delimiters (\(...\), <p>$$...$$</p>) and runs with math
     # enabled by default, so it is covered too. Code blocks/spans are stripped
-    # first because a math library ignores <code>/<pre> (a literal \( or $$
+    # first because a math library ignores these elements (a literal \( or $$
     # inside code is not rendered as math, so it must not trigger loading it).
+    # Strip script/style elements first: their contents may contain literal
+    # strings that look like HTML tags.
     if (!has_math && 'math' %in% options$extensions) {
-      r0 = gsub('(?s)<(pre|code)[ >].*?</\\1>', '', ret, perl = TRUE)
+      r0 = gsub(
+        '(?si)<(script|style)[ >].*?</\\1\\s*>', '', ret, perl = TRUE
+      )
+      r0 = gsub('(?si)<pre[ >].*?</pre\\s*>', '', r0, perl = TRUE)
+      r0 = gsub('(?si)<code[ >].*?</code\\s*>', '', r0, perl = TRUE)
       has_math = length(r0) && (
         grepl('\\(', r0, fixed = TRUE) || grepl('$$', r0, fixed = TRUE) ||
         grepl('\\begin{', r0, fixed = TRUE)
