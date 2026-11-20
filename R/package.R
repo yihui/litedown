@@ -16,6 +16,9 @@
 
 # an internal environment to store some intermediate objects
 .env = new_env()
+# cross-reference dbs of book chapters (must be a list: NULL[[i]] = <vector>
+# is an error in R < 4.0)
+.env$refs = list()
 
 #' The `fuse()` environment
 #'
