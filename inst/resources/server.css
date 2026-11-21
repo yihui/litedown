@@ -6,7 +6,10 @@ body > .nav-path {
   order: -1;
 }
 @media screen {
-  body:not(.pagesjs) > .nav-path {
+  .slide-mode > .nav-path {
+    scroll-snap-align: start;
+  }
+  body:not(.pagesjs):not(.slide-mode) > .nav-path {
     position: sticky;
     top: 0;
     z-index: 10;
