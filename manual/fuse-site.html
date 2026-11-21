@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 1.0.24">
+<meta name="generator" content="litedown 1.0.25">
 <title>Fuse R Markdown documents individually under a directory</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.9/css/default.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.9/css/article.min.css">
@@ -15,7 +15,7 @@
 <meta name="function-index" content="../function-index.json">
 </head>
 <body>
-<nav class="site-nav"><p><a href="../index.html" class="brand">litedown</a> <small class="version">v1.0.24</small>
+<nav class="site-nav"><p><a href="../index.html" class="brand">litedown</a> <small class="version">v1.0.25</small>
 <a href="../examples.html">Examples</a>
 <a href="../manual.html">Manual</a>
 <a href="../news.html">News</a>
@@ -45,12 +45,16 @@
 <p>Run <code><a href="mark.html">fuse()</a></code> on R Markdown documents individually to generate a website.
 </p>
 <h2 id="sec:usage" class="unnumbered">Usage</h2>
-<pre><code class="language-r">fuse_site(input = ".")</code></pre>
+<pre><code class="language-r">fuse_site(input = ".", quiet = FALSE)</code></pre>
 <h2 id="sec:arguments" class="unnumbered">Arguments</h2>
 <table class="desc-table" role = "presentation">
 <tr><td><code>input</code></td>
 <td>
 <p>The root directory of the site, or a vector of input file paths.</p>
+</td></tr>
+<tr><td><code>quiet</code></td>
+<td>
+<p>Whether to show the progress bar or skipped input files.</p>
 </td></tr>
 </table>
 <h2 id="sec:details" class="unnumbered">Details</h2>
@@ -110,7 +114,7 @@ if (xfun::is_R_CMD_check()) unlink(d, recursive = TRUE)
 </section>
 <footer><div class="flex-col">
 <p>Developed by <a href="https://yihui.org">Yihui Xie</a></p>
-<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.24</p>
+<p>Site built with <a href="https://github.com/yihui/litedown">litedown</a> v1.0.25</p>
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.9/js/sidenotes.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@xiee/utils@1.16.9/js/toc-highlight.min.js" defer></script>
